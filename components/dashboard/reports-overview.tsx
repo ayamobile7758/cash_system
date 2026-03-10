@@ -36,7 +36,7 @@ type ReportsOverviewProps = {
         phone: string | null;
         current_balance: number;
         credit_limit: number;
-        due_date: string | null;
+        due_date_days: number | null;
       }>;
     };
     accountReport: {

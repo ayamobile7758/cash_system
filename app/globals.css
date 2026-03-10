@@ -316,6 +316,15 @@ code {
   display: grid;
 }
 
+.dashboard-main,
+.workspace-panel,
+.login-grid > *,
+.summary-grid > *,
+.detail-grid > *,
+.detail-grid--thirds > * {
+  min-width: 0;
+}
+
 .login-grid,
 .summary-grid,
 .detail-grid,
@@ -373,6 +382,8 @@ code {
 }
 
 .table-wrap {
+  width: 100%;
+  max-width: 100%;
   overflow-x: auto;
 }
 

@@ -69,7 +69,7 @@ function createDefaultState() {
     selectedAccountId: null,
     posTerminalCode: "POS-01",
     notes: "",
-    currentIdempotencyKey: createDraftIdempotencyKey(),
+    currentIdempotencyKey: "",
     submissionState: "idle" as SubmissionState,
     lastCompletedSale: null as SaleResponseData | null,
     lastErrorCode: null as string | null

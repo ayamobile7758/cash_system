@@ -79,6 +79,12 @@ export function PosWorkspace() {
     }
   }, [accounts, selectedAccountId, setSelectedAccountId]);
 
+  useEffect(() => {
+    if (cartHydrated && !currentIdempotencyKey) {
+      refreshIdempotencyKey();
+    }
+  }, [cartHydrated, currentIdempotencyKey, refreshIdempotencyKey]);
+
   const categories = ["all", ...new Set(products.map((product) => product.category))];
   const normalizedQuery = normalizeArabic(deferredQuery);
   const filteredProducts = products.filter((product) => {
@@ -108,6 +114,12 @@ export function PosWorkspace() {
 
     if (!selectedAccountId) {
       toast.error("اختر حساب الدفع أولًا.");
+      return;
+    }
+
+    if (!currentIdempotencyKey) {
+      refreshIdempotencyKey();
+      toast.error("جاري تهيئة مفتاح الطلب. أعد المحاولة خلال ثوانٍ.");
       return;
     }
 

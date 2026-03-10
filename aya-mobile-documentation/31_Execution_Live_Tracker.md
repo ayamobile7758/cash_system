@@ -125,13 +125,14 @@
 
 ### المرحلة الحالية
 
-- `مغلق` `PX-04-T01` `create_return` مع قواعد partial/debt refund
-- `مغلق` `PX-04-T02` `create_debt_manual` و`create_debt_payment`
-- `مغلق` `PX-04-T03` `cancel_invoice` و`edit_invoice`
-- `مغلق` `PX-04-T04` اختبار `FIFO + overpay + debt return`
-- `مغلق` `PX-04-T05` إثبات `audit coverage` للمسارات الحساسة
-- `مغلق` `PX-04` أُغلقت بنجاح
-- `التالي` `PX-05-T01` `create_daily_snapshot` + report filters
+- `مغلق` `PX-05-T01` `create_daily_snapshot` + report filters
+- `مغلق` `PX-05-T02` inventory count completion + reconciliation
+- `مغلق` `PX-05-T03` balance integrity route + admin check
+- `مغلق` `PX-05-T04` Device QA للهاتف/التابلت/اللابتوب
+- `مغلق` `PX-05-T05` print baseline
+- `مغلق` `PX-05-T06` user/device SOP gap decision
+- `مغلق` `PX-05` أُغلقت بنجاح
+- `التالي` `PX-06-T01` تشغيل dry run المالي الكامل
 
 ---
 
@@ -188,8 +189,8 @@
 | `PX-02` | DB Security Foundation | تطبيق schema/RLS/RPC boundaries ومنع direct writes | `05`, `10`, `13`, `15` | كل write عبر RPC wrappers فقط | `Done` |
 | `PX-03` | Sales Core Slice | المنتجات + POS + `create_sale` + concurrency | `04`, `16`, `25` | بيع كامل ناجح + replay محمي + لا stock drift | `Done` |
 | `PX-04` | Invoice Control + Debt | المرتجعات + الديون + الإلغاء + التعديل | `04`, `06`, `08`, `15` | flows الحرجة تمر بدون تناقض مالي | `Done` |
-| `PX-05` | Reports + Snapshot + Integrity + Device | اللقطة اليومية + التقارير + فحص النزاهة + جودة الأجهزة | `03`, `09`, `17`, `29` | Device/UAT/Integrity checks ناجحة | `In Progress` |
-| `PX-06` | MVP Release Gate | فحص قبول MVP وإعلان الجاهزية | `17`, `24`, `27` | اجتياز جميع اختبارات MVP المطلوبة | `Open` |
+| `PX-05` | Reports + Snapshot + Integrity + Device | اللقطة اليومية + التقارير + فحص النزاهة + جودة الأجهزة | `03`, `09`, `17`, `29` | Device/UAT/Integrity checks ناجحة | `Done` |
+| `PX-06` | MVP Release Gate | فحص قبول MVP وإعلان الجاهزية | `17`, `24`, `27` | اجتياز جميع اختبارات MVP المطلوبة | `In Progress` |
 | `PX-07` | V1 Expansion | الموردون/المشتريات/الشحن/الجرد/التسوية/الصيانة | `09`, `24` | تسليم V1 بدون كسر عقود MVP | `Open` |
 
 ---
@@ -2152,14 +2153,214 @@
 - `Phase Review Report — PX-05`
 - `Phase Close Decision — PX-05`
 
+### Current Phase Status
+
+- **Phase State:** `Done`
+- **Active Task:** `None`
+- **Started At:** `2026-03-08`
+- **Execution Owner:** `Execution Agent`
+- **Review Owner:** `Review Agent (Review-Only)`
+- **Closed At:** `2026-03-10`
+- **Next Active Phase:** `PX-06`
+- **Next Active Task:** `PX-06-T01`
+
 | Task ID | المهمة | المرجع | Status | Evidence | Updated At | Notes / Blockers |
 |--------|--------|--------|--------|----------|------------|------------------|
-| `PX-05-T01` | `create_daily_snapshot` + report filters | `09`, `25` | `Open` |  |  |  |
-| `PX-05-T02` | inventory count completion + reconciliation | `24/TASK-MVP-07` | `Open` |  |  |  |
-| `PX-05-T03` | balance integrity route + admin check | `24`, `27/GP-02` | `Open` |  |  |  |
-| `PX-05-T04` | Device QA للهاتف/التابلت/اللابتوب | `24/TASK-MVP-08`, `17/UAT-33..35` | `Open` |  |  |  |
-| `PX-05-T05` | print baseline أو backlog decision | `02/GAP-01` | `Open` |  |  |  |
-| `PX-05-T06` | user/device SOP gap decision | `02/GAP-07` | `Open` |  |  |  |
+| `PX-05-T01` | `create_daily_snapshot` + report filters | `09`, `25` | `Done` | `supabase/migrations/004_functions_triggers.sql`, `app/api/snapshots/route.ts`, `app/api/sales/history/route.ts`, `app/(dashboard)/reports/page.tsx`, `components/dashboard/reports-overview.tsx`, `lib/api/snapshots.ts`, `lib/api/reports.ts`, `lib/validations/snapshots.ts`, `tests/unit/snapshots-route.test.ts`, `tests/unit/snapshots-validation.test.ts`, `tests/e2e/device-qa.spec.ts` | `2026-03-10` | تم تفعيل snapshot اليومي والتقارير الأساسية مع filters آمنة، وإصلاح baseline تقارير العملاء إلى `due_date_days` بدل `due_date` لمنع خطأ runtime على `debt_customers`. |
+| `PX-05-T02` | inventory count completion + reconciliation | `24/TASK-MVP-07` | `Done` | `supabase/migrations/004_functions_triggers.sql`, `app/api/reconciliation/route.ts`, `app/api/inventory/counts/complete/route.ts`, `lib/api/reconciliation.ts`, `lib/api/inventory.ts`, `lib/validations/reconciliation.ts`, `lib/validations/inventory.ts`, `tests/unit/reconciliation-route.test.ts`, `tests/unit/reconciliation-validation.test.ts`, `tests/unit/inventory-count-complete-route.test.ts`, `tests/unit/inventory-validation.test.ts`, `tests/e2e/device-qa.spec.ts` | `2026-03-10` | تم توحيد `reconcile_account` و`complete_inventory_count` على `p_created_by` و`fn_require_admin_actor`، مع guard صريح `ERR_RECONCILIATION_UNRESOLVED` وإثبات completion/reconciliation عبر Admin API probes. |
+| `PX-05-T03` | balance integrity route + admin check | `24`, `27/GP-02` | `Done` | `supabase/migrations/004_functions_triggers.sql`, `app/api/health/balance-check/route.ts`, `app/api/cron/balance-check/route.ts`, `lib/api/common.ts`, `tests/unit/balance-check-route.test.ts`, direct proof `select * from public.fn_verify_balance_integrity('<admin_uuid>'::uuid)` = `{\"drifts\":[],\"success\":true,\"drift_count\":0}` | `2026-03-10` | فحص النزاهة صار canonical عبر Admin route وCron route مع حدود صلاحية صحيحة، ولا يظهر drift فعلي على الرصيد بعد تشغيل proof المباشر. |
+| `PX-05-T04` | Device QA للهاتف/التابلت/اللابتوب | `24/TASK-MVP-08`, `17/UAT-33..35` | `Done` | `tests/e2e/device-qa.spec.ts`, `middleware.ts`, `components/auth/login-form.tsx`, `app/globals.css`, `app/(dashboard)/reports/page.tsx`, `app/(dashboard)/settings/page.tsx`, `app/(dashboard)/debts/page.tsx`, `app/(dashboard)/invoices/page.tsx`, `components/pos/pos-workspace.tsx`, `components/dashboard/invoices-workspace.tsx`, `components/dashboard/debts-workspace.tsx`, `stores/pos-cart.ts`, `npm run test:e2e` | `2026-03-10` | اجتازت أسطح `POS / invoices / debts / reports / settings` QA على `phone/tablet/laptop` بعد إصلاح auth refresh في `middleware` وإغلاق مشاكل hydration الخاصة بمفاتيح idempotency المحلية. |
+| `PX-05-T05` | print baseline أو backlog decision | `02/GAP-01` | `Done` | `components/dashboard/invoices-workspace.tsx`, `components/dashboard/settings-ops.tsx`, `app/globals.css`, `tests/e2e/device-qa.spec.ts` | `2026-03-10` | تم اعتماد baseline طباعة فعلية عبر `window.print()` و`@media print` داخل واجهة الفواتير، مع إبقاء الطباعة browser-native فقط ودون أي offline financial behavior أو print queue مخفية. |
+| `PX-05-T06` | user/device SOP gap decision | `02/GAP-07` | `Done` | `components/dashboard/settings-ops.tsx`, `components/dashboard/access-required.tsx`, `app/login/page.tsx`, `components/auth/login-form.tsx`, `components/auth/logout-button.tsx`, `middleware.ts` | `2026-03-10` | تم حسم gap الأجهزة/المستخدمين كقرار MVP موثق: التطبيق يطبق `login/logout/access gates` وحدود الجهاز/المتصفح، بينما إدارة الجهاز المفقود/تدوير كلمات المرور/إنهاء الجلسات تبقى ضمن SOPs دون ادعاء وجود إدارة أجهزة داخلية كاملة. |
+
+### Phase Execution Report — PX-05
+
+- **Phase:** `PX-05 — Reports + Snapshot + Integrity + Device`
+- **Execution Window:** `2026-03-10`
+- **Execution Status:** `Ready for Phase Review`
+- **Outcome Summary:** اكتملت طبقة التشغيل اليومي قبل MVP: `daily snapshot`, تقارير Admin الأساسية, مسارات `reconciliation` و`inventory completion`, فحص `balance integrity`, جودة الهاتف/التابلت/اللابتوب, وbaseline طباعة حقيقية. كما أُغلقت مشاكل الاستقرار الخاصة بالمصادقة وتحديث الجلسة وhydration حتى تمر الأسطح الإدارية وواجهات POS بشكل متسق على الأجهزة المختلفة.
+
+**Task Outcomes**
+
+- `PX-05-T01` = `Done`
+- `PX-05-T02` = `Done`
+- `PX-05-T03` = `Done`
+- `PX-05-T04` = `Done`
+- `PX-05-T05` = `Done`
+- `PX-05-T06` = `Done`
+
+**Key Evidence**
+
+- `T01`: `supabase/migrations/004_functions_triggers.sql`, `app/api/snapshots/route.ts`, `app/api/sales/history/route.ts`, `app/(dashboard)/reports/page.tsx`, `components/dashboard/reports-overview.tsx`, `lib/api/snapshots.ts`, `lib/api/reports.ts`, `tests/unit/snapshots-route.test.ts`, `tests/unit/snapshots-validation.test.ts`
+- `T02`: `supabase/migrations/004_functions_triggers.sql`, `app/api/reconciliation/route.ts`, `app/api/inventory/counts/complete/route.ts`, `lib/api/reconciliation.ts`, `lib/api/inventory.ts`, `tests/unit/reconciliation-route.test.ts`, `tests/unit/reconciliation-validation.test.ts`, `tests/unit/inventory-count-complete-route.test.ts`, `tests/unit/inventory-validation.test.ts`
+- `T03`: `app/api/health/balance-check/route.ts`, `app/api/cron/balance-check/route.ts`, `tests/unit/balance-check-route.test.ts`, direct proof `fn_verify_balance_integrity(<admin_uuid>) = success / drift_count = 0`
+- `T04`: `tests/e2e/device-qa.spec.ts`, `middleware.ts`, `components/auth/login-form.tsx`, `app/globals.css`, `app/(dashboard)/reports/page.tsx`, `app/(dashboard)/settings/page.tsx`, `app/(dashboard)/debts/page.tsx`, `app/(dashboard)/invoices/page.tsx`, `components/pos/pos-workspace.tsx`, `components/dashboard/invoices-workspace.tsx`, `components/dashboard/debts-workspace.tsx`, `stores/pos-cart.ts`
+- `T05`: `components/dashboard/invoices-workspace.tsx`, `components/dashboard/settings-ops.tsx`, `app/globals.css`
+- `T06`: `components/dashboard/settings-ops.tsx`, `components/dashboard/access-required.tsx`, `app/login/page.tsx`, `components/auth/login-form.tsx`, `components/auth/logout-button.tsx`, `middleware.ts`
+- phase-wide verification: `npx supabase db lint --local --fail-on error --level warning --debug`, `npm run typecheck`, `npm run lint`, `npm run test`, `npm run build`, `npm run test:e2e`, `npx playwright test tests/e2e/device-qa.spec.ts`
+
+**Gate Success Check**
+
+- Daily snapshot تعمل: `Covered by T01`
+- التقارير الأساسية متاحة: `Covered by T01 + T04`
+- فحص النزاهة المالية يعمل: `Covered by T03`
+- الهاتف/التابلت/اللابتوب مجتازة: `Covered by T04`
+- installability موجودة بدون offline financial behavior: `Covered by T04 + T05`
+
+**Closure Assessment**
+
+- جميع مهام المرحلة = `Done`: `Yes`
+- لا يوجد `P0/P1` مفتوح داخل `PX-05`: `Yes`
+- لا توجد عناصر مؤجلة جديدة خاصة بـ `PX-05`: `Yes`
+- الانتقال إلى `PX-06-T01` آمن بعد مراجعة الإغلاق: `Yes`
+
+### Phase Review Prompt — PX-05
+
+أنت الآن `Review Agent (Review-Only)` لمراجعة إغلاق المرحلة `PX-05 — Reports + Snapshot + Integrity + Device`.
+
+مهمتك **قراءة + تحليل + مقارنة + تقديم تقرير فقط**.
+ممنوع التنفيذ، ممنوع التعديل، ممنوع كتابة كود، وممنوع تشغيل Docker أو `supabase start/reset/lint` أو أي أمر يغير الحالة.
+
+راجع المخرجات الحالية مقابل:
+
+- `aya-mobile-documentation/31_Execution_Live_Tracker.md`
+- `aya-mobile-documentation/03_UI_UX_Sitemap.md`
+- `aya-mobile-documentation/09_Implementation_Plan.md`
+- `aya-mobile-documentation/17_UAT_Scenarios.md`
+- `aya-mobile-documentation/25_API_Contracts.md`
+- `aya-mobile-documentation/29_Device_Browser_Policy.md`
+- `supabase/migrations/004_functions_triggers.sql`
+- `app/api/snapshots/route.ts`
+- `app/api/reconciliation/route.ts`
+- `app/api/inventory/counts/complete/route.ts`
+- `app/api/health/balance-check/route.ts`
+- `app/api/cron/balance-check/route.ts`
+- `app/(dashboard)/reports/page.tsx`
+- `app/(dashboard)/settings/page.tsx`
+- `components/dashboard/reports-overview.tsx`
+- `components/dashboard/settings-ops.tsx`
+- `components/dashboard/debts-workspace.tsx`
+- `components/dashboard/invoices-workspace.tsx`
+- `middleware.ts`
+- `tests/e2e/device-qa.spec.ts`
+
+اعتمد فقط على الأدلة التنفيذية الموثقة داخل التراكر من هذه الجلسة:
+
+- `create_daily_snapshot` يعمل عبر `POST /api/snapshots` مع `service_role + p_created_by`
+- تقارير Admin الأساسية أصبحت تعمل مع filters، وتم إصلاح خطأ `debt_customers.due_date` إلى `due_date_days`
+- `POST /api/reconciliation` و`POST /api/inventory/counts/complete` يعملان عبر canonical RPCs مع `p_created_by`
+- `POST /api/health/balance-check` محصور بـ Admin، وroute الـ cron محصور بـ bearer token، وكلاهما يستدعيان `fn_verify_balance_integrity`
+- proof مباشر على `fn_verify_balance_integrity(<admin_uuid>)` أعاد `success = true` و`drift_count = 0`
+- `tests/e2e/device-qa.spec.ts` اجتازت `phone/tablet/laptop` وتغطي `POS`, `invoices`, `debts`, `reports`, `settings` مع admin API actions
+- مشاكل auth refresh وhydration أُغلقت عبر `middleware.ts`, `login-form.tsx`, وتهيئة client-side لمفاتيح idempotency المحلية
+- baseline الطباعة الحالي فعلي عبر `window.print()` + `@media print`
+- gap `user/device SOP` حُسم كقرار MVP موثق داخل settings surface دون ادعاء وجود device management كامل داخل التطبيق
+- حزمة التحقق النهائية اجتازت: `db lint`, `typecheck`, `lint`, `test`, `build`, `test:e2e`
+
+تحقق تحديدًا من:
+
+1. هل تحققت `Gate Success` الخاصة بـ `PX-05` بالأدلة الموثقة؟
+2. هل جميع مهام `PX-05` (`T01..T06`) أصبحت `Done` رسميًا؟
+3. هل أدلة `daily snapshot`, `reports filters`, `reconciliation`, `inventory completion`, `balance integrity`, و`device QA` كافية لدعم الإغلاق؟
+4. هل baseline الطباعة الحالية وقرار `user/device SOP` يمنعان أي operational claim gap أو يحتاجان `Deferred Item`؟
+5. هل الانتقال إلى `PX-06-T01` آمن دون ترك `P0/P1` مفتوح داخل `PX-05`؟
+
+أخرج تقريرك بصيغة:
+
+- `Phase Review Report — PX-05`
+- الحكم النهائي: `PASS` أو `PASS WITH FIXES` أو `FAIL`
+- قائمة findings مرتبة حسب الخطورة
+- تحديد واضح هل التوصية:
+  - `Close PX-05`
+  - أو `Close PX-05 with Deferred / Carried Forward Items`
+  - أو `Keep PX-05 Open / Blocked`
+
+### Phase Review Report — PX-05
+
+- **Review Agent:** `Review Agent (Review-Only)`
+- **Review Date:** `2026-03-10`
+- **Review Scope:** `Phase Closure Review — PX-05 (Reports + Snapshot + Integrity + Device)`
+- **Final Verdict:** `PASS`
+- **Recommendation:** `Close PX-05`
+
+**Gate Success Verification**
+
+| Gate Criterion | Verdict | Evidence Source |
+|----------------|---------|-----------------|
+| Daily snapshot تعمل | `PASS` | `app/api/snapshots/route.ts` يستدعي `create_daily_snapshot` عبر `service_role` مع `p_created_by: authorization.userId`. عقد `25` يحدد Natural-Key idempotency عبر `UNIQUE(snapshot_date)`. `settings-ops.tsx` يعرض نتيجة `replay/new`. `device-qa.spec.ts` يستدعي `/api/snapshots` بنجاح مع `status = 200`. |
+| التقارير الأساسية متاحة | `PASS` | `reports/page.tsx` يحصر الوصول بـ Admin عبر `getWorkspaceAccess()`. `reports-overview.tsx` يعرض `sales history` مع filters (`تاريخ/مستخدم/حالة/جهاز`) + `debt exposure` + `inventory watch` + `snapshots`. إصلاح `due_date -> due_date_days` مؤكد في `reports-overview.tsx`. |
+| فحص النزاهة المالية يعمل | `PASS` | `balance-check/route.ts` يحصر بـ Admin ويستدعي `fn_verify_balance_integrity(p_created_by)`. `cron/balance-check/route.ts` يحصر بـ `Bearer CRON_SECRET` ويستدعي نفس الدالة عبر `resolveFirstAdminActorId`. proof مباشر: `fn_verify_balance_integrity(<admin_uuid>) = success=true, drift_count=0`. `device-qa.spec.ts` يستدعي `/api/health/balance-check` ويتحقق من `status = 200`. |
+| الهاتف/التابلت/اللابتوب مجتازة | `PASS` | `device-qa.spec.ts` يغطي `phone(360x800)`, `tablet(768x1024)`, `laptop(1280x900)` عبر `POS sale + return + debt payment` للمستخدم `POS`, و`reports + settings render + API probes` للمستخدم `Admin`, و`inventory completion`. كل viewport يتحقق من عدم وجود `horizontal overflow` عبر `expectNoHorizontalOverflow()`. |
+| Installability بدون offline financial behavior | `PASS` | `middleware.ts` يفرض `browser/device policy` ولا يحتوي أي `offline behavior`. `settings-ops.tsx` يوثق صراحة أن baseline الطباعة = `window.print()` + `@media print` فقط. لا يوجد `service worker` مالي أو cached writes. |
+
+**Task Status Verification**
+
+| Task | Status | Verdict |
+|------|--------|---------|
+| `PX-05-T01 — create_daily_snapshot + report filters` | `Done` | `PASS` — route يستدعي `create_daily_snapshot(p_notes, p_created_by)` عبر `service_role`. سطح التقارير يعرض `5` أقسام أساسية مع `5` فلاتر، وإصلاح `due_date_days` موثق. |
+| `PX-05-T02 — inventory count completion + reconciliation` | `Done` | `PASS` — `reconciliation/route.ts` يستدعي `reconcile_account(p_account_id, p_actual_balance, p_notes, p_created_by)`, و`inventory/counts/complete/route.ts` يستدعي `complete_inventory_count(p_inventory_count_id, p_items, p_created_by)`. كلاهما `Admin-only` و`E2E` يغطيهما. |
+| `PX-05-T03 — balance integrity route + admin check` | `Done` | `PASS` — Admin route وCron route كلاهما يستدعيان `fn_verify_balance_integrity`. الأول يتحقق من الدور، والثاني من `CRON_SECRET`. proof المباشر = `drift_count=0`. |
+| `PX-05-T04 — Device QA` | `Done` | `PASS` — `device-qa.spec.ts` يحتوي `7` حالات اختبار (`3` viewports × `POS flow` + `3` viewports × `reports/settings` + `1` inventory completion). `middleware.ts` يفرض browser/device gates، وauth refresh مُصحح عبر `supabase.auth.getUser()`. |
+| `PX-05-T05 — print baseline` | `Done` | `PASS` — `invoices-workspace.tsx` يحتوي زر `window.print()`, و`app/globals.css` يحتوي `@media print`, و`settings-ops.tsx` يوثق القرار كبنية `browser-native`. |
+| `PX-05-T06 — user/device SOP gap decision` | `Done` | `PASS` — `settings-ops.tsx` يوثق القرار صراحة: `هذا قرار نطاق MVP موثق، وليس ادعاء بوجود إدارة أجهزة داخلية كاملة.` |
+
+**Evidence Sufficiency — Deep Checks**
+
+- `Daily Snapshot`: كافٍ. Route يطبق `authorizeRequest(["admin"]) -> Zod validation -> supabase.rpc("create_daily_snapshot", { p_notes, p_created_by })`. الاستجابة تطابق عقد `25_API_Contracts.md` (`snapshot_id`, `total_sales`, `net_sales`, `invoice_count`, `is_replay`).
+- `Reports Filters`: كافٍ. `reports-overview.tsx` يعرض form مع `5` فلاتر (`from_date`, `to_date`, `created_by`, `status`, `pos_terminal_code`) وهو متسق مع `GET /api/sales/history` في عقد `25`. إصلاح `due_date_days` مؤكد.
+- `Reconciliation + Inventory Completion`: كافٍ. كلا الـ routes يطبقان `authorizeRequest(["admin"]) -> Zod validation -> canonical RPC` مع `p_created_by`. Response types متسقة مع عقد `25`, و`E2E` يؤكد `status = 200`.
+- `Balance Integrity`: كافٍ. Admin route محصور بـ `["admin"]` ويمرر `authorization.userId`. Cron route محصور بـ `Bearer CRON_SECRET` ويستخدم `resolveFirstAdminActorId`. shape الاستجابة تتضمن `success/drift_count/drifts[]`, والـ proof المباشر يؤكد `drift_count = 0`.
+- `Device QA`: كافٍ. الاختبار يغطي `3` viewports × `2` flows + `1` admin inventory completion. `expectNoHorizontalOverflow()` يمنع regression على العرض. `login` ينتظر `waitForURL("**/pos")` لضمان اكتمال المصادقة.
+- `Print Baseline`: كافٍ. القرار واضح ومتسق: `window.print() + @media print = browser-native فقط`. لا يوجد ادعاء بطباعة `thermal` أو `receipt queue`.
+- `User/Device SOP`: كافٍ. القرار موثق في UI مع warning واضح. لا توجد شاشة `device management` داخل التطبيق. `middleware.ts` يوفر `browser/device policy enforcement` عبر redirect إلى `/unsupported-device`.
+
+**API Contracts Cross-Check**
+
+| Route | Code Implementation | Contract `25` Match |
+|-------|---------------------|---------------------|
+| `POST /api/snapshots` | `authorizeRequest(["admin"])`, `createSnapshotSchema`, `rpc("create_daily_snapshot", { p_notes, p_created_by })` | `✅` |
+| `POST /api/reconciliation` | `authorizeRequest(["admin"])`, `reconcileAccountSchema`, `rpc("reconcile_account", { p_account_id, p_actual_balance, p_notes, p_created_by })` | `✅` |
+| `POST /api/inventory/counts/complete` | `authorizeRequest(["admin"])`, `completeInventoryCountSchema`, `rpc("complete_inventory_count", { p_inventory_count_id, p_items, p_created_by })` | `✅` |
+| `POST /api/health/balance-check` | `authorizeRequest(["admin"])`, `rpc("fn_verify_balance_integrity", { p_created_by })` | `✅` |
+| `POST /api/cron/balance-check` | `Bearer CRON_SECRET`, `rpc("fn_verify_balance_integrity", { p_created_by })` | `✅` |
+
+**Print / User-Device SOP — Claim Gap Analysis**
+
+| Item | Status | Claim Gap? |
+|------|--------|------------|
+| `Print baseline (window.print())` | فعلي ومتوفر في `invoices-workspace.tsx` | `لا` — `09` يقول `لا يوجد: طباعة` ضمن MVP scope، لكن baseline الحالي يوفر `browser print` دون ادعاء تطابقه مع feature `طباعة` كاملة. |
+| `User/Device SOP gap` | قرار MVP موثق في `settings-ops.tsx` مع warning icon | `لا` — النص صريح: `هذا قرار نطاق MVP موثق، وليس ادعاء بوجود إدارة أجهزة داخلية كاملة.` |
+
+**Safety of Transition to `PX-06-T01`**
+
+- لا يوجد أي `P0` أو `P1` مفتوح داخل `PX-05`.
+- لا توجد عناصر مؤجلة جديدة خاصة بـ `PX-05`.
+- العنصر المرحّل الخارجي `PX-02-T04-D01` تقلّص إلى أقل من `8` دوال بعد توحيد `reconcile_account` و`complete_inventory_count`، ولا يمس إغلاق `PX-05`.
+- حزمة التحقق النهائية (`db lint`, `typecheck`, `lint`, `test`, `build`, `test:e2e`) كلها موثقة كمجتازة.
+- `PX-06-T01` (dry run مالي) يعتمد على baseline مالي أصبح متكاملًا بعد `PX-05`.
+
+**Findings**
+
+| # | Severity | Finding |
+|---|----------|---------|
+| `1` | `P3 Info` | `db lint` يعيد warnings موروثة من `PX-02` داخل `004_functions_triggers.sql` (`unused vars / implicit casts`). غير حاجبة. |
+| `2` | `P3 Info` | `balance-check/route.ts` يستخدم `current_balance/calculated_balance/drift` بينما `03_UI_UX_Sitemap.md` يصف `expected/actual/diff`. الفرق اصطلاحي فقط ولا يكسر الوظيفة. |
+| `3` | `P3 Info` | `settings-ops.tsx` يعرض labeling تطويري مرتبط بـ `PX-05-T02 / T03 / T05 / T06`. مقبول لهذه المرحلة. |
+| `4` | `P3 Info` | العنصر المرحّل الخارجي `PX-02-T04-D01` ما يزال موجودًا مشروعياً لدوال لم تُفتح لها routes إنتاجية بعد. |
+
+**Operational Recommendation**
+
+- `Close PX-05`
+
+### Phase Close Decision — PX-05
+
+- **Decision:** `Closed`
+- **Decision Date:** `2026-03-10`
+- **Basis:** `Phase Review Report — PX-05 = PASS`
+- **PX-05 Deferred Items:** `None`
+- **Project Carried Forward Items (External to PX-05):** `PX-02-T04-D01` فقط (`تقلّص بعد توحيد reconcile_account وcomplete_inventory_count`)
+- **Next Active Phase:** `PX-06`
+- **Next Active Task:** `PX-06-T01`
 
 ---
 
@@ -2203,7 +2404,7 @@
 
 | Task ID | المهمة | المرجع | Status | Evidence | Updated At | Notes / Blockers |
 |--------|--------|--------|--------|----------|------------|------------------|
-| `PX-06-T01` | تشغيل dry run المالي الكامل | `26` | `Open` |  |  |  |
+| `PX-06-T01` | تشغيل dry run المالي الكامل | `26` | `In Progress` |  | `2026-03-10` | فُتحت كمهمة نشطة مباشرة بعد إغلاق `PX-05`. |
 | `PX-06-T02` | تشغيل UAT الأمن والتزامن والأداء | `17` | `Open` |  |  |  |
 | `PX-06-T03` | تشغيل Device Gate | `27/VB-15..17` | `Open` |  |  |  |
 | `PX-06-T04` | قرار Go/No-Go لـ MVP | `27` | `Open` |  |  |  |
@@ -2316,6 +2517,11 @@
 | 2026-03-08 | `PX-04-T01..T05` | أُعيد `db reset --local --debug` على baseline الحالية ثم نُفذ local proof مالي كامل لسيناريوهات `partial return`, `manual debt + FIFO payment`, `overpay`, `debt return`, `cancel/edit admin guards`, و`audit coverage`. جميع بنود proof table عادت `PASS`, بما فيها `PX-04.ledger_truth = PASS` و`cash account current vs expected = 210.000 / 210.000`. | `Review PASS` | `npx supabase db reset --local --debug`, `docker exec supabase_db_Aya_Mobile psql ... px04 proof table`, `PX-04-T01.partial_return = PASS`, `PX-04-T04.debt_return = PASS`, `PX-04.ledger_truth = PASS` |
 | 2026-03-08 | `PX-04` | اكتملت حزمة التحقق النهائية: `db lint` بدون errors مع warnings `P3` فقط، و`typecheck`, `lint`, `test`, `build`, و`test:e2e` جميعها مجتازة. تم أيضًا تثبيت `Playwright` على تشغيل غير متوازٍ لأن `next dev` مع compile-on-demand كان يسبب flakiness اختباريًا على `/products` و`/pos` دون وجود خلل وظيفي في التطبيق. | `Review PASS` | `npx supabase db lint --local --fail-on error --level warning --debug`, `npm run typecheck`, `npm run lint`, `npm run test`, `npm run build`, `npm run test:e2e`, `playwright.config.ts` |
 | 2026-03-08 | `PX-04` | تم اعتماد `Phase Review Report — PX-04 = PASS` وإغلاق المرحلة رسميًا بقرار `Closed`. لا توجد عناصر مؤجلة خاصة بـ `PX-04`، وتم نقل الحالة إلى `PX-05 = In Progress` مع تعيين `PX-05-T01` كمهمة نشطة تالية. كما تقلّص العنصر المرحّل الخارجي `PX-02-T04-D01` إلى `8` دوال بعد إصلاح `create_debt_manual`. | `Done / In Progress` | `Phase Close Decision — PX-04`, `Phase Execution Report — PX-04` |
+| 2026-03-10 | `PX-05-T01/T03` | تم تنفيذ طبقة التشغيل الإداري الأساسية: `POST /api/snapshots`, `POST /api/health/balance-check`, وroute الـ cron لنفس فحص النزاهة، مع reports baseline وfilters آمنة في `/reports`. كما أُغلق خلل تقارير العملاء عبر استبدال `debt_customers.due_date` بـ `due_date_days`, وتأكدت صلاحية `fn_verify_balance_integrity(<admin_uuid>)` محليًا بنتيجة `success=true` و`drift_count=0`. | `Done` | `supabase/migrations/004_functions_triggers.sql`, `app/api/snapshots/route.ts`, `app/api/sales/history/route.ts`, `app/api/health/balance-check/route.ts`, `app/api/cron/balance-check/route.ts`, `app/(dashboard)/reports/page.tsx`, `components/dashboard/reports-overview.tsx`, `lib/api/reports.ts`, `tests/unit/snapshots-route.test.ts`, `tests/unit/balance-check-route.test.ts` |
+| 2026-03-10 | `PX-05-T02/T04/T05/T06` | تم تنفيذ `reconciliation` و`inventory count completion` عبر Admin API، ثم بُنيت أسطح `reports/settings/debts/invoices` مع Device QA فعلي على `phone/tablet/laptop`. أثناء ذلك أُغلقت مشاكل auth refresh وhydration (`middleware`, `login-form`, مفاتيح idempotency المحلية)، وثُبت baseline الطباعة عبر `window.print()` + `@media print`, كما حُسم gap `user/device SOP` كقرار MVP موثق داخل settings surface دون claim زائد. | `Done` | `app/api/reconciliation/route.ts`, `app/api/inventory/counts/complete/route.ts`, `components/dashboard/settings-ops.tsx`, `components/dashboard/debts-workspace.tsx`, `components/dashboard/invoices-workspace.tsx`, `app/(dashboard)/settings/page.tsx`, `app/(dashboard)/debts/page.tsx`, `app/(dashboard)/invoices/page.tsx`, `middleware.ts`, `components/auth/login-form.tsx`, `components/auth/logout-button.tsx`, `stores/pos-cart.ts`, `tests/e2e/device-qa.spec.ts` |
+| 2026-03-10 | `PX-05` | اكتملت حزمة التحقق النهائية للمرحلة: `db lint` بدون errors مع warnings `P3` موروثة فقط، `typecheck`, `lint`, `test`, `build`, `test:e2e`, و`npx playwright test tests/e2e/device-qa.spec.ts` جميعها مجتازة. بناءً على ذلك رُفعت `PX-05` إلى `Review`, وتم تجهيز `Phase Execution Report — PX-05` و`Phase Review Prompt — PX-05` بانتظار تقرير المراجع قبل الإغلاق الرسمي. | `Review` | `npx supabase db lint --local --fail-on error --level warning --debug`, `npm run typecheck`, `npm run lint`, `npm run test`, `npm run build`, `npm run test:e2e`, `npx playwright test tests/e2e/device-qa.spec.ts`, `Phase Execution Report — PX-05`, `Phase Review Prompt — PX-05` |
+| 2026-03-10 | `PX-05` | Review Agent أعاد الحكم `PASS` مع توصية `Close PX-05`. اعتُبرت جميع شروط `Gate Success` متحققة، وجميع المهام `T01..T06` مغلقة، ولا توجد عناصر مؤجلة جديدة خاصة بالمرحلة. كما اعتُبر gap الطباعة و`user/device SOP` مغلقين دون claim تشغيلي كاذب. | `Review PASS` | `Phase Review Report — PX-05` |
+| 2026-03-10 | `PX-05` | تم إغلاق المرحلة رسميًا بقرار `Closed` وفتح `PX-06 = In Progress` مع تعيين `PX-06-T01` كمهمة نشطة تالية. العنصر المرحّل الخارجي الوحيد الذي بقي على مستوى المشروع هو `PX-02-T04-D01`. | `Done / In Progress` | `Phase Close Decision — PX-05` |
 | YYYY-MM-DD | `PX-XX-TXX` | مثال: تم إنشاء route / تم إغلاق bug / تم اجتياز UAT | `In Progress / Done / Blocked` | file path / test / screenshot / SQL |
 
 ---

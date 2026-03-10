@@ -42,7 +42,8 @@ export function LoginForm() {
                   return;
                 }
 
-                window.location.href = "/pos";
+                await supabase.auth.getSession();
+                window.location.assign("/pos");
               })();
             });
           }}

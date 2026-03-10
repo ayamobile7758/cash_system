@@ -29,6 +29,21 @@ type WorkspaceProfile = {
   is_active: boolean;
 };
 
+type AuthenticatedUser = {
+  id: string;
+};
+
+type ServerAuthClient = {
+  getUser?: () => Promise<{
+    data: { user: AuthenticatedUser | null };
+    error: Error | null;
+  }>;
+  getSession?: () => Promise<{
+    data: { session: { user: AuthenticatedUser } | null };
+    error: Error | null;
+  }>;
+};
+
 export type AuthorizationResult =
   | {
       authorized: true;
@@ -68,14 +83,44 @@ export function getApiErrorMeta(code: string) {
   return API_ERROR_MAP.ERR_API_INTERNAL;
 }
 
+export async function getAuthenticatedUser(serverClient: ReturnType<typeof createSupabaseServerClient>) {
+  const authClient = serverClient.auth as ServerAuthClient;
+
+  if (typeof authClient.getUser === "function") {
+    const {
+      data: { user },
+      error
+    } = await authClient.getUser();
+
+    return {
+      user,
+      error
+    };
+  }
+
+  if (typeof authClient.getSession === "function") {
+    const {
+      data: { session },
+      error
+    } = await authClient.getSession();
+
+    return {
+      user: session?.user ?? null,
+      error
+    };
+  }
+
+  return {
+    user: null,
+    error: new Error("ERR_API_SESSION_INVALID")
+  };
+}
+
 export async function authorizeRequest(allowedRoles: WorkspaceRole[]): Promise<AuthorizationResult> {
   const serverClient = createSupabaseServerClient();
-  const {
-    data: { session },
-    error: sessionError
-  } = await serverClient.auth.getSession();
+  const { user, error: userError } = await getAuthenticatedUser(serverClient);
 
-  if (sessionError || !session) {
+  if (userError || !user) {
     const meta = getApiErrorMeta("ERR_API_SESSION_INVALID");
     return {
       authorized: false,
@@ -87,7 +132,7 @@ export async function authorizeRequest(allowedRoles: WorkspaceRole[]): Promise<A
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("role, is_active")
-    .eq("id", session.user.id)
+    .eq("id", user.id)
     .maybeSingle<WorkspaceProfile>();
 
   if (
@@ -106,7 +151,7 @@ export async function authorizeRequest(allowedRoles: WorkspaceRole[]): Promise<A
   return {
     authorized: true,
     supabase,
-    userId: session.user.id,
+    userId: user.id,
     role: profile.role
   };
 }

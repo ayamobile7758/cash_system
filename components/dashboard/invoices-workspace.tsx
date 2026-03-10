@@ -41,7 +41,7 @@ export function InvoicesWorkspace({ role, invoices, accounts }: InvoicesWorkspac
   const [returnType, setReturnType] = useState<"full" | "partial">("partial");
   const [refundAccountId, setRefundAccountId] = useState(accounts[0]?.id ?? "");
   const [returnReason, setReturnReason] = useState("");
-  const [returnKey, setReturnKey] = useState(createUuid);
+  const [returnKey, setReturnKey] = useState("");
   const [cancelReason, setCancelReason] = useState("");
   const [returnResult, setReturnResult] = useState<ReturnResponse | null>(null);
   const [cancelResult, setCancelResult] = useState<CancelResponse | null>(null);
@@ -82,6 +82,12 @@ export function InvoicesWorkspace({ role, invoices, accounts }: InvoicesWorkspac
       return next;
     });
   }, [selectedInvoice]);
+
+  useEffect(() => {
+    if (!returnKey) {
+      setReturnKey(createUuid());
+    }
+  }, [returnKey]);
 
   return (
     <section className="workspace-stack">
@@ -262,7 +268,7 @@ export function InvoicesWorkspace({ role, invoices, accounts }: InvoicesWorkspac
               <button
                 type="button"
                 className="primary-button"
-                disabled={isPending || !returnReason.trim()}
+                disabled={isPending || !returnReason.trim() || !returnKey}
                 onClick={() => {
                   const items = selectedInvoice.items
                     .map((item) => ({

@@ -60,7 +60,7 @@ type DebtCustomerRow = {
   phone: string | null;
   current_balance: number;
   credit_limit: number;
-  due_date: string | null;
+  due_date_days: number | null;
 };
 
 type AccountSummaryRow = {
@@ -216,7 +216,7 @@ export async function getReportBaseline(
       .returns<SnapshotSummaryRow[]>(),
     supabase
       .from("debt_customers")
-      .select("id, name, phone, current_balance, credit_limit, due_date")
+      .select("id, name, phone, current_balance, credit_limit, due_date_days")
       .order("current_balance", { ascending: false })
       .limit(8)
       .returns<DebtCustomerRow[]>(),

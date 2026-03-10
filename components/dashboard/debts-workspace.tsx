@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { Loader2, ReceiptText, Search, Wallet } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -39,12 +39,12 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
   const [selectedCustomerId, setSelectedCustomerId] = useState(customers[0]?.id ?? "");
   const [manualAmount, setManualAmount] = useState("");
   const [manualDescription, setManualDescription] = useState("");
-  const [manualKey, setManualKey] = useState(createUuid);
+  const [manualKey, setManualKey] = useState("");
   const [paymentAmount, setPaymentAmount] = useState("");
   const [paymentAccountId, setPaymentAccountId] = useState(accounts[0]?.id ?? "");
   const [paymentNotes, setPaymentNotes] = useState("");
   const [paymentEntryId, setPaymentEntryId] = useState("");
-  const [paymentKey, setPaymentKey] = useState(createUuid);
+  const [paymentKey, setPaymentKey] = useState("");
   const [manualResult, setManualResult] = useState<ManualDebtResponse | null>(null);
   const [paymentResult, setPaymentResult] = useState<DebtPaymentResponse | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -66,6 +66,16 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
     customers.find((customer) => customer.id === selectedCustomerId) ??
     null;
   const customerEntries = entries.filter((entry) => entry.debt_customer_id === selectedCustomerId);
+
+  useEffect(() => {
+    if (!manualKey) {
+      setManualKey(createUuid());
+    }
+
+    if (!paymentKey) {
+      setPaymentKey(createUuid());
+    }
+  }, [manualKey, paymentKey]);
 
   return (
     <section className="workspace-stack">
@@ -200,7 +210,7 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
               <button
                 type="button"
                 className="primary-button"
-                disabled={isPending || !selectedCustomerId || !manualAmount}
+                disabled={isPending || !selectedCustomerId || !manualAmount || !manualKey}
                 onClick={() => {
                   startTransition(() => {
                     void (async () => {
@@ -303,7 +313,7 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
             <button
               type="button"
               className="primary-button"
-              disabled={isPending || !selectedCustomerId || !paymentAmount || !paymentAccountId}
+              disabled={isPending || !selectedCustomerId || !paymentAmount || !paymentAccountId || !paymentKey}
               onClick={() => {
                 startTransition(() => {
                   void (async () => {

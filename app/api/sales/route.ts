@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getAuthenticatedUser } from "@/lib/api/common";
 import { extractErrorCode, getCreateSaleErrorMeta } from "@/lib/api/sales";
 import type { SaleResponseData, StandardEnvelope } from "@/lib/pos/types";
 import { createSaleSchema } from "@/lib/validations/sales";
@@ -48,12 +49,9 @@ async function findExistingInvoiceByIdempotencyKey(idempotencyKey: string) {
 export async function POST(request: Request) {
   try {
     const serverClient = createSupabaseServerClient();
-    const {
-      data: { session },
-      error: sessionError
-    } = await serverClient.auth.getSession();
+    const { user, error: userError } = await getAuthenticatedUser(serverClient);
 
-    if (sessionError || !session) {
+    if (userError || !user) {
       const meta = getCreateSaleErrorMeta("ERR_API_SESSION_INVALID");
       return errorResponse("ERR_API_SESSION_INVALID", meta.message, meta.status);
     }
@@ -80,7 +78,7 @@ export async function POST(request: Request) {
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("role, is_active")
-      .eq("id", session.user.id)
+      .eq("id", user.id)
       .single<{ role: string; is_active: boolean }>();
 
     if (profileError || !profile || !profile.is_active || !["admin", "pos_staff"].includes(profile.role)) {
@@ -96,7 +94,7 @@ export async function POST(request: Request) {
       p_pos_terminal: payload.pos_terminal_code ?? null,
       p_notes: payload.notes ?? null,
       p_idempotency_key: payload.idempotency_key,
-      p_created_by: session.user.id
+      p_created_by: user.id
     });
 
     if (rpcError) {
