@@ -45,7 +45,7 @@ type InventoryCompleteResponse = {
 type InventoryDraftState = Record<
   string,
   Array<{
-    product_id: string;
+    inventory_count_item_id: string;
     actual_quantity: number;
     reason: string;
   }>
@@ -82,7 +82,7 @@ export function SettingsOps({ accounts, snapshots, inventoryCounts }: SettingsOp
       for (const count of inventoryCounts) {
         if (!next[count.id]) {
           next[count.id] = count.items.map((item) => ({
-            product_id: item.product_id,
+            inventory_count_item_id: item.id,
             actual_quantity: item.actual_quantity,
             reason: item.reason ?? ""
           }));
@@ -425,7 +425,7 @@ export function SettingsOps({ accounts, snapshots, inventoryCounts }: SettingsOp
                         body: JSON.stringify({
                           inventory_count_id: selectedCount.id,
                           items: selectedCount.items.map((item, index) => ({
-                            product_id: item.product_id,
+                            inventory_count_item_id: item.id,
                             actual_quantity: selectedCountDraft[index]?.actual_quantity ?? item.actual_quantity,
                             reason: selectedCountDraft[index]?.reason || undefined
                           }))

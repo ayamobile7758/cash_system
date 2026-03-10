@@ -15,7 +15,7 @@ export default async function ReportsPage({ searchParams = {} }: ReportsPageProp
     return (
       <AccessRequired
         title="يلزم تسجيل الدخول لفتح التقارير"
-        description="شاشة التقارير محصورة بحساب Admin نشط لأن محتواها يعرض الحسابات والأرصدة والديون واللقطات اليومية."
+        description="شاشة التقارير محصورة بحساب Admin نشط لأنها تعرض الأرصدة والحركات والديون واللقطات اليومية."
       />
     );
   }
@@ -24,7 +24,7 @@ export default async function ReportsPage({ searchParams = {} }: ReportsPageProp
     return (
       <AccessRequired
         title="التقارير محصورة بحساب Admin"
-        description="حسابات POS لا تفتح تقارير الإدارة ولا ملخصات الأرصدة أو الديون الكاملة."
+        description="حسابات POS لا تفتح تقارير الإدارة التفصيلية ولا ملف التصدير Excel."
       />
     );
   }

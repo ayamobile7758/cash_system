@@ -64,7 +64,7 @@ describe("POST /api/inventory/counts/complete", () => {
         inventory_count_id: "11111111-1111-1111-8111-111111111111",
         items: [
           {
-            product_id: "22222222-2222-2222-8222-222222222222",
+            inventory_count_item_id: "22222222-2222-2222-8222-222222222222",
             actual_quantity: 8,
             reason: "فرق جرد"
           }
@@ -79,7 +79,7 @@ describe("POST /api/inventory/counts/complete", () => {
       p_inventory_count_id: "11111111-1111-1111-8111-111111111111",
       p_items: [
         {
-          product_id: "22222222-2222-2222-8222-222222222222",
+          inventory_count_item_id: "22222222-2222-2222-8222-222222222222",
           actual_quantity: 8,
           reason: "فرق جرد"
         }

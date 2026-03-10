@@ -537,6 +537,53 @@ code {
   gap: 0.65rem;
 }
 
+.selection-panel {
+  display: grid;
+  gap: 0.65rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  padding: 0.85rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.68);
+  border: 1px solid rgba(23, 33, 43, 0.08);
+}
+
+.selection-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 44px;
+  padding: 0.65rem 0.8rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(23, 33, 43, 0.08);
+  background: rgba(247, 244, 236, 0.92);
+  cursor: pointer;
+}
+
+.selection-chip input {
+  margin: 0;
+}
+
+.chip-button {
+  border: 1px solid rgba(23, 33, 43, 0.1);
+  background: rgba(255, 255, 255, 0.82);
+  color: inherit;
+  border-radius: 999px;
+  padding: 0.55rem 0.95rem;
+  font: inherit;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    transform 150ms ease;
+}
+
+.chip-button:hover,
+.chip-button.is-selected {
+  border-color: rgba(31, 125, 83, 0.28);
+  background: rgba(31, 125, 83, 0.12);
+  transform: translateY(-1px);
+}
+
 .quick-add-row {
   margin-bottom: 1rem;
 }
@@ -718,6 +765,13 @@ code {
   border: 1px solid rgba(23, 33, 43, 0.1);
   background: rgba(255, 255, 255, 0.9);
   resize: vertical;
+}
+
+.stack-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.95rem;
 }
 
 .cart-summary {

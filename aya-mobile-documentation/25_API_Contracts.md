@@ -45,6 +45,7 @@
 |------|--------|------|-------------|
 | `/api/sales` | POST | Admin, POS | Required |
 | `/api/sales/history` | GET | Admin, POS | N/A |
+| `/api/reports/export` | GET | Admin | N/A |
 | `/api/returns` | POST | Admin, POS | Required |
 | `/api/debts/manual` | POST | Admin | Required |
 | `/api/payments/debt` | POST | Admin, POS | Required |
@@ -123,7 +124,19 @@
 **Errors**
 `ERR_API_SESSION_INVALID`, `ERR_API_ROLE_FORBIDDEN`, `ERR_API_INTERNAL`.
 
-### 3) `POST /api/returns`
+### 3) `GET /api/reports/export`
+**Query**
+`from_date`, `to_date`, `created_by?`, `status?`, `pos_terminal_code?`, `page?`, `page_size?`
+
+**Success `200`**
+- `Content-Type = application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`
+- `Content-Disposition = attachment; filename="aya-reports-YYYY-MM-DD_to_YYYY-MM-DD.xlsx"`
+- الملف يحتوي أوراقًا للتقارير الأساسية والمحسنة (`Summary`, `Profit`, `Sales History`, `Returns`, `Account Movements`, `Accounts`, `Debt Customers`, `Inventory`, `Maintenance`, `Snapshots`).
+
+**Errors**
+`ERR_API_SESSION_INVALID`, `ERR_API_ROLE_FORBIDDEN`, `ERR_API_INTERNAL`.
+
+### 4) `POST /api/returns`
 **Body**
 ```json
 {
@@ -142,7 +155,7 @@
 **Errors**
 `ERR_INVOICE_NOT_FOUND`, `ERR_INVOICE_CANCELLED`, `ERR_ITEM_NOT_FOUND`, `ERR_RETURN_QUANTITY`, `ERR_CANCEL_ALREADY`, `ERR_IDEMPOTENCY`, `ERR_RETURN_REFUND_ACCOUNT_REQUIRED`, `ERR_UNAUTHORIZED`.
 
-### 4) `POST /api/debts/manual`
+### 5) `POST /api/debts/manual`
 **Body**
 ```json
 {
@@ -159,7 +172,7 @@
 **Errors**
 `ERR_IDEMPOTENCY`, `ERR_VALIDATION_NEGATIVE_AMOUNT`, `ERR_CUSTOMER_NOT_FOUND`, `ERR_UNAUTHORIZED`.
 
-### 5) `POST /api/payments/debt`
+### 6) `POST /api/payments/debt`
 **Body**
 ```json
 {
@@ -186,7 +199,7 @@
 **Errors**
 `ERR_DEBT_OVERPAY`, `ERR_DEBT_ENTRY_NOT_FOUND`, `ERR_IDEMPOTENCY`, `ERR_VALIDATION_NEGATIVE_AMOUNT`, `ERR_CUSTOMER_NOT_FOUND`, `ERR_UNAUTHORIZED`.
 
-### 6) `POST /api/topups`
+### 7) `POST /api/topups`
 **Body**
 ```json
 {
@@ -205,7 +218,7 @@
 **Errors**
 `ERR_IDEMPOTENCY`, `ERR_VALIDATION_NEGATIVE_AMOUNT`, `ERR_API_VALIDATION_FAILED`.
 
-### 7) `POST /api/transfers`
+### 8) `POST /api/transfers`
 **Body**
 ```json
 {
@@ -223,7 +236,7 @@
 **Errors**
 `ERR_TRANSFER_SAME_ACCOUNT`, `ERR_INSUFFICIENT_BALANCE`, `ERR_IDEMPOTENCY`, `ERR_VALIDATION_NEGATIVE_AMOUNT`.
 
-### 8) `POST /api/purchases`
+### 9) `POST /api/purchases`
 **Body**
 ```json
 {
@@ -242,7 +255,7 @@
 **Errors**
 `ERR_IDEMPOTENCY`, `ERR_VALIDATION_REQUIRED_FIELD`, `ERR_UNAUTHORIZED`.
 
-### 9) `POST /api/reconciliation`
+### 10) `POST /api/reconciliation`
 **Body**
 ```json
 { "account_id": "uuid", "actual_balance": 0, "notes": "text" }
@@ -254,7 +267,7 @@
 **Errors**
 `ERR_ACCOUNT_NOT_FOUND`, `ERR_RECONCILIATION_UNRESOLVED`, `ERR_UNAUTHORIZED`.
 
-### 10) `POST /api/payments/supplier`
+### 11) `POST /api/payments/supplier`
 **Body**
 ```json
 {
@@ -272,7 +285,7 @@
 **Errors**
 `ERR_SUPPLIER_NOT_FOUND`, `ERR_SUPPLIER_OVERPAY`, `ERR_IDEMPOTENCY`, `ERR_VALIDATION_NEGATIVE_AMOUNT`, `ERR_UNAUTHORIZED`.
 
-### 11) `POST /api/snapshots`
+### 12) `POST /api/snapshots`
 **Body**
 ```json
 { "notes": "text" }
@@ -293,7 +306,7 @@
 **Errors**
 `ERR_VALIDATION_SNAPSHOT_DATE`, `ERR_UNAUTHORIZED`, `ERR_DB_TRANSACTION_FAILED`.
 
-### 12) `POST /api/maintenance`
+### 13) `POST /api/maintenance`
 **Body**
 ```json
 {
@@ -313,7 +326,7 @@
 **Errors**
 `ERR_IDEMPOTENCY`, `ERR_VALIDATION_REQUIRED_FIELD`, `ERR_API_VALIDATION_FAILED`.
 
-### 13) `POST /api/invoices/cancel`
+### 14) `POST /api/invoices/cancel`
 **Body**
 ```json
 { "invoice_id": "uuid", "cancel_reason": "text" }
@@ -325,7 +338,7 @@
 **Errors**
 `ERR_CANCEL_ALREADY`, `ERR_CANCEL_HAS_RETURN`, `ERR_CANCEL_REASON`, `ERR_CANNOT_CANCEL_PAID_DEBT`, `ERR_UNAUTHORIZED`.
 
-### 14) `POST /api/invoices/edit`
+### 15) `POST /api/invoices/edit`
 **Body**
 ```json
 {
@@ -344,7 +357,7 @@
 **Errors**
 `ERR_CANCEL_ALREADY`, `ERR_CANCEL_HAS_RETURN`, `ERR_CANCEL_REASON`, `ERR_STOCK_INSUFFICIENT`, `ERR_PAYMENT_MISMATCH`, `ERR_UNAUTHORIZED`.
 
-### 15) `POST /api/inventory/counts/complete`
+### 16) `POST /api/inventory/counts/complete`
 **Body**
 ```json
 {
@@ -359,7 +372,7 @@
 **Errors**
 `ERR_COUNT_NOT_FOUND`, `ERR_COUNT_ALREADY_COMPLETED`, `ERR_VALIDATION_NEGATIVE_QUANTITY`, `ERR_UNAUTHORIZED`.
 
-### 16) `POST /api/settings`
+### 17) `POST /api/settings`
 **Body**
 ```json
 {
@@ -373,7 +386,7 @@
 **Errors**
 `ERR_UNAUTHORIZED`, `ERR_SETTING_NOT_FOUND`, `ERR_VALIDATION_INCORRECT_TYPE`, `ERR_VALIDATION_OUT_OF_RANGE`.
 
-### 17) `GET /api/health`
+### 18) `GET /api/health`
 **Success `200`**
 ```json
 { "status": "ok", "timestamp": "2026-03-01T10:00:00Z" }
@@ -383,7 +396,7 @@
 { "status": "degraded", "timestamp": "2026-03-01T10:00:00Z" }
 ```
 
-### 18) `POST /api/health/balance-check`
+### 19) `POST /api/health/balance-check`
 
 **الصلاحية:** Admin فقط
 **الدالة:** `fn_verify_balance_integrity()`

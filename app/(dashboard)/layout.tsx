@@ -6,6 +6,10 @@ import { LogoutButton } from "@/components/auth/logout-button";
 const navigation = [
   { href: "/pos", label: "POS" },
   { href: "/products", label: "المنتجات" },
+  { href: "/inventory", label: "الجرد والتسوية" },
+  { href: "/suppliers", label: "الموردون" },
+  { href: "/operations", label: "الشحن والتحويلات" },
+  { href: "/maintenance", label: "الصيانة" },
   { href: "/invoices", label: "الفواتير" },
   { href: "/debts", label: "الديون" },
   { href: "/reports", label: "التقارير" },
@@ -20,7 +24,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
     <div className="dashboard-shell">
       <header className="dashboard-header">
         <div>
-          <p className="eyebrow">PX-05 / Reports + Snapshot + Integrity + Device</p>
+          <p className="eyebrow">PX-07 / V1 Expansion</p>
           <h1>Aya Mobile Workspace</h1>
           <p className="workspace-footnote">
             {access.state === "ok"

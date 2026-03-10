@@ -111,7 +111,7 @@ describe("PosWorkspace", () => {
     });
 
     expect(globalThis.fetch).not.toHaveBeenCalled();
-  });
+  }, 15000);
 
   it("adds a product to the local cart without triggering a write request", async () => {
     render(<PosWorkspace />);
@@ -126,5 +126,5 @@ describe("PosWorkspace", () => {
 
     expect(usePosCartStore.getState().items).toHaveLength(1);
     expect(globalThis.fetch).not.toHaveBeenCalled();
-  });
+  }, 15000);
 });

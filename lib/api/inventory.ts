@@ -1,5 +1,16 @@
 import { getApiErrorMeta } from "@/lib/api/common";
 
+const INVENTORY_CREATE_ERROR_MAP = {
+  ERR_PRODUCT_NOT_FOUND: {
+    status: 404,
+    message: "لم يتم العثور على المنتجات المطلوبة لبدء الجرد."
+  },
+  ERR_UNAUTHORIZED: {
+    status: 403,
+    message: "ليس لديك صلاحية لبدء الجرد."
+  }
+} as const;
+
 const INVENTORY_ERROR_MAP = {
   ERR_COUNT_NOT_FOUND: {
     status: 404,
@@ -19,7 +30,16 @@ const INVENTORY_ERROR_MAP = {
   }
 } as const;
 
+type InventoryCreateErrorCode = keyof typeof INVENTORY_CREATE_ERROR_MAP;
 type InventoryErrorCode = keyof typeof INVENTORY_ERROR_MAP;
+
+export function getCreateInventoryCountErrorMeta(code: string) {
+  if (code in INVENTORY_CREATE_ERROR_MAP) {
+    return INVENTORY_CREATE_ERROR_MAP[code as InventoryCreateErrorCode];
+  }
+
+  return getApiErrorMeta(code);
+}
 
 export function getCompleteInventoryErrorMeta(code: string) {
   if (code in INVENTORY_ERROR_MAP) {
