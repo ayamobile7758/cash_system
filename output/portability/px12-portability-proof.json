@@ -3,7 +3,7 @@
     "products_row_count": 1,
     "customers_row_count": 1,
     "backup_kind": "backup_bundle",
-    "revoked_package_id": "b6130113-d12c-4377-9de5-3f32f3d7b6e5"
+    "revoked_package_id": "56882d97-e083-4ba0-9d6b-d0fb7bf014a6"
   },
   "import": {
     "invalid_dry_run": {
@@ -13,16 +13,16 @@
     },
     "committed": {
       "rows_committed": 1,
-      "product_name": "PX12 Imported Commit 1773234944183"
+      "product_name": "PX12 Imported Commit 1773262086676"
     }
   },
   "restore": {
-    "drill_id": "7db8bc4b-6d37-461d-a571-e4043b34b63f",
+    "drill_id": "6fabc347-f748-4b9f-896b-f717d23f24ed",
     "drift_count": 0,
     "rto_seconds": 1
   },
   "privacy": {
-    "customer_phone_masked": "******4183",
+    "customer_phone_masked": "******6676",
     "raw_phone_absent": true,
     "national_id_absent": true,
     "backup_excludes_customers": true

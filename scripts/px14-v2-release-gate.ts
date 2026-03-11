@@ -19,7 +19,9 @@ type Px08Evidence = {
     };
     notifications: {
       admin_total_count: number;
+      admin_unread_count: number;
       pos_total_count: number;
+      pos_unread_count: number;
     };
   };
 };
@@ -196,7 +198,7 @@ function extractLastJsonObject(rawOutput: string) {
   throw new Error("Failed to isolate the final JSON object from command output.");
 }
 
-function runCommand(command: string, env?: NodeJS.ProcessEnv) {
+function runCommand(command: string, env?: Record<string, string | undefined>) {
   try {
     return execSync(command, {
       encoding: "utf8",
@@ -215,7 +217,7 @@ function runCommand(command: string, env?: NodeJS.ProcessEnv) {
   }
 }
 
-function runJsonCommand<T>(command: string, env?: NodeJS.ProcessEnv) {
+function runJsonCommand<T>(command: string, env?: Record<string, string | undefined>) {
   const rawOutput = runCommand(command, env);
   return JSON.parse(extractLastJsonObject(rawOutput)) as T;
 }
@@ -236,7 +238,7 @@ function getLocalSupabaseEnv() {
     NEXT_PUBLIC_SUPABASE_URL: parsed.API_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: parsed.ANON_KEY,
     SUPABASE_SERVICE_ROLE_KEY: parsed.SERVICE_ROLE_KEY
-  };
+  } satisfies Record<string, string>;
 }
 
 function runReset() {

@@ -1,0 +1,214 @@
+{
+  "release_gate": {
+    "decision": "go",
+    "generated_at": "2026-03-11T20:51:31.990Z"
+  },
+  "uat": {
+    "UAT-36": {
+      "pass": true,
+      "expense_amount": 12,
+      "snapshot_total_expenses": 12,
+      "snapshot_net_profit": -12
+    },
+    "UAT-37": {
+      "pass": true,
+      "admin_notifications": 2,
+      "pos_notifications": 1
+    },
+    "UAT-38": {
+      "pass": true,
+      "admin_unread_count": 2,
+      "pos_unread_count": 1
+    },
+    "UAT-39": {
+      "pass": true,
+      "public_state": "ok",
+      "revoked_state": "revoked",
+      "public_keys": [
+        "invoice_date",
+        "invoice_number",
+        "items",
+        "store_name",
+        "total"
+      ]
+    },
+    "UAT-40": {
+      "pass": true,
+      "created_count": 1,
+      "suppressed_duplicates": 1
+    },
+    "UAT-41": {
+      "pass": true,
+      "whatsapp_status": "queued",
+      "masked_phone": "******1411"
+    },
+    "UAT-42": {
+      "pass": true,
+      "permission_tables_blocked": {
+        "select_blocked": true,
+        "insert_blocked": true
+      },
+      "inventory_bundle": {
+        "read": true,
+        "count_complete": true,
+        "masked_accounts": true,
+        "hidden_reconciliations": true
+      },
+      "maintenance_bundle": {
+        "status_update": true,
+        "balances_masked": true
+      }
+    },
+    "UAT-43": {
+      "pass": true,
+      "base_pos_discount": "ERR_DISCOUNT_EXCEEDED",
+      "guarded_bundle_discount": "ERR_DISCOUNT_APPROVAL_REQUIRED",
+      "override_audit_action": "discount_override_bundle",
+      "large_discount_notification": "large_discount"
+    },
+    "UAT-44": {
+      "pass": true,
+      "current_period": {
+        "sales_total": 200,
+        "total_returns": 0,
+        "net_sales": 200,
+        "expense_total": 12,
+        "purchase_total": 0,
+        "topup_profit": 0,
+        "maintenance_revenue": 0,
+        "net_profit": 68,
+        "invoice_count": 1,
+        "snapshot_count": 1
+      },
+      "compare_period": {
+        "sales_total": 80,
+        "total_returns": 0,
+        "net_sales": 80,
+        "expense_total": 8,
+        "purchase_total": 0,
+        "topup_profit": 0,
+        "maintenance_revenue": 0,
+        "net_profit": 22,
+        "invoice_count": 1,
+        "snapshot_count": 1
+      },
+      "delta": {
+        "sales_total": 120,
+        "net_profit": 46,
+        "expense_total": 4,
+        "invoice_count": 0
+      }
+    },
+    "UAT-45": {
+      "pass": true,
+      "workbook_path": "C:\\Users\\Qaysk\\OneDrive\\Desktop\\Aya Mobile\\output\\spreadsheet\\px11-advanced-report.xlsx",
+      "snapshot_current_net_profit": 68,
+      "ledger_current_net": 188
+    },
+    "UAT-46": {
+      "pass": true,
+      "products_row_count": 1,
+      "customers_row_count": 1,
+      "backup_kind": "backup_bundle"
+    },
+    "UAT-47": {
+      "pass": true,
+      "invalid_dry_run": {
+        "rows_total": 2,
+        "rows_valid": 1,
+        "rows_invalid": 1
+      },
+      "committed": {
+        "rows_committed": 1,
+        "product_name": "PX12 Imported Commit 1773262086676"
+      }
+    },
+    "UAT-48": {
+      "pass": true,
+      "drift_count": 0,
+      "rto_seconds": 1
+    },
+    "UAT-49": {
+      "pass": true,
+      "total_count": 5,
+      "grouped_entities": [
+        "product",
+        "invoice",
+        "debt_customer",
+        "maintenance_job"
+      ],
+      "search_p95_ms": 34.9
+    },
+    "UAT-50": {
+      "pass": true,
+      "alerts": {
+        "low_stock": 1,
+        "overdue_debts": 1,
+        "reconciliation_drift": 1,
+        "maintenance_ready": 1,
+        "unread_notifications": 4
+      }
+    },
+    "UAT-51": {
+      "pass": true,
+      "px11_reports_device_regression": "PASS",
+      "px13_search_alerts_device_regression": "PASS"
+    }
+  },
+  "audit": {
+    "privacy": {
+      "receipt_safe_keys_only": true,
+      "raw_phone_absent": true,
+      "national_id_absent": true,
+      "backup_excludes_customers": true
+    },
+    "permissions": {
+      "direct_permission_table_reads_blocked": true,
+      "direct_permission_table_writes_blocked": true,
+      "inventory_balances_masked": true,
+      "maintenance_balances_masked": true
+    },
+    "communication": {
+      "scheduler_deduped": true,
+      "whatsapp_masked_only": true
+    },
+    "findings": {
+      "p0": 0,
+      "p1": 0
+    }
+  },
+  "drills": {
+    "restore": {
+      "drill_id": "6fabc347-f748-4b9f-896b-f717d23f24ed",
+      "drift_count": 0,
+      "rto_seconds": 1
+    },
+    "portability_audit": {
+      "create_export_package": 3,
+      "import_products_dry_run": 2,
+      "import_products_commit": 1,
+      "restore_drill": 1,
+      "revoke_export_package": 1
+    },
+    "portability_notifications": {
+      "portability_event_total": 8
+    },
+    "communication": {
+      "receipt_link": {
+        "token_id": "7853355e-e74b-44ad-8d3d-7d45ab55401b",
+        "expires_at": "2026-03-13T20:45:41.89008+00:00",
+        "public_state": "ok",
+        "revoked_state": "revoked",
+        "reissued_token_id": "72622b8b-790a-4d6e-9ec8-39183d2c7d3c"
+      },
+      "debt_scheduler": {
+        "first_run_created": 1,
+        "second_run_suppressed_duplicates": 1
+      },
+      "whatsapp": {
+        "status": "queued",
+        "sample_error_status": 502
+      }
+    }
+  }
+}
