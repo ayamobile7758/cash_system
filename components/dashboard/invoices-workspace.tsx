@@ -180,7 +180,7 @@ export function InvoicesWorkspace({ role, invoices, accounts }: InvoicesWorkspac
               </div>
 
               <div className="action-row">
-                <label className="stack-field" style={{ minWidth: "220px" }}>
+                <label className="stack-field stack-field--min-220">
                   <span>مدة صلاحية الرابط (بالساعات)</span>
                   <input
                     type="number"
