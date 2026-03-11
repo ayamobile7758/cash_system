@@ -48,6 +48,7 @@ type InventoryWorkspaceProps = {
   inProgressCounts: InventoryCountOption[];
   recentCompletedCounts: InventoryCountOption[];
   recentReconciliations: ReconciliationEntryOption[];
+  canReconcile?: boolean;
 };
 
 function getApiErrorMessage<T>(envelope: StandardEnvelope<T>) {
@@ -59,7 +60,8 @@ export function InventoryWorkspace({
   accounts,
   inProgressCounts,
   recentCompletedCounts,
-  recentReconciliations
+  recentReconciliations,
+  canReconcile = true
 }: InventoryWorkspaceProps) {
   const router = useRouter();
   const [countType, setCountType] = useState<"daily" | "weekly" | "monthly">("daily");
@@ -295,68 +297,84 @@ export function InventoryWorkspace({
           ) : null}
         </section>
 
-        <section className="workspace-panel">
-          <div className="section-heading">
-            <div>
-              <p className="eyebrow">Reconciliation</p>
-              <h2>تسوية حساب مباشر</h2>
+        {canReconcile ? (
+          <section className="workspace-panel">
+            <div className="section-heading">
+              <div>
+                <p className="eyebrow">Reconciliation</p>
+                <h2>تسوية حساب مباشر</h2>
+              </div>
+              <Scale size={18} />
             </div>
-            <Scale size={18} />
-          </div>
 
-          <div className="stack-form">
-            <label className="stack-field">
-              <span>الحساب</span>
-              <select value={selectedAccountId} onChange={(event) => setSelectedAccountId(event.target.value)}>
-                {accounts.map((account) => (
-                  <option key={account.id} value={account.id}>
-                    {account.name} - {formatCurrency(account.current_balance)}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <div className="stack-form">
+              <label className="stack-field">
+                <span>الحساب</span>
+                <select value={selectedAccountId} onChange={(event) => setSelectedAccountId(event.target.value)}>
+                  {accounts.map((account) => (
+                    <option key={account.id} value={account.id}>
+                      {account.name} - {formatCurrency(account.current_balance)}
+                    </option>
+                  ))}
+                </select>
+              </label>
 
-            <label className="stack-field">
-              <span>الرصيد الفعلي</span>
-              <input
-                type="number"
-                min={0}
-                step="0.001"
-                value={actualBalance}
-                onChange={(event) => setActualBalance(event.target.value)}
-                placeholder={selectedAccount ? String(selectedAccount.current_balance) : "0.000"}
-              />
-            </label>
+              <label className="stack-field">
+                <span>الرصيد الفعلي</span>
+                <input
+                  type="number"
+                  min={0}
+                  step="0.001"
+                  value={actualBalance}
+                  onChange={(event) => setActualBalance(event.target.value)}
+                  placeholder={selectedAccount ? String(selectedAccount.current_balance) : "0.000"}
+                />
+              </label>
 
-            <label className="stack-field">
-              <span>سبب الفرق</span>
-              <textarea
-                rows={3}
-                value={reconcileNotes}
-                onChange={(event) => setReconcileNotes(event.target.value)}
-                placeholder="مثال: فرق صندوق نهاية المناوبة"
-              />
-            </label>
+              <label className="stack-field">
+                <span>سبب الفرق</span>
+                <textarea
+                  rows={3}
+                  value={reconcileNotes}
+                  onChange={(event) => setReconcileNotes(event.target.value)}
+                  placeholder="مثال: فرق صندوق نهاية المناوبة"
+                />
+              </label>
 
-            <button
-              type="button"
-              className="primary-button"
-              disabled={isPending || !selectedAccountId || !actualBalance || !reconcileNotes.trim()}
-              onClick={() => void handleReconciliation()}
-            >
-              {isPending ? <Loader2 className="spin" size={16} /> : "تأكيد التسوية"}
-            </button>
-          </div>
-
-          {reconciliationResult ? (
-            <div className="result-card">
-              <h3>تمت التسوية</h3>
-              <p>المتوقع: {formatCurrency(reconciliationResult.expected)}</p>
-              <p>الفعلي: {formatCurrency(reconciliationResult.actual)}</p>
-              <p>الفرق: {formatCurrency(reconciliationResult.difference)}</p>
+              <button
+                type="button"
+                className="primary-button"
+                disabled={isPending || !selectedAccountId || !actualBalance || !reconcileNotes.trim()}
+                onClick={() => void handleReconciliation()}
+              >
+                {isPending ? <Loader2 className="spin" size={16} /> : "تأكيد التسوية"}
+              </button>
             </div>
-          ) : null}
-        </section>
+
+            {reconciliationResult ? (
+              <div className="result-card">
+                <h3>تمت التسوية</h3>
+                <p>المتوقع: {formatCurrency(reconciliationResult.expected)}</p>
+                <p>الفعلي: {formatCurrency(reconciliationResult.actual)}</p>
+                <p>الفرق: {formatCurrency(reconciliationResult.difference)}</p>
+              </div>
+            ) : null}
+          </section>
+        ) : (
+          <section className="workspace-panel">
+            <div className="section-heading">
+              <div>
+                <p className="eyebrow">Reconciliation</p>
+                <h2>التسوية المالية</h2>
+              </div>
+              <Scale size={18} />
+            </div>
+
+            <p className="workspace-footnote">
+              بدء الجرد وإكماله متاحان عبر bundle الجرد، لكن إنشاء قيود التسوية المالية يبقى محصورًا بالـ Admin.
+            </p>
+          </section>
+        )}
       </div>
 
       <div className="detail-grid">
@@ -497,25 +515,31 @@ export function InventoryWorkspace({
             )}
           </div>
 
-          <div className="stack-list">
-            {recentReconciliations.length > 0 ? (
-              recentReconciliations.map((entry) => (
-                <article key={entry.id} className="list-card">
-                  <div className="list-card__header">
-                    <strong>{entry.account_name}</strong>
-                    <span>{formatDate(entry.reconciliation_date)}</span>
-                  </div>
-                  <p>المتوقع: {formatCurrency(entry.expected_balance)}</p>
-                  <p>الفعلي: {formatCurrency(entry.actual_balance)}</p>
-                  <p className="workspace-footnote">الفرق: {formatCurrency(entry.difference)}</p>
-                </article>
-              ))
-            ) : (
-              <div className="empty-panel">
-                <p>لا توجد تسويات مسجلة حتى الآن.</p>
-              </div>
-            )}
-          </div>
+          {canReconcile ? (
+            <div className="stack-list">
+              {recentReconciliations.length > 0 ? (
+                recentReconciliations.map((entry) => (
+                  <article key={entry.id} className="list-card">
+                    <div className="list-card__header">
+                      <strong>{entry.account_name}</strong>
+                      <span>{formatDate(entry.reconciliation_date)}</span>
+                    </div>
+                    <p>المتوقع: {formatCurrency(entry.expected_balance)}</p>
+                    <p>الفعلي: {formatCurrency(entry.actual_balance)}</p>
+                    <p className="workspace-footnote">الفرق: {formatCurrency(entry.difference)}</p>
+                  </article>
+                ))
+              ) : (
+                <div className="empty-panel">
+                  <p>لا توجد تسويات مسجلة حتى الآن.</p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="empty-panel">
+              <p>سجل التسويات مخصص للـ Admin فقط.</p>
+            </div>
+          )}
         </section>
       </div>
     </section>

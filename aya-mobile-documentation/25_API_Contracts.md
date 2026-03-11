@@ -103,7 +103,9 @@
 { "success": true, "data": { "invoice_id": "uuid", "invoice_number": "AYA-2026-00001", "total": 0, "change": 0 } }
 ```
 **Errors**
-`ERR_PRODUCT_NOT_FOUND`, `ERR_STOCK_INSUFFICIENT`, `ERR_DISCOUNT_EXCEEDED`, `ERR_PAYMENT_MISMATCH`, `ERR_IDEMPOTENCY`, `ERR_CONCURRENT_STOCK_UPDATE`, `ERR_API_VALIDATION_FAILED`, `ERR_API_ROLE_FORBIDDEN`.
+`ERR_PRODUCT_NOT_FOUND`, `ERR_STOCK_INSUFFICIENT`, `ERR_DISCOUNT_EXCEEDED`, `ERR_DISCOUNT_APPROVAL_REQUIRED`, `ERR_PAYMENT_MISMATCH`, `ERR_IDEMPOTENCY`, `ERR_CONCURRENT_STOCK_UPDATE`, `ERR_API_VALIDATION_FAILED`, `ERR_API_ROLE_FORBIDDEN`.
+
+**ملاحظة PX-10:** `discount_percentage` سيبقى حقلاً مقبولاً من الواجهة، لكن التحقق النهائي من الحد المسموح والاعتماد سيكون عبر bundle + `system_settings` داخل الباك-إند فقط.
 
 ### 2) `GET /api/sales/history`
 **Query**
@@ -355,7 +357,7 @@
 { "success": true, "data": { "invoice_id": "uuid", "invoice_number": "AYA-2026-00080", "total": 0 } }
 ```
 **Errors**
-`ERR_CANCEL_ALREADY`, `ERR_CANCEL_HAS_RETURN`, `ERR_CANCEL_REASON`, `ERR_STOCK_INSUFFICIENT`, `ERR_PAYMENT_MISMATCH`, `ERR_UNAUTHORIZED`.
+`ERR_CANCEL_ALREADY`, `ERR_CANCEL_HAS_RETURN`, `ERR_CANCEL_REASON`, `ERR_STOCK_INSUFFICIENT`, `ERR_PAYMENT_MISMATCH`, `ERR_DISCOUNT_APPROVAL_REQUIRED`, `ERR_UNAUTHORIZED`.
 
 ### 16) `POST /api/inventory/counts/complete`
 **Body**
@@ -459,12 +461,14 @@
 | `/r/[token]` | GET | Public | N/A | `PX-09` |
 | `/api/notifications/debts/run` | POST | Internal/Cron | No | `PX-09` |
 | `/api/messages/whatsapp/send` | POST | Admin | Required | `PX-09` |
-| `/api/roles/assign` | POST | Admin | No | `PX-10` |
+| `/api/roles/assign` | POST / DELETE | Admin | No | `PX-10` |
 | `/api/permissions/preview` | POST | Admin | No | `PX-10` |
 | `/api/reports/advanced` | GET | Admin | N/A | `PX-11` |
 | `/api/reports/advanced/export` | GET | Admin | N/A | `PX-11` |
-| `/api/export/packages` | POST | Admin | Required | `PX-12` |
-| `/api/import/products` | POST | Admin | Required | `PX-12` |
+| `/api/export/packages` | POST | Admin | No | `PX-12` |
+| `/api/export/packages/[packageId]` | GET | Admin | N/A | `PX-12` |
+| `/api/export/packages/[packageId]` | PATCH | Admin | No | `PX-12` |
+| `/api/import/products` | POST | Admin | No | `PX-12` |
 | `/api/restore/drill` | POST | Admin/Internal | Required | `PX-12` |
 | `/api/search/global` | GET | Admin, POS | N/A | `PX-13` |
 | `/api/alerts/summary` | GET | Admin | N/A | `PX-13` |
@@ -552,11 +556,11 @@
 **Errors**
 `ERR_NOTIFICATION_NOT_FOUND`, `ERR_UNAUTHORIZED`, `ERR_API_VALIDATION_FAILED`.
 
-### 23) `POST /api/receipts/link` و`GET /r/[token]`
+### 23) `POST/PATCH /api/receipts/link` و`GET /r/[token]`
 
 **`POST /api/receipts/link` Body**
 ```json
-{ "invoice_id": "uuid", "channel": "share", "expires_in_hours": 168 }
+{ "invoice_id": "uuid", "channel": "share", "expires_in_hours": 168, "force_reissue": false }
 ```
 
 **`POST` Success `200`**
@@ -568,6 +572,23 @@
     "receipt_url": "https://example.com/r/opaque-token",
     "expires_at": "2026-03-17T12:00:00Z",
     "is_reissued": false
+  }
+}
+```
+
+**`PATCH /api/receipts/link` Body**
+```json
+{ "token_id": "uuid", "invoice_id": "uuid" }
+```
+
+**`PATCH` Success `200`**
+```json
+{
+  "success": true,
+  "data": {
+    "token_id": "uuid",
+    "invoice_id": "uuid",
+    "revoked": true
   }
 }
 ```
@@ -615,46 +636,100 @@
 ```
 **Success `200`**
 ```json
-{ "success": true, "data": { "delivery_log_id": "uuid", "status": "queued" } }
+{
+  "success": true,
+  "data": {
+    "delivery_log_id": "uuid",
+    "status": "queued",
+    "wa_url": "https://wa.me/9627XXXXXXXX?text=..."
+  }
+}
 ```
 **Errors**
 `ERR_IDEMPOTENCY`, `ERR_WHATSAPP_DELIVERY_FAILED`, `ERR_VALIDATION_REQUIRED_FIELD`, `ERR_UNAUTHORIZED`.
 
-### 26) `POST /api/roles/assign` و`POST /api/permissions/preview`
+### 26) `POST/DELETE /api/roles/assign` و`POST /api/permissions/preview`
 
 **`POST /api/roles/assign` Body**
 ```json
-{ "user_id": "uuid", "role_key": "inventory_clerk", "notes": "text" }
+{ "user_id": "uuid", "bundle_key": "inventory_clerk", "notes": "text" }
 ```
 **Success `200`**
 ```json
-{ "success": true, "data": { "assignment_id": "uuid", "role_key": "inventory_clerk", "is_active": true } }
+{ "success": true, "data": { "assignment_id": "uuid", "bundle_key": "inventory_clerk", "base_role": "pos_staff", "is_active": true } }
+```
+
+**`DELETE /api/roles/assign` Body**
+```json
+{ "user_id": "uuid", "bundle_key": "inventory_clerk", "notes": "optional revoke reason" }
+```
+**Success `200`**
+```json
+{ "success": true, "data": { "assignment_id": "uuid", "bundle_key": "inventory_clerk", "base_role": "pos_staff", "is_active": false } }
 ```
 
 **`POST /api/permissions/preview` Body**
 ```json
-{ "role_key": "inventory_clerk" }
+{ "bundle_key": "inventory_clerk" }
 ```
 **Success `200`**
 ```json
-{ "success": true, "data": { "permissions": ["inventory.read", "inventory.count.start"] } }
+{ "success": true, "data": { "bundle_key": "inventory_clerk", "base_role": "pos_staff", "permissions": ["inventory.read", "inventory.count.start"], "max_discount_percentage": 0, "discount_requires_approval": false } }
 ```
 **Errors**
 `ERR_ROLE_ASSIGNMENT_INVALID`, `ERR_PERMISSION_BUNDLE_NOT_FOUND`, `ERR_UNAUTHORIZED`.
 
+**Rules**
+- `/api/roles/assign` لا يغيّر `profiles.role`؛ بل يضيف/يلغي assignment فوق coarse role الحالي.
+- `bundle_key` يجب أن يشير إلى bundle active ومطابق لـ `base_role` الموافق للمستخدم.
+- لا يجوز تعيين bundle ترفع مستخدم `pos_staff` إلى صلاحيات Admin-only.
+- أي assign/revoke يجب أن يسجل في `audit_logs`.
+
 ### 27) `GET /api/reports/advanced` و`GET /api/reports/advanced/export`
 
 **Query**
-`from_date`, `to_date`, `compare_from_date?`, `compare_to_date?`, `group_by?`, `dimension?`
+`from_date`, `to_date`, `compare_from_date?`, `compare_to_date?`, `group_by?`, `dimension?`, `created_by?`, `status?`, `pos_terminal_code?`
 
 **Success `200`**
 ```json
 {
   "success": true,
   "data": {
-    "current_period": { "sales_total": 0, "net_profit": 0 },
-    "compare_period": { "sales_total": 0, "net_profit": 0 },
-    "trend": [{ "bucket": "2026-03-10", "sales_total": 0, "net_profit": 0 }]
+    "current_period": {
+      "sales_total": 0,
+      "expense_total": 0,
+      "net_profit": 0,
+      "invoice_count": 0
+    },
+    "compare_period": {
+      "sales_total": 0,
+      "expense_total": 0,
+      "net_profit": 0,
+      "invoice_count": 0
+    },
+    "trend": [
+      {
+        "bucket": "2026-03-10",
+        "sales_total": 0,
+        "expense_total": 0,
+        "net_profit": 0,
+        "invoice_count": 0
+      }
+    ],
+    "breakdown": [
+      {
+        "label": "الصندوق",
+        "amount": 0,
+        "secondary_amount": 0,
+        "item_count": 0
+      }
+    ],
+    "delta": {
+      "sales_total": 0,
+      "expense_total": 0,
+      "net_profit": 0,
+      "invoice_count": 0
+    }
   }
 }
 ```
@@ -662,26 +737,98 @@
 - workbook أو CSV مجمّع يطابق نفس الأرقام المعروضة في الشاشة.
 
 **Errors**
-`ERR_EXPORT_TOO_LARGE`, `ERR_API_ROLE_FORBIDDEN`, `ERR_API_INTERNAL`.
+`ERR_API_VALIDATION_FAILED`, `ERR_EXPORT_TOO_LARGE`, `ERR_API_ROLE_FORBIDDEN`, `ERR_API_INTERNAL`.
 
-### 28) `POST /api/export/packages` و`POST /api/import/products` و`POST /api/restore/drill`
+### 28) `POST /api/export/packages` و`GET/PATCH /api/export/packages/[packageId]` و`POST /api/import/products` و`POST /api/restore/drill`
 
 **`POST /api/export/packages` Body**
 ```json
-{ "package_type": "json|csv", "scope": "products|reports|customers", "filters": {} }
+{
+  "package_type": "json|csv",
+  "scope": "products|reports|customers|backup",
+  "filters": {
+    "active_only": true,
+    "from_date": "2026-03-01",
+    "to_date": "2026-03-11"
+  }
+}
 ```
 **Success `200`**
 ```json
-{ "success": true, "data": { "package_id": "uuid", "download_url": "https://example.com/download/token", "expires_at": "2026-03-11T12:00:00Z" } }
+{
+  "success": true,
+  "data": {
+    "package_id": "uuid",
+    "download_url": "/api/export/packages/uuid",
+    "expires_at": "2026-03-11T12:00:00Z"
+  }
+}
 ```
 
-**`POST /api/import/products` Body**
+**`GET /api/export/packages/[packageId]`**
+- Admin download only
+- Success returns raw `application/json` or `text/csv` attachment
+- Expired/revoked package returns `ERR_EXPORT_PACKAGE_EXPIRED`
+
+**`PATCH /api/export/packages/[packageId]`**
 ```json
-{ "mode": "dry_run|commit", "source_file_id": "uuid" }
+{}
 ```
 **Success `200`**
 ```json
-{ "success": true, "data": { "job_id": "uuid", "mode": "dry_run", "rows_total": 100, "rows_valid": 95, "rows_invalid": 5 } }
+{
+  "success": true,
+  "data": {
+    "package_id": "uuid",
+    "status": "revoked",
+    "revoked_at": "2026-03-11T12:30:00Z"
+  }
+}
+```
+
+**`POST /api/import/products` Body — dry run**
+```json
+{
+  "mode": "dry_run",
+  "source_format": "csv|json",
+  "source_content": "file text content",
+  "file_name": "products-import.csv"
+}
+```
+**Success `200`**
+```json
+{
+  "success": true,
+  "data": {
+    "job_id": "uuid",
+    "mode": "dry_run",
+    "rows_total": 100,
+    "rows_valid": 95,
+    "rows_invalid": 5,
+    "validation_errors": [
+      { "row_number": 2, "field": "name", "message": "اسم المنتج موجود مسبقًا في النظام." }
+    ]
+  }
+}
+```
+
+**`POST /api/import/products` Body — commit**
+```json
+{ "mode": "commit", "dry_run_job_id": "uuid" }
+```
+**Success `200`**
+```json
+{
+  "success": true,
+  "data": {
+    "job_id": "uuid",
+    "mode": "commit",
+    "rows_total": 100,
+    "rows_valid": 95,
+    "rows_invalid": 5,
+    "rows_committed": 95
+  }
+}
 ```
 
 **`POST /api/restore/drill` Body**
@@ -690,7 +837,15 @@
 ```
 **Success `200`**
 ```json
-{ "success": true, "data": { "drill_id": "uuid", "status": "started" } }
+{
+  "success": true,
+  "data": {
+    "drill_id": "uuid",
+    "status": "completed",
+    "drift_count": 0,
+    "rto_seconds": 1
+  }
+}
 ```
 **Errors**
 `ERR_EXPORT_PACKAGE_EXPIRED`, `ERR_IMPORT_DRY_RUN_REQUIRED`, `ERR_RESTORE_ENV_FORBIDDEN`, `ERR_IDEMPOTENCY`, `ERR_UNAUTHORIZED`.
@@ -740,6 +895,6 @@
 
 ---
 
-**الإصدار:** 1.4
-**تاريخ التحديث:** 10 مارس 2026
-**التغييرات:** v1.4 — إضافة عقود مخططة لما بعد `PX-07` (`expenses`, `expense_categories`, `notifications`, `receipt links`, `WhatsApp`, `roles/permissions`, `advanced reports`, `portability`, `search/alerts`) بصيغة draft-for-execution. v1.3 — إضافة تغطية `ERR_RECONCILIATION_UNRESOLVED` و`ERR_CANNOT_CANCEL_PAID_DEBT` و`ERR_APPEND_ONLY_VIOLATION` في العقود. v1.2 — توحيد Drift Authority (`fn_verify_balance_integrity`) + توثيق Idempotency Policy (`create_debt_manual` required, `create_daily_snapshot` natural-key). v1.1 — إضافة عقد `POST /api/health/balance-check`.
+**الإصدار:** 1.6
+**تاريخ التحديث:** 11 مارس 2026
+**التغييرات:** v1.6 — مواءمة عقود `PX-12` مع التنفيذ الفعلي: إضافة download/revoke لـ `export packages`، توثيق dry-run/commit الحقيقيين في `import products`، وإرجاع `restore drill` النهائي (`completed + drift_count + rto_seconds`). v1.5 — توسيع عقد PX-10: `roles/permissions` أصبحت مبنية على `bundle_key` لا `role_key`، مع ربط discount governance بـ `ERR_DISCOUNT_APPROVAL_REQUIRED` داخل `sales` و`invoices/edit`. v1.4 — إضافة عقود مخططة لما بعد `PX-07` (`expenses`, `expense_categories`, `notifications`, `receipt links`, `WhatsApp`, `roles/permissions`, `advanced reports`, `portability`, `search/alerts`) بصيغة draft-for-execution. v1.3 — إضافة تغطية `ERR_RECONCILIATION_UNRESOLVED` و`ERR_CANNOT_CANCEL_PAID_DEBT` و`ERR_APPEND_ONLY_VIOLATION` في العقود. v1.2 — توحيد Drift Authority (`fn_verify_balance_integrity`) + توثيق Idempotency Policy (`create_debt_manual` required, `create_daily_snapshot` natural-key). v1.1 — إضافة عقد `POST /api/health/balance-check`.

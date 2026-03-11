@@ -72,11 +72,25 @@ export type NotificationItem = {
   reference_id: string | null;
   created_at: string;
   user_name: string | null;
+  contact_phone: string | null;
+  whatsapp_template_key: "debt_due_reminder" | "debt_overdue" | "maintenance_ready" | null;
 };
 
 type ProfileNameRow = {
   id: string;
   full_name: string | null;
+};
+
+type DebtEntryPhoneRow = {
+  id: string;
+  debt_customers: {
+    phone: string | null;
+  } | null;
+};
+
+type MaintenancePhoneRow = {
+  id: string;
+  customer_phone: string | null;
 };
 
 function appendSearchParam(target: URLSearchParams, key: string, value: string | string[] | undefined) {
@@ -205,12 +219,73 @@ export async function getNotificationsPageBaseline(
     supabase,
     notifications.map((notification) => notification.user_id)
   );
+  const debtReminderIds = notifications
+    .filter(
+      (notification) =>
+        notification.reference_type === "debt_entry" &&
+        (notification.type === "debt_due_reminder" || notification.type === "debt_overdue")
+    )
+    .map((notification) => notification.reference_id)
+    .filter((value): value is string => Boolean(value));
+  const maintenanceIds = notifications
+    .filter(
+      (notification) =>
+        notification.reference_type === "maintenance_job" && notification.type === "maintenance_ready"
+    )
+    .map((notification) => notification.reference_id)
+    .filter((value): value is string => Boolean(value));
+
+  const [debtPhonesResult, maintenancePhonesResult] = await Promise.all([
+    debtReminderIds.length === 0
+      ? Promise.resolve({ data: [] as DebtEntryPhoneRow[], error: null })
+      : supabase
+          .from("debt_entries")
+          .select("id, debt_customers(phone)")
+          .in("id", debtReminderIds)
+          .returns<DebtEntryPhoneRow[]>(),
+    maintenanceIds.length === 0
+      ? Promise.resolve({ data: [] as MaintenancePhoneRow[], error: null })
+      : supabase
+          .from("maintenance_jobs")
+          .select("id, customer_phone")
+          .in("id", maintenanceIds)
+          .returns<MaintenancePhoneRow[]>()
+  ]);
+
+  if (debtPhonesResult.error) {
+    throw debtPhonesResult.error;
+  }
+
+  if (maintenancePhonesResult.error) {
+    throw maintenancePhonesResult.error;
+  }
+
+  const debtPhoneMap = new Map(
+    (debtPhonesResult.data ?? []).map((row) => [row.id, row.debt_customers?.phone ?? null])
+  );
+  const maintenancePhoneMap = new Map(
+    (maintenancePhonesResult.data ?? []).map((row) => [row.id, row.customer_phone ?? null])
+  );
 
   return {
     filters,
     notifications: notifications.map((notification) => ({
       ...notification,
-      user_name: profileMap.get(notification.user_id) ?? null
+      user_name: profileMap.get(notification.user_id) ?? null,
+      contact_phone:
+        notification.reference_type === "debt_entry"
+          ? debtPhoneMap.get(notification.reference_id ?? "") ?? null
+          : notification.reference_type === "maintenance_job"
+            ? maintenancePhoneMap.get(notification.reference_id ?? "") ?? null
+            : null,
+      whatsapp_template_key:
+        notification.type === "debt_due_reminder"
+          ? "debt_due_reminder"
+          : notification.type === "debt_overdue"
+            ? "debt_overdue"
+            : notification.type === "maintenance_ready"
+              ? "maintenance_ready"
+              : null
     })) satisfies NotificationItem[],
     unreadCount: unreadResult.count ?? 0,
     totalCount: notificationsResult.count ?? notifications.length

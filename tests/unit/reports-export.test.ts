@@ -166,7 +166,44 @@ describe("reports workbook export", () => {
         invoice_count: 1,
         created_at: "2026-03-10T12:00:00Z"
       }
-    ]
+    ],
+    advancedReport: {
+      currentPeriod: {
+        sales_total: 120,
+        total_returns: 20,
+        net_sales: 100,
+        expense_total: 12,
+        purchase_total: 40,
+        topup_profit: 3,
+        maintenance_revenue: 18,
+        net_profit: 49,
+        invoice_count: 1,
+        snapshot_count: 1
+      },
+      comparePeriod: null,
+      trend: [
+        {
+          bucket: "2026-03-10",
+          sales_total: 120,
+          expense_total: 12,
+          net_profit: 49
+        }
+      ],
+      breakdown: [
+        {
+          label: "Ø§Ù„ØµÙ†Ø¯ÙˆÙ‚",
+          amount: 120,
+          secondary_amount: 80,
+          item_count: 2
+        }
+      ],
+      delta: {
+        sales_total: 120,
+        net_profit: 49,
+        expense_total: 12,
+        invoice_count: 1
+      }
+    }
   };
 
   it("creates a workbook with the expected sheets and headline values", () => {

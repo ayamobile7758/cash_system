@@ -20,7 +20,9 @@ type RouteContext = {
 
 export async function PATCH(request: Request, { params }: RouteContext) {
   try {
-    const authorization = await authorizeRequest(["admin", "pos_staff"]);
+    const authorization = await authorizeRequest(["admin", "pos_staff"], {
+      requiredPermissions: ["maintenance.status.update"]
+    });
     if (!authorization.authorized) {
       return authorization.response;
     }

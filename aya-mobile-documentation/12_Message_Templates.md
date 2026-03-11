@@ -137,6 +137,7 @@ const link = `https://wa.me/${phoneNumber}?text=${encodeMessage(message)}`;
 - لا تضع + أو 00 قبل الرقم
 - الرسالة يجب أن تكون URL encoded
 - يفتح واتساب مع الرسالة جاهزة للإرسال
+- النظام يسجل `delivery log` محليًا عند تشغيل زر واتساب، لكن هذا السجل يثبت intent/audit فقط ولا يساوي confirmation من مزود خارجي
 
 ---
 

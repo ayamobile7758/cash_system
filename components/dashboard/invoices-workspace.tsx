@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, useTransition } from "react";
-import { FileText, Loader2, Printer, RotateCcw, Search, ShieldAlert } from "lucide-react";
+import { Copy, ExternalLink, FileText, Link2, Loader2, Printer, RotateCcw, Search, ShieldAlert } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import type { AccountOption, InvoiceOption } from "@/lib/api/dashboard";
@@ -20,6 +20,25 @@ type ReturnResponse = {
 type CancelResponse = {
   success: boolean;
   reversed_entries_count: number;
+};
+
+type ReceiptLinkResponse = {
+  token_id: string;
+  receipt_url: string;
+  expires_at: string;
+  is_reissued: boolean;
+};
+
+type RevokeReceiptLinkResponse = {
+  token_id: string;
+  invoice_id: string;
+  revoked: boolean;
+};
+
+type SendWhatsAppResponse = {
+  delivery_log_id: string;
+  status: "queued";
+  wa_url: string;
 };
 
 type InvoicesWorkspaceProps = {
@@ -45,6 +64,9 @@ export function InvoicesWorkspace({ role, invoices, accounts }: InvoicesWorkspac
   const [cancelReason, setCancelReason] = useState("");
   const [returnResult, setReturnResult] = useState<ReturnResponse | null>(null);
   const [cancelResult, setCancelResult] = useState<CancelResponse | null>(null);
+  const [receiptLinkResult, setReceiptLinkResult] = useState<ReceiptLinkResponse | null>(null);
+  const [whatsAppResult, setWhatsAppResult] = useState<SendWhatsAppResponse | null>(null);
+  const [expiresInHours, setExpiresInHours] = useState("168");
   const [returnQuantities, setReturnQuantities] = useState<ReturnQuantitiesState>({});
   const [isPending, startTransition] = useTransition();
 
@@ -88,6 +110,11 @@ export function InvoicesWorkspace({ role, invoices, accounts }: InvoicesWorkspac
       setReturnKey(createUuid());
     }
   }, [returnKey]);
+
+  useEffect(() => {
+    setReceiptLinkResult(null);
+    setWhatsAppResult(null);
+  }, [selectedInvoiceId]);
 
   return (
     <section className="workspace-stack">
@@ -151,6 +178,172 @@ export function InvoicesWorkspace({ role, invoices, accounts }: InvoicesWorkspac
                   طباعة
                 </button>
               </div>
+
+              <div className="action-row">
+                <label className="stack-field" style={{ minWidth: "220px" }}>
+                  <span>مدة صلاحية الرابط (بالساعات)</span>
+                  <input
+                    type="number"
+                    min={1}
+                    max={720}
+                    step={1}
+                    value={expiresInHours}
+                    onChange={(event) => setExpiresInHours(event.target.value)}
+                  />
+                </label>
+
+                <button
+                  type="button"
+                  className="secondary-button"
+                  disabled={isPending}
+                  onClick={() => {
+                    startTransition(() => {
+                      void (async () => {
+                        const response = await fetch("/api/receipts/link", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            invoice_id: selectedInvoice.id,
+                            channel: "share",
+                            expires_in_hours: Number(expiresInHours || "168")
+                          })
+                        });
+
+                        const envelope = (await response.json()) as StandardEnvelope<ReceiptLinkResponse>;
+                        if (!response.ok || !envelope.success || !envelope.data) {
+                          toast.error(envelope.error?.message ?? "تعذر إنشاء رابط الإيصال.");
+                          return;
+                        }
+
+                        setReceiptLinkResult(envelope.data);
+                        setWhatsAppResult(null);
+                        toast.success(
+                          envelope.data.is_reissued ? "تم تحديث رابط الإيصال." : "تم إنشاء رابط الإيصال العام."
+                        );
+                      })();
+                    });
+                  }}
+                >
+                  {isPending ? <Loader2 className="spin" size={16} /> : <Link2 size={16} />}
+                  إنشاء رابط مشاركة
+                </button>
+
+                {receiptLinkResult ? (
+                  <button
+                    type="button"
+                    className="secondary-button"
+                    disabled={isPending}
+                    onClick={() => {
+                      startTransition(() => {
+                        void (async () => {
+                          const response = await fetch("/api/receipts/link", {
+                            method: "PATCH",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                              token_id: receiptLinkResult.token_id
+                            })
+                          });
+
+                          const envelope = (await response.json()) as StandardEnvelope<RevokeReceiptLinkResponse>;
+                          if (!response.ok || !envelope.success || !envelope.data) {
+                            toast.error(envelope.error?.message ?? "تعذر إلغاء رابط الإيصال.");
+                            return;
+                          }
+
+                          setReceiptLinkResult(null);
+                          setWhatsAppResult(null);
+                          toast.success("تم إلغاء رابط الإيصال العام.");
+                        })();
+                      });
+                    }}
+                  >
+                    إلغاء الرابط
+                  </button>
+                ) : null}
+
+                {receiptLinkResult ? (
+                  <button
+                    type="button"
+                    className="secondary-button"
+                    onClick={() => {
+                      void navigator.clipboard.writeText(receiptLinkResult.receipt_url);
+                      toast.success("تم نسخ رابط الإيصال.");
+                    }}
+                  >
+                    <Copy size={16} />
+                    نسخ الرابط
+                  </button>
+                ) : null}
+
+                {receiptLinkResult ? (
+                  <a
+                    href={receiptLinkResult.receipt_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="secondary-button"
+                  >
+                    <ExternalLink size={16} />
+                    فتح الرابط العام
+                  </a>
+                ) : null}
+
+                {role === "admin" && selectedInvoice.customer_phone && receiptLinkResult ? (
+                  <button
+                    type="button"
+                    className="primary-button"
+                    disabled={isPending}
+                    onClick={() => {
+                      startTransition(() => {
+                        void (async () => {
+                          const response = await fetch("/api/messages/whatsapp/send", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                              template_key: "receipt_share",
+                              target_phone: selectedInvoice.customer_phone,
+                              reference_type: "invoice",
+                              reference_id: selectedInvoice.id,
+                              payload: {
+                                receipt_url: receiptLinkResult.receipt_url
+                              },
+                              idempotency_key: crypto.randomUUID()
+                            })
+                          });
+
+                          const envelope = (await response.json()) as StandardEnvelope<SendWhatsAppResponse>;
+                          if (!response.ok || !envelope.success || !envelope.data) {
+                            toast.error(envelope.error?.message ?? "تعذر تجهيز رسالة واتساب.");
+                            return;
+                          }
+
+                          setWhatsAppResult(envelope.data);
+                          window.open(envelope.data.wa_url, "_blank", "noopener,noreferrer");
+                          toast.success("تم تجهيز رابط واتساب وتسجيل المحاولة.");
+                        })();
+                      });
+                    }}
+                  >
+                    واتساب
+                  </button>
+                ) : null}
+              </div>
+
+              {receiptLinkResult ? (
+                <div className="result-card">
+                  <h3>رابط الإيصال الحالي</h3>
+                  <p>الرابط: {receiptLinkResult.receipt_url}</p>
+                  <p>ينتهي في: {receiptLinkResult.expires_at}</p>
+                  <p>إعادة إصدار: {receiptLinkResult.is_reissued ? "نعم" : "لا"}</p>
+                </div>
+              ) : null}
+
+              {whatsAppResult ? (
+                <div className="result-card">
+                  <h3>محاولة واتساب</h3>
+                  <p>الحالة: {whatsAppResult.status}</p>
+                  <p>Delivery Log: {whatsAppResult.delivery_log_id}</p>
+                </div>
+              ) : null}
 
               <section className="print-receipt">
                 <div className="info-strip">

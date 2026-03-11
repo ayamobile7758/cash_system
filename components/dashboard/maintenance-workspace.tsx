@@ -215,7 +215,11 @@ export function MaintenanceWorkspace({
                   <strong>{account.name}</strong>
                   <span>{account.type}</span>
                 </div>
-                <p className="workspace-footnote">الرصيد الحالي: {formatCurrency(account.current_balance)}</p>
+                {account.current_balance != null ? (
+                  <p className="workspace-footnote">الرصيد الحالي: {formatCurrency(account.current_balance)}</p>
+                ) : (
+                  <p className="workspace-footnote">يتم إخفاء الرصيد بحسب الحزمة المسندة.</p>
+                )}
               </article>
             ))}
           </div>

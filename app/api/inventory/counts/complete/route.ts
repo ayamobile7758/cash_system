@@ -12,7 +12,9 @@ type CompleteInventoryResponseData = {
 
 export async function POST(request: Request) {
   try {
-    const authorization = await authorizeRequest(["admin"]);
+    const authorization = await authorizeRequest(["admin", "pos_staff"], {
+      requiredPermissions: ["inventory.count.complete"]
+    });
     if (!authorization.authorized) {
       return authorization.response;
     }

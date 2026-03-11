@@ -115,6 +115,10 @@
 - Admin: SELECT, INSERT, UPDATE, DELETE
 - POS: SELECT (نفس السجل فقط)
 
+**ملاحظة PX-10:**
+- `profiles.role` يبقى coarse role (`admin` / `pos_staff`) فقط.
+- الصلاحيات الدقيقة المستقبلية لا تُنمذج بتوسيع هذا العمود، بل عبر جداول مستقلة (`permission_bundles`, `role_assignments`) مع بقاء authority الأساسية كما هي.
+
 ---
 
 ### جدول 2: products (المنتجات)
@@ -900,11 +904,13 @@
 | Column | Type | Required | Default | Description |
 |--------|------|----------|---------|-------------|
 | id | UUID | ✅ | auto | Primary Key |
+| expense_number | VARCHAR(20) | ✅ | server-generated | رقم المصروف بصيغة `AYA-YYYY-NNNNN` |
 | expense_date | DATE | ✅ | CURRENT_DATE | تاريخ المصروف |
 | account_id | UUID | ✅ | - | من أي حساب |
 | category_id | UUID | ✅ | - | فئة المصروف (FK → expense_categories) |
 | amount | DECIMAL(12,3) | ✅ | - | المبلغ |
-| description | VARCHAR(255) | ✅ | - | الوصف |
+| description | VARCHAR(500) | ✅ | - | الوصف |
+| notes | TEXT | ❌ | null | ملاحظات تشغيلية اختيارية |
 | created_at | TIMESTAMPTZ | ✅ | now() | تاريخ الإنشاء |
 | created_by | UUID | ✅ | - | من سجل المصروف |
 | idempotency_key | UUID | ❌ | null | مفتاح منع التكرار (ADR-033) |
@@ -916,17 +922,27 @@
 - FK: created_by → profiles(id)
 
 **Indexes:**
+- idx_expenses_number (expense_number) UNIQUE
 - idx_expenses_date (expense_date)
 - idx_expenses_account (account_id)
 - idx_expenses_category (category_id)
 
 **Constraints:**
 - CHECK (amount > 0)
+- UNIQUE (expense_number)
 - UNIQUE (idempotency_key) WHERE idempotency_key IS NOT NULL
 
 **RLS (ADR-044):**
-- قراءة مباشرة: Admin: SELECT all, POS: SELECT
+- قراءة مباشرة: Admin: SELECT all, POS: own only (`created_by = auth.uid()`)
 - كتابة: عبر API Routes فقط (service_role) — راجع ADR-042
+
+**ملاحظات تشغيلية:**
+- `expense_number` يُولّد من السيرفر فقط عبر `fn_generate_number('EXP')`.
+- `create_expense()` تعمل عبر `service_role + p_created_by` مع `REVOKE ALL` عن `PUBLIC/authenticated/anon`.
+- كل مصروف ينشئ:
+  - سجلًا في `expenses`
+  - قيد `ledger_entries` من نوع `expense`
+  - سجل `audit_logs`
 
 ---
 
@@ -1213,8 +1229,10 @@
 | title | VARCHAR(255) | ✅ | - | عنوان الإشعار |
 | body | TEXT | ✅ | - | محتوى الإشعار |
 | is_read | BOOLEAN | ✅ | false | هل تم قراءته؟ |
+| read_at | TIMESTAMPTZ | ❌ | null | وقت تعليم الإشعار كمقروء |
 | reference_type | VARCHAR(50) | ❌ | null | نوع المرجع |
 | reference_id | UUID | ❌ | null | رقم المرجع |
+| dedupe_key | TEXT | ❌ | null | مفتاح منع التكرار للإشعارات المجدولة |
 | created_at | TIMESTAMPTZ | ✅ | now() | تاريخ الإنشاء |
 | updated_at | TIMESTAMPTZ | ✅ | now() | تاريخ التحديث |
 
@@ -1227,13 +1245,14 @@
 - idx_notifications_read (user_id, is_read)
 - idx_notifications_type (type)
 - idx_notifications_created (created_at)
+- uq_notifications_user_type_dedupe (user_id, type, dedupe_key) UNIQUE
 
 **Constraints:**
 - CHECK (type IN ('debt_limit_exceeded', 'large_discount', 'reconciliation_difference', 'low_stock', 'invoice_cancelled', 'daily_snapshot', 'debt_due_reminder', 'debt_overdue', 'maintenance_ready'))
 
 **RLS:**
-- Admin: SELECT, UPDATE (mark as read)
-- POS: SELECT (own), UPDATE (own, mark as read)
+- Admin: SELECT all, UPDATE (mark as read)
+- POS: SELECT (own only), UPDATE (own only, mark as read)
 
 **أنواع الإشعارات:**
 
@@ -1248,6 +1267,282 @@
 | `debt_due_reminder` | دين يستحق خلال 3 أيام | Admin | ✅ زر واتساب |
 | `debt_overdue` | دين متأخر عن موعد استحقاقه | Admin | ✅ زر واتساب (ضروري) |
 | `maintenance_ready` | الجهاز جاهز للتسليم (الصيانة) | Admin + POS | ✅ زر واتساب (إبلاغ العميل) |
+
+---
+
+### جدول V2-01: receipt_link_tokens (روابط الإيصالات العامة)
+
+**الهدف:** إصدار روابط إيصالات عامة read-only بصلاحية محدودة وقابلة للإلغاء.
+
+| Column | Type | Required | Default | Description |
+|--------|------|----------|---------|-------------|
+| id | UUID | ✅ | auto | Primary Key |
+| invoice_id | UUID | ✅ | - | رقم الفاتورة المرتبط بالرابط |
+| token_value | VARCHAR(120) | ✅ | generated | token opaque غير قابل للتخمين |
+| channel | VARCHAR(20) | ✅ | `share` | قناة الإصدار: `share` أو `whatsapp` |
+| expires_at | TIMESTAMPTZ | ✅ | - | وقت انتهاء صلاحية الرابط |
+| revoked_at | TIMESTAMPTZ | ❌ | null | وقت الإلغاء |
+| revoked_by | UUID | ❌ | null | من ألغى الرابط |
+| created_at | TIMESTAMPTZ | ✅ | now() | تاريخ الإنشاء |
+| created_by | UUID | ✅ | - | من أصدر الرابط |
+
+**Keys:**
+- PK: id
+- FK: invoice_id → invoices(id) ON DELETE CASCADE
+- FK: revoked_by → profiles(id)
+- FK: created_by → profiles(id)
+
+**Indexes:**
+- idx_receipt_link_tokens_invoice (invoice_id, created_at DESC)
+- idx_receipt_link_tokens_expires (expires_at)
+- UNIQUE (token_value)
+
+**Constraints:**
+- CHECK (channel IN ('share', 'whatsapp'))
+- CHECK (`revoked_at/revoked_by` يجب أن يكونا معًا null أو معًا non-null)
+
+**Access Model:**
+- لا direct table access من المتصفح.
+- Admin/POS يصدران/يلغيان الروابط عبر API فقط.
+- Public access يتم حصريًا عبر `/r/[token]` وبحقول receipt آمنة فقط.
+
+---
+
+### جدول V2-02: whatsapp_delivery_logs (سجل محاولات واتساب)
+
+**الهدف:** تدقيق محاولات WhatsApp baseline (`wa.me`) دون تخزين raw phone أو ادعاء delivery confirmation خارجي.
+
+| Column | Type | Required | Default | Description |
+|--------|------|----------|---------|-------------|
+| id | UUID | ✅ | auto | Primary Key |
+| template_key | VARCHAR(50) | ✅ | - | اسم القالب المستخدم |
+| target_phone_masked | VARCHAR(30) | ✅ | - | رقم الهاتف مقنّع فقط |
+| delivery_mode | VARCHAR(20) | ✅ | `wa_me` | قناة الإرسال الحالية |
+| status | VARCHAR(20) | ✅ | `queued` | حالة المحاولة: `queued`, `sent`, `failed` |
+| provider_message_id | VARCHAR(100) | ❌ | null | معرف مزود خارجي مستقبلي إن وجد |
+| reference_type | VARCHAR(50) | ✅ | - | نوع المرجع: `invoice`, `debt_entry`, `maintenance_job`, `debt_customer` |
+| reference_id | UUID | ✅ | - | رقم المرجع |
+| idempotency_key | UUID | ✅ | - | منع تكرار تسجيل نفس المحاولة |
+| last_error | TEXT | ❌ | null | آخر خطأ معروف |
+| created_at | TIMESTAMPTZ | ✅ | now() | تاريخ الإنشاء |
+| created_by | UUID | ✅ | - | من أنشأ السجل |
+
+**Keys:**
+- PK: id
+- FK: created_by → profiles(id)
+
+**Indexes:**
+- idx_whatsapp_delivery_logs_reference (reference_type, reference_id, created_at DESC)
+- UNIQUE (idempotency_key)
+
+**Constraints:**
+- CHECK (delivery_mode IN ('wa_me'))
+- CHECK (status IN ('queued', 'sent', 'failed'))
+- CHECK (reference_type IN ('invoice', 'debt_entry', 'maintenance_job', 'debt_customer'))
+
+**ملاحظات خصوصية:**
+- لا يُخزن الرقم الخام نهائيًا داخل السجل.
+- baseline الحالية لا تستخدم مزود WhatsApp خارجي؛ السجل يثبت intent/audit فقط.
+- أي tracking فعلي لحالة التسليم من مزود خارجي يحتاج توسعة تعاقدية لاحقة.
+
+---
+
+### جدول V2-03: permission_bundles (حِزم الصلاحيات الدقيقة)
+
+**الهدف:** تعريف قدرات تشغيلية دقيقة قابلة للتعيين للمستخدمين دون تغيير `profiles.role` الأساسي.
+
+| Column | Type | Required | Default | Description |
+|--------|------|----------|---------|-------------|
+| id | UUID | ✅ | auto | Primary Key |
+| key | VARCHAR(80) | ✅ | - | مفتاح الحزمة (`inventory_clerk`, `sales_supervisor`, ...) |
+| label | VARCHAR(120) | ✅ | - | اسم العرض |
+| description | TEXT | ❌ | null | وصف تشغيلي |
+| base_role | ENUM(user_role) | ✅ | - | الدور الأساسي الذي يمكن أن يحمل هذه الحزمة |
+| permissions | TEXT[] | ✅ | `{}` | قائمة permissions التشغيلية |
+| max_discount_percentage | DECIMAL(5,2) | ❌ | null | سقف الخصم لهذه الحزمة إن وُجد |
+| discount_requires_approval | BOOLEAN | ✅ | false | هل الخصم فوق baseline يحتاج اعتمادًا؟ |
+| is_system | BOOLEAN | ✅ | true | هل هي حزمة نظامية محجوزة |
+| is_active | BOOLEAN | ✅ | true | هل الحزمة مفعلة |
+| created_at | TIMESTAMPTZ | ✅ | now() | تاريخ الإنشاء |
+| updated_at | TIMESTAMPTZ | ✅ | now() | تاريخ التحديث |
+
+**Indexes:**
+- UNIQUE (key)
+- idx_permission_bundles_base_role (base_role, is_active)
+- idx_permission_bundles_system (is_system)
+
+**Constraints:**
+- CHECK (array_length(permissions, 1) IS NULL OR array_length(permissions, 1) > 0)
+- CHECK (max_discount_percentage IS NULL OR (max_discount_percentage >= 0 AND max_discount_percentage <= 100))
+
+**Access Model:**
+- لا direct write/read من Browser.
+- الإدارة حصريًا عبر Admin API.
+- الحزمة لا ترفع authority فوق `base_role` ولا تفتح grants أو RLS مستقلة.
+
+---
+
+### جدول V2-04: role_assignments (تعيين الحِزم للمستخدمين)
+
+**الهدف:** إسناد `permission_bundles` للمستخدمين بشكل auditable مع دعم التعطيل/الإلغاء دون حذف تاريخي.
+
+| Column | Type | Required | Default | Description |
+|--------|------|----------|---------|-------------|
+| id | UUID | ✅ | auto | Primary Key |
+| user_id | UUID | ✅ | - | المستخدم المستهدف |
+| bundle_id | UUID | ✅ | - | الحزمة المسندة |
+| notes | TEXT | ❌ | null | سبب/ملاحظة التعيين |
+| assigned_by | UUID | ✅ | - | من قام بالتعيين |
+| assigned_at | TIMESTAMPTZ | ✅ | now() | وقت التعيين |
+| revoked_at | TIMESTAMPTZ | ❌ | null | وقت الإلغاء |
+| revoked_by | UUID | ❌ | null | من ألغى التعيين |
+| is_active | BOOLEAN | ✅ | true | هل التعيين مفعل |
+| created_at | TIMESTAMPTZ | ✅ | now() | تاريخ الإنشاء |
+| updated_at | TIMESTAMPTZ | ✅ | now() | تاريخ التحديث |
+
+**Keys:**
+- PK: id
+- FK: user_id → profiles(id) ON DELETE CASCADE
+- FK: bundle_id → permission_bundles(id) ON DELETE RESTRICT
+- FK: assigned_by → profiles(id)
+- FK: revoked_by → profiles(id)
+
+**Indexes:**
+- idx_role_assignments_user (user_id, is_active)
+- idx_role_assignments_bundle (bundle_id, is_active)
+- UNIQUE (user_id, bundle_id) WHERE is_active = true AND revoked_at IS NULL
+
+**Constraints:**
+- CHECK ((revoked_at IS NULL AND revoked_by IS NULL) OR (revoked_at IS NOT NULL AND revoked_by IS NOT NULL))
+
+**Access Model:**
+- Admin-only عبر API.
+- لا direct write من Browser.
+- أي revoke يعطّل التعيين دون حذف سجل التاريخ.
+
+---
+
+### جدول V2-05: export_packages (حزم التصدير المقيدة)
+
+**الهدف:** إنشاء حزم export داخلية bounded + expirable + revocable بدل أي تنزيل مفتوح أو غير مدقق.
+
+| Column | Type | Required | Default | Description |
+|--------|------|----------|---------|-------------|
+| id | UUID | ✅ | auto | Primary Key |
+| package_type | VARCHAR(10) | ✅ | - | `json` أو `csv` |
+| scope | VARCHAR(30) | ✅ | - | `products`, `reports`, `customers`, `backup` |
+| status | VARCHAR(20) | ✅ | `ready` | `ready`, `revoked`, `expired` |
+| filters | JSONB | ✅ | `{}` | الفلاتر المطبقة على الحزمة |
+| file_name | VARCHAR(200) | ✅ | - | اسم الملف الناتج |
+| row_count | INTEGER | ✅ | 0 | عدد السجلات المشمولة |
+| content_json | JSONB | ❌ | null | المحتوى عند حزم JSON |
+| content_text | TEXT | ❌ | null | المحتوى النصي عند CSV أو JSON serialized |
+| expires_at | TIMESTAMPTZ | ✅ | - | وقت انتهاء صلاحية التنزيل |
+| revoked_at | TIMESTAMPTZ | ❌ | null | وقت الإبطال |
+| created_at | TIMESTAMPTZ | ✅ | now() | تاريخ الإنشاء |
+| updated_at | TIMESTAMPTZ | ✅ | now() | تاريخ التحديث |
+| created_by | UUID | ✅ | - | من أنشأ الحزمة |
+
+**Keys:**
+- PK: id
+- FK: created_by → profiles(id)
+
+**Indexes:**
+- idx_export_packages_scope_created (scope, created_at DESC)
+- idx_export_packages_status_expires (status, expires_at)
+
+**Constraints:**
+- CHECK (package_type IN ('json', 'csv'))
+- CHECK (scope IN ('products', 'reports', 'customers', 'backup'))
+- CHECK (status IN ('ready', 'revoked', 'expired'))
+- CHECK (row_count >= 0)
+- CHECK (scope <> 'backup' OR package_type = 'json')
+
+**Access Model:**
+- Admin-only عبر API.
+- لا direct read/write من Browser.
+- التنزيل يتم فقط عبر route إدارية، والحزمة قابلة للإبطال والانتهاء.
+
+---
+
+### جدول V2-06: import_jobs (سجل الاستيراد مع dry-run / commit)
+
+**الهدف:** الاحتفاظ بنتائج dry-run والاستيراد الفعلي ككيان auditable بدل استيراد مباشر غير قابل للتتبع.
+
+| Column | Type | Required | Default | Description |
+|--------|------|----------|---------|-------------|
+| id | UUID | ✅ | auto | Primary Key |
+| file_name | VARCHAR(200) | ✅ | - | اسم الملف المرفوع |
+| source_format | VARCHAR(10) | ✅ | - | `json` أو `csv` |
+| status | VARCHAR(30) | ✅ | - | `dry_run_ready`, `dry_run_failed`, `committed` |
+| rows_total | INTEGER | ✅ | 0 | إجمالي الصفوف المقروءة |
+| rows_valid | INTEGER | ✅ | 0 | الصفوف الصالحة للالتزام |
+| rows_invalid | INTEGER | ✅ | 0 | الصفوف المرفوضة |
+| rows_committed | INTEGER | ✅ | 0 | الصفوف التي أُضيفت فعليًا |
+| validation_errors | JSONB | ✅ | `[]` | قائمة أخطاء الصفوف |
+| source_rows | JSONB | ✅ | `[]` | الصفوف الصالحة الناتجة عن dry-run |
+| committed_at | TIMESTAMPTZ | ❌ | null | وقت تنفيذ commit |
+| created_at | TIMESTAMPTZ | ✅ | now() | تاريخ الإنشاء |
+| updated_at | TIMESTAMPTZ | ✅ | now() | تاريخ التحديث |
+| created_by | UUID | ✅ | - | من أنشأ عملية الاستيراد |
+
+**Keys:**
+- PK: id
+- FK: created_by → profiles(id)
+
+**Indexes:**
+- idx_import_jobs_status_created (status, created_at DESC)
+- idx_import_jobs_created_by (created_by, created_at DESC)
+
+**Constraints:**
+- CHECK (source_format IN ('json', 'csv'))
+- CHECK (status IN ('dry_run_ready', 'dry_run_failed', 'committed'))
+- CHECK (rows_total >= 0 AND rows_valid >= 0 AND rows_invalid >= 0 AND rows_committed >= 0)
+
+**Access Model:**
+- Admin-only عبر API.
+- لا direct read/write من Browser.
+- commit مسموح فقط فوق dry-run صالحة وغير ملتزم بها سابقًا.
+
+---
+
+### جدول V2-07: restore_drills (تجارب الاستعادة المعزولة)
+
+**الهدف:** تشغيل restore drill موثقة على بيئة معزولة فقط مع drift/RTO result بدل أي restore تشغيلية مباشرة.
+
+| Column | Type | Required | Default | Description |
+|--------|------|----------|---------|-------------|
+| id | UUID | ✅ | auto | Primary Key |
+| export_package_id | UUID | ✅ | - | حزمة backup المصدر |
+| target_env | VARCHAR(40) | ✅ | - | يجب أن تكون `isolated-drill` |
+| status | VARCHAR(20) | ✅ | `started` | `started`, `completed`, `failed` |
+| drift_count | INTEGER | ❌ | null | عدد حالات drift بعد drill |
+| rto_seconds | INTEGER | ❌ | null | زمن الاستعادة المقاس بالثواني |
+| result_summary | JSONB | ❌ | null | ملخص النتائج والdrifts |
+| completed_at | TIMESTAMPTZ | ❌ | null | وقت الإكمال |
+| created_at | TIMESTAMPTZ | ✅ | now() | تاريخ الإنشاء |
+| updated_at | TIMESTAMPTZ | ✅ | now() | تاريخ التحديث |
+| created_by | UUID | ✅ | - | من شغل drill |
+| idempotency_key | UUID | ✅ | - | منع إعادة نفس drill |
+
+**Keys:**
+- PK: id
+- FK: export_package_id → export_packages(id) ON DELETE RESTRICT
+- FK: created_by → profiles(id)
+
+**Indexes:**
+- idx_restore_drills_created (created_at DESC)
+- idx_restore_drills_package (export_package_id, created_at DESC)
+- UNIQUE (idempotency_key)
+
+**Constraints:**
+- CHECK (target_env IN ('isolated-drill'))
+- CHECK (status IN ('started', 'completed', 'failed'))
+
+**Access Model:**
+- Admin/Internal فقط عبر API.
+- لا direct read/write من Browser.
+- أي restore خارج `isolated-drill` مرفوض تعاقديًا.
 
 ---
 
@@ -1318,6 +1613,9 @@
 | profiles | notifications | user_id |
 | profiles | system_settings | updated_by |
 | profiles | invoices | cancelled_by |
+| profiles | export_packages | created_by |
+| profiles | import_jobs | created_by |
+| profiles | restore_drills | created_by |
 
 | products | invoice_items | product_id |
 | products | return_items | - (عبر invoice_items) |
@@ -1360,6 +1658,7 @@
 | returns | return_items | return_id |
 
 | purchase_orders | purchase_items | purchase_id |
+| export_packages | restore_drills | export_package_id |
 
 ---
 
@@ -1774,6 +2073,6 @@ CREATE INDEX idx_products_category_stock ON products(category, stock_quantity);
 
 ---
 
-**الإصدار:** 3.4  
-**تاريخ التحديث:** 5 مارس 2026  
-**التغييرات:** v3.4 — إغلاق P0: إزالة retroactive_edit من `notifications` (LOCK-NoBackdate)، توحيد `suppliers` RLS (no POS direct SELECT)، إضافة `debt_entries.idempotency_key`، وتفعيل Natural-Key idempotency لـ `daily_snapshots` عبر `UNIQUE(snapshot_date)`.
+**الإصدار:** 3.6
+**تاريخ التحديث:** 11 مارس 2026
+**التغييرات:** v3.6 — إضافة جداول portability التشغيلية `export_packages`, `import_jobs`, `restore_drills` كعقد PX-12 مع bounded export, dry-run/commit, وrestore drill معزولة. v3.5 — إضافة جدولَي `permission_bundles` و`role_assignments` كعقد PX-10 للصلاحيات الدقيقة مع تثبيت أن `profiles.role` يبقى coarse role. v3.4 — إغلاق P0: إزالة retroactive_edit من `notifications` (LOCK-NoBackdate)، توحيد `suppliers` RLS (no POS direct SELECT)، إضافة `debt_entries.idempotency_key`، وتفعيل Natural-Key idempotency لـ `daily_snapshots` عبر `UNIQUE(snapshot_date)`.

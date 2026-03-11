@@ -695,6 +695,41 @@
 
 ---
 
-**الإصدار:** 2.2  
-**تاريخ التحديث:** 5 مارس 2026  
-**التغييرات:** v2.2 — إضافة ADR-046 (Authority Locks) وتحديث ADR-033/041 لتوحيد سياسة idempotency. v2.1 — إضافة ADR-045 (Rate Limiting) للحماية.
+## ADR-047: طبقة الصلاحيات الدقيقة فوق الدور الأساسي
+
+| الجانب | التفاصيل |
+|--------|----------|
+| **التاريخ** | 11 مارس 2026 |
+| **الحالة** | ✅ مُتخذ |
+| **السياق** | النظام الحالي يعتمد على `profiles.role` بقيمتين فقط (`admin`, `pos_staff`). توسعة V2 تحتاج صلاحيات تشغيلية أدق دون فتح authority جديدة على مستوى DB أو كسر Blind POS أو grants الحالية |
+| **القرار** | الإبقاء على `profiles.role` كـ **coarse authority ceiling**، وإضافة طبقة ثانية عبر `permission_bundles` + `role_assignments` لتحديد القدرات التشغيلية داخل حدود الدور الأساسي |
+| **البدائل** | (1) توسيع ENUM نفسه إلى عشرات الأدوار التشغيلية — مرفوض لأنه يخلط authority بالوظائف التشغيلية. (2) منح grants/RLS مختلفة لكل bundle — مرفوض لأنه يفتح shadow paths ويعقد الحوكمة |
+| **السبب** | الحفاظ على نموذج authority الحالي مع السماح بتخصيصات V2 مثل الجرد، التقارير، الصيانة، والخصومات دون المساس بـ API-first أو Revoke-All-First |
+| **الأثر** | `profiles.role` يبقى `admin` أو `pos_staff` فقط. أي bundle يجب أن يلتزم `base_role` الموافق له. التحقق من bundles يتم في API/server layer فقط. لا direct grants جديدة، ولا bundle يرفع `pos_staff` إلى صلاحيات DB من مستوى Admin |
+
+### قواعد إلزامية
+
+1. `profiles.role` يحدد السقف الأعلى، و`permission_bundles` يحدد التفاصيل التشغيلية داخل هذا السقف فقط.
+2. لا يجوز لأي bundle أن يمنح `pos_staff` القدرة على تجاوز `fn_require_admin_actor()`.
+3. لا يجوز فتح direct read/write path جديد بسبب bundles؛ كل التنفيذ يبقى عبر API المحمية.
+4. تعيين bundles وإلغاؤها يجب أن يكون auditable عبر `role_assignments` و`audit_logs`.
+
+---
+
+## ADR-048: حوكمة الخصم بحسب bundle مع Audit إلزامي
+
+| الجانب | التفاصيل |
+|--------|----------|
+| **التاريخ** | 11 مارس 2026 |
+| **الحالة** | ✅ مُتخذ |
+| **السياق** | الحد الحالي للخصم يعتمد فقط على `system_settings.max_pos_discount_percentage` مع استثناء Admin. توسعة الصلاحيات الدقيقة تحتاج ضبطًا أدق للخصم بحسب bundle، مع منع أي override صامت |
+| **القرار** | ربط حدود الخصم مستقبلاً بـ `permission_bundles.max_discount_percentage` و`discount_requires_approval` مع بقاء `system_settings.max_pos_discount_percentage` كـ baseline عام. عند تجاوز الحد المسموح يجب إعادة `ERR_DISCOUNT_APPROVAL_REQUIRED` أو `ERR_DISCOUNT_EXCEEDED` حسب العقد |
+| **البدائل** | (1) ترك الخصم global فقط — مرفوض لأنه لا يغطي تنوع الأدوار. (2) السماح بتجاوز صامت مع audit لاحق — مرفوض لأنه يخلق واقعًا تشغيليًا غير مضبوط |
+| **السبب** | التحكم بالخصم من أكثر المسارات حساسية على الربحية والحَوْكمة التشغيلية. يجب أن يكون قرار الخصم قابلاً للتدقيق ومربوطًا بالدور/bundle لا بالشخص فقط |
+| **الأثر** | `create_sale` و`edit_invoice` ستخضعان لاحقًا لفحص bundle cap + approval policy. أي approval أو override يجب أن يسجل في `audit_logs` ولا يفتح bypass جديدًا على مستوى DB |
+
+---
+
+**الإصدار:** 2.3
+**تاريخ التحديث:** 11 مارس 2026
+**التغييرات:** v2.3 — إضافة ADR-047 (Fine-Grained Permission Layer) وADR-048 (Discount Governance by Bundle). v2.2 — إضافة ADR-046 (Authority Locks) وتحديث ADR-033/041 لتوحيد سياسة idempotency. v2.1 — إضافة ADR-045 (Rate Limiting) للحماية.

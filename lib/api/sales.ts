@@ -2,6 +2,10 @@ const CREATE_SALE_ERROR_MAP = {
   ERR_PRODUCT_NOT_FOUND: { status: 404, message: "المنتج المطلوب غير موجود." },
   ERR_STOCK_INSUFFICIENT: { status: 400, message: "المخزون غير كاف لهذا المنتج." },
   ERR_DISCOUNT_EXCEEDED: { status: 400, message: "نسبة الخصم تتجاوز الحد المسموح." },
+  ERR_DISCOUNT_APPROVAL_REQUIRED: {
+    status: 403,
+    message: "هذا الخصم يحتاج اعتمادًا من حزمة صلاحيات أعلى."
+  },
   ERR_PAYMENT_MISMATCH: { status: 400, message: "مجموع المدفوعات لا يساوي إجمالي الفاتورة." },
   ERR_IDEMPOTENCY: { status: 409, message: "تم تنفيذ هذه العملية مسبقًا." },
   ERR_CONCURRENT_STOCK_UPDATE: {

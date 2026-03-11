@@ -1,3 +1,5 @@
+import { format, parseISO, startOfMonth, startOfWeek } from "date-fns";
+import type { AdvancedReportDimension, AdvancedReportGroupBy } from "@/lib/validations/reports";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 
 type WorkspaceRole = "admin" | "pos_staff";
@@ -5,6 +7,10 @@ type WorkspaceRole = "admin" | "pos_staff";
 export type SalesHistoryFilters = {
   fromDate: string;
   toDate: string;
+  compareFromDate?: string;
+  compareToDate?: string;
+  groupBy?: AdvancedReportGroupBy;
+  dimension?: AdvancedReportDimension;
   createdBy?: string;
   status?: string;
   posTerminalCode?: string;
@@ -70,6 +76,46 @@ export type ProfitReport = {
   topup_profit: number;
   maintenance_delivered_count: number;
   maintenance_revenue: number;
+};
+
+export type AdvancedReportPeriodSummary = {
+  sales_total: number;
+  total_returns: number;
+  net_sales: number;
+  expense_total: number;
+  purchase_total: number;
+  topup_profit: number;
+  maintenance_revenue: number;
+  net_profit: number;
+  invoice_count: number;
+  snapshot_count: number;
+};
+
+export type AdvancedTrendPoint = {
+  bucket: string;
+  sales_total: number;
+  net_profit: number;
+  expense_total: number;
+};
+
+export type AdvancedBreakdownEntry = {
+  label: string;
+  amount: number;
+  secondary_amount: number;
+  item_count: number;
+};
+
+export type AdvancedReport = {
+  currentPeriod: AdvancedReportPeriodSummary;
+  comparePeriod: AdvancedReportPeriodSummary | null;
+  trend: AdvancedTrendPoint[];
+  breakdown: AdvancedBreakdownEntry[];
+  delta: {
+    sales_total: number;
+    net_profit: number;
+    expense_total: number;
+    invoice_count: number;
+  };
 };
 
 export type ReturnReasonSummary = {
@@ -174,6 +220,7 @@ export type ReportBaseline = {
   accountMovementReport: AccountMovementReport;
   maintenanceReport: MaintenanceReport;
   snapshots: SnapshotSummary[];
+  advancedReport: AdvancedReport;
 };
 
 type InvoiceHistoryRow = {
@@ -218,6 +265,11 @@ type ReturnRow = {
   created_by: string;
 };
 
+type ReturnMetricRow = {
+  return_date: string;
+  total_amount: number;
+};
+
 type InvoiceNumberRow = {
   id: string;
   invoice_number: string;
@@ -237,12 +289,49 @@ type LedgerEntryRow = {
 };
 
 type PurchaseOrderRow = {
+  purchase_date?: string;
   total_amount: number;
+  supplier_id?: string | null;
+  is_paid?: boolean;
 };
 
 type TopupRow = {
+  topup_date?: string;
   amount: number;
   profit_amount: number;
+  supplier_id?: string | null;
+};
+
+type SupplierNameRow = {
+  id: string;
+  name: string;
+};
+
+type ExpenseBreakdownRow = {
+  expense_date?: string;
+  amount: number;
+  category_id: string;
+  created_by?: string;
+};
+
+type ExpenseCategoryNameRow = {
+  id: string;
+  name: string;
+};
+
+type InvoiceMetricRow = {
+  id: string;
+  invoice_date: string;
+  total_amount: number;
+  status: string;
+  created_by: string;
+  pos_terminal_code: string | null;
+};
+
+type InvoiceItemCostRow = {
+  invoice_id: string;
+  quantity: number;
+  cost_price_at_time: number;
 };
 
 type MaintenanceJobRow = {
@@ -275,6 +364,39 @@ function toPositiveInteger(value: string | null, fallback: number) {
   }
 
   return parsed;
+}
+
+function bucketDate(value: string, groupBy: AdvancedReportGroupBy) {
+  const parsed = parseISO(value);
+
+  if (groupBy === "month") {
+    return format(startOfMonth(parsed), "yyyy-MM-dd");
+  }
+
+  if (groupBy === "week") {
+    return format(startOfWeek(parsed, { weekStartsOn: 1 }), "yyyy-MM-dd");
+  }
+
+  return format(parsed, "yyyy-MM-dd");
+}
+
+function buildEmptyAdvancedPeriod(): AdvancedReportPeriodSummary {
+  return {
+    sales_total: 0,
+    total_returns: 0,
+    net_sales: 0,
+    expense_total: 0,
+    purchase_total: 0,
+    topup_profit: 0,
+    maintenance_revenue: 0,
+    net_profit: 0,
+    invoice_count: 0,
+    snapshot_count: 0
+  };
+}
+
+function roundMetric(value: number) {
+  return Number(value.toFixed(3));
 }
 
 function unique<T>(values: T[]) {
@@ -341,6 +463,14 @@ export function parseSalesHistoryFilters(searchParams: URLSearchParams): SalesHi
   const today = todayIsoDate();
   const fromDate = isIsoDate(searchParams.get("from_date")) ? (searchParams.get("from_date") as string) : today;
   const toDate = isIsoDate(searchParams.get("to_date")) ? (searchParams.get("to_date") as string) : today;
+  const compareFromDate = isIsoDate(searchParams.get("compare_from_date"))
+    ? (searchParams.get("compare_from_date") as string)
+    : undefined;
+  const compareToDate = isIsoDate(searchParams.get("compare_to_date"))
+    ? (searchParams.get("compare_to_date") as string)
+    : undefined;
+  const groupBy = (searchParams.get("group_by") as AdvancedReportGroupBy | null) ?? "day";
+  const dimension = (searchParams.get("dimension") as AdvancedReportDimension | null) ?? "account";
   const page = toPositiveInteger(searchParams.get("page"), 1);
   const pageSize = Math.min(toPositiveInteger(searchParams.get("page_size"), 20), 100);
   const createdBy = searchParams.get("created_by") || undefined;
@@ -350,11 +480,494 @@ export function parseSalesHistoryFilters(searchParams: URLSearchParams): SalesHi
   return {
     fromDate: fromDate <= toDate ? fromDate : toDate,
     toDate: toDate >= fromDate ? toDate : fromDate,
+    compareFromDate:
+      compareFromDate && compareToDate ? (compareFromDate <= compareToDate ? compareFromDate : compareToDate) : undefined,
+    compareToDate:
+      compareFromDate && compareToDate ? (compareToDate >= compareFromDate ? compareToDate : compareFromDate) : undefined,
+    groupBy: ["day", "week", "month"].includes(groupBy) ? groupBy : "day",
+    dimension: ["account", "entry_type", "expense_category", "supplier", "maintenance_status"].includes(dimension)
+      ? dimension
+      : "account",
     createdBy,
     status,
     posTerminalCode,
     page,
     pageSize
+  };
+}
+
+async function loadSupplierNameMap(
+  supabase: ReturnType<typeof getSupabaseAdminClient>,
+  ids: Array<string | null | undefined>
+) {
+  const uniqueIds = [...new Set(ids.filter(Boolean))] as string[];
+  const supplierMap = new Map<string, string>();
+
+  if (uniqueIds.length === 0) {
+    return supplierMap;
+  }
+
+  const { data, error } = await supabase.from("suppliers").select("id, name").in("id", uniqueIds).returns<SupplierNameRow[]>();
+  if (error) {
+    throw error;
+  }
+
+  for (const supplier of data ?? []) {
+    supplierMap.set(supplier.id, supplier.name);
+  }
+
+  return supplierMap;
+}
+
+async function loadExpenseCategoryNameMap(
+  supabase: ReturnType<typeof getSupabaseAdminClient>,
+  ids: Array<string | null | undefined>
+) {
+  const uniqueIds = [...new Set(ids.filter(Boolean))] as string[];
+  const categoryMap = new Map<string, string>();
+
+  if (uniqueIds.length === 0) {
+    return categoryMap;
+  }
+
+  const { data, error } = await supabase
+    .from("expense_categories")
+    .select("id, name")
+    .in("id", uniqueIds)
+    .returns<ExpenseCategoryNameRow[]>();
+
+  if (error) {
+    throw error;
+  }
+
+  for (const category of data ?? []) {
+    categoryMap.set(category.id, category.name);
+  }
+
+  return categoryMap;
+}
+
+type PeriodMetrics = {
+  invoices: InvoiceMetricRow[];
+  invoiceItems: InvoiceItemCostRow[];
+  returns: ReturnMetricRow[];
+  expenses: ExpenseBreakdownRow[];
+  purchases: PurchaseOrderRow[];
+  topups: TopupRow[];
+  maintenanceJobs: MaintenanceJobRow[];
+  ledgerEntries: LedgerEntryRow[];
+  snapshotCount: number;
+};
+
+async function loadPeriodMetrics(
+  supabase: ReturnType<typeof getSupabaseAdminClient>,
+  filters: Pick<SalesHistoryFilters, "fromDate" | "toDate" | "createdBy" | "status" | "posTerminalCode">
+): Promise<PeriodMetrics> {
+  let invoicesQuery = supabase
+    .from("invoices")
+    .select("id, invoice_date, total_amount, status, created_by, pos_terminal_code")
+    .in("status", ["active", "partially_returned"])
+    .gte("invoice_date", filters.fromDate)
+    .lte("invoice_date", filters.toDate);
+
+  let returnsQuery = supabase
+    .from("returns")
+    .select("return_date, total_amount")
+    .gte("return_date", filters.fromDate)
+    .lte("return_date", filters.toDate);
+
+  let expensesQuery = supabase
+    .from("expenses")
+    .select("amount, category_id, expense_date, created_by")
+    .gte("expense_date", filters.fromDate)
+    .lte("expense_date", filters.toDate);
+
+  let purchasesQuery = supabase
+    .from("purchase_orders")
+    .select("purchase_date, total_amount, supplier_id, is_paid")
+    .eq("is_paid", true)
+    .gte("purchase_date", filters.fromDate)
+    .lte("purchase_date", filters.toDate);
+
+  let topupsQuery = supabase
+    .from("topups")
+    .select("topup_date, amount, profit_amount, supplier_id")
+    .gte("topup_date", filters.fromDate)
+    .lte("topup_date", filters.toDate);
+
+  let maintenanceQuery = supabase
+    .from("maintenance_jobs")
+    .select("id, job_number, job_date, customer_name, device_type, status, final_amount, created_by")
+    .gte("job_date", filters.fromDate)
+    .lte("job_date", filters.toDate);
+
+  let ledgerQuery = supabase
+    .from("ledger_entries")
+    .select("id, entry_date, account_id, entry_type, adjustment_direction, reference_type, reference_id, description, amount, created_by")
+    .gte("entry_date", filters.fromDate)
+    .lte("entry_date", filters.toDate);
+
+  let snapshotCountQuery = supabase
+    .from("daily_snapshots")
+    .select("id", { count: "exact", head: true })
+    .gte("snapshot_date", filters.fromDate)
+    .lte("snapshot_date", filters.toDate);
+
+  if (filters.createdBy) {
+    invoicesQuery = invoicesQuery.eq("created_by", filters.createdBy);
+    expensesQuery = expensesQuery.eq("created_by", filters.createdBy);
+    purchasesQuery = purchasesQuery.eq("created_by", filters.createdBy);
+    topupsQuery = topupsQuery.eq("created_by", filters.createdBy);
+    maintenanceQuery = maintenanceQuery.eq("created_by", filters.createdBy);
+    ledgerQuery = ledgerQuery.eq("created_by", filters.createdBy);
+    snapshotCountQuery = snapshotCountQuery.eq("created_by", filters.createdBy);
+  }
+
+  if (filters.status) {
+    invoicesQuery = invoicesQuery.eq("status", filters.status);
+  }
+
+  if (filters.posTerminalCode) {
+    invoicesQuery = invoicesQuery.eq("pos_terminal_code", filters.posTerminalCode);
+  }
+
+  const [invoicesResult, returnsResult, expensesResult, purchasesResult, topupsResult, maintenanceResult, ledgerResult, snapshotCountResult] =
+    await Promise.all([
+      invoicesQuery.returns<InvoiceMetricRow[]>(),
+      returnsQuery.returns<ReturnMetricRow[]>(),
+      expensesQuery.returns<ExpenseBreakdownRow[]>(),
+      purchasesQuery.returns<PurchaseOrderRow[]>(),
+      topupsQuery.returns<TopupRow[]>(),
+      maintenanceQuery.returns<MaintenanceJobRow[]>(),
+      ledgerQuery.returns<LedgerEntryRow[]>(),
+      snapshotCountQuery
+    ]);
+
+  if (invoicesResult.error) {
+    throw invoicesResult.error;
+  }
+  if (returnsResult.error) {
+    throw returnsResult.error;
+  }
+  if (expensesResult.error) {
+    throw expensesResult.error;
+  }
+  if (purchasesResult.error) {
+    throw purchasesResult.error;
+  }
+  if (topupsResult.error) {
+    throw topupsResult.error;
+  }
+  if (maintenanceResult.error) {
+    throw maintenanceResult.error;
+  }
+  if (ledgerResult.error) {
+    throw ledgerResult.error;
+  }
+  if (snapshotCountResult.error) {
+    throw snapshotCountResult.error;
+  }
+
+  const invoices = invoicesResult.data ?? [];
+  const invoiceIds = invoices.map((invoice) => invoice.id);
+  const invoiceItemsResult =
+    invoiceIds.length === 0
+      ? { data: [] as InvoiceItemCostRow[], error: null }
+      : await supabase
+          .from("invoice_items")
+          .select("invoice_id, quantity, cost_price_at_time")
+          .in("invoice_id", invoiceIds)
+          .returns<InvoiceItemCostRow[]>();
+
+  if (invoiceItemsResult.error) {
+    throw invoiceItemsResult.error;
+  }
+
+  return {
+    invoices,
+    invoiceItems: invoiceItemsResult.data ?? [],
+    returns: returnsResult.data ?? [],
+    expenses: expensesResult.data ?? [],
+    purchases: purchasesResult.data ?? [],
+    topups: topupsResult.data ?? [],
+    maintenanceJobs: maintenanceResult.data ?? [],
+    ledgerEntries: ledgerResult.data ?? [],
+    snapshotCount: snapshotCountResult.count ?? 0
+  };
+}
+
+function buildPeriodSummary(metrics: PeriodMetrics): AdvancedReportPeriodSummary {
+  const invoiceCostById = new Map<string, number>();
+
+  for (const item of metrics.invoiceItems) {
+    invoiceCostById.set(
+      item.invoice_id,
+      (invoiceCostById.get(item.invoice_id) ?? 0) + item.quantity * item.cost_price_at_time
+    );
+  }
+
+  const salesTotal = metrics.invoices.reduce((sum, invoice) => sum + invoice.total_amount, 0);
+  const returnsTotal = metrics.returns.reduce((sum, entry) => sum + entry.total_amount, 0);
+  const salesCost = metrics.invoices.reduce((sum, invoice) => sum + (invoiceCostById.get(invoice.id) ?? 0), 0);
+  const expenseTotal = metrics.expenses.reduce((sum, entry) => sum + entry.amount, 0);
+  const purchaseTotal = metrics.purchases.reduce((sum, entry) => sum + entry.total_amount, 0);
+  const topupProfit = metrics.topups.reduce((sum, entry) => sum + entry.profit_amount, 0);
+  const maintenanceRevenue = metrics.maintenanceJobs.reduce((sum, job) => {
+    if (job.status !== "delivered") {
+      return sum;
+    }
+
+    return sum + (job.final_amount ?? 0);
+  }, 0);
+
+  const netSales = salesTotal - returnsTotal;
+  const netProfit = (netSales - salesCost) - expenseTotal + topupProfit + maintenanceRevenue;
+
+  return {
+    sales_total: roundMetric(salesTotal),
+    total_returns: roundMetric(returnsTotal),
+    net_sales: roundMetric(netSales),
+    expense_total: roundMetric(expenseTotal),
+    purchase_total: roundMetric(purchaseTotal),
+    topup_profit: roundMetric(topupProfit),
+    maintenance_revenue: roundMetric(maintenanceRevenue),
+    net_profit: roundMetric(netProfit),
+    invoice_count: metrics.invoices.length,
+    snapshot_count: metrics.snapshotCount
+  };
+}
+
+function buildTrend(metrics: PeriodMetrics, groupBy: AdvancedReportGroupBy): AdvancedTrendPoint[] {
+  const invoiceCostById = new Map<string, number>();
+
+  for (const item of metrics.invoiceItems) {
+    invoiceCostById.set(
+      item.invoice_id,
+      (invoiceCostById.get(item.invoice_id) ?? 0) + item.quantity * item.cost_price_at_time
+    );
+  }
+
+  const buckets = new Map<
+    string,
+    { sales_total: number; total_returns: number; sales_cost: number; expense_total: number; topup_profit: number; maintenance_revenue: number }
+  >();
+
+  const getBucket = (key: string) => {
+    if (!buckets.has(key)) {
+      buckets.set(key, {
+        sales_total: 0,
+        total_returns: 0,
+        sales_cost: 0,
+        expense_total: 0,
+        topup_profit: 0,
+        maintenance_revenue: 0
+      });
+    }
+
+    return buckets.get(key)!;
+  };
+
+  for (const invoice of metrics.invoices) {
+    const bucket = getBucket(bucketDate(invoice.invoice_date, groupBy));
+    bucket.sales_total += invoice.total_amount;
+    bucket.sales_cost += invoiceCostById.get(invoice.id) ?? 0;
+  }
+
+  for (const entry of metrics.returns) {
+    const bucket = getBucket(bucketDate(entry.return_date, groupBy));
+    bucket.total_returns += entry.total_amount;
+  }
+
+  for (const entry of metrics.expenses) {
+    if (!entry.expense_date) {
+      continue;
+    }
+
+    const bucket = getBucket(bucketDate(entry.expense_date, groupBy));
+    bucket.expense_total += entry.amount;
+  }
+
+  for (const entry of metrics.topups) {
+    if (!entry.topup_date) {
+      continue;
+    }
+
+    const bucket = getBucket(bucketDate(entry.topup_date, groupBy));
+    bucket.topup_profit += entry.profit_amount;
+  }
+
+  for (const job of metrics.maintenanceJobs) {
+    if (job.status !== "delivered") {
+      continue;
+    }
+
+    const bucket = getBucket(bucketDate(job.job_date, groupBy));
+    bucket.maintenance_revenue += job.final_amount ?? 0;
+  }
+
+  return [...buckets.entries()]
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([bucket, values]) => ({
+      bucket,
+      sales_total: roundMetric(values.sales_total),
+      expense_total: roundMetric(values.expense_total),
+      net_profit: roundMetric(
+        (values.sales_total - values.total_returns - values.sales_cost) -
+          values.expense_total +
+          values.topup_profit +
+          values.maintenance_revenue
+      )
+    }));
+}
+
+async function buildBreakdown(
+  supabase: ReturnType<typeof getSupabaseAdminClient>,
+  metrics: PeriodMetrics,
+  dimension: AdvancedReportDimension
+): Promise<AdvancedBreakdownEntry[]> {
+  if (dimension === "expense_category") {
+    const categoryMap = await loadExpenseCategoryNameMap(
+      supabase,
+      metrics.expenses.map((entry) => entry.category_id)
+    );
+    const breakdown = new Map<string, AdvancedBreakdownEntry>();
+
+    for (const entry of metrics.expenses) {
+      const label = categoryMap.get(entry.category_id) ?? "فئة غير معروفة";
+      const current = breakdown.get(label) ?? { label, amount: 0, secondary_amount: 0, item_count: 0 };
+      current.amount += entry.amount;
+      current.item_count += 1;
+      breakdown.set(label, current);
+    }
+
+    return [...breakdown.values()].sort((left, right) => right.amount - left.amount);
+  }
+
+  if (dimension === "supplier") {
+    const supplierMap = await loadSupplierNameMap(
+      supabase,
+      [...metrics.purchases.map((entry) => entry.supplier_id), ...metrics.topups.map((entry) => entry.supplier_id)]
+    );
+    const breakdown = new Map<string, AdvancedBreakdownEntry>();
+
+    for (const purchase of metrics.purchases) {
+      const label = supplierMap.get(purchase.supplier_id ?? "") ?? "بدون مورد";
+      const current = breakdown.get(label) ?? { label, amount: 0, secondary_amount: 0, item_count: 0 };
+      current.amount += purchase.total_amount;
+      current.item_count += 1;
+      breakdown.set(label, current);
+    }
+
+    for (const topup of metrics.topups) {
+      const label = supplierMap.get(topup.supplier_id ?? "") ?? "بدون مزود";
+      const current = breakdown.get(label) ?? { label, amount: 0, secondary_amount: 0, item_count: 0 };
+      current.amount += topup.amount;
+      current.secondary_amount += topup.profit_amount;
+      current.item_count += 1;
+      breakdown.set(label, current);
+    }
+
+    return [...breakdown.values()].sort((left, right) => right.amount - left.amount);
+  }
+
+  if (dimension === "maintenance_status") {
+    const breakdown = new Map<string, AdvancedBreakdownEntry>();
+
+    for (const job of metrics.maintenanceJobs) {
+      const label = job.status;
+      const current = breakdown.get(label) ?? { label, amount: 0, secondary_amount: 0, item_count: 0 };
+      current.amount += job.final_amount ?? 0;
+      current.item_count += 1;
+      breakdown.set(label, current);
+    }
+
+    return [...breakdown.values()].sort((left, right) => right.item_count - left.item_count);
+  }
+
+  if (dimension === "entry_type") {
+    const breakdown = new Map<string, AdvancedBreakdownEntry>();
+
+    for (const entry of metrics.ledgerEntries) {
+      const label = entry.entry_type;
+      const current = breakdown.get(label) ?? { label, amount: 0, secondary_amount: 0, item_count: 0 };
+      current.amount += entry.amount;
+      current.item_count += 1;
+      breakdown.set(label, current);
+    }
+
+    return [...breakdown.values()].sort((left, right) => right.amount - left.amount);
+  }
+
+  const accountIds = [...new Set(metrics.ledgerEntries.map((entry) => entry.account_id))];
+
+  if (accountIds.length === 0) {
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from("accounts")
+    .select("id, name")
+    .in("id", accountIds)
+    .returns<Array<{ id: string; name: string }>>();
+
+  if (error) {
+    throw error;
+  }
+
+  const accountMap = new Map((data ?? []).map((account) => [account.id, account.name]));
+  const breakdown = new Map<string, AdvancedBreakdownEntry>();
+
+  for (const entry of metrics.ledgerEntries) {
+    const label = accountMap.get(entry.account_id) ?? "حساب غير معروف";
+    const current = breakdown.get(label) ?? { label, amount: 0, secondary_amount: 0, item_count: 0 };
+    current.amount += entry.amount;
+
+    if (entry.entry_type === "income" || entry.adjustment_direction === "increase") {
+      current.secondary_amount += entry.amount;
+    } else if (entry.entry_type === "expense" || entry.adjustment_direction === "decrease") {
+      current.secondary_amount -= entry.amount;
+    }
+
+    current.item_count += 1;
+    breakdown.set(label, current);
+  }
+
+  return [...breakdown.values()].sort((left, right) => right.amount - left.amount);
+}
+
+export async function getAdvancedReportData(
+  supabase: ReturnType<typeof getSupabaseAdminClient>,
+  filters: SalesHistoryFilters
+): Promise<AdvancedReport> {
+  const [currentMetrics, compareMetrics] = await Promise.all([
+    loadPeriodMetrics(supabase, filters),
+    filters.compareFromDate && filters.compareToDate
+      ? loadPeriodMetrics(supabase, {
+          fromDate: filters.compareFromDate,
+          toDate: filters.compareToDate,
+          createdBy: filters.createdBy,
+          status: filters.status,
+          posTerminalCode: filters.posTerminalCode
+        })
+      : Promise.resolve(null)
+  ]);
+
+  const currentPeriod = buildPeriodSummary(currentMetrics);
+  const comparePeriod = compareMetrics ? buildPeriodSummary(compareMetrics) : null;
+  const trend = buildTrend(currentMetrics, filters.groupBy ?? "day");
+  const breakdown = await buildBreakdown(supabase, currentMetrics, filters.dimension ?? "account");
+
+  return {
+    currentPeriod,
+    comparePeriod,
+    trend,
+    breakdown,
+    delta: {
+      sales_total: roundMetric(currentPeriod.sales_total - (comparePeriod?.sales_total ?? 0)),
+      net_profit: roundMetric(currentPeriod.net_profit - (comparePeriod?.net_profit ?? 0)),
+      expense_total: roundMetric(currentPeriod.expense_total - (comparePeriod?.expense_total ?? 0)),
+      invoice_count: currentPeriod.invoice_count - (comparePeriod?.invoice_count ?? 0)
+    }
   };
 }
 
@@ -781,6 +1394,7 @@ export async function getReportBaseline(
       getAccountMovementReport(supabase, filters),
       getMaintenanceReport(supabase, filters)
     ]);
+  const advancedReport = await getAdvancedReportData(supabase, filters);
 
   if (snapshotsResult.error) {
     throw snapshotsResult.error;
@@ -828,7 +1442,8 @@ export async function getReportBaseline(
     returnsReport,
     accountMovementReport,
     maintenanceReport,
-    snapshots: snapshotsResult.data ?? []
+    snapshots: snapshotsResult.data ?? [],
+    advancedReport
   };
 }
 

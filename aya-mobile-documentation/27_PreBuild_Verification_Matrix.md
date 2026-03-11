@@ -48,15 +48,15 @@
 
 | ID | المحور | الفحص | المرجع | آلية التحقق | معيار النجاح | الخطورة إذا فشل | الحالة |
 |----|--------|-------|--------|-------------|--------------|-----------------|--------|
-| `VB-18` | Financial | طبقة المصروفات أصبحت authority كاملة وليست carried-forward gap | `09`, `15`, `16`, `25` | Contract Review + runtime proof | `create_expense` يعمل عبر API ويؤثر على snapshot/profit | Blocker | Planned |
-| `VB-19` | Privacy | روابط الإيصالات العامة محكومة token/revocation/expiry | `18`, `25`, `17` | Link privacy review + UAT-39 | لا كشف لأي بيانات داخلية في public receipt | Blocker | Planned |
-| `VB-20` | Communication | reminders وWhatsApp محكومة dedupe + delivery audit | `18`, `25`, `17` | Scheduler/log review + UAT-40/41 | لا spam ولا silent failure | High | Planned |
-| `VB-21` | Authorization | role expansion لا يفتح privilege escalation أو shadow paths | `10`, `13`, `25`, `17` | Role matrix review + regression UAT | bundles والأدوار الجديدة لا تكسر Blind POS | Blocker | Planned |
-| `VB-22` | Reporting | advanced reports + export parity صحيحة ماليًا | `03`, `25`, `17` | Compare/export review + proof scripts | totals في UI/export = `ledger/snapshots/expenses` | Critical | Planned |
-| `VB-23` | Portability | export/import/restore محكوم بخصوصية وتدقيق واستعادة معزولة | `18`, `25`, `17` | Package review + restore drill | لا restore على البيئة الأساسية + `drift = 0` بعد drill | Blocker | Planned |
-| `VB-24` | Performance | caching والبحث لا يخلقان stale finance أو تجاوزات p95 | `13`, `17`, `27` | Perf review + UAT-49 | search/report p95 ضمن الهدف | High | Planned |
-| `VB-25` | Operations | alert aggregation تحسن الإشارة دون فقدان التنبيهات الحرجة | `03`, `17`, `18` | UAT-50 + manual review | dedupe صحيح وcoverage كامل للتنبيهات الحرجة | High | Planned |
-| `VB-26` | Device Regression | التحسينات لا تكسر الهاتف/التابلت/اللابتوب بعد V2 | `17`, `29` | UAT-51 | no overflow / no workflow regression | Critical | Planned |
+| `VB-18` | Financial | طبقة المصروفات أصبحت authority كاملة وليست carried-forward gap | `09`, `15`, `16`, `25` | Contract Review + runtime proof | `create_expense` يعمل عبر API ويؤثر على snapshot/profit | Blocker | Pass |
+| `VB-19` | Privacy | روابط الإيصالات العامة محكومة token/revocation/expiry | `18`, `25`, `17` | Link privacy review + UAT-39 | لا كشف لأي بيانات داخلية في public receipt | Blocker | Pass |
+| `VB-20` | Communication | reminders وWhatsApp محكومة dedupe + delivery audit | `18`, `25`, `17` | Scheduler/log review + UAT-40/41 | لا spam ولا silent failure | High | Pass |
+| `VB-21` | Authorization | role expansion لا يفتح privilege escalation أو shadow paths | `10`, `13`, `25`, `17` | Role matrix review + regression UAT | bundles والأدوار الجديدة لا تكسر Blind POS | Blocker | Pass |
+| `VB-22` | Reporting | advanced reports + export parity صحيحة ماليًا | `03`, `25`, `17` | Compare/export review + proof scripts | totals في UI/export = `ledger/snapshots/expenses` | Critical | Pass |
+| `VB-23` | Portability | export/import/restore محكوم بخصوصية وتدقيق واستعادة معزولة | `18`, `25`, `17` | Package review + restore drill | لا restore على البيئة الأساسية + `drift = 0` بعد drill | Blocker | Pass |
+| `VB-24` | Performance | caching والبحث لا يخلقان stale finance أو تجاوزات p95 | `13`, `17`, `27` | Perf review + UAT-49 | search/report p95 ضمن الهدف | High | Pass |
+| `VB-25` | Operations | alert aggregation تحسن الإشارة دون فقدان التنبيهات الحرجة | `03`, `17`, `18` | UAT-50 + manual review | dedupe صحيح وcoverage كامل للتنبيهات الحرجة | High | Pass |
+| `VB-26` | Device Regression | التحسينات لا تكسر الهاتف/التابلت/اللابتوب بعد V2 | `17`, `29` | UAT-51 | no overflow / no workflow regression | Critical | Pass |
 
 ---
 

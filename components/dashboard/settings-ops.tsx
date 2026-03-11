@@ -4,7 +4,15 @@ import { useEffect, useMemo, useState, useTransition } from "react";
 import { AlertTriangle, Loader2, RefreshCcw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import type { InventoryCountOption, SettingsAccount, SettingsSnapshot } from "@/lib/api/dashboard";
+import { PermissionsPanel } from "@/components/dashboard/permissions-panel";
+import type {
+  InventoryCountOption,
+  PermissionAssignmentOption,
+  PermissionBundleOption,
+  PermissionUserOption,
+  SettingsAccount,
+  SettingsSnapshot
+} from "@/lib/api/dashboard";
 import type { StandardEnvelope } from "@/lib/pos/types";
 import { formatCompactNumber, formatCurrency, formatDate, formatDateTime } from "@/lib/utils/formatters";
 
@@ -55,13 +63,23 @@ type SettingsOpsProps = {
   accounts: SettingsAccount[];
   snapshots: SettingsSnapshot[];
   inventoryCounts: InventoryCountOption[];
+  permissionBundles: PermissionBundleOption[];
+  permissionUsers: PermissionUserOption[];
+  activeAssignments: PermissionAssignmentOption[];
 };
 
 function getApiErrorMessage<T>(envelope: StandardEnvelope<T>) {
   return envelope.error?.message ?? "تعذر إتمام العملية.";
 }
 
-export function SettingsOps({ accounts, snapshots, inventoryCounts }: SettingsOpsProps) {
+export function SettingsOps({
+  accounts,
+  snapshots,
+  inventoryCounts,
+  permissionBundles,
+  permissionUsers,
+  activeAssignments
+}: SettingsOpsProps) {
   const router = useRouter();
   const [snapshotNotes, setSnapshotNotes] = useState("");
   const [selectedAccountId, setSelectedAccountId] = useState(accounts[0]?.id ?? "");
@@ -114,6 +132,12 @@ export function SettingsOps({ accounts, snapshots, inventoryCounts }: SettingsOp
       </div>
 
       <div className="detail-grid">
+        <PermissionsPanel
+          permissionBundles={permissionBundles}
+          permissionUsers={permissionUsers}
+          activeAssignments={activeAssignments}
+        />
+
         <section className="workspace-panel">
           <div className="section-heading">
             <div>

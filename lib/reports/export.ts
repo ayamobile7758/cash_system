@@ -265,3 +265,201 @@ export function buildReportWorkbookBuffer({
     type: "buffer"
   }) as Buffer;
 }
+
+export function buildAdvancedReportWorkbookFilename(filters: SalesHistoryFilters) {
+  return `aya-advanced-reports-${filters.fromDate}_to_${filters.toDate}.xlsx`;
+}
+
+export function buildAdvancedReportWorkbookBuffer({
+  filters,
+  reportBaseline,
+  generatedAt
+}: ReportExportPayload) {
+  const workbook = XLSX.utils.book_new();
+  const { advancedReport } = reportBaseline;
+
+  const summaryRows: Array<Array<string | number | null | undefined>> = [
+    ["التقرير", "الحالي", "المقارنة", "الفرق"],
+    ["تاريخ التوليد", generatedAt, "", ""],
+    ["من تاريخ", filters.fromDate, filters.compareFromDate ?? "-", ""],
+    ["إلى تاريخ", filters.toDate, filters.compareToDate ?? "-", ""],
+    ["التجميع", filters.groupBy ?? "day", "", ""],
+    ["البعد", filters.dimension ?? "account", "", ""],
+    [],
+    [
+      "إجمالي المبيعات",
+      advancedReport.currentPeriod.sales_total,
+      advancedReport.comparePeriod?.sales_total ?? "",
+      advancedReport.delta.sales_total
+    ],
+    [
+      "إجمالي المرتجعات",
+      advancedReport.currentPeriod.total_returns,
+      advancedReport.comparePeriod?.total_returns ?? "",
+      roundExportMetric(
+        advancedReport.currentPeriod.total_returns - (advancedReport.comparePeriod?.total_returns ?? 0)
+      )
+    ],
+    [
+      "صافي المبيعات",
+      advancedReport.currentPeriod.net_sales,
+      advancedReport.comparePeriod?.net_sales ?? "",
+      roundExportMetric(advancedReport.currentPeriod.net_sales - (advancedReport.comparePeriod?.net_sales ?? 0))
+    ],
+    [
+      "إجمالي المصروفات",
+      advancedReport.currentPeriod.expense_total,
+      advancedReport.comparePeriod?.expense_total ?? "",
+      advancedReport.delta.expense_total
+    ],
+    [
+      "إجمالي المشتريات",
+      advancedReport.currentPeriod.purchase_total,
+      advancedReport.comparePeriod?.purchase_total ?? "",
+      roundExportMetric(
+        advancedReport.currentPeriod.purchase_total - (advancedReport.comparePeriod?.purchase_total ?? 0)
+      )
+    ],
+    [
+      "ربح الشحن",
+      advancedReport.currentPeriod.topup_profit,
+      advancedReport.comparePeriod?.topup_profit ?? "",
+      roundExportMetric(
+        advancedReport.currentPeriod.topup_profit - (advancedReport.comparePeriod?.topup_profit ?? 0)
+      )
+    ],
+    [
+      "إيراد الصيانة",
+      advancedReport.currentPeriod.maintenance_revenue,
+      advancedReport.comparePeriod?.maintenance_revenue ?? "",
+      roundExportMetric(
+        advancedReport.currentPeriod.maintenance_revenue - (advancedReport.comparePeriod?.maintenance_revenue ?? 0)
+      )
+    ],
+    [
+      "صافي الربح",
+      advancedReport.currentPeriod.net_profit,
+      advancedReport.comparePeriod?.net_profit ?? "",
+      advancedReport.delta.net_profit
+    ],
+    [
+      "عدد الفواتير",
+      advancedReport.currentPeriod.invoice_count,
+      advancedReport.comparePeriod?.invoice_count ?? "",
+      advancedReport.delta.invoice_count
+    ],
+    [
+      "عدد اللقطات",
+      advancedReport.currentPeriod.snapshot_count,
+      advancedReport.comparePeriod?.snapshot_count ?? "",
+      roundExportMetric(
+        advancedReport.currentPeriod.snapshot_count - (advancedReport.comparePeriod?.snapshot_count ?? 0)
+      )
+    ]
+  ];
+  XLSX.utils.book_append_sheet(workbook, makeSheet(summaryRows), "Summary");
+
+  addObjectSheet(
+    workbook,
+    "Trend",
+    [
+      { key: "bucket", label: "الفترة" },
+      { key: "sales_total", label: "إجمالي المبيعات" },
+      { key: "expense_total", label: "إجمالي المصروفات" },
+      { key: "net_profit", label: "صافي الربح" }
+    ],
+    advancedReport.trend.map((entry) => ({
+      bucket: entry.bucket,
+      sales_total: entry.sales_total,
+      expense_total: entry.expense_total,
+      net_profit: entry.net_profit
+    }))
+  );
+
+  addObjectSheet(
+    workbook,
+    "Breakdown",
+    [
+      { key: "label", label: "البند" },
+      { key: "amount", label: "القيمة الأساسية" },
+      { key: "secondary_amount", label: "القيمة الثانوية" },
+      { key: "item_count", label: "عدد العناصر" }
+    ],
+    advancedReport.breakdown.map((entry) => ({
+      label: entry.label,
+      amount: entry.amount,
+      secondary_amount: entry.secondary_amount,
+      item_count: entry.item_count
+    }))
+  );
+
+  addObjectSheet(
+    workbook,
+    "Sales History",
+    [
+      { key: "invoice_number", label: "رقم الفاتورة" },
+      { key: "invoice_date", label: "التاريخ" },
+      { key: "created_by_name", label: "المستخدم" },
+      { key: "pos_terminal_code", label: "الجهاز" },
+      { key: "status", label: "الحالة" },
+      { key: "total", label: "الإجمالي" }
+    ],
+    reportBaseline.salesHistory.data.map((entry) => ({
+      invoice_number: entry.invoice_number,
+      invoice_date: entry.invoice_date,
+      created_by_name: entry.created_by_name ?? "غير معروف",
+      pos_terminal_code: entry.pos_terminal_code ?? "غير محدد",
+      status: entry.status,
+      total: entry.total
+    }))
+  );
+
+  addObjectSheet(
+    workbook,
+    "Account Movements",
+    [
+      { key: "entry_date", label: "التاريخ" },
+      { key: "account_name", label: "الحساب" },
+      { key: "entry_type", label: "نوع القيد" },
+      { key: "reference_type", label: "المرجع" },
+      { key: "amount", label: "القيمة" },
+      { key: "description", label: "الوصف" }
+    ],
+    reportBaseline.accountMovementReport.entries.map((entry) => ({
+      entry_date: entry.entry_date,
+      account_name: entry.account_name,
+      entry_type: entry.adjustment_direction ? `${entry.entry_type}:${entry.adjustment_direction}` : entry.entry_type,
+      reference_type: entry.reference_type ?? "-",
+      amount: entry.amount,
+      description: entry.description
+    }))
+  );
+
+  addObjectSheet(
+    workbook,
+    "Snapshots",
+    [
+      { key: "snapshot_date", label: "تاريخ اللقطة" },
+      { key: "net_sales", label: "صافي المبيعات" },
+      { key: "net_profit", label: "صافي الربح" },
+      { key: "invoice_count", label: "عدد الفواتير" },
+      { key: "created_at", label: "وقت الإنشاء" }
+    ],
+    reportBaseline.snapshots.map((entry) => ({
+      snapshot_date: entry.snapshot_date,
+      net_sales: entry.net_sales,
+      net_profit: entry.net_profit,
+      invoice_count: entry.invoice_count,
+      created_at: entry.created_at
+    }))
+  );
+
+  return XLSX.write(workbook, {
+    bookType: "xlsx",
+    type: "buffer"
+  }) as Buffer;
+}
+
+function roundExportMetric(value: number) {
+  return Number(value.toFixed(3));
+}

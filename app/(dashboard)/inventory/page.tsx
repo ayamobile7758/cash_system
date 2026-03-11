@@ -2,6 +2,7 @@ import { getWorkspaceAccess } from "@/app/(dashboard)/access";
 import { AccessRequired } from "@/components/dashboard/access-required";
 import { InventoryWorkspace } from "@/components/dashboard/inventory-workspace";
 import { getInventoryPageBaseline } from "@/lib/api/dashboard";
+import { hasPermission } from "@/lib/permissions";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export default async function InventoryPage() {
@@ -16,17 +17,19 @@ export default async function InventoryPage() {
     );
   }
 
-  if (access.state !== "ok" || access.role !== "admin") {
+  if (access.state !== "ok" || !hasPermission(access.permissions, "inventory.read")) {
     return (
       <AccessRequired
-        title="الجرد والتسوية محصوران بحساب Admin"
-        description="حسابات POS لا تبدأ الجرد ولا تنفذ التسويات المالية مباشرة."
+        title="هذه الشاشة تتطلب bundle جرد صالحًا"
+        description="الجرد يحتاج `inventory.read`. التسوية المالية نفسها تبقى محصورة بالـ Admin داخل نفس الشاشة."
       />
     );
   }
 
   const supabase = getSupabaseAdminClient();
-  const baseline = await getInventoryPageBaseline(supabase);
+  const baseline = await getInventoryPageBaseline(supabase, {
+    role: access.role
+  });
 
-  return <InventoryWorkspace {...baseline} />;
+  return <InventoryWorkspace {...baseline} canReconcile={access.role === "admin"} />;
 }

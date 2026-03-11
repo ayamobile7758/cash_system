@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { hasPermission, resolvePermissionContext, type WorkspaceRole } from "@/lib/permissions";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { StandardEnvelope } from "@/lib/pos/types";
@@ -23,7 +24,6 @@ const API_ERROR_MAP = {
 } as const;
 
 type ApiErrorCode = keyof typeof API_ERROR_MAP;
-type WorkspaceRole = "admin" | "pos_staff";
 type WorkspaceProfile = {
   role: WorkspaceRole;
   is_active: boolean;
@@ -50,6 +50,10 @@ export type AuthorizationResult =
       supabase: ReturnType<typeof getSupabaseAdminClient>;
       userId: string;
       role: WorkspaceRole;
+      permissions: string[];
+      bundleKeys: string[];
+      maxDiscountPercentage: number | null;
+      discountRequiresApproval: boolean;
     }
   | {
       authorized: false;
@@ -116,7 +120,12 @@ export async function getAuthenticatedUser(serverClient: ReturnType<typeof creat
   };
 }
 
-export async function authorizeRequest(allowedRoles: WorkspaceRole[]): Promise<AuthorizationResult> {
+export async function authorizeRequest(
+  allowedRoles: WorkspaceRole[],
+  options?: {
+    requiredPermissions?: string[];
+  }
+): Promise<AuthorizationResult> {
   const serverClient = createSupabaseServerClient();
   const { user, error: userError } = await getAuthenticatedUser(serverClient);
 
@@ -148,10 +157,27 @@ export async function authorizeRequest(allowedRoles: WorkspaceRole[]): Promise<A
     };
   }
 
+  const permissionContext = await resolvePermissionContext(supabase, user.id, profile.role);
+
+  if (
+    options?.requiredPermissions &&
+    options.requiredPermissions.some((permission) => !hasPermission(permissionContext.permissions, permission))
+  ) {
+    const meta = getApiErrorMeta("ERR_API_ROLE_FORBIDDEN");
+    return {
+      authorized: false,
+      response: errorResponse("ERR_API_ROLE_FORBIDDEN", meta.message, meta.status)
+    };
+  }
+
   return {
     authorized: true,
     supabase,
     userId: user.id,
-    role: profile.role
+    role: profile.role,
+    permissions: permissionContext.permissions,
+    bundleKeys: permissionContext.bundleKeys,
+    maxDiscountPercentage: permissionContext.maxDiscountPercentage,
+    discountRequiresApproval: permissionContext.discountRequiresApproval
   };
 }

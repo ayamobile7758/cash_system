@@ -3,26 +3,42 @@ import type { ReactNode } from "react";
 import { getWorkspaceAccess } from "@/app/(dashboard)/access";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { getUnreadNotificationCount } from "@/lib/api/notifications";
+import { hasPermission } from "@/lib/permissions";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 
 const navigation = [
-  { href: "/pos", label: "POS" },
-  { href: "/products", label: "المنتجات" },
-  { href: "/expenses", label: "المصروفات" },
-  { href: "/inventory", label: "الجرد والتسوية" },
-  { href: "/suppliers", label: "الموردون" },
-  { href: "/operations", label: "الشحن والتحويلات" },
-  { href: "/maintenance", label: "الصيانة" },
-  { href: "/invoices", label: "الفواتير" },
-  { href: "/debts", label: "الديون" },
-  { href: "/reports", label: "التقارير" },
-  { href: "/notifications", label: "الإشعارات" },
-  { href: "/settings", label: "الإعدادات" },
+  { href: "/pos", label: "POS", permission: "pos.use" },
+  { href: "/products", label: "المنتجات", permission: "products.read" },
+  { href: "/expenses", label: "المصروفات", permission: "expenses.read" },
+  { href: "/inventory", label: "الجرد والتسوية", permission: "inventory.read" },
+  { href: "/suppliers", label: "الموردون", adminOnly: true },
+  { href: "/operations", label: "الشحن والتحويلات", permission: "operations.read" },
+  { href: "/maintenance", label: "الصيانة", permission: "maintenance.read" },
+  { href: "/invoices", label: "الفواتير", permission: "invoices.read" },
+  { href: "/debts", label: "الديون", permission: "debts.read" },
+  { href: "/reports", label: "التقارير", adminOnly: true },
+  { href: "/portability", label: "النقل والنسخ", adminOnly: true },
+  { href: "/notifications", label: "الإشعارات", permission: "notifications.read" },
+  { href: "/settings", label: "الإعدادات", adminOnly: true },
   { href: "/", label: "الصفحة الرئيسية" }
 ];
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   const access = await getWorkspaceAccess();
+  const scopedNavigation =
+    access.state !== "ok"
+      ? navigation.filter((item) => item.href === "/")
+      : navigation.filter((item) => {
+          if (item.adminOnly) {
+            return access.role === "admin";
+          }
+
+          if (!item.permission) {
+            return true;
+          }
+
+          return hasPermission(access.permissions, item.permission);
+        });
   const unreadNotifications =
     access.state === "ok"
       ? await getUnreadNotificationCount(getSupabaseAdminClient(), {
@@ -45,7 +61,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
         </div>
 
         <nav className="dashboard-nav" aria-label="workspace navigation">
-          {navigation.map((item) => (
+          {scopedNavigation.map((item) => (
             <Link key={item.href} href={item.href} className="dashboard-nav__link">
               {item.href === "/notifications" && unreadNotifications > 0
                 ? `${item.label} (${unreadNotifications})`

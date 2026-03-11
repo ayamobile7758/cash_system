@@ -1,7 +1,8 @@
+import { unstable_cache } from "next/cache";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
+import type { WorkspaceRole } from "@/lib/permissions";
 import { getReportBaseline, parseSalesHistoryFilters } from "@/lib/api/reports";
 
-type WorkspaceRole = "admin" | "pos_staff";
 type SearchParamsInput = Record<string, string | string[] | undefined>;
 
 export type WorkspaceUserOption = {
@@ -24,6 +25,73 @@ export type SettingsSnapshot = {
   net_sales: number;
   net_profit: number;
   invoice_count: number;
+  created_at: string;
+};
+
+export type PermissionBundleOption = {
+  id: string;
+  key: string;
+  label: string;
+  description: string | null;
+  base_role: WorkspaceRole;
+  permissions: string[];
+  max_discount_percentage: number | null;
+  discount_requires_approval: boolean;
+  is_system: boolean;
+};
+
+export type PermissionUserOption = {
+  id: string;
+  full_name: string | null;
+  role: WorkspaceRole;
+  active_bundle_keys: string[];
+};
+
+export type PermissionAssignmentOption = {
+  id: string;
+  user_id: string;
+  bundle_key: string;
+  bundle_label: string;
+  notes: string | null;
+  assigned_at: string;
+  assigned_by_name: string | null;
+};
+
+export type PortabilityPackageOption = {
+  id: string;
+  package_type: "json" | "csv";
+  scope: "products" | "reports" | "customers" | "backup";
+  status: "ready" | "revoked" | "expired";
+  file_name: string;
+  row_count: number;
+  expires_at: string;
+  revoked_at: string | null;
+  created_at: string;
+  is_expired: boolean;
+};
+
+export type PortabilityImportJobOption = {
+  id: string;
+  file_name: string;
+  source_format: "json" | "csv";
+  status: "dry_run_ready" | "dry_run_failed" | "committed";
+  rows_total: number;
+  rows_valid: number;
+  rows_invalid: number;
+  rows_committed: number;
+  committed_at: string | null;
+  created_at: string;
+};
+
+export type PortabilityRestoreDrillOption = {
+  id: string;
+  package_id: string;
+  package_file_name: string | null;
+  target_env: "isolated-drill";
+  status: "started" | "completed" | "failed";
+  drift_count: number | null;
+  rto_seconds: number | null;
+  completed_at: string | null;
   created_at: string;
 };
 
@@ -199,7 +267,7 @@ export type MaintenanceAccountOption = {
   name: string;
   type: string;
   module_scope: string;
-  current_balance: number;
+  current_balance: number | null;
 };
 
 export type MaintenanceJobOption = {
@@ -412,7 +480,19 @@ export function toUrlSearchParams(searchParams: SearchParamsInput) {
   return params;
 }
 
-export async function listActiveWorkspaceUsers(
+async function readMaybeCached<T>(cachedQuery: () => Promise<T>, fallbackQuery: () => Promise<T>) {
+  try {
+    return await cachedQuery();
+  } catch (error) {
+    if (error instanceof Error && error.message.includes("incrementalCache missing")) {
+      return fallbackQuery();
+    }
+
+    throw error;
+  }
+}
+
+async function queryActiveWorkspaceUsers(
   supabase: ReturnType<typeof getSupabaseAdminClient>
 ) {
   const { data, error } = await supabase
@@ -430,7 +510,19 @@ export async function listActiveWorkspaceUsers(
   return data ?? [];
 }
 
-export async function listPosTerminalCodes(
+const getCachedActiveWorkspaceUsers = unstable_cache(
+  async () => queryActiveWorkspaceUsers(getSupabaseAdminClient()),
+  ["px13-active-workspace-users"],
+  { revalidate: 120 }
+);
+
+export async function listActiveWorkspaceUsers(
+  supabase: ReturnType<typeof getSupabaseAdminClient>
+) {
+  return queryActiveWorkspaceUsers(supabase);
+}
+
+async function queryPosTerminalCodes(
   supabase: ReturnType<typeof getSupabaseAdminClient>,
   fromDate: string,
   toDate: string
@@ -449,6 +541,21 @@ export async function listPosTerminalCodes(
   return [...new Set((data ?? []).map((row) => row.pos_terminal_code).filter(Boolean))] as string[];
 }
 
+const getCachedPosTerminalCodes = unstable_cache(
+  async (fromDate: string, toDate: string) =>
+    queryPosTerminalCodes(getSupabaseAdminClient(), fromDate, toDate),
+  ["px13-pos-terminal-codes"],
+  { revalidate: 120 }
+);
+
+export async function listPosTerminalCodes(
+  supabase: ReturnType<typeof getSupabaseAdminClient>,
+  fromDate: string,
+  toDate: string
+) {
+  return queryPosTerminalCodes(supabase, fromDate, toDate);
+}
+
 export async function getReportsPageBaseline(
   supabase: ReturnType<typeof getSupabaseAdminClient>,
   searchParams: SearchParamsInput
@@ -456,8 +563,14 @@ export async function getReportsPageBaseline(
   const filters = parseSalesHistoryFilters(toUrlSearchParams(searchParams));
   const [reportBaseline, users, terminals] = await Promise.all([
     getReportBaseline(supabase, filters, { role: "admin", userId: "" }),
-    listActiveWorkspaceUsers(supabase),
-    listPosTerminalCodes(supabase, filters.fromDate, filters.toDate)
+    readMaybeCached(
+      () => getCachedActiveWorkspaceUsers(),
+      () => queryActiveWorkspaceUsers(supabase)
+    ),
+    readMaybeCached(
+      () => getCachedPosTerminalCodes(filters.fromDate, filters.toDate),
+      () => queryPosTerminalCodes(supabase, filters.fromDate, filters.toDate)
+    )
   ]);
 
   return {
@@ -471,7 +584,14 @@ export async function getReportsPageBaseline(
 export async function getSettingsPageBaseline(
   supabase: ReturnType<typeof getSupabaseAdminClient>
 ) {
-  const [accountsResult, snapshotsResult, countsResult] = await Promise.all([
+  const [
+    accountsResult,
+    snapshotsResult,
+    countsResult,
+    permissionBundlesResult,
+    permissionUsersResult,
+    roleAssignmentsResult
+  ] = await Promise.all([
     supabase
       .from("accounts")
       .select("id, name, type, current_balance, module_scope")
@@ -490,7 +610,41 @@ export async function getSettingsPageBaseline(
       .eq("status", "in_progress")
       .order("count_date", { ascending: false })
       .limit(5)
-      .returns<InventoryCountRow[]>()
+      .returns<InventoryCountRow[]>(),
+    supabase
+      .from("permission_bundles")
+      .select(
+        "id, key, label, description, base_role, permissions, max_discount_percentage, discount_requires_approval, is_system"
+      )
+      .eq("is_active", true)
+      .order("base_role", { ascending: true })
+      .order("label", { ascending: true })
+      .returns<PermissionBundleOption[]>(),
+    supabase
+      .from("profiles")
+      .select("id, full_name, role")
+      .eq("is_active", true)
+      .in("role", ["admin", "pos_staff"])
+      .order("full_name", { ascending: true })
+      .returns<WorkspaceUserOption[]>(),
+    supabase
+      .from("role_assignments")
+      .select(
+        "id, user_id, notes, assigned_at, profiles!role_assignments_assigned_by_fkey(full_name), permission_bundles(key, label)"
+      )
+      .eq("is_active", true)
+      .is("revoked_at", null)
+      .order("assigned_at", { ascending: false })
+      .returns<
+        Array<{
+          id: string;
+          user_id: string;
+          notes: string | null;
+          assigned_at: string;
+          profiles: { full_name: string | null } | null;
+          permission_bundles: { key: string; label: string } | null;
+        }>
+      >()
   ]);
 
   if (accountsResult.error) {
@@ -505,12 +659,56 @@ export async function getSettingsPageBaseline(
     throw countsResult.error;
   }
 
+  if (permissionBundlesResult.error) {
+    throw permissionBundlesResult.error;
+  }
+
+  if (permissionUsersResult.error) {
+    throw permissionUsersResult.error;
+  }
+
+  if (roleAssignmentsResult.error) {
+    throw roleAssignmentsResult.error;
+  }
+
+  const activeBundleKeysByUser = new Map<string, string[]>();
+  for (const assignment of roleAssignmentsResult.data ?? []) {
+    const bundleKey = assignment.permission_bundles?.key;
+    if (!bundleKey) {
+      continue;
+    }
+
+    const list = activeBundleKeysByUser.get(assignment.user_id) ?? [];
+    list.push(bundleKey);
+    activeBundleKeysByUser.set(assignment.user_id, list);
+  }
+
   const countIds = (countsResult.data ?? []).map((count) => count.id);
   if (countIds.length === 0) {
     return {
       accounts: accountsResult.data ?? [],
       snapshots: snapshotsResult.data ?? [],
-      inventoryCounts: [] as InventoryCountOption[]
+      inventoryCounts: [] as InventoryCountOption[],
+      permissionBundles: permissionBundlesResult.data ?? [],
+      permissionUsers: (permissionUsersResult.data ?? []).map((user) => ({
+        ...user,
+        active_bundle_keys: activeBundleKeysByUser.get(user.id) ?? []
+      })),
+      activeAssignments: (roleAssignmentsResult.data ?? []).flatMap((assignment) =>
+        assignment.permission_bundles
+          ? [
+              {
+                id: assignment.id,
+                user_id: assignment.user_id,
+                bundle_key: assignment.permission_bundles.key,
+                bundle_label: assignment.permission_bundles.label,
+                notes: assignment.notes,
+                assigned_at: assignment.assigned_at,
+                assigned_by_name: assignment.profiles?.full_name ?? null
+              } satisfies PermissionAssignmentOption
+            ]
+          : []
+      )
     };
   }
 
@@ -554,6 +752,26 @@ export async function getSettingsPageBaseline(
   return {
     accounts: accountsResult.data ?? [],
     snapshots: snapshotsResult.data ?? [],
+    permissionBundles: permissionBundlesResult.data ?? [],
+    permissionUsers: (permissionUsersResult.data ?? []).map((user) => ({
+      ...user,
+      active_bundle_keys: activeBundleKeysByUser.get(user.id) ?? []
+    })),
+    activeAssignments: (roleAssignmentsResult.data ?? []).flatMap((assignment) =>
+      assignment.permission_bundles
+        ? [
+            {
+              id: assignment.id,
+              user_id: assignment.user_id,
+              bundle_key: assignment.permission_bundles.key,
+              bundle_label: assignment.permission_bundles.label,
+              notes: assignment.notes,
+              assigned_at: assignment.assigned_at,
+              assigned_by_name: assignment.profiles?.full_name ?? null
+            } satisfies PermissionAssignmentOption
+          ]
+        : []
+    ),
     inventoryCounts: (countsResult.data ?? []).map((count) => ({
       ...count,
       items: itemsByCount.get(count.id) ?? []
@@ -561,9 +779,95 @@ export async function getSettingsPageBaseline(
   };
 }
 
-export async function getInventoryPageBaseline(
+export async function getPortabilityPageBaseline(
   supabase: ReturnType<typeof getSupabaseAdminClient>
 ) {
+  const [packagesResult, importJobsResult, restoreDrillsResult] = await Promise.all([
+    supabase
+      .from("export_packages")
+      .select("id, package_type, scope, status, file_name, row_count, expires_at, revoked_at, created_at")
+      .order("created_at", { ascending: false })
+      .limit(10)
+      .returns<
+        Array<{
+          id: string;
+          package_type: "json" | "csv";
+          scope: "products" | "reports" | "customers" | "backup";
+          status: "ready" | "revoked" | "expired";
+          file_name: string;
+          row_count: number;
+          expires_at: string;
+          revoked_at: string | null;
+          created_at: string;
+        }>
+      >(),
+    supabase
+      .from("import_jobs")
+      .select("id, file_name, source_format, status, rows_total, rows_valid, rows_invalid, rows_committed, committed_at, created_at")
+      .order("created_at", { ascending: false })
+      .limit(10)
+      .returns<PortabilityImportJobOption[]>(),
+    supabase
+      .from("restore_drills")
+      .select("id, export_package_id, target_env, status, drift_count, rto_seconds, completed_at, created_at")
+      .order("created_at", { ascending: false })
+      .limit(10)
+      .returns<
+        Array<{
+          id: string;
+          export_package_id: string;
+          target_env: "isolated-drill";
+          status: "started" | "completed" | "failed";
+          drift_count: number | null;
+          rto_seconds: number | null;
+          completed_at: string | null;
+          created_at: string;
+        }>
+      >()
+  ]);
+
+  if (packagesResult.error) {
+    throw packagesResult.error;
+  }
+
+  if (importJobsResult.error) {
+    throw importJobsResult.error;
+  }
+
+  if (restoreDrillsResult.error) {
+    throw restoreDrillsResult.error;
+  }
+
+  const packageFileNameById = new Map((packagesResult.data ?? []).map((item) => [item.id, item.file_name]));
+
+  return {
+    packages: (packagesResult.data ?? []).map((item) => ({
+      ...item,
+      is_expired: new Date(item.expires_at).getTime() <= Date.now()
+    })) as PortabilityPackageOption[],
+    importJobs: importJobsResult.data ?? [],
+    restoreDrills: (restoreDrillsResult.data ?? []).map((item) => ({
+      id: item.id,
+      package_id: item.export_package_id,
+      package_file_name: packageFileNameById.get(item.export_package_id) ?? null,
+      target_env: item.target_env,
+      status: item.status,
+      drift_count: item.drift_count,
+      rto_seconds: item.rto_seconds,
+      completed_at: item.completed_at,
+      created_at: item.created_at
+    })) as PortabilityRestoreDrillOption[]
+  };
+}
+
+export async function getInventoryPageBaseline(
+  supabase: ReturnType<typeof getSupabaseAdminClient>,
+  options: {
+    role: WorkspaceRole;
+  }
+) {
+  const isAdmin = options.role === "admin";
+
   const [productsResult, accountsResult, countsResult, reconciliationsResult] = await Promise.all([
     supabase
       .from("products")
@@ -571,26 +875,30 @@ export async function getInventoryPageBaseline(
       .eq("is_active", true)
       .order("name", { ascending: true })
       .returns<InventoryProductRow[]>(),
-    supabase
-      .from("accounts")
-      .select("id, name, type, current_balance, module_scope")
-      .eq("is_active", true)
-      .order("display_order", { ascending: true })
-      .returns<SettingsAccount[]>(),
+    isAdmin
+      ? supabase
+          .from("accounts")
+          .select("id, name, type, current_balance, module_scope")
+          .eq("is_active", true)
+          .order("display_order", { ascending: true })
+          .returns<SettingsAccount[]>()
+      : Promise.resolve({ data: [] as SettingsAccount[], error: null }),
     supabase
       .from("inventory_counts")
       .select("id, count_date, count_type, status, notes, completed_at")
       .order("created_at", { ascending: false })
       .limit(10)
       .returns<InventoryCountRow[]>(),
-    supabase
-      .from("reconciliation_entries")
-      .select(
-        "id, reconciliation_date, expected_balance, actual_balance, difference, difference_reason, is_resolved, account_id, accounts(name)"
-      )
-      .order("created_at", { ascending: false })
-      .limit(10)
-      .returns<ReconciliationEntryRow[]>()
+    isAdmin
+      ? supabase
+          .from("reconciliation_entries")
+          .select(
+            "id, reconciliation_date, expected_balance, actual_balance, difference, difference_reason, is_resolved, account_id, accounts(name)"
+          )
+          .order("created_at", { ascending: false })
+          .limit(10)
+          .returns<ReconciliationEntryRow[]>()
+      : Promise.resolve({ data: [] as ReconciliationEntryRow[], error: null })
   ]);
 
   if (productsResult.error) {
@@ -1111,6 +1419,8 @@ export async function getMaintenancePageBaseline(
     userId: string;
   }
 ) {
+  const isAdmin = options.role === "admin";
+
   const [accountsResult, jobsResult] = await Promise.all([
     supabase
       .from("accounts")
@@ -1182,7 +1492,10 @@ export async function getMaintenancePageBaseline(
 
   return {
     role: options.role,
-    maintenanceAccounts: accountsResult.data ?? [],
+    maintenanceAccounts: (accountsResult.data ?? []).map((account) => ({
+      ...account,
+      current_balance: isAdmin ? account.current_balance : null
+    })),
     jobs,
     summary
   };

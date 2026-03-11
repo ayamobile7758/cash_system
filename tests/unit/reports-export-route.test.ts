@@ -77,7 +77,30 @@ describe("GET /api/reports/export", () => {
       returnsReport: { total_returns: 0, return_count: 0, reasons: [], entries: [] },
       accountMovementReport: { total_movements: 0, entries: [], summaries: [] },
       maintenanceReport: { open_count: 0, ready_count: 0, delivered_count: 0, delivered_revenue: 0, jobs: [] },
-      snapshots: []
+      snapshots: [],
+      advancedReport: {
+        currentPeriod: {
+          sales_total: 0,
+          total_returns: 0,
+          net_sales: 0,
+          expense_total: 0,
+          purchase_total: 0,
+          topup_profit: 0,
+          maintenance_revenue: 0,
+          net_profit: 0,
+          invoice_count: 0,
+          snapshot_count: 0
+        },
+        comparePeriod: null,
+        trend: [],
+        breakdown: [],
+        delta: {
+          sales_total: 0,
+          net_profit: 0,
+          expense_total: 0,
+          invoice_count: 0
+        }
+      }
     });
     vi.mocked(buildReportWorkbookBuffer).mockReturnValue(Buffer.from("xlsx"));
 

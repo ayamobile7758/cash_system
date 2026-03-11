@@ -1258,7 +1258,7 @@
 
 **المحتوى:**
 - إنشاء package تصدير
-- قائمة packages الأخيرة مع expiry
+- قائمة packages الأخيرة مع expiry + download + revoke
 - شاشة import products:
   - اختيار الملف
   - dry-run summary
@@ -1271,6 +1271,8 @@
 **الملاحظات:**
 - لا يوجد restore على البيئة الأساسية من هذه الشاشة
 - كل عملية portability تُظهر warning صريح عن التدقيق والخصوصية
+- حزم `customers` لا تعرض رقم الهاتف الخام ولا `national_id`
+- حزم `backup` تُولد بصيغة `JSON` فقط وتُستخدم للاستعادة المعزولة لا للتنزيل المفتوح
 
 ---
 
@@ -1328,6 +1330,6 @@
 
 ---
 
-**الإصدار:** 1.8
-**تاريخ التحديث:** 10 مارس 2026
-**التغييرات:** v1.8 — إضافة أسطح V2 المخططة: `public receipt view`, `roles/permissions center`, `advanced analytics`, `portability center`, و`global search + alert aggregation`. v1.7 — إضافة بطاقة سلامة الأرصدة (Balance Integrity Card) في Dashboard + توثيق `POST /api/health/balance-check`. v1.6 — توضيح رؤية POS لشاشة الحسابات (Blind POS).
+**الإصدار:** 1.9
+**تاريخ التحديث:** 11 مارس 2026
+**التغييرات:** v1.9 — مواءمة شاشة portability مع تنفيذ `PX-12`: packages قابلة للتنزيل/الإبطال، restore drill تعرض drift/RTO، وحزم العملاء تُظهر masking بدل البيانات الخام. v1.8 — إضافة أسطح V2 المخططة: `public receipt view`, `roles/permissions center`, `advanced analytics`, `portability center`, و`global search + alert aggregation`. v1.7 — إضافة بطاقة سلامة الأرصدة (Balance Integrity Card) في Dashboard + توثيق `POST /api/health/balance-check`. v1.6 — توضيح رؤية POS لشاشة الحسابات (Blind POS).

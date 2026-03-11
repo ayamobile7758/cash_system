@@ -1,14 +1,24 @@
+import { resolvePermissionContext, type WorkspaceRole } from "@/lib/permissions";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 type WorkspaceAccessResult =
-  | { state: "ok"; userId: string; role: "admin" | "pos_staff"; fullName: string | null }
+  | {
+      state: "ok";
+      userId: string;
+      role: WorkspaceRole;
+      fullName: string | null;
+      permissions: string[];
+      bundleKeys: string[];
+      maxDiscountPercentage: number | null;
+      discountRequiresApproval: boolean;
+    }
   | { state: "unauthenticated" }
   | { state: "forbidden" };
 
 type ProfileAccessRow = {
   full_name: string | null;
-  role: "admin" | "pos_staff";
+  role: WorkspaceRole;
   is_active: boolean;
 };
 
@@ -39,10 +49,16 @@ export async function getWorkspaceAccess(): Promise<WorkspaceAccessResult> {
     return { state: "forbidden" };
   }
 
+  const permissionContext = await resolvePermissionContext(adminClient, user.id, profile.role);
+
   return {
     state: "ok",
     userId: user.id,
     role: profile.role,
-    fullName: profile.full_name
+    fullName: profile.full_name,
+    permissions: permissionContext.permissions,
+    bundleKeys: permissionContext.bundleKeys,
+    maxDiscountPercentage: permissionContext.maxDiscountPercentage,
+    discountRequiresApproval: permissionContext.discountRequiresApproval
   };
 }

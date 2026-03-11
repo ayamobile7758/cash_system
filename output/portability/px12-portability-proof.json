@@ -1,0 +1,40 @@
+{
+  "export": {
+    "products_row_count": 1,
+    "customers_row_count": 1,
+    "backup_kind": "backup_bundle",
+    "revoked_package_id": "b6130113-d12c-4377-9de5-3f32f3d7b6e5"
+  },
+  "import": {
+    "invalid_dry_run": {
+      "rows_total": 2,
+      "rows_valid": 1,
+      "rows_invalid": 1
+    },
+    "committed": {
+      "rows_committed": 1,
+      "product_name": "PX12 Imported Commit 1773234944183"
+    }
+  },
+  "restore": {
+    "drill_id": "7db8bc4b-6d37-461d-a571-e4043b34b63f",
+    "drift_count": 0,
+    "rto_seconds": 1
+  },
+  "privacy": {
+    "customer_phone_masked": "******4183",
+    "raw_phone_absent": true,
+    "national_id_absent": true,
+    "backup_excludes_customers": true
+  },
+  "audit": {
+    "create_export_package": 3,
+    "import_products_dry_run": 2,
+    "import_products_commit": 1,
+    "restore_drill": 1,
+    "revoke_export_package": 1
+  },
+  "notifications": {
+    "portability_event_total": 8
+  }
+}

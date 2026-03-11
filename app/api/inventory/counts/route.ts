@@ -13,7 +13,9 @@ type CreateInventoryCountResponseData = {
 
 export async function POST(request: Request) {
   try {
-    const authorization = await authorizeRequest(["admin"]);
+    const authorization = await authorizeRequest(["admin", "pos_staff"], {
+      requiredPermissions: ["inventory.count.start"]
+    });
     if (!authorization.authorized) {
       return authorization.response;
     }

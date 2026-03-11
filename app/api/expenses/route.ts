@@ -12,7 +12,9 @@ type ExpenseResponseData = {
 
 export async function POST(request: Request) {
   try {
-    const authorization = await authorizeRequest(["admin", "pos_staff"]);
+    const authorization = await authorizeRequest(["admin", "pos_staff"], {
+      requiredPermissions: ["expenses.create"]
+    });
     if (!authorization.authorized) {
       return authorization.response;
     }

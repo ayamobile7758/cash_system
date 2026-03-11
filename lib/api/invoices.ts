@@ -22,6 +22,10 @@ const EDIT_INVOICE_ERROR_MAP = {
   ERR_CUSTOMER_NOT_FOUND: { status: 404, message: "عميل الدين المطلوب غير موجود." },
   ERR_STOCK_INSUFFICIENT: { status: 400, message: "المخزون غير كافٍ لإتمام التعديل." },
   ERR_PAYMENT_MISMATCH: { status: 400, message: "مجموع المدفوعات لا يساوي إجمالي الفاتورة." },
+  ERR_DISCOUNT_APPROVAL_REQUIRED: {
+    status: 403,
+    message: "هذا الخصم يحتاج اعتمادًا من حزمة صلاحيات أعلى."
+  },
   ERR_UNAUTHORIZED: { status: 403, message: "ليس لديك صلاحية لهذه العملية." }
 } as const;
 

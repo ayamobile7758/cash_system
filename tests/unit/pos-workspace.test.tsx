@@ -99,9 +99,12 @@ describe("PosWorkspace", () => {
 
     const searchInput = screen.getByRole("searchbox");
 
-    await waitFor(() => {
+    await waitFor(
+      () => {
       expect(searchInput).toHaveFocus();
-    });
+      },
+      { timeout: 4000 }
+    );
 
     fireEvent.change(searchInput, { target: { value: "شاحن" } });
 

@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { loadEnvConfig } from "@next/env";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { expect, type Page } from "@playwright/test";
 
@@ -12,6 +13,8 @@ export type FixtureUser = {
 };
 
 type ServiceRoleClient = SupabaseClient;
+
+loadEnvConfig(process.cwd());
 
 function requireEnv(name: string) {
   const value = process.env[name];
@@ -94,7 +97,12 @@ export async function login(page: Page, email: string, password: string, targetP
   await page.getByLabel("البريد الإلكتروني").fill(email);
   await page.getByLabel("كلمة المرور").fill(password);
   await page.getByRole("button", { name: "الدخول إلى بيئة التشغيل" }).click();
-  await page.waitForURL(`**${targetPath}`);
+  await page.waitForURL("**/pos");
+
+  if (targetPath !== "/pos") {
+    await page.goto(targetPath, { waitUntil: "domcontentloaded" });
+    await page.waitForLoadState("networkidle");
+  }
 }
 
 export async function expectNoHorizontalOverflow(page: Page) {

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ReportsAdvancedCharts } from "@/components/dashboard/reports-advanced-charts";
 import type { WorkspaceUserOption } from "@/lib/api/dashboard";
 import type { ReportBaseline, SalesHistoryFilters } from "@/lib/api/reports";
 import { formatCompactNumber, formatCurrency, formatDate, formatDateTime } from "@/lib/utils/formatters";
@@ -29,8 +30,13 @@ function buildExportHref(filters: SalesHistoryFilters) {
   const params = new URLSearchParams();
   params.set("from_date", filters.fromDate);
   params.set("to_date", filters.toDate);
-  params.set("page", String(filters.page));
-  params.set("page_size", String(filters.pageSize));
+  params.set("group_by", filters.groupBy ?? "day");
+  params.set("dimension", filters.dimension ?? "account");
+
+  if (filters.compareFromDate && filters.compareToDate) {
+    params.set("compare_from_date", filters.compareFromDate);
+    params.set("compare_to_date", filters.compareToDate);
+  }
 
   if (filters.createdBy) {
     params.set("created_by", filters.createdBy);
@@ -44,27 +50,28 @@ function buildExportHref(filters: SalesHistoryFilters) {
     params.set("pos_terminal_code", filters.posTerminalCode);
   }
 
-  return `/api/reports/export?${params.toString()}`;
+  return `/api/reports/advanced/export?${params.toString()}`;
 }
 
 export function ReportsOverview({ filters, users, terminals, reportBaseline }: ReportsOverviewProps) {
   const exportHref = buildExportHref(filters);
+  const { advancedReport } = reportBaseline;
 
   return (
     <section className="workspace-stack">
       <div className="workspace-hero">
         <div>
-          <p className="eyebrow">PX-07-T05</p>
-          <h1>التقارير المحسنة والتصدير</h1>
+          <p className="eyebrow">PX-11</p>
+          <h1>التقارير المتقدمة والتحليلات المقارنة</h1>
           <p className="workspace-lead">
-            نفس baseline تعرض تقارير الإدارة التفصيلية وتغذي ملف Excel القابل للتصدير، مع فلترة موحدة
-            للتاريخ والمستخدم والجهاز والحالة.
+            هذه الشاشة تجمع compare period وtrend وdrilldown مع baseline التقارير الإدارية القديمة، وتغذي export
+            متطابقًا مع نفس الأرقام الظاهرة على الشاشة.
           </p>
         </div>
 
         <div className="action-row">
           <a href={exportHref} className="primary-button">
-            تصدير Excel
+            تصدير Excel المتقدم
           </a>
           <Link href="/settings" className="secondary-button">
             فتح الإعدادات
@@ -82,6 +89,16 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
           <label className="stack-field">
             <span>إلى تاريخ</span>
             <input type="date" name="to_date" defaultValue={filters.toDate} />
+          </label>
+
+          <label className="stack-field">
+            <span>من تاريخ المقارنة</span>
+            <input type="date" name="compare_from_date" defaultValue={filters.compareFromDate ?? ""} />
+          </label>
+
+          <label className="stack-field">
+            <span>إلى تاريخ المقارنة</span>
+            <input type="date" name="compare_to_date" defaultValue={filters.compareToDate ?? ""} />
           </label>
 
           <label className="stack-field">
@@ -119,6 +136,26 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
             </select>
           </label>
 
+          <label className="stack-field">
+            <span>التجميع</span>
+            <select name="group_by" defaultValue={filters.groupBy ?? "day"}>
+              <option value="day">يومي</option>
+              <option value="week">أسبوعي</option>
+              <option value="month">شهري</option>
+            </select>
+          </label>
+
+          <label className="stack-field">
+            <span>بعد التحليل</span>
+            <select name="dimension" defaultValue={filters.dimension ?? "account"}>
+              <option value="account">الحساب</option>
+              <option value="entry_type">نوع القيد</option>
+              <option value="expense_category">فئة المصروف</option>
+              <option value="supplier">المورد / المزود</option>
+              <option value="maintenance_status">حالة الصيانة</option>
+            </select>
+          </label>
+
           <div className="action-row action-row--end">
             <button type="submit" className="primary-button">
               تطبيق الفلاتر
@@ -128,6 +165,86 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
             </Link>
           </div>
         </form>
+      </section>
+
+      <section className="workspace-panel">
+        <div className="section-heading">
+          <div>
+            <p className="eyebrow">Compare / Trends / Drilldown</p>
+            <h2>ملخص الفترة الحالية مقابل فترة المقارنة</h2>
+          </div>
+          <p className="workspace-footnote">
+            الحالي: {filters.fromDate} → {filters.toDate}
+            {filters.compareFromDate && filters.compareToDate
+              ? ` | المقارنة: ${filters.compareFromDate} → ${filters.compareToDate}`
+              : " | لا توجد فترة مقارنة محددة"}
+          </p>
+        </div>
+
+        <div className="summary-grid">
+          <article className="workspace-panel">
+            <p className="eyebrow">Current Period</p>
+            <h2>{formatCurrency(advancedReport.currentPeriod.sales_total)}</h2>
+            <p className="workspace-footnote">
+              صافي الربح: {formatCurrency(advancedReport.currentPeriod.net_profit)} | المصروفات:{" "}
+              {formatCurrency(advancedReport.currentPeriod.expense_total)}
+            </p>
+          </article>
+
+          <article className="workspace-panel">
+            <p className="eyebrow">Compare Period</p>
+            <h2>{formatCurrency(advancedReport.comparePeriod?.sales_total ?? 0)}</h2>
+            <p className="workspace-footnote">
+              صافي الربح: {formatCurrency(advancedReport.comparePeriod?.net_profit ?? 0)} | المصروفات:{" "}
+              {formatCurrency(advancedReport.comparePeriod?.expense_total ?? 0)}
+            </p>
+          </article>
+
+          <article className="workspace-panel">
+            <p className="eyebrow">Delta Sales</p>
+            <h2>{formatCurrency(advancedReport.delta.sales_total)}</h2>
+            <p className="workspace-footnote">فرق إجمالي المبيعات بين الفترتين</p>
+          </article>
+
+          <article className="workspace-panel">
+            <p className="eyebrow">Delta Profit</p>
+            <h2>{formatCurrency(advancedReport.delta.net_profit)}</h2>
+            <p className="workspace-footnote">فرق صافي الربح بين الفترتين</p>
+          </article>
+        </div>
+
+        <ReportsAdvancedCharts trend={advancedReport.trend} breakdown={advancedReport.breakdown} />
+
+        <div className="table-wrap">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>البند</th>
+                <th>القيمة الأساسية</th>
+                <th>القيمة الثانوية</th>
+                <th>عدد العناصر</th>
+              </tr>
+            </thead>
+            <tbody>
+              {advancedReport.breakdown.length > 0 ? (
+                advancedReport.breakdown.map((entry) => (
+                  <tr key={entry.label}>
+                    <td>{entry.label}</td>
+                    <td>{formatCurrency(entry.amount)}</td>
+                    <td>{formatCurrency(entry.secondary_amount)}</td>
+                    <td>{formatCompactNumber(entry.item_count)}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={4} className="table-empty">
+                    لا توجد بيانات breakdown ضمن الفلاتر الحالية.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </section>
 
       <section className="summary-grid">

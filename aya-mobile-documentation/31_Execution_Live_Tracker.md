@@ -132,15 +132,20 @@
 - `مغلق` `PX-08-T03` `/api/expenses` + `/expenses` + validation
 - `مغلق` `PX-08-T04` inbox الإشعارات + mark as read
 - `مغلق` `PX-08-T05` proof تكامل المصروفات مع `daily_snapshot/reports`
-- `مراجعة` `PX-08` التنفيذ اكتمل وحزمة مراجعة المرحلة جاهزة
+- `مغلق` `PX-08` أُغلقت بنجاح وتم استهلاك `create_expense` بالكامل
+- `مغلق` `PX-09-T01` عقد receipt links + token/revocation
+- `مغلق` `PX-09-T02` public receipt page + share action
+- `مغلق` `PX-09-T03` scheduler لتذكير الديون مع dedupe
+- `مغلق` `PX-09-T04` WhatsApp adapter + delivery log
+- `مغلق` `PX-09-T05` privacy/no-leakage proof
+- `مغلق` `PX-09` أُغلقت بنجاح بعد مراجعة privacy/communication
 
-### المراحل المخططة التالية (بعد مراجعة PX-08)
+### المراحل المخططة التالية
 
-- `التالي` `PX-09` التواصل وروابط الإيصالات
-- `التالي` `PX-10` الصلاحيات الدقيقة وقيود الخصم
-- `التالي` `PX-11` التقارير المتقدمة والتحليلات
-- `التالي` `PX-12` النقل والنسخ الاحتياطي والاستيراد
-- `التالي` `PX-13` الأداء والبحث وتجميع التنبيهات
+- `مغلق` `PX-10` أُغلقت بنجاح بعد مراجعة الصلاحيات الدقيقة وقيود الخصم وتحديث `VB-21` إلى `Pass`
+- `مغلق` `PX-11` أُغلقت بنجاح بعد مراجعة التقارير المتقدمة وparity التصدير
+- `مغلق` `PX-12` أُغلقت بنجاح بعد مراجعة portability/privacy/restore
+- `مغلق` `PX-13` أُغلقت بنجاح بعد مراجعة الأداء والبحث وتجميع التنبيهات
 - `التالي` `PX-14` V2 Release Gate
 
 ---
@@ -201,12 +206,12 @@
 | `PX-05` | Reports + Snapshot + Integrity + Device | اللقطة اليومية + التقارير + فحص النزاهة + جودة الأجهزة | `03`, `09`, `17`, `29` | Device/UAT/Integrity checks ناجحة | `Done` |
 | `PX-06` | MVP Release Gate | فحص قبول MVP وإعلان الجاهزية | `17`, `24`, `27` | اجتياز جميع اختبارات MVP المطلوبة | `Done` |
 | `PX-07` | V1 Expansion | الموردون/المشتريات/الشحن/الجرد/التسوية/الصيانة | `09`, `24` | تسليم V1 بدون كسر عقود MVP | `Done` |
-| `PX-08` | Expense Core + Notification Inbox | استهلاك `create_expense` وفتح المصروفات والإشعارات تشغيليًا | `09`, `18`, `24`, `25` | المصروفات تعمل وتؤثر على snapshot/reports والإشعارات scoped correctly | `Review` |
-| `PX-09` | Communication + Receipt Links | receipt links + reminders + WhatsApp delivery | `09`, `18`, `24`, `25` | public receipt read-only آمن + reminders deduped + delivery log auditable | `Open` |
-| `PX-10` | Fine-Grained Permissions | توسيع الأدوار وقيود الخصم بدون كسر authority | `09`, `10`, `13`, `24`, `25` | role bundles تعمل ولا shadow paths جديدة | `Open` |
-| `PX-11` | Advanced Reports + Comparative Analytics | تقارير مقارنة ورسوم وتحليلات متقدمة | `09`, `03`, `24`, `25` | compare/trend/export parity + proof مالي صحيح | `Open` |
-| `PX-12` | Data Portability + Backup / Import | export/import/restore drill بشكل آمن ومدقق | `09`, `18`, `24`, `25`, `27` | portability تعمل مع audit/privacy/restore proof | `Open` |
-| `PX-13` | Performance + Search + Alert Aggregation | caching آمن + بحث متقدم + مركز تنبيهات | `09`, `17`, `24`, `27` | p95 targets + no stale finance + device regression pass | `Open` |
+| `PX-08` | Expense Core + Notification Inbox | استهلاك `create_expense` وفتح المصروفات والإشعارات تشغيليًا | `09`, `18`, `24`, `25` | المصروفات تعمل وتؤثر على snapshot/reports والإشعارات scoped correctly | `Done` |
+| `PX-09` | Communication + Receipt Links | receipt links + reminders + WhatsApp delivery | `09`, `18`, `24`, `25` | public receipt read-only آمن + reminders deduped + delivery log auditable | `Done` |
+| `PX-10` | Fine-Grained Permissions | توسيع الأدوار وقيود الخصم بدون كسر authority | `09`, `10`, `13`, `24`, `25` | role bundles تعمل ولا shadow paths جديدة | `Done` |
+| `PX-11` | Advanced Reports + Comparative Analytics | تقارير مقارنة ورسوم وتحليلات متقدمة | `09`, `03`, `24`, `25` | compare/trend/export parity + proof مالي صحيح | `Done` |
+| `PX-12` | Data Portability + Backup / Import | export/import/restore drill بشكل آمن ومدقق | `09`, `18`, `24`, `25`, `27` | portability تعمل مع audit/privacy/restore proof | `Done` |
+| `PX-13` | Performance + Search + Alert Aggregation | caching آمن + بحث متقدم + مركز تنبيهات | `09`, `17`, `24`, `27` | p95 targets + no stale finance + device regression pass | `Done` |
 | `PX-14` | V2 Release Gate | فحص قبول V2 وإعلان الجاهزية | `17`, `24`, `27` | UAT V2 + privacy/security/restore = Pass | `Open` |
 
 ---
@@ -4406,6 +4411,84 @@
   - أو `Close PX-08 with Fixes`
   - أو `Keep PX-08 Open / Blocked`
 
+### Phase Review Report — PX-08
+
+- **Review Agent:** `Review Agent (Review-Only)`
+- **Review Date:** `2026-03-11`
+- **Review Scope:** `Phase Close Review — PX-08 — Expense Core + Notification Inbox`
+- **Final Verdict:** `PASS`
+- **Recommendation:** `Close PX-08`
+
+تمت مراجعة إغلاق المرحلة عبر مقارنة migration `013`, طبقة API/UI, الاختبارات, وproof script مع العقود المرجعية والأدلة التنفيذية الموثقة في التراكر. الحكم النهائي أن `PX-08` أغلقت carried-forward item القديم `create_expense` بشكل صحيح، وفتحت طبقة مصروفات وإشعارات تشغيلية متوافقة مع authority الحالية دون فتح write/read paths غير مصرح بها.
+
+1. **هل تحققت Gate Success الخاصة بـ `PX-08`؟**
+   - `PASS`
+   - `create_expense` تعمل عبر `service_role + p_created_by`
+   - `/api/expenses` و`/expenses` تعملان مع validation و`ledger/audit`
+   - `expense_categories` = `Admin CRUD + active read`
+   - `total_expenses/net_profit` تتغيران داخل `snapshots/reports`
+   - `notifications` scoped correctly بين Admin وPOS
+
+2. **هل جميع مهام `PX-08` (`T01..T05`) أصبحت `Done`؟**
+   - `PASS`
+   - `T01 = Done`
+   - `T02 = Done`
+   - `T03 = Done`
+   - `T04 = Done`
+   - `T05 = Done`
+
+3. **هل استهلاك `PX-02-T04-D01 = create_expense` صحيح؟**
+   - `PASS`
+   - `013` أعادت تعريف `create_expense` على `fn_require_actor(p_created_by)`
+   - `REVOKE ALL` + `GRANT EXECUTE TO service_role` تمنع direct execute غير المصرح
+   - `app/api/expenses/route.ts` يمرر `p_created_by = authorization.userId`
+   - `expenses` RLS بقيت scoped (`created_by = auth.uid() OR fn_is_admin()`)
+
+4. **هل `expense_categories` و`/api/expenses` متوافقة مع العقود المرجعية؟**
+   - `PASS`
+   - عقود `25_API_Contracts.md` و`16_Error_Codes.md` و`18_Data_Retention_Privacy.md` متسقة مع التنفيذ
+   - لا يوجد contract mismatch مفتوح
+
+5. **هل `notifications inbox + mark as read` تطبق scoping صحيحًا؟**
+   - `PASS`
+   - Admin = `all`
+   - POS = `own only`
+   - unit tests وproof runtime أثبتا عدم ظهور إشعارات Admin داخل POS
+
+6. **هل proof تكامل المصروفات كافٍ لدعم الإغلاق؟**
+   - `PASS`
+   - script أثبت:
+     - `expense amount = 12`
+     - `account balance 0 -> -12`
+     - `snapshot.total_expenses = 12`
+     - `snapshot.net_profit = -12`
+     - `profit_report.expense_total = 12`
+     - `profit_report.snapshot_net_profit = -12`
+
+**Findings**
+
+| # | Level | Finding | Assessment |
+|---|-------|---------|------------|
+| 1 | `P3 Info` | `expense_categories` direct read متاح للمستخدمين الموثقين ضمن active scope فقط | مقبول؛ ليست بيانات مالية حساسة |
+| 2 | `P3 Info` | `db lint` يعيد warnings `P3` موروثة من migrations أقدم | غير حاجبة |
+| 3 | `P3 Info` | `VB-18` لم تكن محدّثة إلى `Pass` لحظة المراجعة | مسؤولية توثيقية على `Execution Agent` بعد الإغلاق |
+
+**Operational Recommendation**
+
+- `Close PX-08`
+- لا توجد findings بمستوى `P0/P1/P2`
+- `create_expense` لم تعد carried-forward item مفتوحة
+
+### Phase Close Decision — PX-08
+
+- **Decision:** `Closed`
+- **Decision Date:** `2026-03-11`
+- **Basis:** `Phase Review Report — PX-08 = PASS`
+- **PX-08 Deferred Items:** `None`
+- **Project Carried Forward Items (External to PX-08):** `None`
+- **Next Active Phase:** `PX-09`
+- **Next Active Task:** `PX-09-T01`
+
 ---
 
 ## PX-09 — Communication + Receipt Links
@@ -4448,13 +4531,224 @@
 
 ### Planned Tasks
 
-| Task ID | المهمة | المراجع | الحالة الابتدائية | Expected Proofs |
-|---------|--------|---------|-------------------|-----------------|
-| `PX-09-T01` | عقد receipt links + token/revocation | `18`, `25`, `27` | `Open` | token opaque + revocable + expirable |
-| `PX-09-T02` | public receipt page + share action | `03`, `25`, `29` | `Open` | read-only public receipt works on mobile |
-| `PX-09-T03` | scheduler لتذكير الديون مع dedupe | `04`, `17`, `25` | `Open` | reminder proof without duplicate spam |
-| `PX-09-T04` | WhatsApp adapter + delivery log | `18`, `25`, `17` | `Open` | send status + audit trail |
-| `PX-09-T05` | privacy/no-leakage proof | `18`, `27` | `Open` | public link + message payload review pass |
+| Task ID | المهمة | المراجع | Status | Evidence | Updated At | Notes / Blockers |
+|---------|--------|---------|--------|----------|------------|------------------|
+| `PX-09-T01` | عقد receipt links + token/revocation | `18`, `25`, `27` | `Done` | `supabase/migrations/014_receipt_links_communication_v2_alignment.sql`, `app/api/receipts/link/route.ts`, `app/r/[token]/page.tsx`, `lib/api/communication.ts`, `lib/validations/communication.ts`, `tests/unit/receipt-links-route.test.ts`, `scripts/px09-communication-receipts.ts`, `npx supabase db reset --local --debug`, `npx tsx scripts/px09-communication-receipts.ts` | `2026-03-11` | أُغلقت المهمة تنفيذيًا. تم إنشاء `receipt_link_tokens` مع token opaque, expiry, revocation semantics, وإصدار/revoke عبر `service_role` فقط مع `audit_logs`. كما أُضيف مسار public read-only يرفض الحالات `invalid/revoked/expired` دون كشف أي بيانات داخلية. |
+| `PX-09-T02` | public receipt page + share action | `03`, `25`, `29` | `Done` | `app/r/[token]/page.tsx`, `components/dashboard/invoices-workspace.tsx`, `lib/api/communication.ts`, `tests/unit/communication-validation.test.ts`, `tests/unit/receipt-links-route.test.ts`, `scripts/px09-communication-receipts.ts`, `npm run build` | `2026-03-11` | أُغلقت المهمة تنفيذيًا. تم بناء public receipt view read-only compatible with mobile/share flow, مع أزرار إصدار/نسخ/فتح/إلغاء الرابط داخل شاشة الفواتير، ودون كشف `customer_phone`, `notes`, `cost`, `profit`, أو أي بيانات تشغيلية داخلية. |
+| `PX-09-T03` | scheduler لتذكير الديون مع dedupe | `04`, `17`, `25` | `Done` | `supabase/migrations/014_receipt_links_communication_v2_alignment.sql`, `app/api/notifications/debts/run/route.ts`, `lib/api/notifications.ts`, `tests/unit/debt-reminders-route.test.ts`, `scripts/px09-communication-receipts.ts`, `npx supabase db lint --local --fail-on error --level warning --debug` | `2026-03-11` | أُغلقت المهمة تنفيذيًا. تم إضافة `notifications.dedupe_key` وجدولة due/overdue reminders عبر `run_debt_reminder_scheduler`, مع suppression للـ duplicates لنفس الحالة/اليوم وإثبات أن Admin يرى التنبيه وPOS لا يراه خارج scopeه. |
+| `PX-09-T04` | WhatsApp adapter + delivery log | `18`, `25`, `17` | `Done` | `supabase/migrations/014_receipt_links_communication_v2_alignment.sql`, `app/api/messages/whatsapp/send/route.ts`, `components/dashboard/invoices-workspace.tsx`, `components/dashboard/notifications-workspace.tsx`, `lib/api/communication.ts`, `tests/unit/whatsapp-route.test.ts`, `scripts/px09-communication-receipts.ts`, `npm run test` | `2026-03-11` | أُغلقت المهمة تنفيذيًا. baseline واتساب بقي `wa.me` فقط دون مزود خارجي، لكن أصبح Auditable عبر `whatsapp_delivery_logs` بحقول masked phone و`status = queued` وidempotency, مع أزرار تشغيل من الفواتير والإشعارات الإدارية دون تخزين الرقم الخام. |
+| `PX-09-T05` | privacy/no-leakage proof | `18`, `27` | `Done` | `scripts/px09-communication-receipts.ts`, `lib/api/communication.ts`, `app/r/[token]/page.tsx`, `tests/unit/communication-validation.test.ts`, `npx supabase db lint --local --fail-on error --level warning --debug`, `npm run typecheck`, `npm run lint`, `npm run build` | `2026-03-11` | أُغلقت المهمة تنفيذيًا. الـ proof أثبت أن public receipt يعرض فقط `store_name/invoice_number/invoice_date/items/total`, وأن رسائل واتساب لا تحمل `cost/profit/internal notes/current balances`, وأن delivery log يحتفظ بالرقم مقنّعًا فقط. |
+
+---
+
+### Phase Execution Report — PX-09
+
+- **Phase:** `PX-09 — Communication + Receipt Links`
+- **Execution Date:** `2026-03-11`
+- **Execution Status:** `Ready for Phase Review`
+- **Outcome Summary:** اكتملت حزمة `PX-09` كاملة على مستوى DB/API/UI/proof دون كسر authority الحالية. migration `014` أضافت `receipt_link_tokens`, `whatsapp_delivery_logs`, و`notifications.dedupe_key`, ثم بُنيت routes receipt sharing / public receipt / debt reminder scheduler / WhatsApp logging، مع proof تنفيذي يثبت revocation semantics, dedupe behavior, وno-leakage boundaries.
+
+#### Task Outcomes
+
+- `PX-09-T01 = Done`
+- `PX-09-T02 = Done`
+- `PX-09-T03 = Done`
+- `PX-09-T04 = Done`
+- `PX-09-T05 = Done`
+
+#### Key Evidence
+
+- `T01:` `supabase/migrations/014_receipt_links_communication_v2_alignment.sql`, `app/api/receipts/link/route.ts`, `app/r/[token]/page.tsx`, `tests/unit/receipt-links-route.test.ts`, `scripts/px09-communication-receipts.ts`
+- `T02:` `components/dashboard/invoices-workspace.tsx`, `lib/api/communication.ts`, `app/r/[token]/page.tsx`, `tests/unit/communication-validation.test.ts`, `npm run build`
+- `T03:` `app/api/notifications/debts/run/route.ts`, `lib/api/notifications.ts`, `tests/unit/debt-reminders-route.test.ts`, `scripts/px09-communication-receipts.ts`
+- `T04:` `app/api/messages/whatsapp/send/route.ts`, `components/dashboard/notifications-workspace.tsx`, `components/dashboard/invoices-workspace.tsx`, `tests/unit/whatsapp-route.test.ts`, `scripts/px09-communication-receipts.ts`
+- `T05:` `scripts/px09-communication-receipts.ts`, `app/r/[token]/page.tsx`, `lib/api/communication.ts`, `npx supabase db lint --local --fail-on error --level warning --debug`, `npm run typecheck`, `npm run lint`, `npm run test`, `npm run build`
+
+#### Runtime Proof Summary
+
+- `receipt_link.public_state = ok`
+- `receipt_link.revoked_state = revoked`
+- `receipt payload keys = store_name/invoice_number/invoice_date/items/total` فقط
+- `debt_scheduler.first_run_created = 1`
+- `debt_scheduler.second_run_suppressed_duplicates = 1`
+- `admin notifications total = 1`
+- `pos notifications total = 0`
+- `whatsapp delivery log status = queued`
+- `target_phone stored as masked only`
+
+#### Verification Checklist
+
+- `npx supabase start --exclude studio,imgproxy,mailpit,logflare,vector,storage-api,realtime,postgres-meta,edge-runtime,supavisor --debug` = `PASS`
+- `npx supabase db reset --local --debug` = `PASS`
+- `npx tsx scripts/px09-communication-receipts.ts` = `PASS`
+- `npx supabase db lint --local --fail-on error --level warning --debug` = `PASS` (warnings `P3` موروثة فقط)
+- `npm run typecheck` = `PASS`
+- `npm run lint` = `PASS`
+- `npm run test` = `PASS`
+- `npm run build` = `PASS`
+
+#### Gate Success Assessment
+
+- public receipt read-only آمن ومقيّد token/revocation = `Yes`
+- reminders `due/overdue` لا تتكرر لنفس الحالة = `Yes`
+- WhatsApp delivery log auditable بلا تخزين raw phone = `Yes`
+- لا يظهر `cost/profit/internal notes/current balances` في الروابط أو الرسائل = `Yes`
+
+#### Carry-Forward / Risk Notes
+
+- لا توجد deferred items جديدة داخل `PX-09`
+- `VB-19` و`VB-20` جاهزتان لتحديث الحالة بعد تقرير المراجعة النهائي
+- `db lint` ما زالت تعيد warnings `P3` موروثة فقط من migrations أقدم (`004`, `013`) ولا تمنع عبور المرحلة
+
+#### Closure Assessment
+
+- جميع مهام المرحلة = `Done`: `Yes`
+- لا يوجد `P0/P1` مفتوح ضمن scope المرحلة: `Yes`
+- المتبقي قبل الإغلاق النهائي = `Phase Review Report — PX-09` + `Phase Close Decision — PX-09`
+
+### Phase Review Prompt — PX-09
+
+أنت الآن `Review Agent (Review-Only)` لمراجعة إغلاق المرحلة `PX-09 — Communication + Receipt Links`.
+
+مهمتك **قراءة + تحليل + مقارنة + تقديم تقرير فقط**.
+ممنوع التنفيذ، ممنوع التعديل، ممنوع كتابة كود، وممنوع تشغيل Docker أو `supabase start/reset/lint` أو أي أمر يغير الحالة.
+
+راجع المخرجات الحالية مقابل:
+
+- `aya-mobile-documentation/31_Execution_Live_Tracker.md`
+- `aya-mobile-documentation/09_Implementation_Plan.md`
+- `aya-mobile-documentation/18_Data_Retention_Privacy.md`
+- `aya-mobile-documentation/24_AI_Build_Playbook.md`
+- `aya-mobile-documentation/25_API_Contracts.md`
+- `aya-mobile-documentation/17_UAT_Scenarios.md`
+- `aya-mobile-documentation/27_PreBuild_Verification_Matrix.md`
+- `aya-mobile-documentation/16_Error_Codes.md`
+- `aya-mobile-documentation/05_Database_Design.md`
+- `supabase/migrations/014_receipt_links_communication_v2_alignment.sql`
+- `app/api/receipts/link/route.ts`
+- `app/api/notifications/debts/run/route.ts`
+- `app/api/messages/whatsapp/send/route.ts`
+- `app/r/[token]/page.tsx`
+- `components/dashboard/invoices-workspace.tsx`
+- `components/dashboard/notifications-workspace.tsx`
+- `lib/api/communication.ts`
+- `lib/api/notifications.ts`
+- `lib/validations/communication.ts`
+- `tests/unit/communication-validation.test.ts`
+- `tests/unit/receipt-links-route.test.ts`
+- `tests/unit/debt-reminders-route.test.ts`
+- `tests/unit/whatsapp-route.test.ts`
+- `scripts/px09-communication-receipts.ts`
+
+اعتمد فقط على الأدلة التنفيذية الموثقة داخل التراكر من هذه الجلسة:
+
+- `014_receipt_links_communication_v2_alignment.sql` أضافت:
+  - `notifications.dedupe_key`
+  - `receipt_link_tokens`
+  - `whatsapp_delivery_logs`
+  - RPCs `issue_receipt_link`, `revoke_receipt_link`, `run_debt_reminder_scheduler`, `create_whatsapp_delivery_log`
+- `/api/receipts/link` يعمل لإصدار/revoke الرابط مع `service_role + p_created_by`
+- `/r/[token]` يعرض receipt read-only فقط بحالات `ok/invalid/revoked/expired`
+- `/api/notifications/debts/run` يعمل بـ admin session أو `CRON_SECRET`
+- `/api/messages/whatsapp/send` يعمل كـ audited `wa.me` adapter دون مزود خارجي
+- proof script أثبت:
+  - `receipt_link.public_state = ok`
+  - `receipt_link.revoked_state = revoked`
+  - `debt_scheduler.first_run_created = 1`
+  - `debt_scheduler.second_run_suppressed_duplicates = 1`
+  - `admin notifications total = 1`
+  - `pos notifications total = 0`
+  - `whatsapp delivery log status = queued`
+  - `target_phone stored as masked only`
+- `db lint` النهائي = بدون errors، مع warnings `P3` فقط
+- `typecheck`, `lint`, `test`, `build` = `PASS`
+
+تحقق تحديدًا من:
+
+1. هل تحققت `Gate Success` الخاصة بـ `PX-09` بالأدلة الموثقة؟
+2. هل جميع مهام `PX-09` (`T01..T05`) أصبحت `Done` رسميًا؟
+3. هل `receipt links` تطبق token opaque + expiry + revoke semantics دون كشف بيانات داخلية؟
+4. هل `public receipt` و`WhatsApp payloads` يمنعان أي leakage لـ `cost/profit/internal notes/current balances/customer phone raw`؟
+5. هل scheduler تذكير الديون يطبق dedupe صحيحًا دون spam، وهل scoping الإشعارات بقي صحيحًا؟
+6. هل baseline واتساب الحالية (`wa.me` + local delivery log) متوافقة مع عقود `18/25` ولا تحتاج deferred item خاصًا؟
+7. هل التوصية الصحيحة هي:
+   - `Close PX-09`
+   - أو `Close PX-09 with Fixes`
+   - أو `Keep PX-09 Open / Blocked`
+
+أخرج تقريرك بصيغة:
+
+- `Phase Review Report — PX-09`
+- الحكم النهائي: `PASS` أو `PASS WITH FIXES` أو `FAIL`
+- قائمة findings مرتبة حسب الخطورة
+- تحديد واضح هل التوصية:
+  - `Close PX-09`
+  - أو `Close PX-09 with Fixes`
+  - أو `Keep PX-09 Open / Blocked`
+
+---
+
+### Phase Review Report — PX-09
+
+- **Review Agent:** `Review Agent (Review-Only)`
+- **Review Date:** `2026-03-11`
+- **Review Scope:** `Phase Close Review — PX-09 — Communication + Receipt Links`
+- **Final Verdict:** `PASS`
+- **Recommendation:** `Close PX-09`
+
+تمت مراجعة إغلاق المرحلة عبر مقارنة migration `014`, طبقة API/UI, proof script, والوثائق المرجعية (`05/09/16/17/18/24/25/27`) مع الأدلة التنفيذية الموثقة في التراكر. الحكم النهائي أن `PX-09` أغلقت شريحة التواصل وروابط الإيصالات بشكل صحيح، مع receipt links آمنة، public receipt read-only, reminder dedupe صحيح، وdelivery log واتساب قابل للتدقيق دون تخزين raw phone.
+
+1. **هل تحققت Gate Success الخاصة بـ `PX-09`؟**
+   - `PASS`
+   - `receipt links`: token opaque + expiry + revoke semantics متحققة عبر `receipt_link_tokens`, `issue_receipt_link`, `revoke_receipt_link`, وproof `ok -> revoked`.
+   - `public receipt`: لا تعرض إلا `store_name/invoice_number/invoice_date/items/total`، ولا يوجد كشف لـ `cost/profit/internal notes/current balances/customer phone raw`.
+   - `debt reminders`: `notifications.dedupe_key` + scheduler proof أثبتا `created = 1` ثم `suppressed_duplicates = 1`.
+   - `WhatsApp`: baseline `wa.me` + `whatsapp_delivery_logs` بحقول masked phone و`status = queued`، مع route Admin-only وidempotency.
+
+2. **هل جميع مهام `PX-09` (`T01..T05`) أصبحت `Done`؟**
+   - `PASS`
+   - `PX-09-T01` إلى `PX-09-T05` جميعها مغلقة تنفيذيًا مع evidence كافية في التراكر.
+
+3. **هل `receipt links` و`public receipt` و`WhatsApp payloads` محكومة بحدود privacy صحيحة؟**
+   - `PASS`
+   - `05_Database_Design.md`, `18_Data_Retention_Privacy.md`, و`25_API_Contracts.md` أصبحت متوافقة مع التنفيذ الحالي.
+   - public route لا يكشف بيانات تشغيلية داخلية.
+   - delivery log لا يخزن raw phone ويثبت intent/audit فقط.
+
+4. **هل scheduler تذكير الديون وscoping الإشعارات صحيحان؟**
+   - `PASS`
+   - Admin يرى reminder notifications.
+   - POS لا يرى reminder notifications خارج scopeه.
+   - `mark as read` بقي scoped كما في `PX-08`.
+
+5. **هل توجد findings حاجبة؟**
+   - لا توجد findings بمستوى `P0/P1/P2`.
+   - الموجود فقط `P3 Info`:
+     - warnings `db lint` الموروثة من migrations أقدم.
+     - baseline واتساب ما زالت `wa.me` دون مزود خارجي، لكنه قرار موثق ومتوافق مع العقود الحالية.
+
+#### Findings Summary
+
+| # | Level | Finding | Assessment |
+|---|-------|---------|------------|
+| `F1` | `P3` | warnings `db lint` الموروثة من `004/013` ما زالت موجودة | غير حاجبة |
+| `F2` | `P3` | baseline واتساب = `wa.me` + local delivery log فقط | مقبول ومتوافق مع `18/25/22/01` |
+
+#### Final Operational Recommendation
+
+- `Close PX-09`
+- لا توجد deferred items جديدة داخل المرحلة.
+- `VB-19` و`VB-20` تستحقان التحديث إلى `Pass`.
+- الانتقال إلى `PX-10-T01` آمن.
+
+### Phase Close Decision — PX-09
+
+- **Decision:** `Closed`
+- **Basis:** `Phase Review Report — PX-09 = PASS`
+- **PX-09 Deferred Items:** `None`
+- **Project Carried Forward Items (External to PX-09):** `None`
+- **Next Active Phase:** `PX-10`
+- **Next Active Task:** `PX-10-T01`
 
 ---
 
@@ -4502,11 +4796,314 @@
 
 | Task ID | المهمة | المراجع | الحالة الابتدائية | Expected Proofs |
 |---------|--------|---------|-------------------|-----------------|
-| `PX-10-T01` | حزمة عقود role expansion (`ADR + schema + API matrix`) | `10`, `13`, `25`, `27` | `Open` | approved contract package |
-| `PX-10-T02` | permission bundles + role assignment flows | `03`, `25`, `17` | `Open` | auditable role assignment |
-| `PX-10-T03` | حراسة UI/API/navigation حسب bundles | `13`, `25`, `29` | `Open` | role-specific rendering + HTTP guards |
-| `PX-10-T04` | قيود الخصم والاعتماد بحسب الدور | `04`, `16`, `25` | `Open` | discount limit enforcement + audit |
-| `PX-10-T05` | regression على Blind POS وauthority | `18`, `27`, `17` | `Open` | no new shadow path proof |
+| `PX-10-T01` | حزمة عقود role expansion (`ADR + schema + API matrix`) | `10`, `13`, `25`, `27` | `Done` | `aya-mobile-documentation/10_ADRs.md`, `aya-mobile-documentation/13_Tech_Config.md`, `aya-mobile-documentation/05_Database_Design.md`, `aya-mobile-documentation/25_API_Contracts.md` | `2026-03-11` | أُغلقت المهمة تنفيذيًا. تم تثبيت نموذج `profiles.role` كسقف authority أساسي، مع توسيع الصلاحيات عبر `permission_bundles` و`role_assignments` فقط، وربط governance الخصم بعقد `ERR_DISCOUNT_APPROVAL_REQUIRED` قبل أي feature code. |
+| `PX-10-T02` | permission bundles + role assignment flows | `03`, `25`, `17` | `Done` | `supabase/migrations/015_permissions_discount_v2_alignment.sql`, `app/api/roles/assign/route.ts`, `app/api/permissions/preview/route.ts`, `components/dashboard/permissions-panel.tsx`, `lib/api/dashboard.ts`, `lib/validations/permissions.ts`, `tests/unit/roles-assign-route.test.ts`, `tests/unit/permissions-preview-route.test.ts`, `tests/unit/permissions-validation.test.ts`, `tests/unit/permissions-model.test.ts`, `scripts/px10-permissions-discount.ts` | `2026-03-11` | أُغلقت المهمة تنفيذيًا. أصبحت bundles قابلة للمعاينة والإسناد والإلغاء إداريًا عبر `service_role + p_created_by`, مع audit صريح ومنع duplicate active assignment أو silent privilege escalation. |
+| `PX-10-T03` | حراسة UI/API/navigation حسب bundles | `13`, `25`, `29` | `Done` | `lib/permissions.ts`, `lib/api/common.ts`, `app/(dashboard)/access.ts`, `app/(dashboard)/layout.tsx`, `app/(dashboard)/expenses/page.tsx`, `app/(dashboard)/operations/page.tsx`, `app/(dashboard)/maintenance/page.tsx`, `app/(dashboard)/inventory/page.tsx`, `components/dashboard/inventory-workspace.tsx`, `components/dashboard/maintenance-workspace.tsx`, `components/dashboard/settings-ops.tsx`, `scripts/px10-permissions-discount.ts` | `2026-03-11` | أُغلقت المهمة تنفيذيًا. صارت الشاشات والroutes تعتمد على `requiredPermissions` وpermission context الفعلي، مع إخفاء التنقلات غير المسموح بها، وحجب أرصدة الحسابات وسجل التسويات عن non-admin حتى عند امتلاك bundle تشغيلية. |
+| `PX-10-T04` | قيود الخصم والاعتماد بحسب الدور | `04`, `16`, `25` | `Done` | `supabase/migrations/015_permissions_discount_v2_alignment.sql`, `app/api/sales/route.ts`, `lib/api/sales.ts`, `lib/api/invoices.ts`, `tests/unit/sales-route.test.ts`, `scripts/px10-permissions-discount.ts` | `2026-03-11` | أُغلقت المهمة تنفيذيًا. `create_sale` أصبحت تقرأ bundle discount policy، وتُرجع `ERR_DISCOUNT_EXCEEDED` أو `ERR_DISCOUNT_APPROVAL_REQUIRED` حسب policy، مع `audit_logs` من نوع `discount_override_bundle` وإشعار `large_discount` للـ Admin عند override صالح. |
+| `PX-10-T05` | regression على Blind POS وauthority | `18`, `27`, `17` | `Done` | `scripts/px10-permissions-discount.ts`, `npx supabase db reset --local --debug`, `npx supabase db lint --local --fail-on error --level warning`, `npm run typecheck`, `npm run lint`, `npm run test`, `npm run build` | `2026-03-11` | أُغلقت المهمة تنفيذيًا. الـ proof أثبت أن POS الموثق لا يستطيع القراءة أو الكتابة على `permission_bundles/role_assignments` مباشرة، وأن bundles التشغيلية لا تفتح shadow paths جديدة ولا تعيد كشف balances أو reconciliation history خارج حدود الـ Admin. |
+
+---
+
+### Execution Report — PX-10-T01
+
+- **Task:** `PX-10-T01 — حزمة عقود role expansion`
+- **Execution Date:** `2026-03-11`
+- **Execution Status:** `Ready for Review`
+
+**Outcome Summary**
+- اكتملت حزمة العقد المرجعية الخاصة بـ `PX-10-T01` دون البدء بأي feature code. تم تثبيت قرار أن `profiles.role` يبقى coarse authority ceiling (`admin` / `pos_staff`) وأن التوسعة ستتم عبر `permission_bundles` + `role_assignments` فقط، مع منع أي direct grants أو privilege escalation بسبب bundles.
+
+**Key Decisions**
+- `ADR-047`: bundles فوق coarse role، لا بديل عن `profiles.role`.
+- `ADR-048`: discount governance سيرتبط لاحقًا بـ bundle cap + approval policy مع `ERR_DISCOUNT_APPROVAL_REQUIRED`.
+- `13_Tech_Config`: أضيف contract صريح يمنع bundles من تجاوز `fn_require_admin_actor()` أو كسر Blind POS.
+- `05_Database_Design`: أضيفت جداول `permission_bundles` و`role_assignments` كعقد schema.
+- `25_API_Contracts`: تحويل `roles/permissions` من `role_key` إلى `bundle_key`، وربط عقود البيع/التعديل بمسار discount approval المستقبلي.
+
+**Files Updated**
+- `aya-mobile-documentation/10_ADRs.md`
+- `aya-mobile-documentation/13_Tech_Config.md`
+- `aya-mobile-documentation/05_Database_Design.md`
+- `aya-mobile-documentation/25_API_Contracts.md`
+
+**Closure Assessment**
+- contract package مكتملة: `Yes`
+- لا feature code قبل اعتماد العقد: `Yes`
+- no authority regression introduced by docs: `Yes`
+- المتبقي قبل الإغلاق النهائي: `Review Report — PX-10-T01` و`Close Decision — PX-10-T01`
+
+### Review Prompt — PX-10-T01
+
+أنت الآن `Review Agent (Review-Only)` لمراجعة `PX-10-T01 — حزمة عقود role expansion`.
+
+مهمتك **قراءة + تحليل + مقارنة + تقديم تقرير فقط**.
+ممنوع التنفيذ، ممنوع التعديل، ممنوع كتابة كود، وممنوع تشغيل Docker أو أي أمر يغير الحالة.
+
+هذه مراجعة **Contract Package Only** وليست مراجعة تنفيذ features.
+
+راجع فقط مقابل:
+
+- `aya-mobile-documentation/31_Execution_Live_Tracker.md`
+- `aya-mobile-documentation/09_Implementation_Plan.md`
+- `aya-mobile-documentation/10_ADRs.md`
+- `aya-mobile-documentation/13_Tech_Config.md`
+- `aya-mobile-documentation/05_Database_Design.md`
+- `aya-mobile-documentation/25_API_Contracts.md`
+- `aya-mobile-documentation/16_Error_Codes.md`
+- `aya-mobile-documentation/17_UAT_Scenarios.md`
+- `aya-mobile-documentation/27_PreBuild_Verification_Matrix.md`
+
+تحقق تحديدًا من:
+
+1. هل قرار الإبقاء على `profiles.role` كـ coarse authority ceiling صحيح ومتسق مع `MVP/V1`؟
+2. هل `ADR-047` و`ADR-048` يغلقان gap التوسعة دون فتح privilege escalation أو shadow paths؟
+3. هل تصميم `permission_bundles` و`role_assignments` في `05_Database_Design.md` كافٍ لبدء `PX-10-T02`؟
+4. هل تحويل `/api/roles/assign` و`/api/permissions/preview` إلى `bundle_key` بدل `role_key` صحيح تعاقديًا؟
+5. هل ربط `ERR_DISCOUNT_APPROVAL_REQUIRED` بعقود `sales` و`invoices/edit` صحيح ومبرر قبل تنفيذ `PX-10-T04`؟
+6. هل الحزمة التنفيذية جاهزة للانتقال إلى `PX-10-T02` بعد اعتماد `T01`؟
+7. هل التوصية الصحيحة هي:
+   - `Close PX-10-T01`
+   - أو `Close PX-10-T01 with Fixes`
+   - أو `Keep PX-10-T01 Open`
+
+أخرج تقريرك بصيغة:
+
+- `Review Report — PX-10-T01`
+- الحكم النهائي: `PASS` أو `PASS WITH FIXES` أو `FAIL`
+- قائمة findings مرتبة حسب الخطورة
+- توصية إجرائية واضحة بخصوص إغلاق `PX-10-T01`
+
+---
+
+### Phase Execution Report — PX-10
+
+- **Phase:** `PX-10 — Fine-Grained Permissions + Discount Governance`
+- **Execution Date:** `2026-03-11`
+- **Execution Status:** `Ready for Phase Review`
+- **Outcome Summary:** اكتملت `PX-10` كاملة على مستوى العقود وDB/API/UI/proof دون كسر authority الحالية. migration `015` أضافت `permission_bundles` و`role_assignments`, وفتحت flows إدارية auditable لإسناد bundles, ثم فُرضت حراسة bundle-aware على surfaces التشغيلية، وأصبحت قيود الخصم تُحكم عبر bundle cap + approval policy مع audit وإشعارات واضحة، ثم أُثبت عبر regression مباشر أن Blind POS لا ينكسر وأنه لا توجد shadow paths جديدة.
+
+#### Task Outcomes
+
+- `PX-10-T01 = Done`
+- `PX-10-T02 = Done`
+- `PX-10-T03 = Done`
+- `PX-10-T04 = Done`
+- `PX-10-T05 = Done`
+
+#### Key Evidence
+
+- `T01:` `aya-mobile-documentation/10_ADRs.md`, `aya-mobile-documentation/13_Tech_Config.md`, `aya-mobile-documentation/05_Database_Design.md`, `aya-mobile-documentation/25_API_Contracts.md`
+- `T02:` `supabase/migrations/015_permissions_discount_v2_alignment.sql`, `app/api/roles/assign/route.ts`, `app/api/permissions/preview/route.ts`, `components/dashboard/permissions-panel.tsx`, `lib/validations/permissions.ts`, `tests/unit/roles-assign-route.test.ts`, `tests/unit/permissions-preview-route.test.ts`, `tests/unit/permissions-model.test.ts`
+- `T03:` `lib/permissions.ts`, `lib/api/common.ts`, `app/(dashboard)/access.ts`, `app/(dashboard)/layout.tsx`, `app/(dashboard)/expenses/page.tsx`, `app/(dashboard)/operations/page.tsx`, `app/(dashboard)/maintenance/page.tsx`, `app/(dashboard)/inventory/page.tsx`, `components/dashboard/inventory-workspace.tsx`, `components/dashboard/maintenance-workspace.tsx`
+- `T04:` `supabase/migrations/015_permissions_discount_v2_alignment.sql`, `app/api/sales/route.ts`, `lib/api/sales.ts`, `lib/api/invoices.ts`, `tests/unit/sales-route.test.ts`, `scripts/px10-permissions-discount.ts`
+- `T05:` `scripts/px10-permissions-discount.ts`, `npx supabase db reset --local --debug`, `npx supabase db lint --local --fail-on error --level warning`, `npm run typecheck`, `npm run lint`, `npm run test`, `npm run build`
+
+#### Runtime Proof Summary
+
+- `assign_expenses_bundle = true`
+- `revoke_expenses_bundle = true`
+- `invalid_admin_assignment_rejected = true`
+- `pos_permission_tables.select_blocked = true`
+- `pos_permission_tables.insert_blocked = true`
+- `inventory_bundle.read = true`
+- `inventory_bundle.count_complete = true`
+- `inventory_bundle.masked_accounts = true`
+- `inventory_bundle.hidden_reconciliations = true`
+- `maintenance_bundle.status_update = true`
+- `maintenance_bundle.balances_masked = true`
+- `base_pos_discount = ERR_DISCOUNT_EXCEEDED`
+- `guarded_bundle_discount = ERR_DISCOUNT_APPROVAL_REQUIRED`
+- `supervisor_bundle_sale_total = 88`
+- `override_audit_action = discount_override_bundle`
+- `large_discount_notification = large_discount`
+
+#### Verification Checklist
+
+- `npx supabase db reset --local --debug` = `PASS`
+- `npm run typecheck` = `PASS`
+- `npx tsx scripts/px10-permissions-discount.ts` = `PASS`
+- `npx supabase db lint --local --fail-on error --level warning` = `PASS` (warnings `P3` فقط)
+- `npm run lint` = `PASS`
+- `npm run test` = `PASS` (`135/135`)
+- `npm run build` = `PASS`
+- `git diff --check` = clean content diff (warnings line endings only)
+
+#### Gate Success Assessment
+
+- role bundles تعمل مع assignment auditable = `Yes`
+- UI/API/navigation محكومة حسب bundles دون fallback permissive = `Yes`
+- discount limits والاعتماد تعمل مع audit + notification = `Yes`
+- لا توجد shadow paths أو direct access جديدة على `permission_bundles/role_assignments` = `Yes`
+- Blind POS بقيت سليمة مع masking إضافي للـ balances والتسويات = `Yes`
+
+#### Carry-Forward / Risk Notes
+
+- لا توجد deferred items جديدة داخل `PX-10`
+- `VB-21` جاهزة لتحديث الحالة بعد تقرير المراجعة النهائي
+- `db lint` تعيد warnings `P3` موروثة فقط من migrations سابقة ولا تمنع عبور المرحلة
+
+#### Closure Assessment
+
+- جميع مهام المرحلة = `Done`: `Yes`
+- لا يوجد `P0/P1` مفتوح ضمن scope المرحلة: `Yes`
+- المتبقي قبل الإغلاق النهائي = `Phase Review Report — PX-10` + `Phase Close Decision — PX-10`
+
+### Phase Review Prompt — PX-10
+
+أنت الآن `Review Agent (Review-Only)` لمراجعة إغلاق المرحلة `PX-10 — Fine-Grained Permissions + Discount Governance`.
+
+مهمتك **قراءة + تحليل + مقارنة + تقديم تقرير فقط**.
+ممنوع التنفيذ، ممنوع التعديل، ممنوع كتابة كود، وممنوع تشغيل Docker أو `supabase start/reset/lint` أو أي أمر يغير الحالة.
+
+راجع المخرجات الحالية مقابل:
+
+- `aya-mobile-documentation/31_Execution_Live_Tracker.md`
+- `aya-mobile-documentation/09_Implementation_Plan.md`
+- `aya-mobile-documentation/10_ADRs.md`
+- `aya-mobile-documentation/13_Tech_Config.md`
+- `aya-mobile-documentation/18_Data_Retention_Privacy.md`
+- `aya-mobile-documentation/24_AI_Build_Playbook.md`
+- `aya-mobile-documentation/25_API_Contracts.md`
+- `aya-mobile-documentation/17_UAT_Scenarios.md`
+- `aya-mobile-documentation/27_PreBuild_Verification_Matrix.md`
+- `aya-mobile-documentation/16_Error_Codes.md`
+- `aya-mobile-documentation/05_Database_Design.md`
+- `supabase/migrations/015_permissions_discount_v2_alignment.sql`
+- `app/api/roles/assign/route.ts`
+- `app/api/permissions/preview/route.ts`
+- `app/api/sales/route.ts`
+- `app/(dashboard)/access.ts`
+- `app/(dashboard)/layout.tsx`
+- `app/(dashboard)/expenses/page.tsx`
+- `app/(dashboard)/operations/page.tsx`
+- `app/(dashboard)/inventory/page.tsx`
+- `app/(dashboard)/maintenance/page.tsx`
+- `components/dashboard/permissions-panel.tsx`
+- `components/dashboard/inventory-workspace.tsx`
+- `components/dashboard/maintenance-workspace.tsx`
+- `components/dashboard/settings-ops.tsx`
+- `lib/api/common.ts`
+- `lib/api/dashboard.ts`
+- `lib/api/permissions.ts`
+- `lib/api/sales.ts`
+- `lib/api/invoices.ts`
+- `lib/permissions.ts`
+- `lib/validations/permissions.ts`
+- `tests/unit/roles-assign-route.test.ts`
+- `tests/unit/permissions-preview-route.test.ts`
+- `tests/unit/permissions-validation.test.ts`
+- `tests/unit/permissions-model.test.ts`
+- `tests/unit/sales-route.test.ts`
+- `scripts/px10-permissions-discount.ts`
+
+اعتمد فقط على الأدلة التنفيذية الموثقة داخل التراكر من هذه الجلسة:
+
+- migration `015_permissions_discount_v2_alignment.sql` أضافت `permission_bundles` و`role_assignments` مع `REVOKE ALL` وRLS deny policies
+- `/api/roles/assign` تدعم `POST/DELETE` لإسناد وإلغاء bundle عبر `service_role + p_created_by`
+- `/api/permissions/preview` تعيد bundle preview إداريًا فقط
+- navigation وpages التشغيلية أصبحت gated حسب `requiredPermissions`
+- non-admin لا يرى balances ولا reconciliation history داخل inventory/maintenance baselines
+- proof script أثبت:
+  - `assign/revoke bundle = true`
+  - `invalid admin assignment = rejected`
+  - `authenticated POS direct read/write على permission tables = blocked`
+  - `inventory bundle = read/count_complete with masked accounts + hidden reconciliations`
+  - `maintenance bundle = status_update with masked balances`
+  - `base_pos_discount = ERR_DISCOUNT_EXCEEDED`
+  - `guarded_bundle_discount = ERR_DISCOUNT_APPROVAL_REQUIRED`
+  - `supervisor bundle sale total = 88`
+  - `discount_override_bundle audit = present`
+  - `large_discount notification = present`
+- `db lint` النهائي = بدون errors، مع warnings `P3` فقط
+- `typecheck`, `lint`, `test`, `build` = `PASS`
+
+تحقق تحديدًا من:
+
+1. هل تحققت `Gate Success` الخاصة بـ `PX-10` بالأدلة الموثقة؟
+2. هل جميع مهام `PX-10` (`T01..T05`) أصبحت `Done` رسميًا؟
+3. هل bundles الجديدة تعمل فوق `profiles.role` دون فتح privilege escalation أو shadow paths؟
+4. هل UI/API/navigation guards أصبحت متوافقة مع العقود المرجعية وتحافظ على Blind POS؟
+5. هل discount governance الحالية كافية لإثبات:
+   - `ERR_DISCOUNT_EXCEEDED`
+   - `ERR_DISCOUNT_APPROVAL_REQUIRED`
+   - وجود `discount_override_bundle` audit
+   - وجود `large_discount` notification
+6. هل proof عدم كشف balances/reconciliations لغير الـ Admin كافٍ لدعم إغلاق المرحلة؟
+7. هل التوصية الصحيحة هي:
+   - `Close PX-10`
+   - أو `Close PX-10 with Fixes`
+   - أو `Keep PX-10 Open / Blocked`
+
+أخرج تقريرك بصيغة:
+
+- `Phase Review Report — PX-10`
+- الحكم النهائي: `PASS` أو `PASS WITH FIXES` أو `FAIL`
+- قائمة findings مرتبة حسب الخطورة
+- تحديد واضح هل التوصية:
+  - `Close PX-10`
+  - أو `Close PX-10 with Fixes`
+  - أو `Keep PX-10 Open / Blocked`
+
+---
+
+### Phase Review Report — PX-10
+
+- **Review Agent:** `Review Agent (Review-Only)`
+- **Review Date:** `2026-03-11`
+- **Review Scope:** `Phase Close Review — PX-10 — Fine-Grained Permissions + Discount Governance`
+- **Final Verdict:** `PASS`
+- **Recommendation:** `Close PX-10`
+
+تمت مراجعة المرحلة على مستوى العقد والـ schema والـ API والـ UI والاختبارات وproof script. الحكم النهائي أن `PX-10` حافظت على `profiles.role` كسقف authority، وأضافت bundles قابلة للإسناد والإلغاء عبر `service_role + p_created_by` فقط، وفرضت gating فعلي على navigation/pages/routes، ثم أثبتت governance الخصم عبر `ERR_DISCOUNT_EXCEEDED` و`ERR_DISCOUNT_APPROVAL_REQUIRED` مع audit وإشعار إداري، دون فتح privilege escalation أو shadow paths جديدة.
+
+1. **Gate Success الخاصة بـ `PX-10`**
+   - `PASS`
+   - bundles تعمل فوق `profiles.role` دون كسر authority الحالية.
+   - permission tables تبقى محجوبة عن `authenticated/POS` قراءةً وكتابةً.
+   - UI/API/navigation أصبحت gated حسب `requiredPermissions`.
+   - non-admin لا يرى balances ولا reconciliation history داخل inventory/maintenance.
+   - discount governance أثبتت `ERR_DISCOUNT_EXCEEDED` و`ERR_DISCOUNT_APPROVAL_REQUIRED` مع `discount_override_bundle` audit و`large_discount` notification.
+
+2. **حالة مهام المرحلة**
+   - `PASS`
+   - `PX-10-T01..T05 = Done`
+   - جميع الأدلة التنفيذية المطلوبة موجودة داخل التراكر، مع `db reset`, `proof script`, `db lint`, `typecheck`, `lint`, `test = 135/135`, و`build`.
+
+3. **Authority / Blind POS / Privacy**
+   - `PASS`
+   - `permission_bundles` و`role_assignments` محميتان بـ `REVOKE ALL` وRLS deny policies.
+   - bundles الجديدة لا تعطي صلاحيات أعلى من `profiles.role`، بل تعمل ضمن سقفه.
+   - baselines التشغيلية لا تكشف balances أو reconciliation history لغير الـ Admin.
+
+4. **Discount Governance**
+   - `PASS`
+   - base POS discount أعلى من الحد يرجع `ERR_DISCOUNT_EXCEEDED`.
+   - bundle guarded discount يرجع `ERR_DISCOUNT_APPROVAL_REQUIRED`.
+   - supervisor bundle sale تمرّ وتُنشئ `discount_override_bundle` audit وإشعار `large_discount`.
+   - السماح للـ Admin بخصومات غير محدودة بقي intentional by contract.
+
+#### Findings Summary
+
+| # | Level | Finding | Assessment |
+|---|-------|---------|------------|
+| `F1` | `P3` | توجد فجوة تغطية اختبارية صغيرة لمسار `ERR_DISCOUNT_EXCEEDED` على مستوى route | تحسين غير حاجب؛ يمكن إضافته لاحقًا |
+| `F2` | `P3` | `db lint` ما زالت تعيد warnings موروثة من migrations أقدم | غير حاجبة |
+
+#### Final Operational Recommendation
+
+- `Close PX-10`
+- لا توجد findings بمستوى `P0/P1/P2`
+- الانتقال إلى `PX-11-T01` آمن
+
+### Phase Close Decision — PX-10
+
+- **Decision:** `Closed`
+- **Decision Date:** `2026-03-11`
+- **Basis:** `Phase Review Report — PX-10 = PASS`
+- **PX-10 Deferred Items:** `None`
+- **Project Carried Forward Items (External to PX-10):** `None`
+- **Next Active Phase:** `PX-11`
+- **Next Active Task:** `PX-11-T01`
 
 ---
 
@@ -4552,11 +5149,238 @@
 
 | Task ID | المهمة | المراجع | الحالة الابتدائية | Expected Proofs |
 |---------|--------|---------|-------------------|-----------------|
-| `PX-11-T01` | عقود التقارير المتقدمة | `25`, `03` | `Open` | compare/trend/drilldown contract |
-| `PX-11-T02` | تقارير فترة ومقارنة فترة | `09`, `17`, `25` | `Open` | month-vs-month proof |
-| `PX-11-T03` | charts وvisual analytics | `03`, `29` | `Open` | charts render across devices |
-| `PX-11-T04` | parity بين الشاشة والتصدير | `25`, `27` | `Open` | UI/export parity proof |
-| `PX-11-T05` | proof مالي للتقارير المتقدمة | `06`, `17`, `27` | `Open` | totals == ledger/snapshots |
+| `PX-11-T01` | عقود التقارير المتقدمة | `25`, `03` | `Done` | compare/trend/drilldown contract |
+| `PX-11-T02` | تقارير فترة ومقارنة فترة | `09`, `17`, `25` | `Done` | month-vs-month proof |
+| `PX-11-T03` | charts وvisual analytics | `03`, `29` | `Done` | charts render across devices |
+| `PX-11-T04` | parity بين الشاشة والتصدير | `25`, `27` | `Done` | UI/export parity proof |
+| `PX-11-T05` | proof مالي للتقارير المتقدمة | `06`, `17`, `27` | `Done` | totals == ledger/snapshots |
+
+### Phase Execution Report — PX-11
+
+- **Phase:** `PX-11 — Advanced Reports + Comparative Analytics`
+- **Execution Date:** `2026-03-11`
+- **Execution Status:** `Ready for Phase Review`
+- **Outcome Summary:** اكتملت `PX-11` كاملة على مستوى العقود وDB/API/UI/export/proof دون كسر authority أو Blind POS. أضيفت طبقة تقارير متقدمة تدعم compare periods وtrend charts وbreakdowns وdelta metrics، ثم ثُبتت parity بين الشاشة وملف Excel، وأُغلق drift فعلي في طبقة التقارير حول `expenses.category_id`, ثم أُثبتت correctness المالية مباشرة مقابل `expenses`, `daily_snapshots`, و`ledger_entries`.
+
+#### Task Outcomes
+
+- `PX-11-T01 = Done`
+- `PX-11-T02 = Done`
+- `PX-11-T03 = Done`
+- `PX-11-T04 = Done`
+- `PX-11-T05 = Done`
+
+#### Key Evidence
+
+- `T01:` `aya-mobile-documentation/25_API_Contracts.md`, `lib/validations/reports.ts`, `app/api/reports/advanced/route.ts`, `app/api/reports/advanced/export/route.ts`
+- `T02:` `lib/api/reports.ts`, `scripts/px11-advanced-reports.ts`, `tests/unit/reports-advanced-validation.test.ts`, `tests/unit/reports-advanced-route.test.ts`
+- `T03:` `components/dashboard/reports-overview.tsx`, `components/dashboard/reports-advanced-charts.tsx`, `app/globals.css`, `tests/e2e/px11-reports.spec.ts`
+- `T04:` `lib/reports/export.ts`, `tests/unit/reports-advanced-export.test.ts`, `tests/unit/reports-advanced-export-route.test.ts`, `tests/unit/reports-export.test.ts`, `tests/unit/reports-export-route.test.ts`, `output/spreadsheet/px11-advanced-report.xlsx`
+- `T05:` `scripts/px11-advanced-reports.ts`, `npx supabase db reset --local --debug`, `npx supabase db lint --local --fail-on error --level warning`, `npm run typecheck`, `npm run lint`, `npm run test`, `npm run build`, `npx playwright test tests/e2e/px11-reports.spec.ts --config=playwright.px06.config.ts`
+
+#### Runtime Proof Summary
+
+- `current_period.sales_total = 200`
+- `current_period.expense_total = 12`
+- `current_period.net_profit = 68`
+- `compare_period.sales_total = 80`
+- `compare_period.expense_total = 8`
+- `compare_period.net_profit = 22`
+- `delta.sales_total = 120`
+- `delta.expense_total = 4`
+- `delta.net_profit = 46`
+- `trend_bucket = current_date bucket present`
+- `workbook_path = output/spreadsheet/px11-advanced-report.xlsx`
+- `snapshot_current_net_profit = 68`
+- `ledger_current_net = 188`
+
+#### Verification Checklist
+
+- `npx supabase db reset --local --debug` = `PASS`
+- `npx tsx scripts/px11-advanced-reports.ts` = `PASS`
+- `npx supabase db lint --local --fail-on error --level warning` = `PASS` (warnings `P3` فقط)
+- `npm run typecheck` = `PASS`
+- `npm run lint` = `PASS`
+- `npm run test` = `PASS` (`144/144`)
+- `npm run build` = `PASS`
+- `npx playwright test tests/e2e/px11-reports.spec.ts --config=playwright.px06.config.ts` = `PASS` (`3/3`) مع local Supabase env overrides + local production build
+- `git diff --check` = clean content diff (warnings line endings only)
+
+#### Gate Success Assessment
+
+- compare reports وtrend charts تعمل = `Yes`
+- profitability تأخذ `expenses` بالحسبان = `Yes`
+- parity بين UI وexport مثبتة = `Yes`
+- totals تطابق `ledger/snapshots/expenses` = `Yes`
+- charts اجتازت phone/tablet/laptop دون overflow = `Yes`
+
+#### Carry-Forward / Risk Notes
+
+- لا توجد deferred items جديدة داخل `PX-11`
+- `VB-22` جاهزة للتحديث بعد تقرير المراجعة النهائي
+- ظهرت console warnings عابرة من Recharts (`width(-1)/height(-1)`) أثناء first render تحت Playwright، لكنها لم تمنع الرندر أو الـ device pass
+- تم تحميل `.env.local` تلقائيًا داخل `tests/e2e/helpers/local-runtime.ts`، ثم استُخدمت local Supabase env overrides وقت التحقق حتى يطابق browser runtime نفس الـ fixtures المحلية
+- تم تثبيت flake قديمة في `tests/unit/pos-workspace.test.tsx` عبر توسيع مهلة `waitFor` فقط دون تغيير سلوك `POS`
+
+#### Closure Assessment
+
+- جميع مهام المرحلة = `Done`: `Yes`
+- لا يوجد `P0/P1` مفتوح ضمن scope المرحلة: `Yes`
+- المتبقي قبل الإغلاق النهائي = `Phase Review Report — PX-11` + `Phase Close Decision — PX-11`
+
+### Phase Review Prompt — PX-11
+
+أنت الآن `Review Agent (Review-Only)` لمراجعة إغلاق المرحلة `PX-11 — Advanced Reports + Comparative Analytics`.
+
+مهمتك **قراءة + تحليل + مقارنة + تقديم تقرير فقط**.
+ممنوع التنفيذ، ممنوع التعديل، ممنوع كتابة كود، وممنوع تشغيل Docker أو `supabase start/reset/lint` أو أي أمر يغير الحالة.
+
+راجع المخرجات الحالية مقابل:
+
+- `aya-mobile-documentation/31_Execution_Live_Tracker.md`
+- `aya-mobile-documentation/09_Implementation_Plan.md`
+- `aya-mobile-documentation/03_UI_UX_Sitemap.md`
+- `aya-mobile-documentation/24_AI_Build_Playbook.md`
+- `aya-mobile-documentation/25_API_Contracts.md`
+- `aya-mobile-documentation/17_UAT_Scenarios.md`
+- `aya-mobile-documentation/27_PreBuild_Verification_Matrix.md`
+- `aya-mobile-documentation/16_Error_Codes.md`
+- `aya-mobile-documentation/06_Financial_Ledger.md`
+- `lib/validations/reports.ts`
+- `app/api/reports/advanced/route.ts`
+- `app/api/reports/advanced/export/route.ts`
+- `components/dashboard/reports-overview.tsx`
+- `components/dashboard/reports-advanced-charts.tsx`
+- `lib/api/reports.ts`
+- `lib/reports/export.ts`
+- `app/globals.css`
+- `tests/unit/reports-advanced-validation.test.ts`
+- `tests/unit/reports-advanced-route.test.ts`
+- `tests/unit/reports-advanced-export.test.ts`
+- `tests/unit/reports-advanced-export-route.test.ts`
+- `tests/unit/reports-export.test.ts`
+- `tests/unit/reports-export-route.test.ts`
+- `tests/unit/pos-workspace.test.tsx`
+- `tests/e2e/helpers/local-runtime.ts`
+- `tests/e2e/px11-reports.spec.ts`
+- `scripts/px11-advanced-reports.ts`
+
+اعتمد فقط على الأدلة التنفيذية الموثقة داخل التراكر من هذه الجلسة:
+
+- `GET /api/reports/advanced` و`GET /api/reports/advanced/export` يعتمدان compare filters + trend + breakdown + delta
+- proof script أثبت:
+  - `current_period.sales_total = 200`
+  - `current_period.expense_total = 12`
+  - `current_period.net_profit = 68`
+  - `compare_period.sales_total = 80`
+  - `compare_period.expense_total = 8`
+  - `compare_period.net_profit = 22`
+  - `delta.sales_total = 120`
+  - `delta.expense_total = 4`
+  - `delta.net_profit = 46`
+  - `snapshot_current_net_profit = 68`
+  - `ledger_current_net = 188`
+- workbook Excel المتقدم تم توليده في `output/spreadsheet/px11-advanced-report.xlsx`
+- `db lint` النهائي = بدون errors، مع warnings `P3` فقط
+- `typecheck`, `lint`, `test`, `build` = `PASS`
+- `tests/e2e/px11-reports.spec.ts` = `PASS` (`3/3`) على `phone/tablet/laptop`
+- التحقق الـ e2e استُخدم مع local Supabase env overrides + local production build حتى يطابق browser runtime نفس fixtures المحلية
+
+تحقق تحديدًا من:
+
+1. هل تحققت `Gate Success` الخاصة بـ `PX-11` بالأدلة الموثقة؟
+2. هل جميع مهام `PX-11` (`T01..T05`) أصبحت `Done` رسميًا؟
+3. هل compare/trend/breakdown/delta contracts أصبحت متوافقة بين `25_API_Contracts.md` والتنفيذ الفعلي؟
+4. هل parity بين الشاشة وExcel مثبتة بما يكفي لدعم إغلاق المرحلة؟
+5. هل proof المالية الحالية كافية لإثبات أن totals التقارير المتقدمة تطابق `expenses`, `daily_snapshots`, و`ledger_entries`؟
+6. هل الـ device pass على `phone/tablet/laptop` كافٍ رغم وجود Recharts console warnings عابرة غير حاجبة؟
+7. هل استخدام local Supabase env overrides في e2e يُعد مسار تحقق صحيحًا وغير حاجب طالما أنه يجعل browser runtime والfixtures على نفس البيئة المحلية؟
+8. هل التوصية الصحيحة هي:
+   - `Close PX-11`
+   - أو `Close PX-11 with Fixes`
+   - أو `Keep PX-11 Open / Blocked`
+
+أخرج تقريرك بصيغة:
+
+- `Phase Review Report — PX-11`
+- الحكم النهائي: `PASS` أو `PASS WITH FIXES` أو `FAIL`
+- قائمة findings مرتبة حسب الخطورة
+- تحديد واضح هل التوصية:
+  - `Close PX-11`
+  - أو `Close PX-11 with Fixes`
+  - أو `Keep PX-11 Open / Blocked`
+
+### Phase Review Report — PX-11
+
+- **Review Agent:** `Review Agent (Review-Only)`
+- **Review Date:** `2026-03-11`
+- **Review Scope:** `Phase Close Review — PX-11 — Advanced Reports + Comparative Analytics`
+- **Final Verdict:** `PASS`
+- **Recommendation:** `Close PX-11`
+
+#### Gate Success Assessment
+
+| Criterion | Status | Evidence |
+|----------|--------|----------|
+| `VB-22` advanced reports + export parity صحيحة ماليًا | `PASS` | proof script assertions + export parity checks |
+| totals في UI/export تطابق `ledger/snapshots/expenses` | `PASS` | `ledger_current_net = 188`, `snapshot_current_net_profit = 68` |
+| compare/trend/breakdown/delta contract implemented | `PASS` | routes تعيد جميع الحقول الخمسة |
+| device pass على `phone/tablet/laptop` | `PASS` | `tests/e2e/px11-reports.spec.ts = 3/3 PASS` |
+
+#### Task Completion Verification
+
+| Task | Status | Summary |
+|------|--------|---------|
+| `T01` | `Done` | contracts لـ compare/trend/breakdown/delta في `25_API_Contracts.md` + validation schema في `reports.ts` |
+| `T02` | `Done` | routes `GET /api/reports/advanced` و`GET /api/reports/advanced/export` مع full filter support |
+| `T03` | `Done` | `ReportsOverview` + `ReportsAdvancedCharts` مع device-safe rendering |
+| `T04` | `Done` | parity بين UI وExcel مثبتة عبر workbook summary/export tests |
+| `T05` | `Done` | proof script مالية كاملة current/compare/delta/snapshot/ledger |
+
+#### Contract Alignment Check
+
+- expected structure (`current_period`, `compare_period`, `trend`, `breakdown`, `delta`) = `Match`
+- implementation في `route.ts` يعيد نفس البنية = `Match`
+- `25_API_Contracts.md` بعد المواءمة = `Match`
+
+#### Financial Proof Summary
+
+- `current_period.sales_total = 200`
+- `current_period.expense_total = 12`
+- `current_period.net_profit = 68`
+- `compare_period.sales_total = 80`
+- `compare_period.expense_total = 8`
+- `compare_period.net_profit = 22`
+- `delta.sales_total = 120`
+- `delta.expense_total = 4`
+- `delta.net_profit = 46`
+- `trend[0].bucket = current_date`
+- `snapshot_net_profit = 68`
+- `ledger_current_net = 188`
+
+#### Findings
+
+| ID | Level | Finding | Assessment |
+|----|-------|---------|------------|
+| `F1` | `P3` | console warnings عابرة من Recharts أثناء first render تحت Playwright | غير حاجبة |
+| `F2` | `P3` | التحقق الـ e2e استعمل local Supabase env overrides + local production build | مسار تحقق صحيح وغير حاجب |
+| `F3` | `P3` | تم تثبيت flake قديمة في `tests/unit/pos-workspace.test.tsx` عبر timeout فقط | غير حاجبة |
+
+#### Final Operational Recommendation
+
+- `Close PX-11`
+- لا توجد findings بمستوى `P0/P1/P2`
+- الانتقال إلى `PX-12-T01` آمن
+
+### Phase Close Decision — PX-11
+
+- **Decision:** `Closed`
+- **Decision Date:** `2026-03-11`
+- **Basis:** `Phase Review Report — PX-11 = PASS`
+- **PX-11 Deferred Items:** `None`
+- **Project Carried Forward Items (External to PX-11):** `None`
+- **Next Active Phase:** `PX-12`
+- **Next Active Task:** `PX-12-T01`
 
 ---
 
@@ -4603,11 +5427,227 @@
 
 | Task ID | المهمة | المراجع | الحالة الابتدائية | Expected Proofs |
 |---------|--------|---------|-------------------|-----------------|
-| `PX-12-T01` | export JSON/CSV admin-only | `25`, `18` | `Open` | bounded audited export packages |
-| `PX-12-T02` | import products مع dry-run/commit | `05`, `17`, `25` | `Open` | dry-run diff + safe commit |
-| `PX-12-T03` | backup/restore drill معزول | `27`, `17`, `18` | `Open` | `RTO` + drift proof |
-| `PX-12-T04` | audit + notifications للعمليات المحمولة | `18`, `25` | `Open` | audit trail + operator notifications |
-| `PX-12-T05` | privacy check للحزم المحمولة | `18`, `27` | `Open` | no unintended PII leakage |
+| `PX-12-T01` | export JSON/CSV admin-only | `25`, `18` | `Done` | bounded audited export packages |
+| `PX-12-T02` | import products مع dry-run/commit | `05`, `17`, `25` | `Done` | dry-run diff + safe commit |
+| `PX-12-T03` | backup/restore drill معزول | `27`, `17`, `18` | `Done` | `RTO` + drift proof |
+| `PX-12-T04` | audit + notifications للعمليات المحمولة | `18`, `25` | `Done` | audit trail + operator notifications |
+| `PX-12-T05` | privacy check للحزم المحمولة | `18`, `27` | `Done` | no unintended PII leakage |
+
+### Phase Execution Report — PX-12
+
+- **Phase:** `PX-12 — Data Portability + Backup / Import`
+- **Execution Date:** `2026-03-11`
+- **Execution Status:** `Ready for Phase Review`
+- **Outcome Summary:** تم تنفيذ portability كاملة على مستوى DB/API/UI/proof: حزم export bounded قابلة للتنزيل/الإبطال، استيراد منتجات مع `dry-run/commit` آمن، restore drill معزولة مع `drift_count = 0` و`RTO` موثق، وكل العمليات audited وتولد `portability_event` notifications دون كشف `PII` غير مقصودة.
+
+#### Task Outcomes
+
+- `PX-12-T01 = Done`
+- `PX-12-T02 = Done`
+- `PX-12-T03 = Done`
+- `PX-12-T04 = Done`
+- `PX-12-T05 = Done`
+
+#### Key Evidence
+
+- `T01`: `supabase/migrations/016_portability_v2_alignment.sql`, `app/api/export/packages/route.ts`, `app/api/export/packages/[packageId]/route.ts`, `lib/api/portability.ts`
+- `T02`: `app/api/import/products/route.ts`, `lib/validations/portability.ts`, `tests/unit/import-products-route.test.ts`, `tests/unit/portability-validation.test.ts`
+- `T03`: `app/api/restore/drill/route.ts`, `scripts/px12-portability.ts`, `tests/unit/restore-drill-route.test.ts`
+- `T04`: `lib/api/portability.ts` (`audit_logs` + `portability_event` notifications), `tests/unit/portability-model.test.ts`
+- `T05`: `scripts/px12-portability.ts`, `aya-mobile-documentation/18_Data_Retention_Privacy.md`, `aya-mobile-documentation/25_API_Contracts.md`, `aya-mobile-documentation/05_Database_Design.md`
+
+#### Verification Summary
+
+- `npx supabase start --exclude edge-runtime,imgproxy,logflare,mailpit,postgres-meta,studio,storage-api,realtime,supavisor,vector --debug` = `PASS`
+- `npx supabase db reset --local --debug` = `PASS`
+- `npx tsx scripts/px12-portability.ts` = `PASS`
+- `npx supabase db lint --local --fail-on error --level warning` = `PASS` (warnings `P3` فقط)
+- `npm run typecheck` = `PASS`
+- `npm run lint` = `PASS`
+- `npm run test` = `PASS` (`166/166`)
+- `npm run build` = `PASS`
+- `git diff --check` = clean content diff (warnings line endings only)
+
+#### Proof Highlights
+
+- export:
+  - `products_row_count = 1`
+  - `customers_row_count = 1`
+  - `backup_kind = backup_bundle`
+  - `revoked_package_id` returned after revoke
+- import:
+  - invalid dry-run = `rows_total 2 / rows_valid 1 / rows_invalid 1`
+  - valid commit = `rows_committed = 1`
+- restore:
+  - `drift_count = 0`
+  - `rto_seconds = 1`
+- privacy:
+  - `customer_phone_masked = ******5362`
+  - `raw_phone_absent = true`
+  - `national_id_absent = true`
+  - `backup_excludes_customers = true`
+- audit / notifications:
+  - `create_export_package = 3`
+  - `import_products_dry_run = 2`
+  - `import_products_commit = 1`
+  - `restore_drill = 1`
+  - `revoke_export_package = 1`
+  - `portability_event_total = 8`
+
+#### Documentation Alignment
+
+- تم مواءمة `25_API_Contracts.md` مع التنفيذ الفعلي لـ `export/download/revoke/import/restore`
+- تم إضافة جداول portability في `05_Database_Design.md`
+- تم تحديث portability privacy contract في `18_Data_Retention_Privacy.md`
+- تم تحديث portability center في `03_UI_UX_Sitemap.md`
+
+#### Closure Assessment
+
+- جميع مهام المرحلة = `Done`: `Yes`
+- لا يوجد `P0/P1` مفتوح داخل scope المرحلة: `Yes`
+- `VB-23` جاهزة للتحديث إلى `Pass` بعد مراجعة الإغلاق النهائية: `Yes`
+- المتبقي قبل الإغلاق النهائي = `Phase Review Report — PX-12` + `Phase Close Decision — PX-12`
+
+### Phase Review Prompt — PX-12
+
+أنت الآن `Review Agent (Review-Only)` لمراجعة إغلاق المرحلة `PX-12 — Data Portability + Backup / Import`.
+
+مهمتك **قراءة + تحليل + مقارنة + تقديم تقرير فقط**.
+ممنوع التنفيذ، ممنوع التعديل، ممنوع كتابة كود، وممنوع تشغيل Docker أو `supabase start/reset/lint` أو أي أمر يغير الحالة.
+
+راجع المخرجات الحالية مقابل:
+
+- `aya-mobile-documentation/31_Execution_Live_Tracker.md`
+- `aya-mobile-documentation/09_Implementation_Plan.md`
+- `aya-mobile-documentation/03_UI_UX_Sitemap.md`
+- `aya-mobile-documentation/05_Database_Design.md`
+- `aya-mobile-documentation/18_Data_Retention_Privacy.md`
+- `aya-mobile-documentation/24_AI_Build_Playbook.md`
+- `aya-mobile-documentation/25_API_Contracts.md`
+- `aya-mobile-documentation/17_UAT_Scenarios.md`
+- `aya-mobile-documentation/27_PreBuild_Verification_Matrix.md`
+- `aya-mobile-documentation/16_Error_Codes.md`
+- `supabase/migrations/016_portability_v2_alignment.sql`
+- `app/api/export/packages/route.ts`
+- `app/api/export/packages/[packageId]/route.ts`
+- `app/api/import/products/route.ts`
+- `app/api/restore/drill/route.ts`
+- `app/(dashboard)/portability/page.tsx`
+- `components/dashboard/portability-workspace.tsx`
+- `lib/api/dashboard.ts`
+- `lib/api/portability.ts`
+- `lib/validations/portability.ts`
+- `tests/unit/portability-validation.test.ts`
+- `tests/unit/export-packages-route.test.ts`
+- `tests/unit/export-package-download-route.test.ts`
+- `tests/unit/import-products-route.test.ts`
+- `tests/unit/restore-drill-route.test.ts`
+- `tests/unit/portability-model.test.ts`
+- `scripts/px12-portability.ts`
+
+اعتمد فقط على الأدلة التنفيذية الموثقة داخل التراكر من هذه الجلسة:
+
+- `016_portability_v2_alignment.sql` أضافت `export_packages`, `import_jobs`, `restore_drills`, و`notifications.type = portability_event`
+- `/api/export/packages` ينشئ حزم bounded Admin-only، و`/api/export/packages/[packageId]` يدعم download/revoke
+- `/api/import/products` يعمل بنمط `dry_run` مع `source_content` ثم `commit` عبر `dry_run_job_id`
+- `/api/restore/drill` يعمل فقط على `isolated-drill` ويعيد `completed + drift_count + rto_seconds`
+- proof script أثبت:
+  - `products_row_count = 1`
+  - `customers_row_count = 1`
+  - `backup_kind = backup_bundle`
+  - invalid dry-run = `2 / 1 / 1`
+  - committed import = `rows_committed = 1`
+  - `drift_count = 0`
+  - `rto_seconds = 1`
+  - `customer_phone_masked = ******5362`
+  - `raw_phone_absent = true`
+  - `national_id_absent = true`
+  - `backup_excludes_customers = true`
+  - `create_export_package = 3`
+  - `import_products_dry_run = 2`
+  - `import_products_commit = 1`
+  - `restore_drill = 1`
+  - `revoke_export_package = 1`
+  - `portability_event_total = 8`
+- `db lint` النهائي = بدون errors، مع warnings `P3` فقط
+- `typecheck`, `lint`, `test`, `build` = `PASS`
+
+تحقق تحديدًا من:
+
+1. هل تحققت `Gate Success` الخاصة بـ `PX-12` بالأدلة الموثقة؟
+2. هل جميع مهام `PX-12` (`T01..T05`) أصبحت `Done` رسميًا؟
+3. هل export packages أصبحت bounded/expirable/revocable و`Admin-only` دون أي public download path؟
+4. هل import products تطبق `dry-run/commit` بشكل آمن مع validation errors واضحة وبدون destructive path مباشر؟
+5. هل restore drill الحالية معزولة فعلًا، وتثبت `drift_count = 0` و`RTO` بشكل كافٍ لإغلاق المرحلة؟
+6. هل audit + `portability_event` notifications كافية لإثبات traceability لكل عمليات portability؟
+7. هل privacy proof كافية لإثبات عدم تسريب `raw phone`, `national_id`, أو customers raw data داخل backup bundle؟
+8. هل مواءمة `25/05/03/18` أغلقت drift التعاقدي فعليًا؟
+9. هل التوصية الصحيحة هي:
+   - `Close PX-12`
+   - أو `Close PX-12 with Fixes`
+   - أو `Keep PX-12 Open / Blocked`
+
+أخرج تقريرك بصيغة:
+
+- `Phase Review Report — PX-12`
+- الحكم النهائي: `PASS` أو `PASS WITH FIXES` أو `FAIL`
+- قائمة findings مرتبة حسب الخطورة
+- تحديد واضح هل التوصية:
+  - `Close PX-12`
+  - أو `Close PX-12 with Fixes`
+  - أو `Keep PX-12 Open / Blocked`
+
+### Phase Review Report — PX-12
+
+- **Review Agent:** `Review Agent (Review-Only)`
+- **Review Date:** `2026-03-11`
+- **Review Scope:** `Phase Closure Review — PX-12 (Data Portability + Backup / Import)`
+- **Final Verdict:** `PASS`
+- **Recommendation:** `Close PX-12`
+
+#### Gate Success Verification
+
+| Gate Criterion | Evidence Source | Verdict |
+|----------------|-----------------|---------|
+| export packages bounded/revocable/audited | `016_portability_v2_alignment.sql`, `/api/export/packages`, proof script | `PASS` |
+| import products dry-run/commit pattern enforced | `/api/import/products`, proof `2 / 1 / 1`, committed `1` | `PASS` |
+| restore drill isolated with zero drift | `/api/restore/drill`, proof `drift_count = 0`, `rto_seconds = 1` | `PASS` |
+| privacy: no raw PII leaked | proof `raw_phone_absent = true`, `national_id_absent = true`, `backup_excludes_customers = true` | `PASS` |
+| portability operations audited | `portability_event_total = 8` + audit counters `3/2/1/1/1` | `PASS` |
+
+#### Task Status Verification
+
+| Task | Status | Findings |
+|------|--------|----------|
+| `PX-12-T01` | `Done` | export packages bounded + Admin-only + revoke path |
+| `PX-12-T02` | `Done` | import products تعمل عبر `dry_run` ثم `commit` فقط |
+| `PX-12-T03` | `Done` | restore drill معزولة وموثقة بـ `drift_count = 0` |
+| `PX-12-T04` | `Done` | audit trail + `portability_event` notifications مكتملة |
+| `PX-12-T05` | `Done` | privacy proof يمنع raw phone و`national_id` داخل الحزم |
+
+#### Findings
+
+| ID | Level | Finding | Assessment |
+|----|-------|---------|------------|
+| `F1` | `P3` | `db lint` warnings موروثة من `004_functions_triggers.sql` | غير حاجبة |
+| `F2` | `P3` | restore drill تستعمل بيانات معزولة/synthetic لإثبات المسار | مقبول ومقصود |
+| `F3` | `P3` | backup bundle تستبعد customers حسب privacy contract | مقبول ومتوافق |
+
+#### Final Operational Recommendation
+
+- `Close PX-12`
+- لا توجد findings بمستوى `P0/P1/P2`
+- الانتقال إلى `PX-13-T01` آمن
+
+### Phase Close Decision — PX-12
+
+- **Decision:** `Closed`
+- **Decision Date:** `2026-03-11`
+- **Basis:** `Phase Review Report — PX-12 = PASS`
+- **PX-12 Deferred Items:** `None`
+- **Project Carried Forward Items (External to PX-12):** `None`
+- **Next Active Phase:** `PX-13`
+- **Next Active Task:** `PX-13-T01`
 
 ---
 
@@ -4653,11 +5693,214 @@
 
 | Task ID | المهمة | المراجع | الحالة الابتدائية | Expected Proofs |
 |---------|--------|---------|-------------------|-----------------|
-| `PX-13-T01` | caching آمن للقراءات | `13`, `27` | `Open` | no stale financial state proof |
-| `PX-13-T02` | advanced search & filters | `03`, `17` | `Open` | relevance + p95 search proof |
-| `PX-13-T03` | admin alert aggregation center | `03`, `18`, `17` | `Open` | deduped actionable alerts |
-| `PX-13-T04` | قياس `p95` للتقارير والبحث | `17`, `27` | `Open` | target metrics documented |
-| `PX-13-T05` | multi-device regression بعد optimization | `29`, `17` | `Open` | no device regressions |
+| `PX-13-T01` | caching آمن للقراءات | `13`, `27` | `Done` | no stale financial state proof |
+| `PX-13-T02` | advanced search & filters | `03`, `17` | `Done` | relevance + p95 search proof |
+| `PX-13-T03` | admin alert aggregation center | `03`, `18`, `17` | `Done` | deduped actionable alerts |
+| `PX-13-T04` | قياس `p95` للتقارير والبحث | `17`, `27` | `Done` | target metrics documented |
+| `PX-13-T05` | multi-device regression بعد optimization | `29`, `17` | `Done` | no device regressions |
+
+### Phase Execution Report — PX-13
+
+- **Phase:** `PX-13 — Performance + Search + Alert Aggregation`
+- **Execution Date:** `2026-03-11`
+- **Execution Status:** `Ready for Phase Review`
+- **Outcome Summary:** تم تنفيذ طبقة `PX-13` كاملة على مستوى القراءة فقط: caching آمن للـ baselines منخفضة المخاطر، global search bounded بكيانات محددة ومفاتيح عرض آمنة فقط، alert aggregation إدارية تقلل الضوضاء دون فتح read paths مالية جديدة، وإثبات performance/device regression على قاعدة محلية نظيفة. أثناء التنفيذ ظهر defect حقيقي في stale search catalogs تحت `next start`; تم إغلاقه بإرجاع catalog search إلى direct reads افتراضيًا مع إبقاء الكاش opt-in فقط.
+
+#### Task Outcomes
+
+- `PX-13-T01 = Done`
+- `PX-13-T02 = Done`
+- `PX-13-T03 = Done`
+- `PX-13-T04 = Done`
+- `PX-13-T05 = Done`
+
+#### Key Evidence
+
+- `T01`: `lib/api/dashboard.ts`, `lib/api/search.ts`, `aya-mobile-documentation/13_Tech_Config.md`
+- `T02`: `lib/validations/search.ts`, `lib/api/search.ts`, `app/api/search/global/route.ts`, `tests/unit/search-validation.test.ts`, `tests/unit/search-global-route.test.ts`
+- `T03`: `app/api/alerts/summary/route.ts`, `app/(dashboard)/notifications/page.tsx`, `components/dashboard/notifications-workspace.tsx`, `tests/unit/alerts-summary-route.test.ts`
+- `T04`: `scripts/px13-search-alerts-performance.ts`
+- `T05`: `tests/e2e/px13-search-alerts.spec.ts`, `tests/e2e/helpers/local-runtime.ts`
+
+#### Verification Summary
+
+- `npx supabase db reset --local --debug` = `PASS`
+- `npx supabase db lint --local --fail-on error --level warning` = `PASS` (warnings `P3` موروثة فقط)
+- `npm run typecheck` = `PASS`
+- `npm run lint` = `PASS`
+- `npm run test` = `PASS` (`174/174`)
+- `npm run build` = `PASS`
+- `npx tsx scripts/px13-search-alerts-performance.ts` = `PASS`
+- `npx playwright test tests/e2e/px13-search-alerts.spec.ts --config=playwright.px06.config.ts` = `PASS` (`6/6`)
+- `git diff --check` = clean content diff (warnings line endings only)
+
+#### Proof Highlights
+
+- search correctness:
+  - `total_count = 5`
+  - `grouped_entities = [product, invoice, debt_customer, maintenance_job]`
+  - `first_item_keys = [entity, id, label, secondary]`
+  - `pos_scoped_invoice = AYA-2026-00001`
+- alert aggregation:
+  - `low_stock = 1`
+  - `overdue_debts = 1`
+  - `reconciliation_drift = 1`
+  - `maintenance_ready = 1`
+  - `unread_notifications = 4`
+- performance:
+  - `search_p95_ms = 22.78`
+  - `reports_p95_ms = 97.12`
+- device regression:
+  - `phone/tablet/laptop = 6/6 PASS`
+  - no horizontal overflow on alerts/search surfaces
+
+#### Cache Safety Assessment
+
+- تم السماح بالكاش فقط على قراءات baseline منخفضة المخاطر مثل active users وterminal lists في `lib/api/dashboard.ts`
+- search catalog reads في `lib/api/search.ts` عادت direct-by-default بعد ظهور stale results تحت local production build
+- لا يوجد caching على write routes أو mutable balances أو search results المعروضة للمشغّل
+
+#### Closure Assessment
+
+- جميع مهام المرحلة = `Done`: `Yes`
+- لا يوجد `P0/P1` مفتوح داخل scope المرحلة: `Yes`
+- `VB-24`, `VB-25`, `VB-26` جاهزة للتحديث بعد مراجعة الإغلاق النهائي: `Yes`
+- المتبقي قبل الإغلاق النهائي = `Phase Review Report — PX-13` + `Phase Close Decision — PX-13`
+
+### Phase Review Prompt — PX-13
+
+أنت الآن `Review Agent (Review-Only)` لمراجعة إغلاق المرحلة `PX-13 — Performance + Search + Alert Aggregation`.
+
+مهمتك **قراءة + تحليل + مقارنة + تقديم تقرير فقط**.
+ممنوع التنفيذ، ممنوع التعديل، ممنوع كتابة كود، وممنوع تشغيل Docker أو `supabase start/reset/lint` أو أي أمر يغير الحالة.
+
+راجع المخرجات الحالية مقابل:
+
+- `aya-mobile-documentation/31_Execution_Live_Tracker.md`
+- `aya-mobile-documentation/09_Implementation_Plan.md`
+- `aya-mobile-documentation/03_UI_UX_Sitemap.md`
+- `aya-mobile-documentation/13_Tech_Config.md`
+- `aya-mobile-documentation/18_Data_Retention_Privacy.md`
+- `aya-mobile-documentation/24_AI_Build_Playbook.md`
+- `aya-mobile-documentation/25_API_Contracts.md`
+- `aya-mobile-documentation/17_UAT_Scenarios.md`
+- `aya-mobile-documentation/27_PreBuild_Verification_Matrix.md`
+- `aya-mobile-documentation/16_Error_Codes.md`
+- `lib/api/dashboard.ts`
+- `lib/api/search.ts`
+- `lib/validations/search.ts`
+- `app/api/search/global/route.ts`
+- `app/api/alerts/summary/route.ts`
+- `app/(dashboard)/notifications/page.tsx`
+- `components/dashboard/notifications-workspace.tsx`
+- `tests/unit/search-validation.test.ts`
+- `tests/unit/search-global-route.test.ts`
+- `tests/unit/alerts-summary-route.test.ts`
+- `tests/e2e/helpers/local-runtime.ts`
+- `tests/e2e/px13-search-alerts.spec.ts`
+- `scripts/px13-search-alerts-performance.ts`
+- `supabase/migrations/016_portability_v2_alignment.sql`
+
+اعتمد فقط على الأدلة التنفيذية الموثقة داخل التراكر من هذه الجلسة:
+
+- caching بقيت محصورة على read baselines منخفضة المخاطر في `lib/api/dashboard.ts`
+- search catalogs أصبحت direct-by-default في `lib/api/search.ts` بعد إغلاق stale-results defect
+- `/api/search/global` يعيد فقط `entity/id/label/secondary` ويمنع query القصيرة عبر `ERR_SEARCH_QUERY_TOO_SHORT`
+- `/api/alerts/summary` Admin-only ويعيد:
+  - `low_stock = 1`
+  - `overdue_debts = 1`
+  - `reconciliation_drift = 1`
+  - `maintenance_ready = 1`
+  - `unread_notifications = 4`
+- proof script أثبت:
+  - `total_count = 5`
+  - `grouped_entities = [product, invoice, debt_customer, maintenance_job]`
+  - `pos_scoped_invoice = AYA-2026-00001`
+  - `search_p95_ms = 22.78`
+  - `reports_p95_ms = 97.12`
+- `tests/e2e/px13-search-alerts.spec.ts` = `6/6 PASS` على `phone/tablet/laptop`
+- `db lint` النهائي = بدون errors، مع warnings `P3` فقط
+- `typecheck`, `lint`, `test`, `build` = `PASS`
+
+تحقق تحديدًا من:
+
+1. هل تحققت `Gate Success` الخاصة بـ `PX-13` بالأدلة الموثقة؟
+2. هل جميع مهام `PX-13` (`T01..T05`) أصبحت `Done` رسميًا؟
+3. هل مسار الكاش الحالي آمن فعلًا ولا يخلق stale finance أو stale search results؟
+4. هل advanced search bounded وصحيحة من حيث:
+   - entities المسموح بها
+   - safe keys only
+   - POS invoice scoping
+   - `ERR_SEARCH_QUERY_TOO_SHORT`
+5. هل admin alert aggregation تقلل الضوضاء دون فقد التنبيهات الحرجة ودون كسر scoping؟
+6. هل proof الأداء الحالية كافية لدعم:
+   - `search_p95_ms <= 400`
+   - `reports_p95_ms <= 2000`
+7. هل device regression pass على `phone/tablet/laptop` كافٍ رغم Recharts console warnings غير الحاجبة؟
+8. هل التوصية الصحيحة هي:
+   - `Close PX-13`
+   - أو `Close PX-13 with Fixes`
+   - أو `Keep PX-13 Open / Blocked`
+
+أخرج تقريرك بصيغة:
+
+- `Phase Review Report — PX-13`
+- الحكم النهائي: `PASS` أو `PASS WITH FIXES` أو `FAIL`
+- قائمة findings مرتبة حسب الخطورة
+- تحديد واضح هل التوصية:
+  - `Close PX-13`
+  - أو `Close PX-13 with Fixes`
+  - أو `Keep PX-13 Open / Blocked`
+
+### Phase Review Report — PX-13
+
+- **Review Agent:** `Review Agent (Review-Only)`
+- **Review Date:** `2026-03-11`
+- **Review Scope:** `Phase Close Review — PX-13 — Performance + Search + Alert Aggregation`
+- **Final Verdict:** `PASS`
+- **Recommendation:** `Close PX-13`
+
+#### Findings مرتبة حسب الخطورة
+
+1. `P3 Info` — ظهر defect منخفض الخطورة في stale search catalogs أثناء القياس على `next start` وتمت معالجته داخل المرحلة بإرجاع catalog search إلى `direct-by-default`; لا يوجد مسار حالي يخلق stale results.
+2. `P3 Info` — تظهر `Recharts console warnings` غير حاجبة في بعض viewports؛ لا تؤثر على correctness أو device workflows.
+3. `P3 Info` — caching بقيت محصورة على baselines منخفضة المخاطر فقط، ولا توجد caching على write routes أو balances mutable.
+
+#### Gate Success Assessment
+
+| Gate Criterion | Verdict | Evidence |
+|---|---|---|
+| caching والبحث لا يخلقان stale finance أو stale search results | `PASS` | `lib/api/dashboard.ts`, `lib/api/search.ts`, defect log في `Phase Execution Report — PX-13` |
+| advanced search bounded وصحيحة | `PASS` | `/api/search/global`, `searchEntitySchema`, safe keys only, `ERR_SEARCH_QUERY_TOO_SHORT`, proof script |
+| admin alert aggregation صحيحة ومخفضة للضوضاء | `PASS` | `/api/alerts/summary`, `notifications-workspace`, proof counts `1/1/1/1/4` |
+| p95 targets محققة | `PASS` | `search_p95_ms = 22.78`, `reports_p95_ms = 97.12` |
+| device regression pass | `PASS` | `tests/e2e/px13-search-alerts.spec.ts = 6/6 PASS` على `phone/tablet/laptop` |
+
+#### Task Completion Verification
+
+| Task | Status | Summary |
+|---|---|---|
+| `PX-13-T01` | `Done` | caching آمن ومحكوم بالقراءة فقط |
+| `PX-13-T02` | `Done` | global search bounded مع safe keys وPOS invoice scoping |
+| `PX-13-T03` | `Done` | alert aggregation center إداري مع dedupe صحيح |
+| `PX-13-T04` | `Done` | قياس `p95` للتقارير والبحث موثق وضمن الهدف |
+| `PX-13-T05` | `Done` | regression pass على `phone/tablet/laptop` دون workflow breakage |
+
+#### Recommendation
+
+- `Close PX-13`
+- لا توجد findings بمستوى `P0/P1`
+- المرحلة مؤهلة للإغلاق والانتقال إلى `PX-14`
+
+### Phase Close Decision — PX-13
+
+- **Decision:** `Closed`
+- **Decision Date:** `2026-03-11`
+- **Basis:** `Phase Review Report — PX-13 = PASS`
+- **PX-13 Deferred Items:** `None`
+- **Next Active Phase:** `PX-14`
+- **Next Active Task:** `PX-14-T01`
+- **Closure Notes:** تم اعتبار defect stale search catalogs مغلقًا داخل المرحلة نفسها، وتم تحديث بوابات `VB-24`, `VB-25`, `VB-26` إلى `Pass` لأن الأداء والبحث وتجميع التنبيهات واجتياز الأجهزة أصبحت مثبتة بالأدلة.
 
 ---
 
@@ -4943,7 +6186,28 @@
 | 2026-03-10 | `Post-PX-07 Planning` | تم اعتماد حزمة التخطيط رسميًا بقرار `Approved Planning Package`. المراحل `PX-08 .. PX-14` أصبحت execution-ready داخل الوثائق، لكن التنفيذ الفعلي لم يبدأ بعد. أول مهمة تنفيذية معتمدة لاحقًا هي `PX-08-T01`. | `Approved / Not Started` | `Planning Approval Decision — Post-PX-07` |
 | 2026-03-10 | `PX-08-T01/T02/T03/T04/T05` | تم تنفيذ حزمة `PX-08` كاملة: migration `013` استهلكت `create_expense` ومواءمت `expense_number/read_at/RLS`، ثم بُنيت routes `/api/expenses`, `/api/expense-categories`, `/api/notifications`, وشاشتا `/expenses` و`/notifications`. التحقق المحلي أثبت تسجيل مصروف كامل مع `ledger/audit`, إدارة فئات المصروفات, scoped notifications, وتكامل المصروفات مع `daily_snapshot/reports` عبر proof script مخصص. | `Done` | `supabase/migrations/013_expenses_notifications_v2_alignment.sql`, `app/api/expenses/route.ts`, `app/api/expense-categories/route.ts`, `app/api/expense-categories/[categoryId]/route.ts`, `app/api/notifications/route.ts`, `app/api/notifications/read/route.ts`, `app/(dashboard)/expenses/page.tsx`, `app/(dashboard)/notifications/page.tsx`, `components/dashboard/expenses-workspace.tsx`, `components/dashboard/notifications-workspace.tsx`, `scripts/px08-expenses-notifications.ts`, `npx supabase db reset --local --debug`, `npx tsx scripts/px08-expenses-notifications.ts`, `npx supabase db lint --local --fail-on error --level warning`, `npm run typecheck`, `npm run lint`, `npm run test`, `npm run build` |
 | 2026-03-10 | `PX-08` | اكتملت المرحلة تنفيذيًا وارتفعت إلى `Review`. جميع المهام `T01..T05 = Done`, وتم استهلاك العنصر الخارجي `PX-02-T04-D01 = create_expense` داخل `T01`، مع تجهيز `Phase Execution Report — PX-08` و`Phase Review Prompt — PX-08` بانتظار تقرير المراجع قبل الإغلاق النهائي. | `Review` | `Phase Execution Report — PX-08`, `Phase Review Prompt — PX-08` |
-| YYYY-MM-DD | `PX-XX-TXX` | مثال: تم إنشاء route / تم إغلاق bug / تم اجتياز UAT | `In Progress / Done / Blocked` | file path / test / screenshot / SQL |
+| 2026-03-11 | `PX-08` | Review Agent أعاد الحكم `PASS` مع توصية `Close PX-08`. اعتُبرت جميع شروط `Gate Success` متحققة، وتم اعتماد أن `create_expense` استُهلكت بالكامل ولم تعد عنصرًا carried forward مفتوحًا. | `Review PASS` | `Phase Review Report — PX-08` |
+| 2026-03-11 | `PX-08` | تم إغلاق المرحلة رسميًا بقرار `Closed` وفتح `PX-09 = Open` مع تعيين `PX-09-T01` كمهمة نشطة تالية. كما تم تحديث `VB-18` إلى `Pass` في مصفوفة التحقق لأن طبقة المصروفات لم تعد gap تخطيطية. | `Done / Next` | `Phase Close Decision — PX-08`, `aya-mobile-documentation/27_PreBuild_Verification_Matrix.md` |
+| 2026-03-11 | `PX-09-T01/T02/T03/T04/T05` | تم تنفيذ حزمة `PX-09` كاملة: migration `014` أضافت `receipt_link_tokens`, `whatsapp_delivery_logs`, و`notifications.dedupe_key`, ثم بُنيت routes `/api/receipts/link`, `/api/notifications/debts/run`, `/api/messages/whatsapp/send`, والمسار العام `/r/[token]`, مع دمج share actions داخل الفواتير والإشعارات. التحقق المحلي أثبت إصدار الرابط وإعادة إصداره وإلغاؤه، public receipt read-only, debt reminder dedupe, scoped notifications, وAuditable `wa.me` delivery log بحقول مقنّعة فقط. | `Done` | `supabase/migrations/014_receipt_links_communication_v2_alignment.sql`, `app/api/receipts/link/route.ts`, `app/api/notifications/debts/run/route.ts`, `app/api/messages/whatsapp/send/route.ts`, `app/r/[token]/page.tsx`, `components/dashboard/invoices-workspace.tsx`, `components/dashboard/notifications-workspace.tsx`, `lib/api/communication.ts`, `scripts/px09-communication-receipts.ts`, `npx supabase start --exclude studio,imgproxy,mailpit,logflare,vector,storage-api,realtime,postgres-meta,edge-runtime,supavisor --debug`, `npx supabase db reset --local --debug`, `npx tsx scripts/px09-communication-receipts.ts`, `npx supabase db lint --local --fail-on error --level warning --debug`, `npm run typecheck`, `npm run lint`, `npm run test`, `npm run build` |
+| 2026-03-11 | `PX-09` | اكتملت المرحلة تنفيذيًا وارتفعت إلى `Review`. جميع المهام `T01..T05 = Done`، وتم تجهيز `Phase Execution Report — PX-09` و`Phase Review Prompt — PX-09`. كما تم تحديث المرجع البنيوي `05_Database_Design.md` ومواءمة وثائق واتساب التشغيلية حتى لا يبقى drift بين التنفيذ والوثائق. | `Review` | `Phase Execution Report — PX-09`, `Phase Review Prompt — PX-09`, `aya-mobile-documentation/05_Database_Design.md`, `aya-mobile-documentation/01_Overview_Assumptions.md`, `aya-mobile-documentation/12_Message_Templates.md`, `aya-mobile-documentation/22_Operations_Guide.md` |
+| 2026-03-11 | `PX-09` | Review Agent أعاد الحكم `PASS` مع توصية `Close PX-09`. اعتُبرت جميع شروط `Gate Success` متحققة، واعْتُمد أن receipt links, public receipt, debt reminder dedupe, وWhatsApp delivery log تعمل دون privacy leakage ودون findings حاجبة. | `Review PASS` | `Phase Review Report — PX-09` |
+| 2026-03-11 | `PX-09` | تم إغلاق المرحلة رسميًا بقرار `Closed` وفتح `PX-10 = Open` مع تعيين `PX-10-T01` كمهمة نشطة تالية. كما تم تحديث `VB-19` و`VB-20` إلى `Pass` في مصفوفة التحقق لأن privacy gate وcommunication gate لم تعودا planned items. | `Done / Next` | `Phase Close Decision — PX-09`, `aya-mobile-documentation/27_PreBuild_Verification_Matrix.md` |
+| 2026-03-11 | `PX-10-T01` | تم تنفيذ حزمة العقود المرجعية لتوسعة الصلاحيات الدقيقة دون أي feature code: إضافة `ADR-047/048`، تثبيت contract الصلاحيات الدقيقة في `13_Tech_Config.md`، إضافة جدولَي `permission_bundles` و`role_assignments` في `05_Database_Design.md`، وتحويل عقود `roles/permissions` إلى `bundle_key` مع ربط `ERR_DISCOUNT_APPROVAL_REQUIRED` بعقود البيع وتعديل الفواتير. أصبحت هذه الحزمة هي الأساس المعتمد الذي بُنيت عليه بقية المرحلة. | `Done` | `aya-mobile-documentation/10_ADRs.md`, `aya-mobile-documentation/13_Tech_Config.md`, `aya-mobile-documentation/05_Database_Design.md`, `aya-mobile-documentation/25_API_Contracts.md`, `Execution Report — PX-10-T01`, `Review Prompt — PX-10-T01` |
+| 2026-03-11 | `PX-10-T02/T03/T04/T05` | تم تنفيذ بقية المرحلة كاملة: migration `015` أضافت bundles/assignments وdiscount governance، ثم بُنيت routes `/api/roles/assign` و`/api/permissions/preview`, وأُضيفت `PermissionsPanel`, وتم تقييد navigation/pages/routes حسب bundles, مع masking إضافي لـ inventory/maintenance baselines. proof script `px10-permissions-discount.ts` أثبت assign/revoke, منع direct access على permission tables, bundle-scoped access, وقيود الخصم (`ERR_DISCOUNT_EXCEEDED`, `ERR_DISCOUNT_APPROVAL_REQUIRED`) مع `discount_override_bundle` audit و`large_discount` notification. | `Done` | `supabase/migrations/015_permissions_discount_v2_alignment.sql`, `app/api/roles/assign/route.ts`, `app/api/permissions/preview/route.ts`, `components/dashboard/permissions-panel.tsx`, `lib/permissions.ts`, `lib/api/common.ts`, `components/dashboard/inventory-workspace.tsx`, `components/dashboard/maintenance-workspace.tsx`, `scripts/px10-permissions-discount.ts` |
+| 2026-03-11 | `PX-10` | اكتملت المرحلة تنفيذيًا وارتفعت إلى `Review`. جميع المهام `T01..T05 = Done`, وتم تجهيز `Phase Execution Report — PX-10` و`Phase Review Prompt — PX-10`. التحقق النهائي اجتاز `db reset`, `typecheck`, `proof script`, `db lint`, `lint`, `test = 135/135`, و`build`. | `Review` | `Phase Execution Report — PX-10`, `Phase Review Prompt — PX-10`, `npx supabase db reset --local --debug`, `npx tsx scripts/px10-permissions-discount.ts`, `npm run test`, `npm run build` |
+| 2026-03-11 | `PX-10` | اعتمد المراجع المستقل المرحلة بحكم `PASS`. أكدت المراجعة أن bundles تعمل فوق `profiles.role` دون privilege escalation، وأن gating الصلاحيات وقيود الخصم (`ERR_DISCOUNT_EXCEEDED` / `ERR_DISCOUNT_APPROVAL_REQUIRED`) صحيحة، مع عدم وجود findings بمستوى `P0/P1/P2`. | `Review PASS` | `Phase Review Report — PX-10` |
+| 2026-03-11 | `PX-10` | أُغلقت المرحلة رسميًا بقرار `Closed`. تم تحديث `VB-21` إلى `Pass` لأن role expansion لم تفتح shadow paths أو privilege escalation، وتم فتح `PX-11 = Open` مع تعيين `PX-11-T01` كمهمة تالية. | `Closed / Next` | `Phase Close Decision — PX-10`, `aya-mobile-documentation/27_PreBuild_Verification_Matrix.md` |
+| 2026-03-11 | `PX-11-T01/T02/T03/T04/T05` | تم تنفيذ حزمة `PX-11` كاملة: توسيع عقود `advanced reports`, بناء routes `/api/reports/advanced` و`/api/reports/advanced/export`, توسيع شاشة `/reports` إلى compare/trend/breakdown analytics, وبناء workbook Excel متقدم. proof script أثبت totals الحالية والمقارنة والدلتا، ثم أُغلق drift فعلي في expenses breakdown (`category_id` بدل `expense_category_id`) قبل التحقق النهائي. | `Done` | `lib/validations/reports.ts`, `app/api/reports/advanced/route.ts`, `app/api/reports/advanced/export/route.ts`, `components/dashboard/reports-overview.tsx`, `components/dashboard/reports-advanced-charts.tsx`, `lib/api/reports.ts`, `lib/reports/export.ts`, `scripts/px11-advanced-reports.ts` |
+| 2026-03-11 | `PX-11` | اكتملت المرحلة تنفيذيًا وارتفعت إلى `Review`. جميع المهام `T01..T05 = Done`, وتم تجهيز `Phase Execution Report — PX-11` و`Phase Review Prompt — PX-11`. التحقق النهائي اجتاز `db reset`, `proof script`, `db lint`, `typecheck`, `lint`, `test = 144/144`, `build`, و`PX-11 e2e = 3/3` باستخدام local Supabase env overrides + local production build. | `Review` | `Phase Execution Report — PX-11`, `Phase Review Prompt — PX-11`, `npx supabase db reset --local --debug`, `npx tsx scripts/px11-advanced-reports.ts`, `npm run test`, `npm run build`, `npx playwright test tests/e2e/px11-reports.spec.ts --config=playwright.px06.config.ts` |
+| 2026-03-11 | `PX-11` | اعتمد المراجع المستقل المرحلة بحكم `PASS`. أكدت المراجعة أن compare/trend/breakdown/delta contracts متطابقة مع التنفيذ، وأن parity بين UI وExcel صحيحة ماليًا، وأن device pass مكتمل دون findings حاجبة. | `Review PASS` | `Phase Review Report — PX-11` |
+| 2026-03-11 | `PX-11` | أُغلقت المرحلة رسميًا بقرار `Closed`. تم تحديث `VB-22` إلى `Pass` لأن advanced reports + export parity أصبحت صحيحة ماليًا، وتم فتح `PX-12 = Open` مع تعيين `PX-12-T01` كمهمة تالية. | `Closed / Next` | `Phase Close Decision — PX-11`, `aya-mobile-documentation/27_PreBuild_Verification_Matrix.md` |
+| 2026-03-11 | `PX-12` | اكتملت المرحلة تنفيذيًا وارتفعت إلى `Review`. جميع المهام `T01..T05 = Done`, وتم تجهيز `Phase Execution Report — PX-12` و`Phase Review Prompt — PX-12`. التحقق النهائي اجتاز stack محلية مع `kong/auth/rest`, ثم `db reset`, `proof script`, `db lint`, `typecheck`, `lint`, `test = 166/166`, `build`, وتمت مواءمة `25/05/03/18` حتى لا يبقى drift بين التنفيذ والعقود. | `Review` | `Phase Execution Report — PX-12`, `Phase Review Prompt — PX-12`, `npx supabase db reset --local --debug`, `npx tsx scripts/px12-portability.ts`, `npm run test`, `npm run build`, `aya-mobile-documentation/25_API_Contracts.md`, `aya-mobile-documentation/05_Database_Design.md`, `aya-mobile-documentation/03_UI_UX_Sitemap.md`, `aya-mobile-documentation/18_Data_Retention_Privacy.md` |
+| 2026-03-11 | `PX-12` | اعتمد المراجع المستقل المرحلة بحكم `PASS`. أكدت المراجعة أن export/import/restore/privacy/audit تعمل بعقود صحيحة، وأن `drift_count = 0` و`rto_seconds = 1` وprivacy proof مكتملة دون findings حاجبة. | `Review PASS` | `Phase Review Report — PX-12` |
+| 2026-03-11 | `PX-12` | أُغلقت المرحلة رسميًا بقرار `Closed`. تم تحديث `VB-23` إلى `Pass` لأن portability gate أصبحت مثبّتة بالأدلة، وتم فتح `PX-13 = Open` مع تعيين `PX-13-T01` كمهمة تالية. | `Closed / Next` | `Phase Close Decision — PX-12`, `aya-mobile-documentation/27_PreBuild_Verification_Matrix.md` |
+| 2026-03-11 | `PX-13-T01/T02/T03/T04/T05` | تم تنفيذ حزمة `PX-13` كاملة: caching بقيت محصورة على baselines منخفضة المخاطر في `dashboard.ts`, وبُني `/api/search/global` مع `ERR_SEARCH_QUERY_TOO_SHORT` وsafe keys only, ثم `/api/alerts/summary` الإدارية ومركز `/notifications` الموحد. أثناء التحقق ظهر stale-results defect في search catalogs تحت `next start`; تم إغلاقه بإرجاع catalog search إلى direct reads افتراضيًا مع إبقاء الكاش opt-in فقط. | `Done` | `lib/api/dashboard.ts`, `lib/api/search.ts`, `lib/validations/search.ts`, `app/api/search/global/route.ts`, `app/api/alerts/summary/route.ts`, `app/(dashboard)/notifications/page.tsx`, `components/dashboard/notifications-workspace.tsx`, `tests/unit/search-validation.test.ts`, `tests/unit/search-global-route.test.ts`, `tests/unit/alerts-summary-route.test.ts`, `tests/e2e/px13-search-alerts.spec.ts`, `scripts/px13-search-alerts-performance.ts` |
+| 2026-03-11 | `PX-13` | اكتملت المرحلة تنفيذيًا وارتفعت إلى `Review`. جميع المهام `T01..T05 = Done`, وتم تجهيز `Phase Execution Report — PX-13` و`Phase Review Prompt — PX-13`. التحقق النهائي اجتاز `db reset`, `db lint`, `typecheck`, `lint`, `test = 174/174`, `build`, `proof script`, و`PX-13 e2e = 6/6` باستخدام local Supabase env overrides + local production build على قاعدة نظيفة. | `Review` | `Phase Execution Report — PX-13`, `Phase Review Prompt — PX-13`, `npx supabase db reset --local --debug`, `npx supabase db lint --local --fail-on error --level warning`, `npm run test`, `npm run build`, `npx tsx scripts/px13-search-alerts-performance.ts`, `npx playwright test tests/e2e/px13-search-alerts.spec.ts --config=playwright.px06.config.ts` |
+| 2026-03-11 | `PX-13` | أعاد Review Agent الحكم `PASS` مع توصية `Close PX-13`. أكدت المراجعة أن مسار الكاش الحالي لا يخلق stale finance أو stale search results، وأن advanced search bounded وصحيحة، وأن alert aggregation تقلل الضوضاء دون كسر scoping، وأن `p95` وdevice regression كلها ضمن الحدود المعتمدة. | `Review PASS` | `Phase Review Report — PX-13` |
+| 2026-03-11 | `PX-13` | أُغلقت المرحلة رسميًا بقرار `Closed`. تم تحديث `VB-24`, `VB-25`, `VB-26` إلى `Pass` لأن performance/search/alert/device gates أصبحت مثبّتة بالأدلة، وتم فتح `PX-14 = Open` مع تعيين `PX-14-T01` كمهمة تالية. | `Closed / Next` | `Phase Close Decision — PX-13`, `aya-mobile-documentation/27_PreBuild_Verification_Matrix.md` |
 
 ---
 

@@ -2,6 +2,7 @@ import { getWorkspaceAccess } from "@/app/(dashboard)/access";
 import { AccessRequired } from "@/components/dashboard/access-required";
 import { MaintenanceWorkspace } from "@/components/dashboard/maintenance-workspace";
 import { getMaintenancePageBaseline } from "@/lib/api/dashboard";
+import { hasPermission } from "@/lib/permissions";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 
 export default async function MaintenancePage() {
@@ -16,11 +17,11 @@ export default async function MaintenancePage() {
     );
   }
 
-  if (access.state !== "ok" || !["admin", "pos_staff"].includes(access.role)) {
+  if (access.state !== "ok" || !hasPermission(access.permissions, "maintenance.read")) {
     return (
       <AccessRequired
-        title="هذه الشاشة تتطلب دورًا تشغيليًا صالحًا"
-        description="يمكن للـ Admin وPOS إدارة أوامر الصيانة، بينما الإلغاء محصور بالـ Admin."
+        title="هذه الشاشة تتطلب bundle صيانة صالحًا"
+        description="يحتاج المستخدم إلى صلاحية `maintenance.read` لعرض أوامر الصيانة، بينما الإلغاء يبقى محصورًا بالـ Admin."
       />
     );
   }

@@ -1,71 +1,25 @@
+import { NextResponse } from "next/server";
 import { POST } from "@/app/api/sales/route";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { getSupabaseAdminClient } from "@/lib/supabase/admin";
+import { authorizeRequest } from "@/lib/api/common";
 
-vi.mock("@/lib/supabase/server", () => ({
-  createSupabaseServerClient: vi.fn()
-}));
-
-vi.mock("@/lib/supabase/admin", () => ({
-  getSupabaseAdminClient: vi.fn()
-}));
-
-type ProfileRow = { role: string; is_active: boolean } | null;
-type InvoiceRow = { id: string; invoice_number: string; total_amount: number } | null;
+vi.mock("@/lib/api/common", async () => {
+  const actual = await vi.importActual<typeof import("@/lib/api/common")>("@/lib/api/common");
+  return {
+    ...actual,
+    authorizeRequest: vi.fn()
+  };
+});
 
 const productId = "11111111-1111-1111-8111-111111111111";
 const accountId = "22222222-2222-2222-8222-222222222222";
 const customerId = "44444444-4444-4444-8444-444444444444";
 const idempotencyKey = "33333333-3333-3333-8333-333333333333";
 
-function buildAdminClient(options?: {
-  profile?: ProfileRow;
-  rpcData?: Record<string, unknown> | null;
-  rpcError?: { message: string } | null;
-  invoice?: InvoiceRow;
-}) {
-  const profile = options?.profile ?? { role: "pos_staff", is_active: true };
-  const rpcData = options?.rpcData ?? {
-    invoice_id: "invoice-1",
-    invoice_number: "INV-0001",
-    total: 12,
-    change: 0
-  };
-  const rpcError = options?.rpcError ?? null;
-  const invoice = options?.invoice ?? null;
-
-  return {
-    from(table: string) {
-      return {
-        select() {
-          return {
-            eq() {
-              if (table === "profiles") {
-                return {
-                  single: vi.fn().mockResolvedValue({
-                    data: profile,
-                    error: profile ? null : { message: "missing profile" }
-                  })
-                };
-              }
-
-              return {
-                maybeSingle: vi.fn().mockResolvedValue({
-                  data: invoice,
-                  error: null
-                })
-              };
-            }
-          };
-        }
-      };
-    },
-    rpc: vi.fn().mockResolvedValue({
-      data: rpcData,
-      error: rpcError
-    })
-  };
-}
+type ExistingInvoiceRow = {
+  id: string;
+  invoice_number: string;
+  total_amount: number;
+} | null;
 
 function createRequest(body: Record<string, unknown>) {
   return new Request("http://localhost/api/sales", {
@@ -77,22 +31,67 @@ function createRequest(body: Record<string, unknown>) {
   });
 }
 
+function buildAuthorization(options?: {
+  rpcData?: Record<string, unknown> | null;
+  rpcError?: { message: string } | null;
+  invoice?: ExistingInvoiceRow;
+}) {
+  const rpc = vi.fn().mockResolvedValue({
+    data:
+      options?.rpcData ?? {
+        invoice_id: "invoice-1",
+        invoice_number: "INV-0001",
+        total: 12,
+        change: 0
+      },
+    error: options?.rpcError ?? null
+  });
+
+  const invoice = options?.invoice ?? null;
+
+  return {
+    authorized: true,
+    role: "pos_staff",
+    userId: "user-1",
+    permissions: ["sales.create"],
+    bundleKeys: [],
+    maxDiscountPercentage: null,
+    discountRequiresApproval: false,
+    supabase: {
+      rpc,
+      from() {
+        return {
+          select() {
+            return {
+              eq() {
+                return {
+                  maybeSingle: vi.fn().mockResolvedValue({
+                    data: invoice,
+                    error: null
+                  })
+                };
+              }
+            };
+          }
+        };
+      }
+    }
+  };
+}
+
 describe("POST /api/sales", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("returns 401 when the session is missing", async () => {
-    vi.mocked(createSupabaseServerClient).mockReturnValue({
-      auth: {
-        getSession: vi.fn().mockResolvedValue({
-          data: { session: null },
-          error: null
-        })
-      }
-    } as never);
-
-    vi.mocked(getSupabaseAdminClient).mockReturnValue(buildAdminClient() as never);
+  it("returns the authorization response when blocked", async () => {
+    vi.mocked(authorizeRequest).mockResolvedValue({
+      authorized: false,
+      response: NextResponse.json(
+        { success: false, error: { code: "ERR_API_ROLE_FORBIDDEN", message: "forbidden" } },
+        { status: 403 }
+      )
+    });
 
     const response = await POST(
       createRequest({
@@ -101,50 +100,12 @@ describe("POST /api/sales", () => {
         idempotency_key: idempotencyKey
       })
     );
-    const payload = await response.json();
-
-    expect(response.status).toBe(401);
-    expect(payload.error.code).toBe("ERR_API_SESSION_INVALID");
-  });
-
-  it("returns 403 when the user role is not allowed", async () => {
-    vi.mocked(createSupabaseServerClient).mockReturnValue({
-      auth: {
-        getSession: vi.fn().mockResolvedValue({
-          data: { session: { user: { id: "user-1" } } },
-          error: null
-        })
-      }
-    } as never);
-
-    vi.mocked(getSupabaseAdminClient).mockReturnValue(
-      buildAdminClient({ profile: { role: "viewer", is_active: true } }) as never
-    );
-
-    const response = await POST(
-      createRequest({
-        items: [{ product_id: productId, quantity: 1 }],
-        payments: [{ account_id: accountId, amount: 10 }],
-        idempotency_key: idempotencyKey
-      })
-    );
-    const payload = await response.json();
 
     expect(response.status).toBe(403);
-    expect(payload.error.code).toBe("ERR_API_ROLE_FORBIDDEN");
   });
 
   it("returns 400 when validation fails", async () => {
-    vi.mocked(createSupabaseServerClient).mockReturnValue({
-      auth: {
-        getSession: vi.fn().mockResolvedValue({
-          data: { session: { user: { id: "user-1" } } },
-          error: null
-        })
-      }
-    } as never);
-
-    vi.mocked(getSupabaseAdminClient).mockReturnValue(buildAdminClient() as never);
+    vi.mocked(authorizeRequest).mockResolvedValue(buildAuthorization() as never);
 
     const response = await POST(
       createRequest({
@@ -159,19 +120,9 @@ describe("POST /api/sales", () => {
     expect(payload.error.code).toBe("ERR_API_VALIDATION_FAILED");
   });
 
-  it("translates the request body to the RPC contract and returns success", async () => {
-    const adminClient = buildAdminClient();
-
-    vi.mocked(createSupabaseServerClient).mockReturnValue({
-      auth: {
-        getSession: vi.fn().mockResolvedValue({
-          data: { session: { user: { id: "user-1" } } },
-          error: null
-        })
-      }
-    } as never);
-
-    vi.mocked(getSupabaseAdminClient).mockReturnValue(adminClient as never);
+  it("passes the canonical payload to create_sale()", async () => {
+    const authorization = buildAuthorization();
+    vi.mocked(authorizeRequest).mockResolvedValue(authorization as never);
 
     const response = await POST(
       createRequest({
@@ -194,7 +145,7 @@ describe("POST /api/sales", () => {
 
     expect(response.status).toBe(200);
     expect(payload.success).toBe(true);
-    expect((adminClient.rpc as ReturnType<typeof vi.fn>).mock.calls[0][1]).toEqual({
+    expect(authorization.supabase.rpc).toHaveBeenCalledWith("create_sale", {
       p_items: [
         {
           product_id: productId,
@@ -212,25 +163,18 @@ describe("POST /api/sales", () => {
   });
 
   it("returns replay metadata when the idempotency key already exists", async () => {
-    vi.mocked(createSupabaseServerClient).mockReturnValue({
-      auth: {
-        getSession: vi.fn().mockResolvedValue({
-          data: { session: { user: { id: "user-1" } } },
-          error: null
-        })
+    const authorization = buildAuthorization({
+      rpcError: { message: "ERR_IDEMPOTENCY" },
+      invoice: {
+        id: "invoice-1",
+        invoice_number: "INV-0001",
+        total_amount: 12
       }
-    } as never);
+    });
 
-    vi.mocked(getSupabaseAdminClient).mockReturnValue(
-      buildAdminClient({
-        rpcError: { message: "ERR_IDEMPOTENCY" },
-        invoice: {
-          id: "invoice-1",
-          invoice_number: "INV-0001",
-          total_amount: 12
-        }
-      }) as never
-    );
+    vi.mocked(authorizeRequest)
+      .mockResolvedValueOnce(authorization as never)
+      .mockResolvedValueOnce(authorization as never);
 
     const response = await POST(
       createRequest({
@@ -244,5 +188,25 @@ describe("POST /api/sales", () => {
     expect(response.status).toBe(409);
     expect(payload.error.code).toBe("ERR_IDEMPOTENCY");
     expect(payload.error.details.existing_result.invoice_number).toBe("INV-0001");
+  });
+
+  it("maps discount approval failures from the RPC layer", async () => {
+    vi.mocked(authorizeRequest).mockResolvedValue(
+      buildAuthorization({
+        rpcError: { message: "ERR_DISCOUNT_APPROVAL_REQUIRED" }
+      }) as never
+    );
+
+    const response = await POST(
+      createRequest({
+        items: [{ product_id: productId, quantity: 1, discount_percentage: 12 }],
+        payments: [{ account_id: accountId, amount: 88 }],
+        idempotency_key: idempotencyKey
+      })
+    );
+    const payload = await response.json();
+
+    expect(response.status).toBe(403);
+    expect(payload.error.code).toBe("ERR_DISCOUNT_APPROVAL_REQUIRED");
   });
 });

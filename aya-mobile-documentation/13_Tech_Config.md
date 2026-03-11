@@ -118,6 +118,17 @@
 
 ---
 
+## نموذج الصلاحيات الدقيقة (PX-10 Contract)
+
+- `profiles.role` يبقى طبقة authority الأساسية (`admin` أو `pos_staff`) ولا يتوسع إلى أدوار تشغيلية فرعية.
+- `permission_bundles` + `role_assignments` يشكلان الطبقة الثانية لتحديد القدرات التشغيلية داخل حدود `profiles.role`.
+- `authorizeRequest()` يبقى coarse gate أوليًّا: أي Route تحدد الحد الأدنى (`admin` أو `pos_staff`) ثم تطبق bundle checks داخليًا عند الحاجة.
+- bundles لا تفتح direct DB grants جديدة، ولا تغيّر RLS، ولا تتجاوز `fn_require_admin_actor()` أو أي RPC Admin-only قائمة.
+- Blind POS يبقى invariant: bundles قد تسمح بعمليات تشغيلية إضافية، لكنها لا تسمح بإظهار `cost_price`, `avg_cost_price`, `current_balance`, `credit_limit`, أو أي حقول محجوبة تعاقديًا.
+- discount governance سيعتمد لاحقًا على `permission_bundles.max_discount_percentage` و`discount_requires_approval` مع بقاء `system_settings.max_pos_discount_percentage` كخط أساس عام.
+
+---
+
 ## 🔑 متغيرات البيئة (Environment Variables)
 
 ### مطلوبة (Required)

@@ -40,7 +40,9 @@ type AuthorizationSupabase = Extract<
 
 export async function GET() {
   try {
-    const authorization = await authorizeRequest(["admin", "pos_staff"]);
+    const authorization = await authorizeRequest(["admin", "pos_staff"], {
+      requiredPermissions: ["expenses.read"]
+    });
     if (!authorization.authorized) {
       return authorization.response;
     }
