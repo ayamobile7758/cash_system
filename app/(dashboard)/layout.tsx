@@ -6,6 +6,8 @@ import { getUnreadNotificationCount } from "@/lib/api/notifications";
 import { hasPermission } from "@/lib/permissions";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 
+export const dynamic = "force-dynamic";
+
 const navigation = [
   { href: "/pos", label: "POS", permission: "pos.use" },
   { href: "/products", label: "المنتجات", permission: "products.read" },
