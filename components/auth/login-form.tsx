@@ -14,10 +14,12 @@ export function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isOffline, setIsOffline] = useState(() => (typeof navigator === "undefined" ? false : !navigator.onLine));
+  const [isOffline, setIsOffline] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
+    setIsOffline(!navigator.onLine);
+
     const handleOnline = () => setIsOffline(false);
     const handleOffline = () => setIsOffline(true);
 
@@ -78,7 +80,28 @@ export function LoginForm() {
                   }
 
                   await supabase.auth.getSession();
-                  router.replace("/pos");
+
+                  const {
+                    data: { user }
+                  } = await supabase.auth.getUser();
+
+                  let nextRoute = "/pos";
+
+                  if (user) {
+                    const { data: profile } = await supabase
+                      .from("profiles")
+                      .select("role")
+                      .eq("id", user.id)
+                      .single();
+
+                    if (profile?.role === "admin") {
+                      nextRoute = "/reports";
+                    } else if (profile?.role === "pos_staff") {
+                      nextRoute = "/pos";
+                    }
+                  }
+
+                  router.replace(nextRoute);
                   router.refresh();
                 } catch (error) {
                   const message = (error as Error).message || "تعذر إكمال تسجيل الدخول الآن.";

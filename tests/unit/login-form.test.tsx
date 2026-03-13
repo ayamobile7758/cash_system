@@ -6,6 +6,8 @@ const mockReplace = vi.fn();
 const mockRefresh = vi.fn();
 const mockSignInWithPassword = vi.fn();
 const mockGetSession = vi.fn();
+const mockGetUser = vi.fn();
+const mockSingle = vi.fn();
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({
@@ -18,8 +20,16 @@ vi.mock("@/lib/supabase/client", () => ({
   createSupabaseBrowserClient: () => ({
     auth: {
       signInWithPassword: mockSignInWithPassword,
-      getSession: mockGetSession
-    }
+      getSession: mockGetSession,
+      getUser: mockGetUser
+    },
+    from: () => ({
+      select: () => ({
+        eq: () => ({
+          single: mockSingle
+        })
+      })
+    })
   })
 }));
 
@@ -40,11 +50,15 @@ describe("LoginForm", () => {
     mockRefresh.mockReset();
     mockSignInWithPassword.mockReset();
     mockGetSession.mockReset();
+    mockGetUser.mockReset();
+    mockSingle.mockReset();
   });
 
-  it("redirects with App Router after successful login", async () => {
+  it("redirects admins to /reports after successful login", async () => {
     mockSignInWithPassword.mockResolvedValue({ error: null });
     mockGetSession.mockResolvedValue({ data: { session: { user: { id: "admin-1" } } } });
+    mockGetUser.mockResolvedValue({ data: { user: { id: "admin-1" } } });
+    mockSingle.mockResolvedValue({ data: { role: "admin" } });
 
     render(<LoginForm />);
 
@@ -62,7 +76,8 @@ describe("LoginForm", () => {
         password: "password123"
       });
       expect(mockGetSession).toHaveBeenCalled();
-      expect(mockReplace).toHaveBeenCalledWith("/pos");
+      expect(mockGetUser).toHaveBeenCalled();
+      expect(mockReplace).toHaveBeenCalledWith("/reports");
       expect(mockRefresh).toHaveBeenCalled();
     });
   }, 15000);
@@ -87,6 +102,37 @@ describe("LoginForm", () => {
     expect(mockReplace).not.toHaveBeenCalled();
   }, 15000);
 
+  it("redirects pos staff to /pos and falls back to /pos when profile is unavailable", async () => {
+    mockSignInWithPassword.mockResolvedValue({ error: null });
+    mockGetSession.mockResolvedValue({ data: { session: { user: { id: "pos-1" } } } });
+    mockGetUser.mockResolvedValue({ data: { user: { id: "pos-1" } } });
+    mockSingle.mockResolvedValueOnce({ data: { role: "pos_staff" } }).mockResolvedValueOnce({ data: null });
+
+    render(<LoginForm />);
+
+    fireEvent.change(screen.getByLabelText("البريد الإلكتروني"), {
+      target: { value: "pos@aya.local" }
+    });
+    fireEvent.change(screen.getByLabelText("كلمة المرور"), {
+      target: { value: "password123" }
+    });
+    fireEvent.click(screen.getByRole("button", { name: /الدخول إلى بيئة التشغيل/i }));
+
+    await waitFor(() => {
+      expect(mockReplace).toHaveBeenCalledWith("/pos");
+    });
+
+    mockReplace.mockClear();
+    mockRefresh.mockClear();
+
+    fireEvent.click(screen.getByRole("button", { name: /الدخول إلى بيئة التشغيل/i }));
+
+    await waitFor(() => {
+      expect(mockReplace).toHaveBeenCalledWith("/pos");
+      expect(mockRefresh).toHaveBeenCalled();
+    });
+  }, 15000);
+
   it("keeps the submit action available when the browser reports offline", async () => {
     Object.defineProperty(window.navigator, "onLine", {
       configurable: true,
@@ -95,6 +141,8 @@ describe("LoginForm", () => {
 
     mockSignInWithPassword.mockResolvedValue({ error: null });
     mockGetSession.mockResolvedValue({ data: { session: { user: { id: "admin-1" } } } });
+    mockGetUser.mockResolvedValue({ data: { user: { id: "admin-1" } } });
+    mockSingle.mockResolvedValue({ data: { role: "admin" } });
 
     render(<LoginForm />);
 
@@ -116,7 +164,7 @@ describe("LoginForm", () => {
         email: "admin@aya.local",
         password: "password123"
       });
-      expect(mockReplace).toHaveBeenCalledWith("/pos");
+      expect(mockReplace).toHaveBeenCalledWith("/reports");
     });
   }, 15000);
 });
