@@ -7,9 +7,9 @@
     "npm": ">=10"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 5000 -H 0.0.0.0",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 5000 -H 0.0.0.0",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=0",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "typecheck": "tsc --noEmit",
