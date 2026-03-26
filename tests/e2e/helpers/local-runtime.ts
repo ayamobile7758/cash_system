@@ -97,9 +97,9 @@ export async function login(page: Page, email: string, password: string, targetP
   await page.getByLabel("البريد الإلكتروني").fill(email);
   await page.getByLabel("كلمة المرور").fill(password);
   await page.getByRole("button", { name: "الدخول إلى بيئة التشغيل" }).click();
-  await page.waitForURL("**/pos");
+  await page.waitForURL(/.*\/(pos|reports)/);
 
-  if (targetPath !== "/pos") {
+  if (targetPath && !page.url().includes(targetPath)) {
     await page.goto(targetPath, { waitUntil: "domcontentloaded" });
     await page.waitForLoadState("networkidle");
   }

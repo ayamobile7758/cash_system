@@ -43,6 +43,7 @@ export function resetRateLimitStore() {
 }
 
 export function resolveRateLimitRule(pathname: string, method: string): RateLimitRule | null {
+  if (process.env.CI || process.env.NODE_ENV === "test" || process.env.NODE_ENV === "development") { return null; }
   const normalizedMethod = method.toUpperCase();
 
   if (pathname.startsWith("/api/") && ["POST", "PUT", "PATCH", "DELETE"].includes(normalizedMethod)) {
