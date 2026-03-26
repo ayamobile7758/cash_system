@@ -120,10 +120,10 @@ export function InvoicesWorkspace({ role, invoices, accounts }: InvoicesWorkspac
     });
   }, [invoices, searchTerm]);
 
-  const selectedInvoice =
-    filteredInvoices.find((invoice) => invoice.id === selectedInvoiceId) ??
-    invoices.find((invoice) => invoice.id === selectedInvoiceId) ??
-    null;
+  const selectedInvoice = useMemo(
+    () => invoices.find((invoice) => invoice.id === selectedInvoiceId) ?? null,
+    [invoices, selectedInvoiceId]
+  );
 
   useEffect(() => {
     if (!selectedInvoice) {
