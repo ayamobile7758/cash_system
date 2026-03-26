@@ -24,7 +24,7 @@ export function LogoutButton() {
               return;
             }
 
-            window.location.href = "/login";
+            window.location.href = "/";
           })();
         });
       }}
