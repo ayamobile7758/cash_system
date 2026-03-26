@@ -1,3 +1,4 @@
+import { vi } from "vitest";
 import {
   buildRateLimitKey,
   consumeRateLimit,
@@ -9,6 +10,10 @@ import {
 describe("rate limiting", () => {
   beforeEach(() => {
     resetRateLimitStore();
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   it("matches mutating API routes", () => {
@@ -45,7 +50,7 @@ describe("rate limiting", () => {
       ip: null
     };
 
-    expect(resolveClientAddress(request)).toBe("10.0.0.1");
+    expect(resolveClientAddress(request as any)).toBe("10.0.0.1");
   });
 
   it("blocks requests after the limit is exhausted and resets after the window", () => {

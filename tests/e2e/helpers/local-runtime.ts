@@ -16,8 +16,8 @@ type ServiceRoleClient = SupabaseClient;
 
 loadEnvConfig(process.cwd());
 
-function requireEnv(name: string) {
-  const value = process.env[name];
+function requireEnv(name: string, fallback?: string) {
+  const value = process.env[name] || fallback;
 
   if (!value) {
     throw new Error(`Missing required runtime env: ${name}`);

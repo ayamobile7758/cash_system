@@ -30,6 +30,10 @@ describe("balance check routes", () => {
     vi.clearAllMocks();
   });
 
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   it("requires admin authorization for POST /api/health/balance-check", async () => {
     vi.mocked(authorizeRequest).mockResolvedValue({
       authorized: false,
