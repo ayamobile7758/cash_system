@@ -7,16 +7,12 @@ const viewports = [
 ] as const;
 
 for (const viewport of viewports) {
-  test(`home page renders the PX-05 launcher on ${viewport.label}`, async ({ page }) => {
+  test(`home page renders the unified login and pos launcher on ${viewport.label}`, async ({ page }) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
     await page.goto("/");
 
-    await expect(page.getByRole("heading", { name: "Aya Mobile" })).toBeVisible();
-    await expect(page.getByText("PX-05 Reports + Snapshot + Integrity + Device")).toBeVisible();
-    await expect(page.getByRole("link", { name: "تسجيل الدخول" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "شاشة نقطة البيع" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "التقارير" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "الإعدادات التشغيلية" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "تسجيل الدخول إلى مساحة العمل" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "نقطة البيع المباشرة" })).toBeVisible();
     await expect(page.getByRole("button", { name: "تثبيت Aya Mobile" })).toBeVisible();
   });
 }
@@ -69,9 +65,9 @@ for (const route of [
   });
 }
 
-test("login route renders the runtime access form", async ({ page }) => {
-  await page.goto("/login");
+test("home page renders the runtime access form", async ({ page }) => {
+  await page.goto("/");
 
-  await expect(page.getByRole("heading", { name: "تسجيل الدخول للتشغيل الحقيقي" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "تسجيل الدخول إلى مساحة العمل" })).toBeVisible();
   await expect(page.getByRole("button", { name: "الدخول إلى بيئة التشغيل" })).toBeVisible();
 });
