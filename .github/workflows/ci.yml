@@ -25,6 +25,14 @@ jobs:
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
 
+      - name: Start Supabase
+        run: npx supabase start
+
+      - name: Setup environment variables
+        run: |
+          npx supabase status -o env --override-name api.url=NEXT_PUBLIC_SUPABASE_URL --override-name anon.key=NEXT_PUBLIC_SUPABASE_ANON_KEY --override-name service_role.key=SUPABASE_SERVICE_ROLE_KEY > .env.local
+          echo "CRON_SECRET=test-secret" >> .env.local
+
       - name: Lint
         run: npm run lint
 
@@ -33,9 +41,6 @@ jobs:
 
       - name: Unit tests
         run: npm run test
-
-      - name: Copy env template for build and E2E tests
-        run: cp .env.example .env.local
 
       - name: Build
         run: npm run build
