@@ -34,14 +34,18 @@ jobs:
       - name: Unit tests
         run: npm run test
 
-      - name: Build
-        run: npm run build
-
       - name: Start Supabase
         run: npx supabase start
 
       - name: Export Supabase Env
-        run: npx supabase status -o env --override-name api.url=NEXT_PUBLIC_SUPABASE_URL --override-name auth.anon_key=NEXT_PUBLIC_SUPABASE_ANON_KEY --override-name auth.service_role_key=SUPABASE_SERVICE_ROLE_KEY >> .env
+        run: |
+          npx supabase status -o env > supabase_env.txt
+          echo "NEXT_PUBLIC_SUPABASE_URL=$(grep '^API_URL=' supabase_env.txt | cut -d '=' -f 2- | tr -d '\"')" >> .env
+          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=$(grep '^ANON_KEY=' supabase_env.txt | cut -d '=' -f 2- | tr -d '\"')" >> .env
+          echo "SUPABASE_SERVICE_ROLE_KEY=$(grep '^SERVICE_ROLE_KEY=' supabase_env.txt | cut -d '=' -f 2- | tr -d '\"')" >> .env
+
+      - name: Build
+        run: npm run build
 
       - name: End-to-end tests
         run: npm run test:e2e

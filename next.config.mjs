@@ -8,7 +8,7 @@ if (process.env.NODE_ENV !== "production") {
 const contentSecurityPolicy = [
   "default-src 'self'",
   "base-uri 'self'",
-  "connect-src 'self' https: wss:",
+  "connect-src 'self' https: wss: http://127.0.0.1:* ws://127.0.0.1:*",
   "font-src 'self' data:",
   "form-action 'self'",
   "frame-ancestors 'none'",
