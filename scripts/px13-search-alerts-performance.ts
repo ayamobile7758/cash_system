@@ -93,16 +93,28 @@ async function createFixtureUser(supabase: any, role: "admin" | "pos_staff", pre
     throw new Error(`Failed to create ${role} fixture: ${error?.message ?? "unknown error"}`);
   }
 
+  return data.user.id;
+}
+
+async function waitForProfiles(supabase: any, userIds: string[]) {
   for (let attempt = 0; attempt < 20; attempt += 1) {
-    const { data: profile } = await supabase.from("profiles").select("id").eq("id", data.user.id).maybeSingle();
-    if (profile?.id) {
-      return data.user.id;
+    const { data: profiles, error } = await supabase
+      .from("profiles")
+      .select("id")
+      .in("id", userIds);
+
+    if (error) {
+      throw new Error(`Failed to poll profiles: ${error.message}`);
+    }
+
+    if (profiles?.length === userIds.length) {
+      return;
     }
 
     await new Promise((resolve) => setTimeout(resolve, 200));
   }
 
-  throw new Error(`Profile row did not appear for ${data.user.id}.`);
+  throw new Error(`Profile rows did not appear for ${userIds.join(", ")}.`);
 }
 
 async function runRpc<T>(supabase: any, fnName: string, params: Record<string, unknown>) {
@@ -130,6 +142,7 @@ async function main() {
 
   const adminId = await createFixtureUser(supabase, "admin", "px13-admin");
   const posId = await createFixtureUser(supabase, "pos_staff", "px13-pos");
+  await waitForProfiles(supabase, [adminId, posId]);
   const currentDate = toIsoDate(new Date());
   const yesterday = shiftDays(-1);
 
