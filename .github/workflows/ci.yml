@@ -32,6 +32,7 @@ jobs:
         run: |
           npx supabase status -o env --override-name api.url=NEXT_PUBLIC_SUPABASE_URL --override-name anon.key=NEXT_PUBLIC_SUPABASE_ANON_KEY --override-name service_role.key=SUPABASE_SERVICE_ROLE_KEY > .env.local
           echo "CRON_SECRET=test-secret" >> .env.local
+          cat .env.local >> $GITHUB_ENV
 
       - name: Lint
         run: npm run lint
@@ -42,26 +43,8 @@ jobs:
       - name: Unit tests
         run: npm run test
 
-      - name: Start Supabase
-        run: npx supabase start
-
-      - name: Export Supabase Env
-        run: |
-          npx supabase status -o env > supabase_env.txt
-          echo "NEXT_PUBLIC_SUPABASE_URL=$(grep '^API_URL=' supabase_env.txt | cut -d '=' -f 2- | tr -d '\"')" >> .env
-          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=$(grep '^ANON_KEY=' supabase_env.txt | cut -d '=' -f 2- | tr -d '\"')" >> .env
-          echo "SUPABASE_SERVICE_ROLE_KEY=$(grep '^SERVICE_ROLE_KEY=' supabase_env.txt | cut -d '=' -f 2- | tr -d '\"')" >> .env
-
       - name: Build
         run: npm run build
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: "https://your-project.supabase.co"
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: "your-public-anon-key"
-          SUPABASE_SERVICE_ROLE_KEY: "your-service-role-key"
 
       - name: End-to-end tests
         run: npm run test:e2e
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: "https://your-project.supabase.co"
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: "your-public-anon-key"
-          SUPABASE_SERVICE_ROLE_KEY: "your-service-role-key"

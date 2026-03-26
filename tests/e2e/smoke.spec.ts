@@ -68,11 +68,6 @@ for (const route of [
 test("home page renders the runtime access form", async ({ page }) => {
   await page.goto("/");
 
-<<<<<<< HEAD
-  await expect(page.getByRole("heading", { name: "تسجيل الدخول إلى مساحة العمل" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "الدخول إلى بيئة التشغيل" })).toBeVisible();
-=======
   await expect(page.getByRole("heading", { name: "تسجيل الدخول" })).toBeVisible();
   await expect(page.getByRole("button", { name: "تسجيل الدخول" })).toBeVisible();
->>>>>>> origin/feature/zen-ui-refactor-11605069441135893072
 });

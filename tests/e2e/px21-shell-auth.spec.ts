@@ -32,10 +32,6 @@ test.describe.serial("PX-21 shell + auth entry", () => {
     await page.waitForLoadState("networkidle");
 
     await expect(page).toHaveTitle(/الصفحة الرئيسية/);
-<<<<<<< HEAD
-    await expect(page.getByRole("heading", { name: "تسجيل الدخول إلى مساحة العمل" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "الدخول إلى بيئة التشغيل" })).toBeVisible();
-=======
     await expect(page.getByRole("heading", { name: "Aya Mobile" })).toBeVisible();
     await expect(page.getByRole("link", { name: "ادخل إلى مساحة العمل", exact: true })).toBeVisible();
     await expect(page.getByRole("link", { name: "افتح نقطة البيع" })).toBeVisible();
@@ -48,7 +44,6 @@ test.describe.serial("PX-21 shell + auth entry", () => {
     await expect(page).toHaveTitle(/تسجيل الدخول/);
     await expect(page.getByRole("heading", { name: "تسجيل الدخول" })).toBeVisible();
     await expect(page.getByRole("button", { name: "تسجيل الدخول" })).toBeVisible();
->>>>>>> origin/feature/zen-ui-refactor-11605069441135893072
     await expect(page.locator("main")).not.toContainText(/PX-|SOP-|baseline/i);
     await expectNoHorizontalOverflow(page);
   });
