@@ -46,6 +46,14 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: "https://your-project.supabase.co"
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: "your-public-anon-key"
+          SUPABASE_SERVICE_ROLE_KEY: "your-service-role-key"
 
       - name: End-to-end tests
         run: npm run test:e2e
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: "https://your-project.supabase.co"
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: "your-public-anon-key"
+          SUPABASE_SERVICE_ROLE_KEY: "your-service-role-key"

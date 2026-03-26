@@ -71,26 +71,25 @@ export function InstallPrompt() {
   }
 
   return (
-    <section className="install-card" aria-labelledby="install-card-title">
-      <div className="install-card__body">
-        <p className="eyebrow">التثبيت على الجهاز</p>
-        <h2 id="install-card-title">التثبيت على الهاتف أو التابلت أو اللابتوب</h2>
-        <p className="install-copy">
-          النظام يعمل كتطبيق ويب واحد على الهاتف والتابلت واللابتوب والديسكتوب، مع
-          تثبيت اختياري على المتصفحات المدعومة، وبدون أي وضع Offline للعمليات المالية.
-        </p>
-      </div>
+    <section className="baseline-card install-card" aria-labelledby="install-card-title">
+      <h2 id="install-card-title" style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>
+        تثبيت النظام على جهازك
+      </h2>
+      <p style={{ margin: '0 0 1rem', color: 'var(--aya-muted)', lineHeight: 1.6 }}>
+        النظام يعمل كتطبيق ويب على جميع الأجهزة، مع توفر التثبيت الاختياري.
+      </p>
 
       <div className="install-card__actions">
         <button
           type="button"
-          className="install-button"
+          className="ghost-button"
+          style={{ width: '100%' }}
           onClick={handleInstallClick}
           disabled={installState !== "ready"}
         >
           تثبيت Aya Mobile
         </button>
-        <p className="install-status" data-install-state={installState}>
+        <p className="install-status" style={{ fontSize: '0.85rem', textAlign: 'center' }} data-install-state={installState}>
           {statusLabel}
         </p>
       </div>

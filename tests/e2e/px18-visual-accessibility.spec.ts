@@ -52,13 +52,6 @@ test.describe.serial("PX-18 visual system + accessibility", () => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
     await page.waitForLoadState("networkidle");
     await expect(page).toHaveTitle(/الصفحة الرئيسية/);
-    await expect(page.getByRole("heading", { name: "Aya Mobile" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "ابدأ جلسة العمل" })).toBeVisible();
-    await expect(page.locator(".hero-panel")).toBeVisible();
-
-    await page.goto("/login", { waitUntil: "domcontentloaded" });
-    await page.waitForLoadState("networkidle");
-    await expect(page).toHaveTitle(/تسجيل الدخول/);
     await expect(page.getByRole("heading", { name: "تسجيل الدخول إلى مساحة العمل" })).toBeVisible();
     await expect(page.locator(".login-panel--accent")).toBeVisible();
 

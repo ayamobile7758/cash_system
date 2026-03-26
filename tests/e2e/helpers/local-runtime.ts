@@ -92,7 +92,7 @@ export async function createFixtureUser(
 }
 
 export async function login(page: Page, email: string, password: string, targetPath = "/pos") {
-  await page.goto("/login", { waitUntil: "domcontentloaded" });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
   await page.waitForLoadState("networkidle");
   await page.getByLabel("البريد الإلكتروني").fill(email);
   await page.getByLabel("كلمة المرور").fill(password);

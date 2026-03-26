@@ -294,7 +294,7 @@ export function DashboardShell({
           {isAuthenticated ? (
             <LogoutButton />
           ) : (
-            <Link href="/login" className="secondary-button" onClick={closeMenu}>
+            <Link href="/" className="secondary-button" onClick={closeMenu}>
               تسجيل الدخول
             </Link>
           )}

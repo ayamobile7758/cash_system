@@ -11,7 +11,7 @@ export function AccessRequired({
   title,
   description,
   actionLabel = "الانتقال إلى تسجيل الدخول",
-  actionHref = "/login"
+  actionHref = "/"
 }: AccessRequiredProps) {
   return (
     <section className="workspace-stack">
