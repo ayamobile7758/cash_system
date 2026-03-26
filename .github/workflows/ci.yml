@@ -41,7 +41,7 @@ jobs:
         run: npx supabase start
 
       - name: Export Supabase Env
-        run: npx supabase status -o env >> .env
+        run: npx supabase status -o env --override-name api.url=NEXT_PUBLIC_SUPABASE_URL --override-name auth.anon_key=NEXT_PUBLIC_SUPABASE_ANON_KEY --override-name auth.service_role_key=SUPABASE_SERVICE_ROLE_KEY >> .env
 
       - name: End-to-end tests
         run: npm run test:e2e
