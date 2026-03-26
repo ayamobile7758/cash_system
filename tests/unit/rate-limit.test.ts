@@ -1,3 +1,4 @@
+import { vi } from "vitest";
 import {
   buildRateLimitKey,
   consumeRateLimit,
@@ -11,32 +12,28 @@ describe("rate limiting", () => {
     resetRateLimitStore();
   });
 
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   it("matches mutating API routes", () => {
-    const originalEnv = process.env.NODE_ENV;
-    const originalCI = process.env.CI;
-    process.env.NODE_ENV = "production";
-    delete process.env.CI;
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("CI", "");
     expect(resolveRateLimitRule("/api/sales", "POST")).toEqual({
       scope: "api-mutation",
       limit: 30,
       windowMs: 60000
     });
-    process.env.NODE_ENV = originalEnv;
-    process.env.CI = originalCI;
   });
 
   it("matches public receipt reads", () => {
-    const originalEnv = process.env.NODE_ENV;
-    const originalCI = process.env.CI;
-    process.env.NODE_ENV = "production";
-    delete process.env.CI;
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("CI", "");
     expect(resolveRateLimitRule("/r/token-1", "GET")).toEqual({
       scope: "public-receipt",
       limit: 60,
       windowMs: 60000
     });
-    process.env.NODE_ENV = originalEnv;
-    process.env.CI = originalCI;
   });
 
   it("resolves the client address from forwarding headers", () => {
