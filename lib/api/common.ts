@@ -176,6 +176,28 @@ export async function parseAndValidate<T>(
   return { success: true, data: parsed.data };
 }
 
+export async function parseQueryAndValidate<T>(
+  request: Request,
+  schema: z.Schema<T>,
+  getErrorMeta: (code: string) => { status: number; message: string }
+): Promise<{ success: true; data: T } | { success: false; response: NextResponse<StandardEnvelope> }> {
+  const url = new URL(request.url);
+  const payload = Object.fromEntries(url.searchParams.entries());
+
+  const parsed = schema.safeParse(payload);
+  if (!parsed.success) {
+    const meta = getErrorMeta("ERR_API_VALIDATION_FAILED");
+    return {
+      success: false,
+      response: errorResponse("ERR_API_VALIDATION_FAILED", meta.message, meta.status, {
+        field_errors: parsed.error.flatten().fieldErrors
+      })
+    };
+  }
+
+  return { success: true, data: parsed.data };
+}
+
 export function handleRouteError(
   error: unknown,
   getErrorMeta: (code: string) => { status: number; message: string }

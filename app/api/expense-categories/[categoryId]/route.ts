@@ -50,9 +50,27 @@ export async function PATCH(
       return authorization.response;
     }
 
-    const validation = await parseAndValidate(request, updateExpenseCategorySchema, getApiErrorMeta);
-    if (!validation.success) {
-      return validation.response;
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      const meta = getExpenseCategoryErrorMeta("ERR_API_VALIDATION_FAILED");
+      return errorResponse("ERR_API_VALIDATION_FAILED", meta.message, meta.status, {
+        body: ["تعذر قراءة JSON من الطلب."]
+      });
+    }
+
+    const payloadWithRouteId = {
+      ...(typeof body === "object" && body !== null ? body : {}),
+      category_id: context.params.categoryId
+    };
+
+    const parsed = updateExpenseCategorySchema.safeParse(payloadWithRouteId);
+    if (!parsed.success) {
+      const meta = getExpenseCategoryErrorMeta("ERR_API_VALIDATION_FAILED");
+      return errorResponse("ERR_API_VALIDATION_FAILED", meta.message, meta.status, {
+        field_errors: parsed.error.flatten().fieldErrors
+      });
     }
 
     const categoryId = context.params.categoryId;
@@ -70,7 +88,7 @@ export async function PATCH(
       throw new Error("ERR_EXPENSE_CATEGORY_NOT_FOUND");
     }
 
-    const payload = validation.data;
+    const payload = parsed.data;
     if (payload.name && (await categoryNameExists(authorization.supabase, payload.name, categoryId))) {
       const meta = getExpenseCategoryErrorMeta("ERR_API_VALIDATION_FAILED");
       return errorResponse("ERR_API_VALIDATION_FAILED", meta.message, meta.status, {

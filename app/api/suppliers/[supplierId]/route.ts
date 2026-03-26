@@ -47,12 +47,30 @@ export async function PATCH(
       return authorization.response;
     }
 
-    const validation = await parseAndValidate(request, updateSupplierSchema, getApiErrorMeta);
-    if (!validation.success) {
-      return validation.response;
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      const meta = getApiErrorMeta("ERR_API_VALIDATION_FAILED");
+      return errorResponse("ERR_API_VALIDATION_FAILED", meta.message, meta.status, {
+        body: ["تعذر قراءة JSON من الطلب."]
+      });
     }
 
-    const payload = validation.data;
+    const payloadWithRouteId = {
+      ...(typeof body === "object" && body !== null ? body : {}),
+      supplier_id: context.params.supplierId
+    };
+
+    const parsed = updateSupplierSchema.safeParse(payloadWithRouteId);
+    if (!parsed.success) {
+      const meta = getApiErrorMeta("ERR_API_VALIDATION_FAILED");
+      return errorResponse("ERR_API_VALIDATION_FAILED", meta.message, meta.status, {
+        field_errors: parsed.error.flatten().fieldErrors
+      });
+    }
+
+    const payload = parsed.data;
     if (await supplierNameExists(authorization.supabase, payload.name, context.params.supplierId)) {
       const meta = getApiErrorMeta("ERR_API_VALIDATION_FAILED");
       return errorResponse("ERR_API_VALIDATION_FAILED", meta.message, meta.status, {

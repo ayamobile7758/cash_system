@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import { authorizeRequest, getApiErrorMeta, handleRouteError, parseAndValidate } from "@/lib/api/common";
+import {
+  authorizeRequest,
+  getApiErrorMeta,
+  handleRouteError,
+  parseQueryAndValidate
+} from "@/lib/api/common";
 import { getAdvancedReportData, parseSalesHistoryFilters } from "@/lib/api/reports";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 import { advancedReportQuerySchema } from "@/lib/validations/reports";
@@ -21,13 +26,12 @@ export async function GET(request: Request) {
       return authorization.response;
     }
 
-    const url = new URL(request.url);
-    const payload = Object.fromEntries(url.searchParams.entries());
-    const validation = await parseAndValidate(request, advancedReportQuerySchema, getApiErrorMeta);
+    const validation = await parseQueryAndValidate(request, advancedReportQuerySchema, getApiErrorMeta);
     if (!validation.success) {
       return validation.response;
     }
 
+    const url = new URL(request.url);
     const filters = parseSalesHistoryFilters(url.searchParams);
     const supabase = getSupabaseAdminClient();
     const report = await getAdvancedReportData(supabase, filters);
