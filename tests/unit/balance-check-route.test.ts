@@ -67,11 +67,15 @@ describe("balance check routes", () => {
   });
 
   it("requires the cron bearer token", async () => {
+    vi.stubEnv("CRON_SECRET", "secret-secret-1234");
+
     const response = await cronBalanceCheck(
       new Request("http://localhost/api/cron/balance-check", { method: "POST" }) as never
     );
 
     expect(response.status).toBe(401);
+
+    vi.unstubAllEnvs();
   });
 
   it("runs the canonical integrity RPC from cron with an admin actor", async () => {
@@ -85,7 +89,7 @@ describe("balance check routes", () => {
     } as never);
     vi.mocked(resolveFirstAdminActorId).mockResolvedValue("admin-1");
 
-    process.env.CRON_SECRET = "secret-secret-1234";
+    vi.stubEnv("CRON_SECRET", "secret-secret-1234");
 
     const response = await cronBalanceCheck(
       new Request("http://localhost/api/cron/balance-check", {
@@ -100,5 +104,7 @@ describe("balance check routes", () => {
     expect(rpc).toHaveBeenCalledWith("fn_verify_balance_integrity", {
       p_created_by: "admin-1"
     });
+
+    vi.unstubAllEnvs();
   });
 });

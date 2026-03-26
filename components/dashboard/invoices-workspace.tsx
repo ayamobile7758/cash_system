@@ -130,17 +130,15 @@ export function InvoicesWorkspace({ role, invoices, accounts }: InvoicesWorkspac
       return;
     }
 
-    setReturnQuantities((current) => {
-      const next = { ...current };
-
-      for (const item of selectedInvoice.items) {
-        if (!(item.id in next)) {
-          next[item.id] = 0;
-        }
-      }
-
-      return next;
-    });
+    setReturnQuantities((current) =>
+      selectedInvoice.items.reduce(
+        (acc, item) => {
+          acc[item.id] ??= 0;
+          return acc;
+        },
+        { ...current }
+      )
+    );
   }, [selectedInvoice]);
 
   useEffect(() => {

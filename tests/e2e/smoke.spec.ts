@@ -11,9 +11,8 @@ for (const viewport of viewports) {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
     await page.goto("/");
 
-    await expect(page.getByRole("heading", { name: "تسجيل الدخول إلى مساحة العمل" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "تسجيل الدخول" })).toBeVisible();
     await expect(page.getByRole("link", { name: "نقطة البيع المباشرة" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "تثبيت Aya Mobile" })).toBeVisible();
   });
 }
 

@@ -27,8 +27,12 @@ function requireEnv(name: string) {
 }
 
 export function createServiceRoleClient() {
-  const supabaseUrl = requireEnv("NEXT_PUBLIC_SUPABASE_URL");
-  const serviceRoleKey = requireEnv("SUPABASE_SERVICE_ROLE_KEY");
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "http://127.0.0.1:54321";
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SERVICE_ROLE_KEY;
+
+  if (!serviceRoleKey) {
+    throw new Error(`Missing required runtime env: SUPABASE_SERVICE_ROLE_KEY or SERVICE_ROLE_KEY`);
+  }
 
   return createClient(supabaseUrl, serviceRoleKey, {
     auth: {
