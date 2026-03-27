@@ -1,7 +1,13 @@
 import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
-  return {
+  const buildId =
+    process.env.NEXT_PUBLIC_APP_VERSION ??
+    process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA ??
+    process.env.VERCEL_GIT_COMMIT_SHA ??
+    "dev";
+
+  const manifest: MetadataRoute.Manifest & { version: string } = {
     name: "Aya Mobile",
     short_name: "Aya Mobile",
     description: "Aya Mobile ERP/POS",
@@ -29,6 +35,9 @@ export default function manifest(): MetadataRoute.Manifest {
         type: "image/png",
         purpose: "maskable"
       }
-    ]
+    ],
+    version: buildId
   };
+
+  return manifest;
 }

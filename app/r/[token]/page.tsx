@@ -4,9 +4,9 @@ import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 import { formatCurrency, formatDate } from "@/lib/utils/formatters";
 
 type PublicReceiptPageProps = {
-  params: {
+  params: Promise<{
     token: string;
-  };
+  }>;
 };
 
 export const metadata: Metadata = {
@@ -29,8 +29,9 @@ function PublicReceiptStateMessage(props: {
 }
 
 export default async function PublicReceiptPage({ params }: PublicReceiptPageProps) {
+  const { token } = await params;
   const supabase = getSupabaseAdminClient();
-  const result = await getPublicReceiptViewByToken(supabase, params.token);
+  const result = await getPublicReceiptViewByToken(supabase, token);
 
   if (result.state === "invalid") {
     return (

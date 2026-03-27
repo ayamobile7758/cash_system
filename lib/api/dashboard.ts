@@ -302,6 +302,7 @@ export type InvoiceItemOption = {
   returned_quantity: number;
   unit_price: number;
   discount_percentage: number;
+  discount_amount: number;
   total_price: number;
 };
 
@@ -316,7 +317,53 @@ export type InvoiceOption = {
   status: string;
   pos_terminal_code: string | null;
   debt_amount: number;
+  subtotal: number;
+  discount_amount: number;
+  invoice_discount_percentage: number;
+  invoice_discount_amount: number;
   items: InvoiceItemOption[];
+};
+
+export type InvoicePaymentOption = {
+  id: string;
+  invoice_id: string;
+  account_id: string;
+  account_name: string;
+  amount: number;
+  fee_amount: number;
+  net_amount: number;
+  created_at: string;
+};
+
+export type InvoiceReturnItemOption = {
+  id: string;
+  return_id: string;
+  invoice_item_id: string;
+  quantity: number;
+  unit_price: number;
+  total_price: number;
+};
+
+export type InvoiceReturnOption = {
+  id: string;
+  return_number: string;
+  return_date: string;
+  return_type: "full" | "partial";
+  total_amount: number;
+  refund_account_id: string | null;
+  refund_account_name: string | null;
+  reason: string;
+  created_at: string;
+  items: InvoiceReturnItemOption[];
+};
+
+export type InvoiceDetailOption = InvoiceOption & {
+  cancel_reason: string | null;
+  cancelled_by: string | null;
+  cancelled_at: string | null;
+  notes: string | null;
+  payments: InvoicePaymentOption[];
+  returns: InvoiceReturnOption[];
 };
 
 type InventoryCountRow = {
@@ -360,6 +407,12 @@ type ReconciliationEntryRow = {
 };
 
 type InvoiceRow = Omit<InvoiceOption, "items">;
+type InvoiceListRow = InvoiceRow & { created_by: string };
+
+const INVOICE_LIST_SELECT =
+  "id, invoice_number, invoice_date, created_at, customer_name, customer_phone, subtotal, discount_amount, invoice_discount_percentage, invoice_discount_amount, total_amount, status, pos_terminal_code, debt_amount, created_by";
+const INVOICE_DETAIL_SELECT =
+  "id, invoice_number, invoice_date, created_at, customer_name, customer_phone, subtotal, discount_amount, invoice_discount_percentage, invoice_discount_amount, total_amount, debt_amount, status, cancel_reason, cancelled_by, cancelled_at, pos_terminal_code, notes, created_by";
 
 type PurchaseOrderRow = {
   id: string;
@@ -456,6 +509,40 @@ type MaintenanceJobRow = {
     name: string;
   } | null;
 };
+
+function buildInvoicesListQuery(
+  supabase: ReturnType<typeof getSupabaseAdminClient>,
+  viewer: { role: WorkspaceRole; userId: string },
+  selectClause: string
+) {
+  let query = supabase
+    .from("invoices")
+    .select(selectClause)
+    .order("invoice_date", { ascending: false })
+    .order("created_at", { ascending: false })
+    .limit(12);
+
+  if (viewer.role === "pos_staff") {
+    query = query.eq("created_by", viewer.userId);
+  }
+
+  return query;
+}
+
+function buildInvoiceDetailQuery(
+  supabase: ReturnType<typeof getSupabaseAdminClient>,
+  viewer: { role: WorkspaceRole; userId: string },
+  invoiceId: string,
+  selectClause: string
+) {
+  let query = supabase.from("invoices").select(selectClause).eq("id", invoiceId).limit(1);
+
+  if (viewer.role === "pos_staff") {
+    query = query.eq("created_by", viewer.userId);
+  }
+
+  return query;
+}
 
 function appendSearchParam(target: URLSearchParams, key: string, value: string | string[] | undefined) {
   if (Array.isArray(value)) {
@@ -1050,21 +1137,8 @@ export async function getInvoicesPageBaseline(
   supabase: ReturnType<typeof getSupabaseAdminClient>,
   viewer: { role: WorkspaceRole; userId: string }
 ) {
-  let invoicesQuery = supabase
-    .from("invoices")
-    .select(
-      "id, invoice_number, invoice_date, created_at, customer_name, customer_phone, total_amount, status, pos_terminal_code, debt_amount, created_by"
-    )
-    .order("invoice_date", { ascending: false })
-    .order("created_at", { ascending: false })
-    .limit(12);
-
-  if (viewer.role === "pos_staff") {
-    invoicesQuery = invoicesQuery.eq("created_by", viewer.userId);
-  }
-
   const [invoicesResult, accountsResult] = await Promise.all([
-    invoicesQuery.returns<(InvoiceRow & { created_by: string })[]>(),
+    buildInvoicesListQuery(supabase, viewer, INVOICE_LIST_SELECT).returns<InvoiceListRow[]>(),
     supabase
       .from("accounts")
       .select("id, name, type, module_scope, fee_percentage")
@@ -1073,12 +1147,12 @@ export async function getInvoicesPageBaseline(
       .returns<AccountOption[]>()
   ]);
 
-  if (invoicesResult.error) {
-    throw invoicesResult.error;
-  }
-
   if (accountsResult.error) {
     throw accountsResult.error;
+  }
+
+  if (invoicesResult.error) {
+    throw invoicesResult.error;
   }
 
   const invoices = invoicesResult.data ?? [];
@@ -1089,9 +1163,10 @@ export async function getInvoicesPageBaseline(
       ? { data: [] as InvoiceItemOption[], error: null }
       : await supabase
           .from("invoice_items")
-          .select("id, invoice_id, product_name_at_time, quantity, returned_quantity, unit_price, discount_percentage, total_price")
+          .select(
+            "id, invoice_id, product_name_at_time, quantity, returned_quantity, unit_price, discount_percentage, discount_amount, total_price"
+          )
           .in("invoice_id", invoiceIds)
-          .order("invoice_id", { ascending: false })
           .returns<InvoiceItemOption[]>();
 
   if (itemsResult.error) {
@@ -1110,6 +1185,113 @@ export async function getInvoicesPageBaseline(
       ...invoice,
       items: itemsByInvoice.get(invoice.id) ?? []
     })),
+    accounts: accountsResult.data ?? []
+  };
+}
+
+export async function getInvoiceDetailPageData(
+  supabase: ReturnType<typeof getSupabaseAdminClient>,
+  viewer: { role: WorkspaceRole; userId: string },
+  invoiceId: string
+) {
+  const [invoiceResult, accountsResult] = await Promise.all([
+    buildInvoiceDetailQuery(supabase, viewer, invoiceId, INVOICE_DETAIL_SELECT).maybeSingle<InvoiceRow>(),
+    supabase
+      .from("accounts")
+      .select("id, name, type, module_scope, fee_percentage")
+      .eq("is_active", true)
+      .order("display_order", { ascending: true })
+      .returns<AccountOption[]>()
+  ]);
+
+  if (accountsResult.error) {
+    throw accountsResult.error;
+  }
+
+  if (invoiceResult.error) {
+    throw invoiceResult.error;
+  }
+
+  const invoice = invoiceResult.data ?? null;
+  if (!invoice) {
+    return { invoice: null, accounts: accountsResult.data ?? [] };
+  }
+
+  const [itemsResult, paymentsResult, returnsResult] = await Promise.all([
+    supabase
+      .from("invoice_items")
+      .select(
+        "id, invoice_id, product_name_at_time, quantity, returned_quantity, unit_price, discount_percentage, discount_amount, total_price"
+      )
+      .eq("invoice_id", invoiceId)
+      .returns<InvoiceItemOption[]>(),
+    supabase
+      .from("payments")
+      .select("id, invoice_id, account_id, amount, fee_amount, net_amount, created_at")
+      .eq("invoice_id", invoiceId)
+      .order("created_at", { ascending: true })
+      .returns<Array<Omit<InvoicePaymentOption, "account_name">>>(),
+    supabase
+      .from("returns")
+      .select("id, return_number, return_date, return_type, total_amount, refund_account_id, reason, created_at")
+      .eq("original_invoice_id", invoiceId)
+      .order("created_at", { ascending: false })
+      .returns<Array<Omit<InvoiceReturnOption, "refund_account_name" | "items">>>()
+  ]);
+
+  if (itemsResult.error) {
+    throw itemsResult.error;
+  }
+
+  if (paymentsResult.error) {
+    throw paymentsResult.error;
+  }
+
+  if (returnsResult.error) {
+    throw returnsResult.error;
+  }
+
+  const accountsById = new Map((accountsResult.data ?? []).map((account) => [account.id, account]));
+  const returnIds = (returnsResult.data ?? []).map((entry) => entry.id);
+
+  const returnItemsResult =
+    returnIds.length === 0
+      ? { data: [] as InvoiceReturnItemOption[], error: null }
+      : await supabase
+          .from("return_items")
+          .select("id, return_id, invoice_item_id, quantity, unit_price, total_price")
+          .in("return_id", returnIds)
+          .returns<InvoiceReturnItemOption[]>();
+
+  if (returnItemsResult.error) {
+    throw returnItemsResult.error;
+  }
+
+  const returnItemsByReturn = new Map<string, InvoiceReturnItemOption[]>();
+  for (const item of returnItemsResult.data ?? []) {
+    const list = returnItemsByReturn.get(item.return_id) ?? [];
+    list.push(item);
+    returnItemsByReturn.set(item.return_id, list);
+  }
+
+  const payments = (paymentsResult.data ?? []).map((payment) => ({
+    ...payment,
+    account_name: accountsById.get(payment.account_id)?.name ?? "غير محدد"
+  }));
+
+  const returns = (returnsResult.data ?? []).map((entry) => ({
+    ...entry,
+    refund_account_name: entry.refund_account_id ? accountsById.get(entry.refund_account_id)?.name ?? null : null,
+    items: returnItemsByReturn.get(entry.id) ?? []
+  }));
+
+  return {
+    invoice: {
+      ...invoice,
+      items: itemsResult.data ?? [],
+      payments,
+      returns
+    } as InvoiceDetailOption,
     accounts: accountsResult.data ?? []
   };
 }

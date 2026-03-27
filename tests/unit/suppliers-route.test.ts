@@ -179,9 +179,9 @@ describe("supplier routes", () => {
         is_active: true
       }),
       {
-        params: {
+        params: Promise.resolve({
           supplierId: "11111111-1111-1111-8111-111111111111"
-        }
+        })
       }
     );
     const payload = await response.json();

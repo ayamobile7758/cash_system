@@ -12,6 +12,7 @@ type DashboardNavConfig = {
   label: string;
   description: string;
   icon:
+    | "home"
     | "pos"
     | "products"
     | "invoices"
@@ -31,6 +32,14 @@ type DashboardNavConfig = {
 };
 
 const navigation: DashboardNavConfig[] = [
+  {
+    href: "/home",
+    label: "لوحة المتابعة",
+    description: "نظرة يومية على المبيعات والتنبيهات والأداء.",
+    icon: "home",
+    group: "management",
+    adminOnly: true
+  },
   {
     href: "/pos",
     label: "نقطة البيع",
@@ -173,7 +182,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   return (
     <DashboardShell
       accountLabel={accountLabel}
-      homeHref="/"
+      homeHref={access.state === "ok" ? "/home" : "/"}
       isAuthenticated={access.state === "ok"}
       navigation={[...scopedNavigation]}
       unreadNotifications={unreadNotifications}

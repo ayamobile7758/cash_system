@@ -39,13 +39,15 @@ async function supplierNameExists(
 
 export async function PATCH(
   request: Request,
-  context: { params: { supplierId: string } }
+  context: { params: Promise<{ supplierId: string }> }
 ) {
   try {
     const authorization = await authorizeRequest(["admin"]);
     if (!authorization.authorized) {
       return authorization.response;
     }
+
+    const { supplierId } = await context.params;
 
     let body: unknown;
     try {
@@ -59,7 +61,7 @@ export async function PATCH(
 
     const payloadWithRouteId = {
       ...(typeof body === "object" && body !== null ? body : {}),
-      supplier_id: context.params.supplierId
+      supplier_id: supplierId
     };
 
     const parsed = updateSupplierSchema.safeParse(payloadWithRouteId);
@@ -71,7 +73,7 @@ export async function PATCH(
     }
 
     const payload = parsed.data;
-    if (await supplierNameExists(authorization.supabase, payload.name, context.params.supplierId)) {
+    if (await supplierNameExists(authorization.supabase, payload.name, supplierId)) {
       const meta = getApiErrorMeta("ERR_API_VALIDATION_FAILED");
       return errorResponse("ERR_API_VALIDATION_FAILED", meta.message, meta.status, {
         field_errors: {
@@ -88,7 +90,7 @@ export async function PATCH(
         address: payload.address?.trim() || null,
         is_active: payload.is_active
       })
-      .eq("id", context.params.supplierId)
+      .eq("id", supplierId)
       .select("id, name, phone, address, current_balance, is_active")
       .single<SupplierResponseData>();
 

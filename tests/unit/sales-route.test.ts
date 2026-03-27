@@ -155,6 +155,7 @@ describe("POST /api/sales", () => {
       ],
       p_payments: [{ account_id: accountId, amount: 12 }],
       p_debt_customer_id: customerId,
+      p_invoice_discount_percentage: 0,
       p_pos_terminal: "POS-01",
       p_notes: "cash sale",
       p_idempotency_key: idempotencyKey,

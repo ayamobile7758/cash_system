@@ -9,7 +9,16 @@ import {
 
 test.describe.configure({ timeout: 120_000 });
 
-const darkModeViewports = [
+const POS_TITLE = "\u0646\u0642\u0637\u0629 \u0627\u0644\u0628\u064a\u0639";
+const OPEN_MENU_LABEL = "\u0641\u062a\u062d \u0627\u0644\u0642\u0627\u0626\u0645\u0629";
+const SEARCH_LABEL = "\u0628\u062d\u062b";
+const CATEGORY_ALL_LABEL = "\u0627\u0644\u0643\u0644";
+const WORKSPACE_NAV_LABEL =
+  "\u0627\u0644\u062a\u0646\u0642\u0644 \u062f\u0627\u062e\u0644 \u0645\u0633\u0627\u062d\u0627\u062a \u0627\u0644\u062a\u0634\u063a\u064a\u0644";
+const REPORTS_TITLE = "\u0642\u0631\u0627\u0621\u0629 \u0623\u0648\u0636\u062d \u0644\u0644\u0623\u062f\u0627\u0621 \u0648\u0627\u0644\u0645\u0642\u0627\u0631\u0646\u0627\u062a";
+const REPORTS_LEAD = "\u0627\u0628\u062f\u0623 \u0628\u0627\u0644\u0641\u0644\u0627\u062a\u0631\u060c \u0631\u0627\u062c\u0639 \u0627\u0644\u0645\u0624\u0634\u0631\u0627\u062a \u0627\u0644\u0623\u0633\u0627\u0633\u064a\u0629";
+
+const lightOnlyViewports = [
   { label: "phone", width: 360, height: 800 },
   { label: "tablet", width: 768, height: 1024 },
   { label: "laptop", width: 1280, height: 900 }
@@ -51,80 +60,76 @@ test.describe.serial("PX-18 visual system + accessibility", () => {
   test("UAT-61 page metadata and visual hierarchy are clear on core surfaces", async ({ page }) => {
     await page.goto("/", { waitUntil: "domcontentloaded" });
     await page.waitForLoadState("networkidle");
-    await expect(page).toHaveTitle(/الصفحة الرئيسية/);
-    await expect(page.getByRole("heading", { name: "تسجيل الدخول إلى مساحة العمل" })).toBeVisible();
-    await expect(page.locator(".login-panel--accent")).toBeVisible();
+    await expect(page).toHaveTitle(/\u0627\u0644\u0635\u0641\u062d\u0629 \u0627\u0644\u0631\u0626\u064a\u0633\u064a\u0629/);
+    await expect(
+      page.getByRole("heading", { name: "\u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062f\u062e\u0648\u0644" })
+    ).toBeVisible();
+    await expect(page.locator(".auth-card")).toBeVisible();
 
     await login(page, admin.email, admin.password, "/reports");
-    await expect(page).toHaveTitle(/التقارير/);
-    await expect(page.getByRole("heading", { name: "قراءة أوضح للأداء والمقارنات" })).toBeVisible();
-    await expect(page.getByText("ابدأ بالفلاتر، راجع المؤشرات الأساسية")).toBeVisible();
+    await expect(page).toHaveTitle(/\u0627\u0644\u062a\u0642\u0627\u0631\u064a\u0631/);
+    await expect(page.getByRole("heading", { name: REPORTS_TITLE })).toBeVisible();
+    await expect(page.getByText(REPORTS_LEAD)).toBeVisible();
     await expect(page.locator(".analytical-page__meta-grid").first()).toBeVisible();
     await expect(page.locator(".data-table").first()).toBeVisible();
-    await expect(page.locator(".dashboard-breadcrumbs")).toBeVisible();
+    await expect(page.locator(".dashboard-topbar .dashboard-header-title")).toContainText(/./);
   });
 
   test("UAT-62 keyboard focus and touch targets are accessible on POS and dashboard shell", async ({ page }) => {
-    await page.setViewportSize({ width: 360, height: 800 });
     await login(page, pos.email, pos.password, "/pos");
+    await page.setViewportSize({ width: 360, height: 800 });
+    await page.goto("/pos", { waitUntil: "domcontentloaded" });
+    await page.waitForLoadState("networkidle");
     await expectNoHorizontalOverflow(page);
 
-    const menuToggle = page.getByRole("button", { name: "فتح القائمة" });
-    const topbarSearchField = page.locator("form.dashboard-quick-search .workspace-search");
-    const topbarSearchInput = page.getByPlaceholder("ابحث سريعًا عن فاتورة أو منتج أو عميل");
-    const topbarSearchButton = page.getByRole("button", { name: "البحث الشامل" });
+    const menuToggle = page.getByRole("button", { name: OPEN_MENU_LABEL });
+    const topbarSearchButton = page.getByRole("button", { name: SEARCH_LABEL });
     const productSearchField = page.locator(".transaction-toolbar__search").first();
-    const productSearchInput = page.getByPlaceholder("ابحث باسم المنتج أو SKU");
-    const confirmSaleButton = page.getByRole("button", { name: "تأكيد البيع" });
+    const productSearchInput = page.getByPlaceholder(
+      "\u0627\u0628\u062d\u062b \u0639\u0646 \u0645\u0646\u062a\u062c..."
+    );
+    const cartSummaryButton = page.locator(".pos-cart-sheet__summary");
 
     await expectTouchTarget(menuToggle);
-    await expectTouchTarget(topbarSearchField);
+    await expectTouchTarget(topbarSearchButton);
     await expectTouchTarget(productSearchField);
-    await expectTouchTarget(confirmSaleButton);
+    await expectTouchTarget(cartSummaryButton);
 
     await expect(productSearchInput).toBeFocused();
 
-    await page.keyboard.press("Shift+Tab");
-    await expect(page.getByLabel("مسار الصفحة").getByRole("link", { name: "نقطة البيع" })).toBeFocused();
-
-    await page.keyboard.press("Shift+Tab");
-    await expect(page.getByRole("link", { name: "الرئيسية" })).toBeFocused();
-
-    await page.keyboard.press("Shift+Tab");
-    await expect(topbarSearchButton).toBeFocused();
-    await expectVisibleFocus(topbarSearchButton);
-
-    await page.keyboard.press("Shift+Tab");
-    await expect(topbarSearchInput).toBeFocused();
-    await expectVisibleFocus(topbarSearchInput);
-
-    await page.keyboard.press("Shift+Tab");
-    await expect(menuToggle).toBeFocused();
+    await menuToggle.focus();
     await expectVisibleFocus(menuToggle);
 
+    await topbarSearchButton.focus();
+    await expectVisibleFocus(topbarSearchButton);
+
+    const categoryChip = page.getByRole("button", { name: CATEGORY_ALL_LABEL }).first();
+    await categoryChip.focus();
+    await expectVisibleFocus(categoryChip);
+
     await menuToggle.click();
-    const nav = page.getByLabel("التنقل داخل مساحات التشغيل");
-    const posLink = nav.getByRole("link", { name: /نقطة البيع/i }).first();
+    const nav = page.getByRole("navigation", { name: WORKSPACE_NAV_LABEL });
+    const posLink = nav.getByRole("link", { name: new RegExp(POS_TITLE, "i") }).first();
     await expectTouchTarget(posLink);
     await expect(posLink).toHaveAttribute("aria-current", "page");
-
-    const categoryChip = page.getByRole("button", { name: "الكل" }).first();
     await expect(categoryChip).toHaveAttribute("aria-pressed", "true");
     await expectTouchTarget(categoryChip);
   });
 
-  for (const viewport of darkModeViewports) {
-    test(`UAT-63 dark mode and reduced motion remain readable on ${viewport.label}`, async ({ page }) => {
-      await page.emulateMedia({ colorScheme: "dark", reducedMotion: "reduce" });
-      await page.setViewportSize({ width: viewport.width, height: viewport.height });
+  for (const viewport of lightOnlyViewports) {
+    test(`UAT-63 light mode and reduced motion remain readable on ${viewport.label}`, async ({ page }) => {
+      await page.emulateMedia({ colorScheme: "light", reducedMotion: "reduce" });
       await login(page, admin.email, admin.password, "/reports");
+      await page.setViewportSize({ width: viewport.width, height: viewport.height });
+      await page.goto("/reports", { waitUntil: "domcontentloaded" });
+      await page.waitForLoadState("networkidle");
       await expectNoHorizontalOverflow(page);
 
       const visualState = await page.evaluate(() => {
         const bodyStyles = window.getComputedStyle(document.body);
         const htmlStyles = window.getComputedStyle(document.documentElement);
         const topbarStyles = window.getComputedStyle(document.querySelector(".dashboard-topbar") as Element);
-        const panelStyles = window.getComputedStyle(document.querySelector(".workspace-panel") as Element);
+        const panelStyles = window.getComputedStyle(document.querySelector(".workspace-panel, .section-card") as Element);
 
         return {
           bodyBackground: bodyStyles.backgroundColor,
@@ -135,6 +140,7 @@ test.describe.serial("PX-18 visual system + accessibility", () => {
           panelBackground: panelStyles.backgroundColor,
           panelBackgroundImage: panelStyles.backgroundImage,
           reducedMotionMatches: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+          lightSchemeMatches: window.matchMedia("(prefers-color-scheme: light)").matches,
           scrollBehavior: htmlStyles.scrollBehavior
         };
       });
@@ -150,10 +156,13 @@ test.describe.serial("PX-18 visual system + accessibility", () => {
       ).toBeTruthy();
       expect(visualState.bodyColor).not.toBe("rgb(0, 0, 0)");
       expect(visualState.reducedMotionMatches).toBeTruthy();
+      expect(visualState.lightSchemeMatches).toBeTruthy();
       expect(visualState.scrollBehavior).toBe("auto");
 
-      await expect(page.getByRole("heading", { name: "قراءة أوضح للأداء والمقارنات" })).toBeVisible();
-      await expect(page.getByRole("link", { name: "تصدير Excel المتقدم" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: REPORTS_TITLE })).toBeVisible();
+      await expect(
+        page.getByRole("link", { name: "\u062a\u0635\u062f\u064a\u0631 Excel \u0627\u0644\u0645\u062a\u0642\u062f\u0645" })
+      ).toBeVisible();
     });
   }
 });

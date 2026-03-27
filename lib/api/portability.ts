@@ -1,10 +1,10 @@
-import * as XLSX from "xlsx";
 import { getApiErrorMeta } from "@/lib/api/common";
 import {
   getReportBaseline,
   parseSalesHistoryFilters,
   type ReportBaseline
 } from "@/lib/api/reports";
+import { parseCsvText, serializeCsvRows } from "@/lib/spreadsheet-core";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 import type {
   CreateExportPackageInput,
@@ -378,8 +378,7 @@ export function buildExportPackageFilename(scope: ExportPackageScope, packageTyp
 }
 
 function toCsvText(rows: Array<Record<string, unknown>>) {
-  const sheet = XLSX.utils.json_to_sheet(rows);
-  return XLSX.utils.sheet_to_csv(sheet, { FS: ",", RS: "\n" });
+  return serializeCsvRows(rows);
 }
 
 function serializeReportRows(reportBaseline: ReportBaseline) {
@@ -627,15 +626,7 @@ function readRowsFromWorkbookContent(format: ImportSourceFormat, content: string
     throw new Error("ERR_API_VALIDATION_FAILED");
   }
 
-  const workbook = XLSX.read(content, { type: "string" });
-  const firstSheetName = workbook.SheetNames[0];
-  if (!firstSheetName) {
-    return [];
-  }
-
-  return XLSX.utils.sheet_to_json<Record<string, unknown>>(workbook.Sheets[firstSheetName], {
-    defval: ""
-  });
+  return parseCsvText(content);
 }
 
 const PRODUCT_CATEGORY_VALUES = new Set([

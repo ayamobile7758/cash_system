@@ -1,5 +1,10 @@
-import * as XLSX from "xlsx";
-import { buildAdvancedReportWorkbookBuffer, buildAdvancedReportWorkbookFilename } from "@/lib/reports/export";
+// @vitest-environment node
+
+import {
+  buildAdvancedReportWorkbookBuffer,
+  buildAdvancedReportWorkbookFilename
+} from "@/lib/reports/export";
+import { readWorkbookRows } from "@/lib/spreadsheet-core";
 import type { ReportBaseline, SalesHistoryFilters } from "@/lib/api/reports";
 
 describe("advanced reports workbook export", () => {
@@ -93,16 +98,16 @@ describe("advanced reports workbook export", () => {
       generatedAt: "2026-03-11T09:00:00.000Z"
     });
 
-    const workbook = XLSX.read(buffer, { type: "buffer" });
-    expect(workbook.SheetNames).toEqual(["Summary", "Trend", "Breakdown", "Sales History", "Account Movements", "Snapshots"]);
+    const workbook = readWorkbookRows(buffer);
+    expect(Object.keys(workbook)).toEqual(["Summary", "Trend", "Breakdown", "Sales History", "Account Movements", "Snapshots"]);
 
-    const summaryRows = XLSX.utils.sheet_to_json<(string | number | null)[]>(workbook.Sheets.Summary, { header: 1 });
-    expect(summaryRows[1]?.[1]).toBe("2026-03-11T09:00:00.000Z");
+    const summaryRows = workbook.Summary;
+    expect(summaryRows[1]?.[1]).toBe("11/03/2026 12:00");
     expect(summaryRows[7]?.[1]).toBe(140);
     expect(summaryRows[7]?.[2]).toBe(100);
     expect(summaryRows[7]?.[3]).toBe(40);
 
-    const breakdownRows = XLSX.utils.sheet_to_json<(string | number | null)[]>(workbook.Sheets.Breakdown, { header: 1 });
+    const breakdownRows = workbook.Breakdown;
     expect(breakdownRows[1]).toEqual(["Supplier A", 40, 5, 2]);
   });
 

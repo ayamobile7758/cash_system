@@ -41,7 +41,7 @@ async function getPackageRecord(supabase: SupabaseAdminClient, packageId: string
 
 export async function GET(
   _request: Request,
-  context: { params: { packageId: string } }
+  context: { params: Promise<{ packageId: string }> }
 ) {
   try {
     const authorization = await authorizeRequest(["admin"]);
@@ -49,7 +49,8 @@ export async function GET(
       return authorization.response;
     }
 
-    const packageRecord = await getPackageRecord(authorization.supabase, context.params.packageId);
+    const { packageId } = await context.params;
+    const packageRecord = await getPackageRecord(authorization.supabase, packageId);
     if (!packageRecord) {
       const meta = getExportPackageErrorMeta("ERR_EXPORT_PACKAGE_EXPIRED");
       return errorResponse("ERR_EXPORT_PACKAGE_EXPIRED", meta.message, meta.status);
@@ -83,7 +84,7 @@ export async function GET(
 
 export async function PATCH(
   _request: Request,
-  context: { params: { packageId: string } }
+  context: { params: Promise<{ packageId: string }> }
 ) {
   try {
     const authorization = await authorizeRequest(["admin"]);
@@ -91,10 +92,12 @@ export async function PATCH(
       return authorization.response;
     }
 
+    const { packageId } = await context.params;
+
     const result = await revokeExportPackage(
       authorization.supabase,
       authorization.userId,
-      context.params.packageId
+      packageId
     );
 
     return NextResponse.json<StandardEnvelope<RevokeExportPackageResponse>>(

@@ -246,6 +246,18 @@ type SalesHistoryViewer = {
 
 type SnapshotSummaryRow = SnapshotSummary;
 
+type SnapshotMetricRow = {
+  snapshot_date: string;
+  total_sales: number;
+  total_returns: number;
+  total_cost: number;
+  net_sales: number;
+  net_profit: number;
+  invoice_count: number;
+  total_expenses: number;
+  total_purchases: number;
+};
+
 type DebtCustomerRow = DebtCustomerSummary;
 
 type AccountSummaryRow = AccountSummary & {
@@ -267,6 +279,11 @@ type ReturnRow = {
 
 type ReturnMetricRow = {
   return_date: string;
+  total_amount: number;
+};
+
+type ReturnReasonRow = {
+  reason: string;
   total_amount: number;
 };
 
@@ -548,46 +565,53 @@ async function loadExpenseCategoryNameMap(
 }
 
 type PeriodMetrics = {
+  useSnapshotTotals: boolean;
+  snapshots: SnapshotMetricRow[];
   invoices: InvoiceMetricRow[];
   invoiceItems: InvoiceItemCostRow[];
   returns: ReturnMetricRow[];
-  expenses: ExpenseBreakdownRow[];
-  purchases: PurchaseOrderRow[];
   topups: TopupRow[];
   maintenanceJobs: MaintenanceJobRow[];
   ledgerEntries: LedgerEntryRow[];
+  expenses: ExpenseBreakdownRow[];
+  purchases: PurchaseOrderRow[];
   snapshotCount: number;
 };
 
 async function loadPeriodMetrics(
   supabase: ReturnType<typeof getSupabaseAdminClient>,
-  filters: Pick<SalesHistoryFilters, "fromDate" | "toDate" | "createdBy" | "status" | "posTerminalCode">
+  filters: Pick<SalesHistoryFilters, "fromDate" | "toDate" | "createdBy" | "status" | "posTerminalCode">,
+  dimension: AdvancedReportDimension
 ): Promise<PeriodMetrics> {
-  let invoicesQuery = supabase
-    .from("invoices")
-    .select("id, invoice_date, total_amount, status, created_by, pos_terminal_code")
-    .in("status", ["active", "partially_returned"])
-    .gte("invoice_date", filters.fromDate)
-    .lte("invoice_date", filters.toDate);
+  const useSnapshotTotals = !filters.createdBy && !filters.status && !filters.posTerminalCode;
+  const needsExpenseRows = dimension === "expense_category" || !useSnapshotTotals;
+  const needsPurchaseRows = dimension === "supplier" || !useSnapshotTotals;
+  const needsLedgerRows = dimension === "account" || dimension === "entry_type";
 
-  let returnsQuery = supabase
-    .from("returns")
-    .select("return_date, total_amount")
-    .gte("return_date", filters.fromDate)
-    .lte("return_date", filters.toDate);
+  let snapshotsQuery = useSnapshotTotals
+    ? supabase
+        .from("daily_snapshots")
+        .select("snapshot_date, total_sales, total_returns, total_cost, net_sales, net_profit, invoice_count, total_expenses, total_purchases")
+        .gte("snapshot_date", filters.fromDate)
+        .lte("snapshot_date", filters.toDate)
+    : null;
 
-  let expensesQuery = supabase
-    .from("expenses")
-    .select("amount, category_id, expense_date, created_by")
-    .gte("expense_date", filters.fromDate)
-    .lte("expense_date", filters.toDate);
+  let invoicesQuery = useSnapshotTotals
+    ? null
+    : supabase
+        .from("invoices")
+        .select("id, invoice_date, total_amount, status, created_by, pos_terminal_code")
+        .in("status", ["active", "partially_returned"])
+        .gte("invoice_date", filters.fromDate)
+        .lte("invoice_date", filters.toDate);
 
-  let purchasesQuery = supabase
-    .from("purchase_orders")
-    .select("purchase_date, total_amount, supplier_id, is_paid")
-    .eq("is_paid", true)
-    .gte("purchase_date", filters.fromDate)
-    .lte("purchase_date", filters.toDate);
+  let returnsQuery = useSnapshotTotals
+    ? null
+    : supabase
+        .from("returns")
+        .select("return_date, total_amount")
+        .gte("return_date", filters.fromDate)
+        .lte("return_date", filters.toDate);
 
   let topupsQuery = supabase
     .from("topups")
@@ -597,15 +621,34 @@ async function loadPeriodMetrics(
 
   let maintenanceQuery = supabase
     .from("maintenance_jobs")
-    .select("id, job_number, job_date, customer_name, device_type, status, final_amount, created_by")
+    .select("job_date, status, final_amount, created_by")
     .gte("job_date", filters.fromDate)
     .lte("job_date", filters.toDate);
 
-  let ledgerQuery = supabase
-    .from("ledger_entries")
-    .select("id, entry_date, account_id, entry_type, adjustment_direction, reference_type, reference_id, description, amount, created_by")
-    .gte("entry_date", filters.fromDate)
-    .lte("entry_date", filters.toDate);
+  let ledgerQuery = needsLedgerRows
+    ? supabase
+        .from("ledger_entries")
+        .select("account_id, entry_type, adjustment_direction, amount")
+        .gte("entry_date", filters.fromDate)
+        .lte("entry_date", filters.toDate)
+    : null;
+
+  let expensesQuery = needsExpenseRows
+    ? supabase
+        .from("expenses")
+        .select("amount, category_id, expense_date, created_by")
+        .gte("expense_date", filters.fromDate)
+        .lte("expense_date", filters.toDate)
+    : null;
+
+  let purchasesQuery = needsPurchaseRows
+    ? supabase
+        .from("purchase_orders")
+        .select("purchase_date, total_amount, supplier_id, is_paid")
+        .eq("is_paid", true)
+        .gte("purchase_date", filters.fromDate)
+        .lte("purchase_date", filters.toDate)
+    : null;
 
   let snapshotCountQuery = supabase
     .from("daily_snapshots")
@@ -614,35 +657,55 @@ async function loadPeriodMetrics(
     .lte("snapshot_date", filters.toDate);
 
   if (filters.createdBy) {
-    invoicesQuery = invoicesQuery.eq("created_by", filters.createdBy);
-    expensesQuery = expensesQuery.eq("created_by", filters.createdBy);
-    purchasesQuery = purchasesQuery.eq("created_by", filters.createdBy);
+    if (invoicesQuery) {
+      invoicesQuery = invoicesQuery.eq("created_by", filters.createdBy);
+    }
+    if (returnsQuery) {
+      returnsQuery = returnsQuery.eq("created_by", filters.createdBy);
+    }
     topupsQuery = topupsQuery.eq("created_by", filters.createdBy);
     maintenanceQuery = maintenanceQuery.eq("created_by", filters.createdBy);
-    ledgerQuery = ledgerQuery.eq("created_by", filters.createdBy);
-    snapshotCountQuery = snapshotCountQuery.eq("created_by", filters.createdBy);
+    if (ledgerQuery) {
+      ledgerQuery = ledgerQuery.eq("created_by", filters.createdBy);
+    }
+    if (expensesQuery) {
+      expensesQuery = expensesQuery.eq("created_by", filters.createdBy);
+    }
+    if (purchasesQuery) {
+      purchasesQuery = purchasesQuery.eq("created_by", filters.createdBy);
+    }
   }
 
-  if (filters.status) {
+  if (invoicesQuery && filters.status) {
     invoicesQuery = invoicesQuery.eq("status", filters.status);
   }
 
-  if (filters.posTerminalCode) {
+  if (invoicesQuery && filters.posTerminalCode) {
     invoicesQuery = invoicesQuery.eq("pos_terminal_code", filters.posTerminalCode);
   }
 
-  const [invoicesResult, returnsResult, expensesResult, purchasesResult, topupsResult, maintenanceResult, ledgerResult, snapshotCountResult] =
+  const [snapshotsResult, invoicesResult, returnsResult, expensesResult, purchasesResult, topupsResult, maintenanceResult, ledgerResult, snapshotCountResult] =
     await Promise.all([
-      invoicesQuery.returns<InvoiceMetricRow[]>(),
-      returnsQuery.returns<ReturnMetricRow[]>(),
-      expensesQuery.returns<ExpenseBreakdownRow[]>(),
-      purchasesQuery.returns<PurchaseOrderRow[]>(),
+      snapshotsQuery
+        ? snapshotsQuery.returns<SnapshotMetricRow[]>()
+        : Promise.resolve({ data: [] as SnapshotMetricRow[], error: null }),
+      invoicesQuery
+        ? invoicesQuery.returns<InvoiceMetricRow[]>()
+        : Promise.resolve({ data: [] as InvoiceMetricRow[], error: null }),
+      returnsQuery
+        ? returnsQuery.returns<ReturnMetricRow[]>()
+        : Promise.resolve({ data: [] as ReturnMetricRow[], error: null }),
+      expensesQuery ? expensesQuery.returns<ExpenseBreakdownRow[]>() : Promise.resolve({ data: [], error: null }),
+      purchasesQuery ? purchasesQuery.returns<PurchaseOrderRow[]>() : Promise.resolve({ data: [], error: null }),
       topupsQuery.returns<TopupRow[]>(),
       maintenanceQuery.returns<MaintenanceJobRow[]>(),
-      ledgerQuery.returns<LedgerEntryRow[]>(),
+      ledgerQuery ? ledgerQuery.returns<LedgerEntryRow[]>() : Promise.resolve({ data: [] as LedgerEntryRow[], error: null }),
       snapshotCountQuery
     ]);
 
+  if (snapshotsResult.error) {
+    throw snapshotsResult.error;
+  }
   if (invoicesResult.error) {
     throw invoicesResult.error;
   }
@@ -671,7 +734,7 @@ async function loadPeriodMetrics(
   const invoices = invoicesResult.data ?? [];
   const invoiceIds = invoices.map((invoice) => invoice.id);
   const invoiceItemsResult =
-    invoiceIds.length === 0
+    useSnapshotTotals || invoiceIds.length === 0
       ? { data: [] as InvoiceItemCostRow[], error: null }
       : await supabase
           .from("invoice_items")
@@ -684,6 +747,8 @@ async function loadPeriodMetrics(
   }
 
   return {
+    useSnapshotTotals,
+    snapshots: snapshotsResult.data ?? [],
     invoices,
     invoiceItems: invoiceItemsResult.data ?? [],
     returns: returnsResult.data ?? [],
@@ -697,6 +762,37 @@ async function loadPeriodMetrics(
 }
 
 function buildPeriodSummary(metrics: PeriodMetrics): AdvancedReportPeriodSummary {
+  const topupProfit = metrics.topups.reduce((sum, entry) => sum + entry.profit_amount, 0);
+  const maintenanceRevenue = metrics.maintenanceJobs.reduce((sum, job) => {
+    if (job.status !== "delivered") {
+      return sum;
+    }
+
+    return sum + (job.final_amount ?? 0);
+  }, 0);
+
+  if (metrics.useSnapshotTotals) {
+    const salesTotal = metrics.snapshots.reduce((sum, snapshot) => sum + snapshot.total_sales, 0);
+    const returnsTotal = metrics.snapshots.reduce((sum, snapshot) => sum + snapshot.total_returns, 0);
+    const expenseTotal = metrics.snapshots.reduce((sum, snapshot) => sum + snapshot.total_expenses, 0);
+    const purchaseTotal = metrics.snapshots.reduce((sum, snapshot) => sum + snapshot.total_purchases, 0);
+    const netSales = metrics.snapshots.reduce((sum, snapshot) => sum + snapshot.net_sales, 0);
+    const snapshotNetProfit = metrics.snapshots.reduce((sum, snapshot) => sum + snapshot.net_profit, 0);
+
+    return {
+      sales_total: roundMetric(salesTotal),
+      total_returns: roundMetric(returnsTotal),
+      net_sales: roundMetric(netSales),
+      expense_total: roundMetric(expenseTotal),
+      purchase_total: roundMetric(purchaseTotal),
+      topup_profit: roundMetric(topupProfit),
+      maintenance_revenue: roundMetric(maintenanceRevenue),
+      net_profit: roundMetric(snapshotNetProfit + topupProfit + maintenanceRevenue),
+      invoice_count: metrics.snapshots.reduce((sum, snapshot) => sum + snapshot.invoice_count, 0),
+      snapshot_count: metrics.snapshotCount
+    };
+  }
+
   const invoiceCostById = new Map<string, number>();
 
   for (const item of metrics.invoiceItems) {
@@ -711,15 +807,6 @@ function buildPeriodSummary(metrics: PeriodMetrics): AdvancedReportPeriodSummary
   const salesCost = metrics.invoices.reduce((sum, invoice) => sum + (invoiceCostById.get(invoice.id) ?? 0), 0);
   const expenseTotal = metrics.expenses.reduce((sum, entry) => sum + entry.amount, 0);
   const purchaseTotal = metrics.purchases.reduce((sum, entry) => sum + entry.total_amount, 0);
-  const topupProfit = metrics.topups.reduce((sum, entry) => sum + entry.profit_amount, 0);
-  const maintenanceRevenue = metrics.maintenanceJobs.reduce((sum, job) => {
-    if (job.status !== "delivered") {
-      return sum;
-    }
-
-    return sum + (job.final_amount ?? 0);
-  }, 0);
-
   const netSales = salesTotal - returnsTotal;
   const netProfit = (netSales - salesCost) - expenseTotal + topupProfit + maintenanceRevenue;
 
@@ -738,15 +825,6 @@ function buildPeriodSummary(metrics: PeriodMetrics): AdvancedReportPeriodSummary
 }
 
 function buildTrend(metrics: PeriodMetrics, groupBy: AdvancedReportGroupBy): AdvancedTrendPoint[] {
-  const invoiceCostById = new Map<string, number>();
-
-  for (const item of metrics.invoiceItems) {
-    invoiceCostById.set(
-      item.invoice_id,
-      (invoiceCostById.get(item.invoice_id) ?? 0) + item.quantity * item.cost_price_at_time
-    );
-  }
-
   const buckets = new Map<
     string,
     { sales_total: number; total_returns: number; sales_cost: number; expense_total: number; topup_profit: number; maintenance_revenue: number }
@@ -767,24 +845,43 @@ function buildTrend(metrics: PeriodMetrics, groupBy: AdvancedReportGroupBy): Adv
     return buckets.get(key)!;
   };
 
-  for (const invoice of metrics.invoices) {
-    const bucket = getBucket(bucketDate(invoice.invoice_date, groupBy));
-    bucket.sales_total += invoice.total_amount;
-    bucket.sales_cost += invoiceCostById.get(invoice.id) ?? 0;
-  }
+  if (metrics.useSnapshotTotals) {
+    for (const snapshot of metrics.snapshots) {
+      const bucket = getBucket(bucketDate(snapshot.snapshot_date, groupBy));
+      bucket.sales_total += snapshot.total_sales;
+      bucket.total_returns += snapshot.total_returns;
+      bucket.sales_cost += snapshot.total_cost;
+      bucket.expense_total += snapshot.total_expenses;
+    }
+  } else {
+    const invoiceCostById = new Map<string, number>();
 
-  for (const entry of metrics.returns) {
-    const bucket = getBucket(bucketDate(entry.return_date, groupBy));
-    bucket.total_returns += entry.total_amount;
-  }
-
-  for (const entry of metrics.expenses) {
-    if (!entry.expense_date) {
-      continue;
+    for (const item of metrics.invoiceItems) {
+      invoiceCostById.set(
+        item.invoice_id,
+        (invoiceCostById.get(item.invoice_id) ?? 0) + item.quantity * item.cost_price_at_time
+      );
     }
 
-    const bucket = getBucket(bucketDate(entry.expense_date, groupBy));
-    bucket.expense_total += entry.amount;
+    for (const invoice of metrics.invoices) {
+      const bucket = getBucket(bucketDate(invoice.invoice_date, groupBy));
+      bucket.sales_total += invoice.total_amount;
+      bucket.sales_cost += invoiceCostById.get(invoice.id) ?? 0;
+    }
+
+    for (const entry of metrics.returns) {
+      const bucket = getBucket(bucketDate(entry.return_date, groupBy));
+      bucket.total_returns += entry.total_amount;
+    }
+
+    for (const entry of metrics.expenses) {
+      if (!entry.expense_date) {
+        continue;
+      }
+
+      const bucket = getBucket(bucketDate(entry.expense_date, groupBy));
+      bucket.expense_total += entry.amount;
+    }
   }
 
   for (const entry of metrics.topups) {
@@ -940,15 +1037,19 @@ export async function getAdvancedReportData(
   filters: SalesHistoryFilters
 ): Promise<AdvancedReport> {
   const [currentMetrics, compareMetrics] = await Promise.all([
-    loadPeriodMetrics(supabase, filters),
+    loadPeriodMetrics(supabase, filters, filters.dimension ?? "account"),
     filters.compareFromDate && filters.compareToDate
-      ? loadPeriodMetrics(supabase, {
-          fromDate: filters.compareFromDate,
-          toDate: filters.compareToDate,
-          createdBy: filters.createdBy,
-          status: filters.status,
-          posTerminalCode: filters.posTerminalCode
-        })
+      ? loadPeriodMetrics(
+          supabase,
+          {
+            fromDate: filters.compareFromDate,
+            toDate: filters.compareToDate,
+            createdBy: filters.createdBy,
+            status: filters.status,
+            posTerminalCode: filters.posTerminalCode
+          },
+          filters.dimension ?? "account"
+        )
       : Promise.resolve(null)
   ]);
 
@@ -1039,25 +1140,40 @@ async function getReturnsReport(
   supabase: ReturnType<typeof getSupabaseAdminClient>,
   filters: SalesHistoryFilters
 ): Promise<ReturnsReport> {
-  let query = supabase
+  let entriesQuery = supabase
     .from("returns")
     .select("id, return_number, return_date, return_type, original_invoice_id, total_amount, reason, created_by")
     .gte("return_date", filters.fromDate)
     .lte("return_date", filters.toDate)
     .order("return_date", { ascending: false })
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .limit(20);
+
+  let reasonsQuery = supabase
+    .from("returns")
+    .select("reason, total_amount")
+    .gte("return_date", filters.fromDate)
+    .lte("return_date", filters.toDate);
 
   if (filters.createdBy) {
-    query = query.eq("created_by", filters.createdBy);
+    entriesQuery = entriesQuery.eq("created_by", filters.createdBy);
+    reasonsQuery = reasonsQuery.eq("created_by", filters.createdBy);
   }
 
-  const { data, error } = await query.returns<ReturnRow[]>();
-  if (error) {
-    throw error;
+  const [entriesResult, reasonsResult] = await Promise.all([
+    entriesQuery.returns<ReturnRow[]>(),
+    reasonsQuery.returns<ReturnReasonRow[]>()
+  ]);
+
+  if (entriesResult.error) {
+    throw entriesResult.error;
+  }
+  if (reasonsResult.error) {
+    throw reasonsResult.error;
   }
 
-  const rows = data ?? [];
-  const listRows = rows.slice(0, 20);
+  const listRows = entriesResult.data ?? [];
+  const reasonRows = reasonsResult.data ?? [];
   const [profileNames, invoiceNumbers] = await Promise.all([
     loadProfileNameMap(
       supabase,
@@ -1070,7 +1186,7 @@ async function getReturnsReport(
   ]);
 
   const reasonMap = new Map<string, ReturnReasonSummary>();
-  for (const row of rows) {
+  for (const row of reasonRows) {
     const current = reasonMap.get(row.reason) ?? {
       reason: row.reason,
       count: 0,
@@ -1083,8 +1199,8 @@ async function getReturnsReport(
   }
 
   return {
-    total_returns: rows.reduce((sum, row) => sum + row.total_amount, 0),
-    return_count: rows.length,
+    total_returns: reasonRows.reduce((sum, row) => sum + row.total_amount, 0),
+    return_count: reasonRows.length,
     reasons: [...reasonMap.values()].sort((left, right) => right.total_amount - left.total_amount),
     entries: listRows.map((row) => ({
       return_id: row.id,
@@ -1103,7 +1219,13 @@ async function getAccountMovementReport(
   supabase: ReturnType<typeof getSupabaseAdminClient>,
   filters: SalesHistoryFilters
 ): Promise<AccountMovementReport> {
-  let query = supabase
+  let summaryQuery = supabase
+    .from("ledger_entries")
+    .select("account_id, entry_type, adjustment_direction, amount")
+    .gte("entry_date", filters.fromDate)
+    .lte("entry_date", filters.toDate);
+
+  let entriesQuery = supabase
     .from("ledger_entries")
     .select(
       "id, entry_date, account_id, entry_type, adjustment_direction, reference_type, reference_id, description, amount, created_by"
@@ -1111,14 +1233,17 @@ async function getAccountMovementReport(
     .gte("entry_date", filters.fromDate)
     .lte("entry_date", filters.toDate)
     .order("entry_date", { ascending: false })
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .limit(40);
 
   if (filters.createdBy) {
-    query = query.eq("created_by", filters.createdBy);
+    summaryQuery = summaryQuery.eq("created_by", filters.createdBy);
+    entriesQuery = entriesQuery.eq("created_by", filters.createdBy);
   }
 
-  const [ledgerResult, accountsResult] = await Promise.all([
-    query.returns<LedgerEntryRow[]>(),
+  const [summaryResult, entriesResult, accountsResult] = await Promise.all([
+    summaryQuery.returns<LedgerEntryRow[]>(),
+    entriesQuery.returns<LedgerEntryRow[]>(),
     supabase
       .from("accounts")
       .select("id, name, current_balance, type, module_scope, is_active, display_order")
@@ -1127,16 +1252,20 @@ async function getAccountMovementReport(
       .returns<AccountSummaryRow[]>()
   ]);
 
-  if (ledgerResult.error) {
-    throw ledgerResult.error;
+  if (summaryResult.error) {
+    throw summaryResult.error;
+  }
+
+  if (entriesResult.error) {
+    throw entriesResult.error;
   }
 
   if (accountsResult.error) {
     throw accountsResult.error;
   }
 
-  const rows = ledgerResult.data ?? [];
-  const listRows = rows.slice(0, 40);
+  const rows = summaryResult.data ?? [];
+  const listRows = entriesResult.data ?? [];
   const accounts = accountsResult.data ?? [];
   const accountMap = new Map(accounts.map((account) => [account.id, account]));
   const profileNames = await loadProfileNameMap(
@@ -1200,24 +1329,6 @@ async function getProfitReport(
   supabase: ReturnType<typeof getSupabaseAdminClient>,
   filters: SalesHistoryFilters
 ): Promise<ProfitReport> {
-  let purchasesQuery = supabase
-    .from("purchase_orders")
-    .select("total_amount")
-    .gte("purchase_date", filters.fromDate)
-    .lte("purchase_date", filters.toDate);
-
-  let returnsQuery = supabase
-    .from("returns")
-    .select("total_amount")
-    .gte("return_date", filters.fromDate)
-    .lte("return_date", filters.toDate);
-
-  let expensesQuery = supabase
-    .from("expenses")
-    .select("amount")
-    .gte("expense_date", filters.fromDate)
-    .lte("expense_date", filters.toDate);
-
   let topupsQuery = supabase
     .from("topups")
     .select("amount, profit_amount")
@@ -1231,41 +1342,22 @@ async function getProfitReport(
     .lte("job_date", filters.toDate);
 
   if (filters.createdBy) {
-    purchasesQuery = purchasesQuery.eq("created_by", filters.createdBy);
-    returnsQuery = returnsQuery.eq("created_by", filters.createdBy);
-    expensesQuery = expensesQuery.eq("created_by", filters.createdBy);
     topupsQuery = topupsQuery.eq("created_by", filters.createdBy);
     maintenanceQuery = maintenanceQuery.eq("created_by", filters.createdBy);
   }
 
-  const [snapshotsResult, purchasesResult, returnsResult, expensesResult, topupsResult, maintenanceResult] = await Promise.all([
+  const [snapshotsResult, topupsResult, maintenanceResult] = await Promise.all([
     supabase
       .from("daily_snapshots")
-      .select("id, snapshot_date, net_sales, net_profit, invoice_count, created_at")
+      .select("id, snapshot_date, net_sales, net_profit, invoice_count, total_expenses, total_returns, total_purchases, created_at")
       .gte("snapshot_date", filters.fromDate)
-      .lte("snapshot_date", filters.toDate)
-      .returns<SnapshotSummaryRow[]>(),
-    purchasesQuery.returns<PurchaseOrderRow[]>(),
-    returnsQuery.returns<Array<{ total_amount: number }>>(),
-    expensesQuery.returns<Array<{ amount: number }>>(),
+      .lte("snapshot_date", filters.toDate),
     topupsQuery.returns<TopupRow[]>(),
     maintenanceQuery.returns<Array<{ status: string; final_amount: number | null }>>()
   ]);
 
   if (snapshotsResult.error) {
     throw snapshotsResult.error;
-  }
-
-  if (purchasesResult.error) {
-    throw purchasesResult.error;
-  }
-
-  if (returnsResult.error) {
-    throw returnsResult.error;
-  }
-
-  if (expensesResult.error) {
-    throw expensesResult.error;
   }
 
   if (topupsResult.error) {
@@ -1276,29 +1368,28 @@ async function getProfitReport(
     throw maintenanceResult.error;
   }
 
-  const snapshots = snapshotsResult.data ?? [];
-  const purchases = purchasesResult.data ?? [];
-  const returns = returnsResult.data ?? [];
-  const expenses = expensesResult.data ?? [];
+  const snapshots = (snapshotsResult.data ?? []) as Array<
+    SnapshotSummaryRow & { total_expenses: number; total_returns: number; total_purchases: number }
+  >;
   const topups = topupsResult.data ?? [];
-  const maintenanceJobs = maintenanceResult.data ?? [];
+  const maintenanceRows = maintenanceResult.data ?? [];
 
   return {
     snapshot_count: snapshots.length,
     snapshot_net_sales: snapshots.reduce((sum, snapshot) => sum + snapshot.net_sales, 0),
     snapshot_net_profit: snapshots.reduce((sum, snapshot) => sum + snapshot.net_profit, 0),
-    expense_total: expenses.reduce((sum, entry) => sum + entry.amount, 0),
-    return_total: returns.reduce((sum, entry) => sum + entry.total_amount, 0),
-    purchase_total: purchases.reduce((sum, entry) => sum + entry.total_amount, 0),
-    topup_amount: topups.reduce((sum, entry) => sum + entry.amount, 0),
-    topup_profit: topups.reduce((sum, entry) => sum + entry.profit_amount, 0),
-    maintenance_delivered_count: maintenanceJobs.filter((entry) => entry.status === "delivered").length,
-    maintenance_revenue: maintenanceJobs.reduce((sum, entry) => {
-      if (entry.status !== "delivered") {
+    expense_total: snapshots.reduce((sum, snapshot) => sum + snapshot.total_expenses, 0),
+    return_total: snapshots.reduce((sum, snapshot) => sum + snapshot.total_returns, 0),
+    purchase_total: snapshots.reduce((sum, snapshot) => sum + snapshot.total_purchases, 0),
+    topup_amount: topups.reduce((sum, topup) => sum + topup.amount, 0),
+    topup_profit: topups.reduce((sum, topup) => sum + topup.profit_amount, 0),
+    maintenance_delivered_count: maintenanceRows.filter((row) => row.status === "delivered").length,
+    maintenance_revenue: maintenanceRows.reduce((sum, row) => {
+      if (row.status !== "delivered") {
         return sum;
       }
 
-      return sum + (entry.final_amount ?? 0);
+      return sum + (row.final_amount ?? 0);
     }, 0)
   };
 }
@@ -1307,25 +1398,41 @@ async function getMaintenanceReport(
   supabase: ReturnType<typeof getSupabaseAdminClient>,
   filters: SalesHistoryFilters
 ): Promise<MaintenanceReport> {
-  let query = supabase
+  let summaryQuery = supabase
+    .from("maintenance_jobs")
+    .select("status, final_amount")
+    .gte("job_date", filters.fromDate)
+    .lte("job_date", filters.toDate);
+
+  let entriesQuery = supabase
     .from("maintenance_jobs")
     .select("id, job_number, job_date, customer_name, device_type, status, final_amount, created_by")
     .gte("job_date", filters.fromDate)
     .lte("job_date", filters.toDate)
     .order("job_date", { ascending: false })
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .limit(20);
 
   if (filters.createdBy) {
-    query = query.eq("created_by", filters.createdBy);
+    summaryQuery = summaryQuery.eq("created_by", filters.createdBy);
+    entriesQuery = entriesQuery.eq("created_by", filters.createdBy);
   }
 
-  const { data, error } = await query.returns<MaintenanceJobRow[]>();
-  if (error) {
-    throw error;
+  const [summaryResult, entriesResult] = await Promise.all([
+    summaryQuery.returns<Array<Pick<MaintenanceJobRow, "status" | "final_amount">>>(),
+    entriesQuery.returns<MaintenanceJobRow[]>()
+  ]);
+
+  if (summaryResult.error) {
+    throw summaryResult.error;
   }
 
-  const rows = data ?? [];
-  const listRows = rows.slice(0, 20);
+  if (entriesResult.error) {
+    throw entriesResult.error;
+  }
+
+  const rows = summaryResult.data ?? [];
+  const listRows = entriesResult.data ?? [];
   const profileNames = await loadProfileNameMap(
     supabase,
     listRows.map((row) => row.created_by)
@@ -1360,10 +1467,20 @@ export async function getReportBaseline(
   filters: SalesHistoryFilters,
   viewer: SalesHistoryViewer
 ): Promise<ReportBaseline> {
-  const salesHistory = await getSalesHistory(supabase, filters, viewer);
-
-  const [snapshotsResult, debtsResult, accountsResult, inventoryResult, profitReport, returnsReport, accountMovementReport, maintenanceReport] =
+  const [
+    salesHistory,
+    snapshotsResult,
+    debtsResult,
+    accountsResult,
+    inventoryResult,
+    profitReport,
+    returnsReport,
+    accountMovementReport,
+    maintenanceReport,
+    advancedReport
+  ] =
     await Promise.all([
+      getSalesHistory(supabase, filters, viewer),
       supabase
         .from("daily_snapshots")
         .select("id, snapshot_date, net_sales, net_profit, invoice_count, created_at")
@@ -1392,9 +1509,9 @@ export async function getReportBaseline(
       getProfitReport(supabase, filters),
       getReturnsReport(supabase, filters),
       getAccountMovementReport(supabase, filters),
-      getMaintenanceReport(supabase, filters)
+      getMaintenanceReport(supabase, filters),
+      getAdvancedReportData(supabase, filters)
     ]);
-  const advancedReport = await getAdvancedReportData(supabase, filters);
 
   if (snapshotsResult.error) {
     throw snapshotsResult.error;

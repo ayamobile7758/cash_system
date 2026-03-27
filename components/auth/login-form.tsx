@@ -6,6 +6,7 @@ import { Loader2, Store } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { StatusBanner } from "@/components/ui/status-banner";
+import { getSafeArabicErrorMessage } from "@/lib/error-messages";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 export function LoginForm() {
@@ -62,8 +63,9 @@ export function LoginForm() {
                 });
 
                 if (error) {
-                  setErrorMessage(error.message);
-                  toast.error(error.message);
+                  const message = getSafeArabicErrorMessage(error, "تعذر إكمال تسجيل الدخول. حاول مجددًا.");
+                  setErrorMessage(message);
+                  toast.error(message);
                   return;
                 }
 
@@ -92,7 +94,7 @@ export function LoginForm() {
                 router.replace(nextRoute);
                 router.refresh();
               } catch (error) {
-                const message = (error as Error).message || "تعذر إكمال تسجيل الدخول الآن.";
+                const message = getSafeArabicErrorMessage(error, "تعذر إكمال تسجيل الدخول الآن.");
                 setErrorMessage(message);
                 toast.error(message);
               }

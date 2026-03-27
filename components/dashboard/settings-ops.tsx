@@ -99,7 +99,7 @@ export function SettingsOps({
   const [reconciliationResult, setReconciliationResult] = useState<ReconciliationResponse | null>(null);
   const [inventoryResult, setInventoryResult] = useState<InventoryCompleteResponse | null>(null);
   const [inventoryDrafts, setInventoryDrafts] = useState<InventoryDraftState>({});
-  const [activeSection, setActiveSection] = useState<SettingsSection>("permissions");
+  const [activeSection, setActiveSection] = useState<SettingsSection>("snapshot");
   const [actionErrorMessage, setActionErrorMessage] = useState<string | null>(null);
   const [retryAction, setRetryAction] = useState<SettingsAction | null>(null);
   const [confirmAction, setConfirmAction] = useState<SettingsConfirmAction>(null);
@@ -394,6 +394,7 @@ export function SettingsOps({
               <label className="stack-field">
                 <span>ملاحظات اختيارية</span>
                 <textarea
+                  className="field-input"
                   rows={3}
                   maxLength={500}
                   value={snapshotNotes}
@@ -505,7 +506,7 @@ export function SettingsOps({
             <div className="stack-form">
               <label className="stack-field">
                 <span>الحساب</span>
-                <select value={selectedAccountId} onChange={(event) => setSelectedAccountId(event.target.value)}>
+                <select className="field-input" value={selectedAccountId} onChange={(event) => setSelectedAccountId(event.target.value)}>
                   {accounts.map((account) => (
                     <option key={account.id} value={account.id}>
                       {account.name} - {formatCurrency(account.current_balance)}
@@ -517,6 +518,7 @@ export function SettingsOps({
               <label className="stack-field">
                 <span>الرصيد الفعلي</span>
                 <input
+                  className="field-input"
                   type="number"
                   min={0}
                   step="0.001"
@@ -529,6 +531,7 @@ export function SettingsOps({
               <label className="stack-field">
                 <span>سبب التسوية</span>
                 <textarea
+                  className="field-input"
                   rows={3}
                   value={reconcileNotes}
                   onChange={(event) => setReconcileNotes(event.target.value)}
@@ -572,7 +575,7 @@ export function SettingsOps({
               <>
                 <label className="stack-field">
                   <span>عملية الجرد</span>
-                  <select value={selectedCountId} onChange={(event) => setSelectedCountId(event.target.value)}>
+                  <select className="field-input" value={selectedCountId} onChange={(event) => setSelectedCountId(event.target.value)}>
                     {inventoryCounts.map((count) => (
                       <option key={count.id} value={count.id}>
                         {count.count_type} - {formatDate(count.count_date)}
@@ -599,6 +602,7 @@ export function SettingsOps({
                           <label className="stack-field">
                             <span>الكمية الفعلية</span>
                             <input
+                              className="field-input"
                               type="number"
                               min={0}
                               step={1}
@@ -618,6 +622,7 @@ export function SettingsOps({
                           <label className="stack-field">
                             <span>سبب الفرق</span>
                             <input
+                              className="field-input"
                               type="text"
                               maxLength={255}
                               value={draft?.reason ?? ""}

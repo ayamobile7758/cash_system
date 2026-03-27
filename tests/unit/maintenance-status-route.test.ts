@@ -36,7 +36,7 @@ describe("PATCH /api/maintenance/[jobId]", () => {
         status: "delivered",
         final_amount: 20
       }),
-      { params: { jobId: "job-1" } }
+      { params: Promise.resolve({ jobId: "job-1" }) }
     );
     const payload = await response.json();
 
@@ -70,7 +70,7 @@ describe("PATCH /api/maintenance/[jobId]", () => {
         payment_account_id: "22222222-2222-4222-8222-222222222222",
         notes: "تم الإصلاح"
       }),
-      { params: { jobId: "job-1" } }
+      { params: Promise.resolve({ jobId: "job-1" }) }
     );
     const payload = await response.json();
 
@@ -104,7 +104,7 @@ describe("PATCH /api/maintenance/[jobId]", () => {
         status: "ready",
         notes: "خطوة غير صالحة"
       }),
-      { params: { jobId: "job-1" } }
+      { params: Promise.resolve({ jobId: "job-1" }) }
     );
     const payload = await response.json();
 

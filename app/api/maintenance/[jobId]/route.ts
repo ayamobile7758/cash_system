@@ -12,10 +12,12 @@ type MaintenanceStatusResponse = {
   ledger_entry_id: string | null;
 };
 
+type MaintenanceRouteParams = {
+  jobId: string;
+};
+
 type RouteContext = {
-  params: {
-    jobId: string;
-  };
+  params: Promise<MaintenanceRouteParams>;
 };
 
 export async function PATCH(request: Request, { params }: RouteContext) {
@@ -32,9 +34,11 @@ export async function PATCH(request: Request, { params }: RouteContext) {
       return validation.response;
     }
 
+    const { jobId } = await params;
+
     const payload = validation.data;
     const { data, error: rpcError } = await authorization.supabase.rpc("update_maintenance_job_status", {
-      p_job_id: params.jobId,
+      p_job_id: jobId,
       p_new_status: payload.status,
       p_final_amount: payload.final_amount ?? null,
       p_payment_account_id: payload.payment_account_id ?? null,

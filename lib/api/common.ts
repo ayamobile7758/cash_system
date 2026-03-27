@@ -111,7 +111,7 @@ export function internalErrorResponse(error: unknown, options?: { context?: stri
   return errorResponse("ERR_API_INTERNAL", meta.message, meta.status);
 }
 
-export async function getAuthenticatedUser(serverClient: ReturnType<typeof createSupabaseServerClient>) {
+export async function getAuthenticatedUser(serverClient: Awaited<ReturnType<typeof createSupabaseServerClient>>) {
   const authClient = serverClient.auth as ServerAuthClient;
 
   if (typeof authClient.getUser === "function") {
@@ -217,7 +217,7 @@ export async function authorizeRequest(
     requiredPermissions?: string[];
   }
 ): Promise<AuthorizationResult> {
-  const serverClient = createSupabaseServerClient();
+  const serverClient = await createSupabaseServerClient();
   const { user, error: userError } = await getAuthenticatedUser(serverClient);
 
   if (userError || !user) {

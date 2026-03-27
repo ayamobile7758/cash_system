@@ -196,9 +196,9 @@ describe("expense categories routes", () => {
         })
       }),
       {
-        params: {
+        params: Promise.resolve({
           categoryId: "cat-1"
-        }
+        })
       }
     );
     const payload = await response.json();

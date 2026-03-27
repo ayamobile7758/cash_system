@@ -85,6 +85,7 @@ export function ExpensesWorkspace({
   const [retryAction, setRetryAction] = useState<ExpensesRetryAction | null>(null);
   const [retryCategoryId, setRetryCategoryId] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState<ExpensesSection>("create");
+  const visibleSection = role === "admin" || activeSection !== "categories" ? activeSection : "create";
   const [categoryDrafts, setCategoryDrafts] = useState<CategoryDraftState>(() =>
     Object.fromEntries(
       categories.map((category) => [
@@ -244,17 +245,17 @@ export function ExpensesWorkspace({
       />
 
       <div className="operational-page__meta-grid">
-        <article className="operational-page__meta-card">
+        <article className="operational-page__meta-card stat-card">
           <span className="operational-page__meta-label">إجمالي الشهر</span>
           <strong className="operational-page__meta-value">{formatCurrency(summary.total_expenses)}</strong>
           <p className="operational-page__meta-hint">إجمالي المصروفات في الشهر الحالي.</p>
         </article>
-        <article className="operational-page__meta-card">
+        <article className="operational-page__meta-card stat-card">
           <span className="operational-page__meta-label">عدد القيود</span>
           <strong className="operational-page__meta-value">{formatCompactNumber(summary.expense_count)}</strong>
           <p className="operational-page__meta-hint">عدد المصروفات المسجلة خلال الفترة الحالية.</p>
         </article>
-        <article className="operational-page__meta-card">
+        <article className="operational-page__meta-card stat-card">
           <span className="operational-page__meta-label">الفئات النشطة</span>
           <strong className="operational-page__meta-value">{formatCompactNumber(summary.active_category_count)}</strong>
           <p className="operational-page__meta-hint">فئات المصروف المتاحة للفريق حاليًا.</p>
@@ -264,14 +265,14 @@ export function ExpensesWorkspace({
       <div className="operational-section-nav" aria-label="أقسام شاشة المصروفات">
         <button
           type="button"
-          className={activeSection === "create" ? "chip-button is-selected" : "chip-button"}
+          className={visibleSection === "create" ? "chip-button is-selected" : "chip-button"}
           onClick={() => setActiveSection("create")}
         >
           تسجيل المصروف
         </button>
         <button
           type="button"
-          className={activeSection === "recent" ? "chip-button is-selected" : "chip-button"}
+          className={visibleSection === "recent" ? "chip-button is-selected" : "chip-button"}
           onClick={() => setActiveSection("recent")}
         >
           آخر القيود
@@ -279,7 +280,7 @@ export function ExpensesWorkspace({
         {role === "admin" ? (
           <button
             type="button"
-            className={activeSection === "categories" ? "chip-button is-selected" : "chip-button"}
+            className={visibleSection === "categories" ? "chip-button is-selected" : "chip-button"}
             onClick={() => setActiveSection("categories")}
           >
             إدارة الفئات
@@ -306,7 +307,7 @@ export function ExpensesWorkspace({
         />
       ) : null}
 
-      {activeSection === "create" ? <div className="operational-layout operational-layout--split">
+      {visibleSection === "create" ? <div className="operational-layout operational-layout--split">
         <section className="workspace-panel">
           <div className="section-heading">
             <div>
@@ -319,7 +320,7 @@ export function ExpensesWorkspace({
           <div className="stack-form">
             <label className="stack-field">
               <span>الحساب</span>
-              <select value={accountId} onChange={(event) => setAccountId(event.target.value)}>
+              <select className="field-input" value={accountId} onChange={(event) => setAccountId(event.target.value)}>
                 {accounts.map((account) => (
                   <option key={account.id} value={account.id}>
                     {account.name} — {formatBalanceLabel(account)}
@@ -330,7 +331,7 @@ export function ExpensesWorkspace({
 
             <label className="stack-field">
               <span>فئة المصروف</span>
-              <select value={categoryId} onChange={(event) => setCategoryId(event.target.value)}>
+              <select className="field-input" value={categoryId} onChange={(event) => setCategoryId(event.target.value)}>
                 {categories.map((category) => (
                   <option key={category.id} value={category.id}>
                     {category.name} ({getCategoryTypeLabel(category.type)})
@@ -342,6 +343,7 @@ export function ExpensesWorkspace({
             <label className="stack-field">
               <span>المبلغ</span>
               <input
+                className="field-input"
                 type="number"
                 min={0.001}
                 step="0.001"
@@ -352,12 +354,12 @@ export function ExpensesWorkspace({
 
             <label className="stack-field">
               <span>الوصف</span>
-              <input value={description} onChange={(event) => setDescription(event.target.value)} />
+              <input className="field-input" value={description} onChange={(event) => setDescription(event.target.value)} />
             </label>
 
             <label className="stack-field">
               <span>ملاحظات</span>
-              <textarea rows={3} value={notes} onChange={(event) => setNotes(event.target.value)} />
+              <textarea className="field-input" rows={3} value={notes} onChange={(event) => setNotes(event.target.value)} />
             </label>
 
             <button
@@ -414,7 +416,7 @@ export function ExpensesWorkspace({
         </section>
       </div> : null}
 
-      {activeSection === "recent" ? (
+      {visibleSection === "recent" ? (
         <div className="operational-layout operational-layout--wide">
           <section className="workspace-panel operational-content">
             <div className="section-heading">
@@ -452,7 +454,7 @@ export function ExpensesWorkspace({
         </div>
       ) : null}
 
-      {role === "admin" && activeSection === "categories" ? (
+      {visibleSection === "categories" ? (
         <section className="workspace-panel">
           <div className="section-heading">
             <div>
@@ -467,12 +469,13 @@ export function ExpensesWorkspace({
               <div className="stack-form">
                 <label className="stack-field">
                   <span>اسم الفئة</span>
-                  <input value={newCategoryName} onChange={(event) => setNewCategoryName(event.target.value)} />
+                  <input className="field-input" value={newCategoryName} onChange={(event) => setNewCategoryName(event.target.value)} />
                 </label>
 
                 <label className="stack-field">
                   <span>النوع</span>
                   <select
+                    className="field-input"
                     value={newCategoryType}
                     onChange={(event) => setNewCategoryType(event.target.value as "fixed" | "variable")}
                   >
@@ -484,6 +487,7 @@ export function ExpensesWorkspace({
                 <label className="stack-field">
                   <span>الترتيب</span>
                   <input
+                    className="field-input"
                     type="number"
                     step="1"
                     value={newCategorySortOrder}
@@ -494,6 +498,7 @@ export function ExpensesWorkspace({
                 <label className="stack-field">
                   <span>الوصف</span>
                   <textarea
+                    className="field-input"
                     rows={3}
                     value={newCategoryDescription}
                     onChange={(event) => setNewCategoryDescription(event.target.value)}
@@ -502,6 +507,7 @@ export function ExpensesWorkspace({
 
                 <label className="checkbox-field">
                   <input
+                    className="field-input"
                     type="checkbox"
                     checked={newCategoryIsActive}
                     onChange={(event) => setNewCategoryIsActive(event.target.checked)}
@@ -546,6 +552,7 @@ export function ExpensesWorkspace({
                         <label className="stack-field">
                           <span>الاسم</span>
                           <input
+                            className="field-input"
                             value={baseDraft.name}
                             onChange={(event) =>
                               setCategoryDrafts((current) => ({
@@ -562,6 +569,7 @@ export function ExpensesWorkspace({
                         <label className="stack-field">
                           <span>النوع</span>
                           <select
+                            className="field-input"
                             value={baseDraft.type}
                             onChange={(event) =>
                               setCategoryDrafts((current) => ({
@@ -581,6 +589,7 @@ export function ExpensesWorkspace({
                         <label className="stack-field">
                           <span>الوصف</span>
                           <textarea
+                            className="field-input"
                             rows={2}
                             value={baseDraft.description}
                             onChange={(event) =>
@@ -598,6 +607,7 @@ export function ExpensesWorkspace({
                         <label className="stack-field">
                           <span>الترتيب</span>
                           <input
+                            className="field-input"
                             type="number"
                             value={baseDraft.sort_order}
                             onChange={(event) =>
@@ -614,6 +624,7 @@ export function ExpensesWorkspace({
 
                         <label className="checkbox-field">
                           <input
+                            className="field-input"
                             type="checkbox"
                             checked={baseDraft.is_active}
                             onChange={(event) =>

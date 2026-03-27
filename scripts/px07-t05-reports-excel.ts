@@ -2,10 +2,10 @@ import { execSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
-import * as XLSX from "xlsx";
 import { createClient } from "@supabase/supabase-js";
 import { getReportBaseline, type SalesHistoryFilters } from "../lib/api/reports";
 import { buildReportWorkbookBuffer } from "../lib/reports/export";
+import { readWorkbookRows } from "../lib/spreadsheet-core";
 
 function assert(condition: unknown, message: string) {
   if (!condition) {
@@ -265,12 +265,12 @@ async function main() {
   const workbookPath = join("output", "spreadsheet", "px07-t05-reports-export.xlsx");
   writeFileSync(workbookPath, workbookBuffer);
 
-  const workbook = XLSX.read(workbookBuffer, { type: "buffer" });
-  assert(workbook.SheetNames.includes("Summary"), "Workbook should include Summary sheet.");
-  assert(workbook.SheetNames.includes("Returns"), "Workbook should include Returns sheet.");
-  assert(workbook.SheetNames.includes("Account Movements"), "Workbook should include Account Movements sheet.");
+  const workbook = readWorkbookRows(workbookBuffer);
+  assert(Object.keys(workbook).includes("Summary"), "Workbook should include Summary sheet.");
+  assert(Object.keys(workbook).includes("Returns"), "Workbook should include Returns sheet.");
+  assert(Object.keys(workbook).includes("Account Movements"), "Workbook should include Account Movements sheet.");
 
-  const summaryRows = XLSX.utils.sheet_to_json<Array<string | number>>(workbook.Sheets.Summary, { header: 1 });
+  const summaryRows = workbook.Summary;
   assert(summaryRows[8]?.[1] === reportBaseline.salesSummary.total_sales, "Workbook sales total mismatch.");
 
   const output = {
@@ -290,7 +290,7 @@ async function main() {
       maintenance_revenue: reportBaseline.profitReport.maintenance_revenue,
       movement_count: reportBaseline.accountMovementReport.total_movements,
       workbook_path: workbookPath,
-      workbook_sheets: workbook.SheetNames
+      workbook_sheets: Object.keys(workbook)
     }
   };
 

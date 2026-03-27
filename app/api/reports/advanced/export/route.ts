@@ -53,7 +53,7 @@ export async function GET(request: Request) {
     }
 
     const generatedAt = new Date().toISOString();
-    const workbook = buildAdvancedReportWorkbookBuffer({
+    const workbook = await buildAdvancedReportWorkbookBuffer({
       filters,
       reportBaseline,
       generatedAt

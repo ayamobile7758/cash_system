@@ -3,6 +3,7 @@
 import { useTransition } from "react";
 import { LogOut, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { getSafeArabicErrorMessage } from "@/lib/error-messages";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 export function LogoutButton() {
@@ -20,7 +21,7 @@ export function LogoutButton() {
             const { error } = await supabase.auth.signOut();
 
             if (error) {
-              toast.error(error.message);
+              toast.error(getSafeArabicErrorMessage(error, "تعذر تسجيل الخروج. حاول مجددًا."));
               return;
             }
 

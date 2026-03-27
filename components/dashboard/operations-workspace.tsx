@@ -28,6 +28,8 @@ type OperationsWorkspaceProps = {
 type TopupResponse = {
   topup_id: string;
   topup_number: string;
+  invoice_id: string;
+  invoice_number: string;
   ledger_entry_ids: string[];
 };
 
@@ -156,7 +158,9 @@ export function OperationsWorkspace({
         setTopupNotes("");
         setTopupKey(createUuid());
         clearActionFeedback();
-        toast.success(`تم تسجيل الشحن ${envelope.data.topup_number} بنجاح.`);
+        toast.success(
+          `تم تسجيل الشحن ${envelope.data.topup_number} بنجاح — فاتورة ${envelope.data.invoice_number}.`
+        );
         router.refresh();
       })();
     });
@@ -222,17 +226,17 @@ export function OperationsWorkspace({
       />
 
       <div className="operational-page__meta-grid">
-        <article className="operational-page__meta-card">
+        <article className="operational-page__meta-card stat-card">
           <span className="operational-page__meta-label">ربح الشحن</span>
           <strong className="operational-page__meta-value">{formatCurrency(topupSummary.total_profit)}</strong>
           <p className="operational-page__meta-hint">إجمالي ربح الشحن خلال آخر 30 يومًا.</p>
         </article>
-        <article className="operational-page__meta-card">
+        <article className="operational-page__meta-card stat-card">
           <span className="operational-page__meta-label">إجمالي التحصيل</span>
           <strong className="operational-page__meta-value">{formatCurrency(topupSummary.total_amount)}</strong>
           <p className="operational-page__meta-hint">إجمالي المبالغ المستلمة من عمليات الشحن.</p>
         </article>
-        <article className="operational-page__meta-card">
+        <article className="operational-page__meta-card stat-card">
           <span className="operational-page__meta-label">النشاط</span>
           <strong className="operational-page__meta-value">{formatCompactNumber(topupSummary.entry_count)}</strong>
           <p className="operational-page__meta-hint">
@@ -299,7 +303,7 @@ export function OperationsWorkspace({
           <div className="stack-form">
             <label className="stack-field">
               <span>شركة الشحن</span>
-              <select value={topupProviderId} onChange={(event) => setTopupProviderId(event.target.value)}>
+              <select className="field-input" value={topupProviderId} onChange={(event) => setTopupProviderId(event.target.value)}>
                 <option value="">اختياري — بدون مزود</option>
                 {providers.map((provider) => (
                   <option key={provider.id} value={provider.id}>
@@ -312,7 +316,7 @@ export function OperationsWorkspace({
             <div className="inline-form-grid">
               <label className="stack-field">
                 <span>حساب الاستلام</span>
-                <select value={topupAccountId} onChange={(event) => setTopupAccountId(event.target.value)}>
+                <select className="field-input" value={topupAccountId} onChange={(event) => setTopupAccountId(event.target.value)}>
                   {accounts.map((account) => (
                     <option key={account.id} value={account.id}>
                       {account.name}
@@ -324,6 +328,7 @@ export function OperationsWorkspace({
               <label className="stack-field">
                 <span>المبلغ المستلم</span>
                 <input
+                  className="field-input"
                   type="number"
                   min="0"
                   step="0.001"
@@ -338,6 +343,7 @@ export function OperationsWorkspace({
               <label className="stack-field">
                 <span>الربح</span>
                 <input
+                  className="field-input"
                   type="number"
                   min="0"
                   step="0.001"
@@ -358,6 +364,7 @@ export function OperationsWorkspace({
             <label className="stack-field">
               <span>ملاحظة</span>
               <textarea
+                className="field-input"
                 rows={3}
                 maxLength={255}
                 value={topupNotes}
@@ -382,6 +389,7 @@ export function OperationsWorkspace({
             <div className="result-card">
               <h3>تم تسجيل الشحن</h3>
               <p>رقم العملية: {topupResult.topup_number}</p>
+              <p>رقم الفاتورة: {topupResult.invoice_number}</p>
               <p>عدد القيود: {topupResult.ledger_entry_ids.length}</p>
             </div>
           ) : null}
@@ -494,6 +502,7 @@ export function OperationsWorkspace({
                   <label className="stack-field">
                     <span>من حساب</span>
                     <select
+                      className="field-input"
                       value={transferFromAccountId}
                       onChange={(event) => setTransferFromAccountId(event.target.value)}
                     >
@@ -507,7 +516,7 @@ export function OperationsWorkspace({
 
                   <label className="stack-field">
                     <span>إلى حساب</span>
-                    <select value={transferToAccountId} onChange={(event) => setTransferToAccountId(event.target.value)}>
+                    <select className="field-input" value={transferToAccountId} onChange={(event) => setTransferToAccountId(event.target.value)}>
                       {accounts.map((account) => (
                         <option key={account.id} value={account.id}>
                           {account.name}
@@ -536,6 +545,7 @@ export function OperationsWorkspace({
                 <label className="stack-field">
                   <span>المبلغ</span>
                   <input
+                    className="field-input"
                     type="number"
                     min="0"
                     step="0.001"
@@ -548,6 +558,7 @@ export function OperationsWorkspace({
                 <label className="stack-field">
                   <span>ملاحظات</span>
                   <textarea
+                    className="field-input"
                     rows={3}
                     maxLength={255}
                     value={transferNotes}

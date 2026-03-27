@@ -8,7 +8,7 @@ import { hasPermission } from "@/lib/permissions";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 
 type NotificationsPageProps = {
-  searchParams?: Record<string, string | string[] | undefined>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
 export const metadata: Metadata = {
@@ -16,7 +16,8 @@ export const metadata: Metadata = {
   description: "متابعة التنبيهات والإشعارات والبحث السريع من شاشة واحدة واضحة."
 };
 
-export default async function NotificationsPage({ searchParams = {} }: NotificationsPageProps) {
+export default async function NotificationsPage({ searchParams }: NotificationsPageProps) {
+  const resolvedSearchParams = (await searchParams) ?? {};
   const access = await getWorkspaceAccess();
 
   if (access.state === "unauthenticated") {
@@ -47,14 +48,14 @@ export default async function NotificationsPage({ searchParams = {} }: Notificat
     userId: access.userId
   };
   const [baseline, searchBaseline, alertsSummary] = await Promise.all([
-    getNotificationsPageBaseline(supabase, viewer, searchParams),
+    getNotificationsPageBaseline(supabase, viewer, resolvedSearchParams),
     getGlobalSearchPageBaseline(
       supabase,
       {
         ...viewer,
         permissions: access.permissions
       },
-      searchParams
+      resolvedSearchParams
     ),
     access.role === "admin" ? getAlertsSummary(supabase, viewer) : Promise.resolve(null)
   ]);

@@ -88,7 +88,7 @@ describe("GET /api/reports/advanced/export", () => {
         }
       }
     });
-    vi.mocked(buildAdvancedReportWorkbookBuffer).mockReturnValue(Buffer.from("xlsx"));
+    vi.mocked(buildAdvancedReportWorkbookBuffer).mockResolvedValue(Buffer.from("xlsx"));
 
     const response = await GET(
       new Request(

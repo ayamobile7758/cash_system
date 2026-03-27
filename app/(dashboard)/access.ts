@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { resolvePermissionContext, type WorkspaceRole } from "@/lib/permissions";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -22,8 +23,8 @@ type ProfileAccessRow = {
   is_active: boolean;
 };
 
-export async function getWorkspaceAccess(): Promise<WorkspaceAccessResult> {
-  const supabase = createSupabaseServerClient();
+export const getWorkspaceAccess = cache(async function getWorkspaceAccess(): Promise<WorkspaceAccessResult> {
+  const supabase = await createSupabaseServerClient();
   const {
     data: { user },
     error
@@ -61,4 +62,4 @@ export async function getWorkspaceAccess(): Promise<WorkspaceAccessResult> {
     maxDiscountPercentage: permissionContext.maxDiscountPercentage,
     discountRequiresApproval: permissionContext.discountRequiresApproval
   };
-}
+});

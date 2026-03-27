@@ -14,24 +14,18 @@ export type FixtureUser = {
 
 type ServiceRoleClient = SupabaseClient;
 
+const EMAIL_LABEL = "\u0627\u0644\u0628\u0631\u064a\u062f \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a";
+const PASSWORD_LABEL = "\u0643\u0644\u0645\u0629 \u0627\u0644\u0645\u0631\u0648\u0631";
+const LOGIN_BUTTON = "\u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062f\u062e\u0648\u0644";
+
 loadEnvConfig(process.cwd());
-
-function requireEnv(name: string, fallback?: string) {
-  const value = process.env[name] || fallback;
-
-  if (!value) {
-    throw new Error(`Missing required runtime env: ${name}`);
-  }
-
-  return value;
-}
 
 export function createServiceRoleClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "http://127.0.0.1:54321";
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SERVICE_ROLE_KEY;
 
   if (!serviceRoleKey) {
-    throw new Error(`Missing required runtime env: SUPABASE_SERVICE_ROLE_KEY or SERVICE_ROLE_KEY`);
+    throw new Error("Missing required runtime env: SUPABASE_SERVICE_ROLE_KEY or SERVICE_ROLE_KEY");
   }
 
   return createClient(supabaseUrl, serviceRoleKey, {
@@ -96,17 +90,37 @@ export async function createFixtureUser(
 }
 
 export async function login(page: Page, email: string, password: string, targetPath = "/pos") {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.goto("/login", { waitUntil: "domcontentloaded" });
   await page.waitForLoadState("networkidle");
-  await page.getByLabel("البريد الإلكتروني").fill(email);
-  await page.getByLabel("كلمة المرور").fill(password);
+  await page.getByLabel(EMAIL_LABEL).fill(email);
+  await page.getByLabel(PASSWORD_LABEL).fill(password);
+  await page.getByRole("button", { name: LOGIN_BUTTON }).click();
 
-  await page.getByRole("button", { name: "تسجيل الدخول" }).click();
-  await page.waitForURL("**/pos");
+  const expectedPath = targetPath || "/pos";
+
+  try {
+    await page.waitForURL((url) => url.pathname === expectedPath, {
+      timeout: 15_000
+    });
+  } catch {
+    await page.waitForTimeout(1_000);
+    await page.goto(expectedPath, { waitUntil: "domcontentloaded" });
+  }
+
+  await page.waitForLoadState("networkidle");
 
   if (targetPath && !page.url().includes(targetPath)) {
     await page.goto(targetPath, { waitUntil: "domcontentloaded" });
     await page.waitForLoadState("networkidle");
+  }
+
+  if (!page.url().includes(expectedPath)) {
+    const banner = page.locator(".status-banner");
+    if (await banner.isVisible()) {
+      throw new Error(`Login stayed on ${page.url()} with banner: ${await banner.innerText()}`);
+    }
+
+    throw new Error(`Login did not reach ${expectedPath}. Current URL: ${page.url()}`);
   }
 }
 

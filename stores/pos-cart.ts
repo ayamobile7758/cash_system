@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import type { PosCartItem, PosProduct, SaleResponseData } from "@/lib/pos/types";
+import type { PosCartItem, PosProduct, SaleResponseData, SplitPayment } from "@/lib/pos/types";
 
 function createDraftIdempotencyKey() {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
@@ -45,11 +45,32 @@ function clampQuantity(item: PosCartItem, nextQuantity: number) {
 
 type SubmissionState = "idle" | "submitting" | "success" | "error";
 
+export type HeldCart = {
+  id: string;
+  label: string;
+  items: PosCartItem[];
+  selectedAccountId: string | null;
+  selectedCustomerId: string | null;
+  selectedCustomerName: string | null;
+  amountReceived: number | null;
+  splitPayments: SplitPayment[];
+  invoiceDiscountPercentage: number;
+  notes: string;
+  heldAt: string;
+};
+
 interface PosCartStore {
   items: PosCartItem[];
   selectedAccountId: string | null;
+  selectedCustomerId: string | null;
+  selectedCustomerName: string | null;
+  amountReceived: number | null;
+  splitPayments: SplitPayment[];
+  invoiceDiscountPercentage: number;
   posTerminalCode: string;
+  terminalCodeLocked: boolean;
   notes: string;
+  heldCarts: HeldCart[];
   currentIdempotencyKey: string;
   submissionState: SubmissionState;
   lastCompletedSale: SaleResponseData | null;
@@ -59,8 +80,22 @@ interface PosCartStore {
   setQuantity: (productId: string, quantity: number) => void;
   setDiscountPercentage: (productId: string, discountPercentage: number) => void;
   setSelectedAccountId: (accountId: string) => void;
+  setSelectedCustomer: (customerId: string | null, customerName: string | null) => void;
+  clearSelectedCustomer: () => void;
+  setAmountReceived: (amount: number | null) => void;
+  addSplitPayment: (accountId: string, amount: number) => void;
+  removeSplitPayment: (index: number) => void;
+  updateSplitPaymentAmount: (index: number, amount: number) => void;
+  updateSplitPaymentAccount: (index: number, accountId: string) => void;
+  clearSplitPayments: () => void;
+  setInvoiceDiscountPercentage: (percentage: number) => void;
   setNotes: (notes: string) => void;
   setPosTerminalCode: (code: string) => void;
+  lockTerminalCode: () => void;
+  unlockTerminalCode: () => void;
+  holdCurrentCart: (label: string) => void;
+  restoreHeldCart: (cartId: string) => void;
+  discardHeldCart: (cartId: string) => void;
   clearCart: () => void;
   markSubmitting: () => void;
   markError: (errorCode: string) => void;
@@ -73,8 +108,15 @@ function createDefaultState() {
   return {
     items: [] as PosCartItem[],
     selectedAccountId: null,
+    selectedCustomerId: null as string | null,
+    selectedCustomerName: null as string | null,
+    amountReceived: null as number | null,
+    splitPayments: [] as SplitPayment[],
+    invoiceDiscountPercentage: 0,
     posTerminalCode: "POS-01",
+    terminalCodeLocked: false,
     notes: "",
+    heldCarts: [] as HeldCart[],
     currentIdempotencyKey: createDraftIdempotencyKey(),
     submissionState: "idle" as SubmissionState,
     lastCompletedSale: null as SaleResponseData | null,
@@ -170,18 +212,187 @@ export const usePosCartStore = create<PosCartStore>()(
       setSelectedAccountId(accountId) {
         set({ selectedAccountId: accountId });
       },
+      setSelectedCustomer(customerId, customerName) {
+        set({
+          selectedCustomerId: customerId,
+          selectedCustomerName: customerName,
+          submissionState: "idle",
+          lastErrorCode: null
+        });
+      },
+      clearSelectedCustomer() {
+        set({
+          selectedCustomerId: null,
+          selectedCustomerName: null,
+          submissionState: "idle",
+          lastErrorCode: null
+        });
+      },
+      setAmountReceived(amount) {
+        set({ amountReceived: amount });
+      },
+      addSplitPayment(accountId, amount) {
+        set((state) => {
+          if (state.splitPayments.length >= 2) {
+            return state;
+          }
+
+          return {
+            splitPayments: [
+              ...state.splitPayments,
+              {
+                accountId,
+                amount: roundCartAmount(Math.max(0, amount))
+              }
+            ],
+            submissionState: "idle",
+            lastErrorCode: null
+          };
+        });
+      },
+      removeSplitPayment(index) {
+        set((state) => ({
+          splitPayments: state.splitPayments.filter((_, currentIndex) => currentIndex !== index),
+          submissionState: "idle",
+          lastErrorCode: null
+        }));
+      },
+      updateSplitPaymentAmount(index, amount) {
+        set((state) => ({
+          splitPayments: state.splitPayments.map((payment, currentIndex) =>
+            currentIndex === index
+              ? {
+                  ...payment,
+                  amount: roundCartAmount(Math.max(0, amount))
+                }
+              : payment
+          ),
+          submissionState: "idle",
+          lastErrorCode: null
+        }));
+      },
+      updateSplitPaymentAccount(index, accountId) {
+        set((state) => ({
+          splitPayments: state.splitPayments.map((payment, currentIndex) =>
+            currentIndex === index
+              ? {
+                  ...payment,
+                  accountId
+                }
+              : payment
+          ),
+          submissionState: "idle",
+          lastErrorCode: null
+        }));
+      },
+      clearSplitPayments() {
+        set({
+          splitPayments: [],
+          submissionState: "idle",
+          lastErrorCode: null
+        });
+      },
+      setInvoiceDiscountPercentage(percentage) {
+        set({
+          invoiceDiscountPercentage: Math.min(Math.max(percentage, 0), 100),
+          submissionState: "idle",
+          lastErrorCode: null
+        });
+      },
       setNotes(notes) {
         set({ notes });
       },
       setPosTerminalCode(code) {
         set({ posTerminalCode: code });
       },
+      lockTerminalCode() {
+        set({ terminalCodeLocked: true });
+      },
+      unlockTerminalCode() {
+        set({ terminalCodeLocked: false });
+      },
+      holdCurrentCart(label) {
+        set((state) => {
+          const normalizedLabel = label.trim();
+
+          if (state.items.length === 0 || state.heldCarts.length >= 5 || normalizedLabel.length === 0) {
+            return state;
+          }
+
+          const heldCart: HeldCart = {
+            id: createDraftIdempotencyKey(),
+            label: normalizedLabel,
+            items: state.items,
+            selectedAccountId: state.selectedAccountId,
+            selectedCustomerId: state.selectedCustomerId,
+            selectedCustomerName: state.selectedCustomerName,
+            amountReceived: state.amountReceived,
+            splitPayments: state.splitPayments,
+            invoiceDiscountPercentage: state.invoiceDiscountPercentage,
+            notes: state.notes,
+            heldAt: new Date().toISOString()
+          };
+
+          return {
+            ...state,
+            items: [],
+            selectedAccountId: "",
+            selectedCustomerId: null,
+            selectedCustomerName: null,
+            amountReceived: null,
+            splitPayments: [],
+            invoiceDiscountPercentage: 0,
+            notes: "",
+            heldCarts: [...state.heldCarts, heldCart],
+            submissionState: "idle",
+            lastErrorCode: null,
+            currentIdempotencyKey: createDraftIdempotencyKey()
+          };
+        });
+      },
+      restoreHeldCart(cartId) {
+        set((state) => {
+          const heldCart = state.heldCarts.find((cart) => cart.id === cartId);
+
+          if (!heldCart) {
+            return state;
+          }
+
+          return {
+            ...state,
+            items: heldCart.items,
+            selectedAccountId: "",
+            selectedCustomerId: heldCart.selectedCustomerId,
+            selectedCustomerName: heldCart.selectedCustomerName,
+            amountReceived: null,
+            splitPayments: [],
+            invoiceDiscountPercentage: heldCart.invoiceDiscountPercentage ?? 0,
+            notes: heldCart.notes,
+            heldCarts: state.heldCarts.filter((cart) => cart.id !== cartId),
+            submissionState: "idle",
+            lastErrorCode: null,
+            currentIdempotencyKey: createDraftIdempotencyKey()
+          };
+        });
+      },
+      discardHeldCart(cartId) {
+        set((state) => ({
+          heldCarts: state.heldCarts.filter((cart) => cart.id !== cartId)
+        }));
+      },
       clearCart() {
         set((state) => ({
           ...state,
           items: [],
+          selectedAccountId: "",
+          selectedCustomerId: null,
+          selectedCustomerName: null,
+          amountReceived: null,
+          splitPayments: [],
+          invoiceDiscountPercentage: 0,
           notes: "",
           submissionState: "idle",
+          lastCompletedSale: null,
           lastErrorCode: null,
           currentIdempotencyKey: createDraftIdempotencyKey()
         }));
@@ -199,6 +410,12 @@ export const usePosCartStore = create<PosCartStore>()(
         set((state) => ({
           ...state,
           items: [],
+          selectedAccountId: "",
+          selectedCustomerId: null,
+          selectedCustomerName: null,
+          amountReceived: null,
+          splitPayments: [],
+          invoiceDiscountPercentage: 0,
           notes: "",
           submissionState: "success",
           lastCompletedSale: sale,
@@ -231,8 +448,15 @@ export const usePosCartStore = create<PosCartStore>()(
       partialize: (state) => ({
         items: state.items,
         selectedAccountId: state.selectedAccountId,
+        selectedCustomerId: state.selectedCustomerId,
+        selectedCustomerName: state.selectedCustomerName,
+        amountReceived: state.amountReceived,
+        splitPayments: state.splitPayments,
+        invoiceDiscountPercentage: state.invoiceDiscountPercentage,
         posTerminalCode: state.posTerminalCode,
+        terminalCodeLocked: state.terminalCodeLocked,
         notes: state.notes,
+        heldCarts: state.heldCarts,
         currentIdempotencyKey: state.currentIdempotencyKey,
         lastCompletedSale: state.lastCompletedSale
       })

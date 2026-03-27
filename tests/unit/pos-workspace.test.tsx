@@ -7,7 +7,7 @@ const mockUseProducts = vi.fn();
 const mockUsePosAccounts = vi.fn();
 
 vi.mock("@/hooks/use-products", () => ({
-  useProducts: () => mockUseProducts()
+  useProducts: (...args: unknown[]) => mockUseProducts(...args)
 }));
 
 vi.mock("@/hooks/use-pos-accounts", () => ({
@@ -27,6 +27,9 @@ describe("PosWorkspace", () => {
     localStorage.clear();
     usePosCartStore.getState().resetStore();
     await usePosCartStore.persist.rehydrate();
+
+    mockUseProducts.mockReset();
+    mockUsePosAccounts.mockReset();
 
     mockUseProducts.mockReturnValue({
       products: [
@@ -64,8 +67,12 @@ describe("PosWorkspace", () => {
         }
       ],
       isLoading: false,
+      isLoadingMore: false,
       isOffline: false,
       errorMessage: null,
+      hasMore: false,
+      totalCount: 2,
+      loadMore: vi.fn(),
       refresh: vi.fn()
     });
 
@@ -96,8 +103,8 @@ describe("PosWorkspace", () => {
     vi.restoreAllMocks();
   });
 
-  it("autofocuses the local search input and filters products client-side", async () => {
-    render(<PosWorkspace />);
+  it("autofocuses the search input and forwards filters to the products hook", async () => {
+    render(<PosWorkspace maxDiscountPercentage={null} />);
 
     const searchInput = screen.getByRole("searchbox");
 
@@ -112,8 +119,12 @@ describe("PosWorkspace", () => {
 
     await waitFor(
       () => {
-        expect(screen.queryAllByText("شاحن سريع").length).toBeGreaterThan(0);
-        expect(screen.queryByText("سماعة بلوتوث")).not.toBeInTheDocument();
+        expect(mockUseProducts).toHaveBeenLastCalledWith(
+          expect.objectContaining({
+            searchQuery: "شاحن",
+            category: "all"
+          })
+        );
       },
       { timeout: 10000 }
     );
@@ -122,17 +133,15 @@ describe("PosWorkspace", () => {
   }, 30000);
 
   it("adds a product to the local cart without triggering a write request", async () => {
-    render(<PosWorkspace />);
+    render(<PosWorkspace maxDiscountPercentage={null} />);
 
     const quickAddButton = screen.getAllByRole("button", { name: /شاحن سريع/i })[0];
     fireEvent.click(quickAddButton);
 
     await waitFor(() => {
-      expect(screen.getByText("سلة الطلب الحالية")).toBeInTheDocument();
-      expect(screen.getByRole("button", { name: "حذف شاحن سريع" })).toBeInTheDocument();
+      expect(usePosCartStore.getState().items).toHaveLength(1);
     });
 
-    expect(usePosCartStore.getState().items).toHaveLength(1);
     expect(globalThis.fetch).not.toHaveBeenCalled();
   }, 30000);
 });

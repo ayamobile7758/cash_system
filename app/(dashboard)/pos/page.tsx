@@ -29,5 +29,5 @@ export default async function PosPage() {
     );
   }
 
-  return <PosWorkspace />;
+  return <PosWorkspace maxDiscountPercentage={access.maxDiscountPercentage} />;
 }

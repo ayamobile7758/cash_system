@@ -64,6 +64,7 @@ export async function POST(request: Request) {
       p_debt_customer_id: payload.customer_id ?? null,
       p_pos_terminal: payload.pos_terminal_code ?? null,
       p_notes: payload.notes ?? null,
+      p_invoice_discount_percentage: payload.invoice_discount_percentage ?? 0,
       p_idempotency_key: payload.idempotency_key,
       p_created_by: authorization.userId
     });
@@ -83,6 +84,10 @@ export async function POST(request: Request) {
       }
 
       throw rpcError;
+    }
+
+    if (!data) {
+      throw new Error("ERR_API_INTERNAL");
     }
 
     return NextResponse.json<StandardEnvelope<SaleResponseData>>(

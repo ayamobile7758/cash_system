@@ -2,10 +2,10 @@ import { execSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import * as XLSX from "xlsx";
 import { createClient } from "@supabase/supabase-js";
 import { getReportBaseline, type SalesHistoryFilters } from "@/lib/api/reports";
 import { buildAdvancedReportWorkbookBuffer } from "@/lib/reports/export";
+import { readWorkbookRows } from "../lib/spreadsheet-core";
 
 function assert(condition: unknown, message: string): asserts condition {
   if (!condition) {
@@ -406,8 +406,8 @@ async function main() {
     reportBaseline,
     generatedAt: new Date().toISOString()
   });
-  const workbook = XLSX.read(workbookBuffer, { type: "buffer" });
-  const summaryRows = XLSX.utils.sheet_to_json<(string | number | null)[]>(workbook.Sheets.Summary, { header: 1 });
+  const workbook = readWorkbookRows(workbookBuffer);
+  const summaryRows = workbook.Summary;
   assert(summaryRows[7]?.[1] === 200, "Workbook current sales mismatch.");
   assert(summaryRows[7]?.[2] === 80, "Workbook compare sales mismatch.");
   assert(summaryRows[7]?.[3] === 120, "Workbook sales delta mismatch.");

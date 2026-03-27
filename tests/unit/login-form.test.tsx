@@ -98,7 +98,8 @@ describe("LoginForm", () => {
     fireEvent.click(screen.getByRole("button", { name: /تسجيل الدخول/i }));
 
     expect(await screen.findByText("تعذر تسجيل الدخول")).toBeInTheDocument();
-    expect(screen.getByText("Bad credentials")).toBeInTheDocument();
+    expect(screen.getByText("تعذر إكمال تسجيل الدخول. حاول مجددًا.")).toBeInTheDocument();
+    expect(screen.queryByText("Bad credentials")).not.toBeInTheDocument();
     expect(mockReplace).not.toHaveBeenCalled();
   }, 15000);
 

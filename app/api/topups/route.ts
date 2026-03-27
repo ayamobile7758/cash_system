@@ -7,6 +7,8 @@ import { createTopupSchema } from "@/lib/validations/operations";
 type TopupResponse = {
   topup_id: string;
   topup_number: string;
+  invoice_id: string;
+  invoice_number: string;
   ledger_entry_ids: string[];
 };
 
@@ -44,6 +46,8 @@ export async function POST(request: Request) {
         data: {
           topup_id: data.topup_id,
           topup_number: data.topup_number,
+          invoice_id: data.invoice_id,
+          invoice_number: data.invoice_number,
           ledger_entry_ids: data.ledger_entry_ids
         }
       },

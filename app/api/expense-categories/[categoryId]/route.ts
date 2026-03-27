@@ -42,13 +42,15 @@ async function categoryNameExists(
 
 export async function PATCH(
   request: Request,
-  context: { params: { categoryId: string } }
+  context: { params: Promise<{ categoryId: string }> }
 ) {
   try {
     const authorization = await authorizeRequest(["admin"]);
     if (!authorization.authorized) {
       return authorization.response;
     }
+
+    const { categoryId } = await context.params;
 
     let body: unknown;
     try {
@@ -62,7 +64,7 @@ export async function PATCH(
 
     const payloadWithRouteId = {
       ...(typeof body === "object" && body !== null ? body : {}),
-      category_id: context.params.categoryId
+      category_id: categoryId
     };
 
     const parsed = updateExpenseCategorySchema.safeParse(payloadWithRouteId);
@@ -73,7 +75,6 @@ export async function PATCH(
       });
     }
 
-    const categoryId = context.params.categoryId;
     const { data: existing, error: existingError } = await authorization.supabase
       .from("expense_categories")
       .select("id, name, type, description, is_active, sort_order")

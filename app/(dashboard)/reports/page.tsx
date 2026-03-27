@@ -6,7 +6,7 @@ import { getReportsPageBaseline } from "@/lib/api/dashboard";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 
 type ReportsPageProps = {
-  searchParams?: Record<string, string | string[] | undefined>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
 export const metadata: Metadata = {
@@ -14,7 +14,8 @@ export const metadata: Metadata = {
   description: "مراجعة الأداء المالي والتشغيلي ومقارنة الفترات من شاشة تقارير متقدمة."
 };
 
-export default async function ReportsPage({ searchParams = {} }: ReportsPageProps) {
+export default async function ReportsPage({ searchParams }: ReportsPageProps) {
+  const resolvedSearchParams = (await searchParams) ?? {};
   const access = await getWorkspaceAccess();
 
   if (access.state === "unauthenticated") {
@@ -36,7 +37,7 @@ export default async function ReportsPage({ searchParams = {} }: ReportsPageProp
   }
 
   const supabase = getSupabaseAdminClient();
-  const baseline = await getReportsPageBaseline(supabase, searchParams);
+  const baseline = await getReportsPageBaseline(supabase, resolvedSearchParams);
 
   return <ReportsOverview {...baseline} />;
 }

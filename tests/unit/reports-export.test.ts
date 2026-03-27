@@ -1,5 +1,7 @@
-import * as XLSX from "xlsx";
+// @vitest-environment node
+
 import { buildReportWorkbookBuffer, buildReportWorkbookFilename } from "@/lib/reports/export";
+import { readWorkbookRows } from "@/lib/spreadsheet-core";
 import type { ReportBaseline, SalesHistoryFilters } from "@/lib/api/reports";
 
 describe("reports workbook export", () => {
@@ -191,7 +193,7 @@ describe("reports workbook export", () => {
       ],
       breakdown: [
         {
-          label: "Ø§Ù„ØµÙ†Ø¯ÙˆÙ‚",
+          label: "الصندوق",
           amount: 120,
           secondary_amount: 80,
           item_count: 2
@@ -213,8 +215,8 @@ describe("reports workbook export", () => {
       generatedAt: "2026-03-10T15:00:00.000Z"
     });
 
-    const workbook = XLSX.read(buffer, { type: "buffer" });
-    expect(workbook.SheetNames).toEqual([
+    const workbook = readWorkbookRows(buffer);
+    expect(Object.keys(workbook)).toEqual([
       "Summary",
       "Profit",
       "Sales History",
@@ -228,17 +230,13 @@ describe("reports workbook export", () => {
       "Snapshots"
     ]);
 
-    const summaryRows = XLSX.utils.sheet_to_json<(string | number | null)[]>(workbook.Sheets.Summary, {
-      header: 1
-    });
-    expect(summaryRows[1]?.[1]).toBe("2026-03-10T15:00:00.000Z");
+    const summaryRows = workbook.Summary;
+    expect(summaryRows[1]?.[1]).toBe("10/03/2026 18:00");
     expect(summaryRows[8]?.[1]).toBe(120);
     expect(summaryRows[15]?.[1]).toBe(12);
 
-    const salesRows = XLSX.utils.sheet_to_json<(string | number | null)[]>(workbook.Sheets["Sales History"], {
-      header: 1
-    });
-    expect(salesRows[1]).toEqual(["AYA-2026-00001", "2026-03-10", "أحمد", "POS-01", "active", 120]);
+    const salesRows = workbook["Sales History"];
+    expect(salesRows[1]).toEqual(["AYA-2026-00001", "10/03/2026", "أحمد", "POS-01", "active", 120]);
   });
 
   it("builds a stable filename from filters", () => {

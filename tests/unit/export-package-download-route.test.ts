@@ -68,7 +68,7 @@ describe("export package download route", () => {
     } as never);
 
     const response = await GET(new Request("http://localhost/api/export/packages/package-1"), {
-      params: { packageId: "package-1" }
+      params: Promise.resolve({ packageId: "package-1" })
     });
 
     expect(response.status).toBe(200);
@@ -99,7 +99,7 @@ describe("export package download route", () => {
     } as never);
 
     const response = await GET(new Request("http://localhost/api/export/packages/package-1"), {
-      params: { packageId: "package-1" }
+      params: Promise.resolve({ packageId: "package-1" })
     });
     const payload = await response.json();
 
@@ -121,7 +121,7 @@ describe("export package download route", () => {
     });
 
     const response = await PATCH(new Request("http://localhost/api/export/packages/package-1", { method: "PATCH" }), {
-      params: { packageId: "package-1" }
+      params: Promise.resolve({ packageId: "package-1" })
     });
     const payload = await response.json();
 

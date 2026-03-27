@@ -192,15 +192,15 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
         description="راجع أرصدة العملاء، افتح القيود المعلقة، وسجل التسديدات أو الديون اليدوية من مساحة تقلل التشتيت وتبقي الإجراءات الحرجة في متناولك."
         meta={
           <div className="transaction-page__meta" aria-label="ملخص شاشة الديون">
-            <article className="transaction-page__meta-card">
+            <article className="transaction-page__meta-card stat-card">
               <span>العملاء الظاهرون</span>
               <strong>{formatCompactNumber(filteredCustomers.length)}</strong>
             </article>
-            <article className="transaction-page__meta-card">
+            <article className="transaction-page__meta-card stat-card">
               <span>العميل الحالي</span>
               <strong>{selectedCustomer?.name ?? "اختر عميلًا"}</strong>
             </article>
-            <article className="transaction-page__meta-card transaction-page__meta-card--safe">
+            <article className="transaction-page__meta-card transaction-page__meta-card--safe stat-card">
               <span>الرصيد المفتوح</span>
               <strong>{selectedCustomer ? formatCurrency(totalOutstanding) : "—"}</strong>
             </article>
@@ -264,6 +264,7 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
             <label className="workspace-search transaction-toolbar__search">
               <Search size={18} />
               <input
+                className="field-input"
                 type="search"
                 placeholder="ابحث باسم العميل أو الهاتف"
                 value={searchTerm}
@@ -309,15 +310,15 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
             {selectedCustomer ? (
               <>
                 <div className="transaction-summary-grid">
-                  <article className="transaction-page__meta-card">
+                  <article className="transaction-page__meta-card stat-card">
                     <span>الرصيد الحالي</span>
                     <strong>{formatCurrency(selectedCustomer.current_balance)}</strong>
                   </article>
-                  <article className="transaction-page__meta-card">
+                  <article className="transaction-page__meta-card stat-card">
                     <span>القيود المفتوحة</span>
                     <strong>{formatCompactNumber(customerEntries.length)}</strong>
                   </article>
-                  <article className="transaction-page__meta-card transaction-page__meta-card--safe">
+                  <article className="transaction-page__meta-card transaction-page__meta-card--safe stat-card">
                     <span>الرصيد المتبقي</span>
                     <strong>{formatCurrency(totalOutstanding)}</strong>
                   </article>
@@ -361,6 +362,7 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                       <label className="stack-field">
                         <span>المبلغ</span>
                         <input
+                          className="field-input"
                           type="number"
                           min={0.001}
                           step="0.001"
@@ -373,6 +375,7 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                       <label className="stack-field">
                         <span>الوصف</span>
                         <textarea
+                          className="field-input"
                           rows={3}
                           maxLength={255}
                           value={manualDescription}
@@ -411,6 +414,7 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                       <label className="stack-field">
                         <span>المبلغ</span>
                         <input
+                          className="field-input"
                           type="number"
                           min={0.001}
                           step="0.001"
@@ -422,7 +426,7 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
 
                       <label className="stack-field">
                         <span>حساب الدفع</span>
-                        <select value={paymentAccountId} onChange={(event) => setPaymentAccountId(event.target.value)}>
+                        <select className="field-input" value={paymentAccountId} onChange={(event) => setPaymentAccountId(event.target.value)}>
                           {accounts.map((account) => (
                             <option key={account.id} value={account.id}>
                               {account.name}
@@ -434,7 +438,7 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                       {customerEntries.length > 0 ? (
                         <label className="stack-field">
                           <span>قيد محدد (اختياري)</span>
-                          <select value={paymentEntryId} onChange={(event) => setPaymentEntryId(event.target.value)}>
+                          <select className="field-input" value={paymentEntryId} onChange={(event) => setPaymentEntryId(event.target.value)}>
                             <option value="">اتركه فارغًا لتفعيل FIFO</option>
                             {customerEntries.map((entry) => (
                               <option key={entry.id} value={entry.id}>
@@ -452,6 +456,7 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                       <label className="stack-field">
                         <span>ملاحظات</span>
                         <textarea
+                          className="field-input"
                           rows={3}
                           maxLength={255}
                           value={paymentNotes}

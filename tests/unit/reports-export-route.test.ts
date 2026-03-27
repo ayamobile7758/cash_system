@@ -102,7 +102,7 @@ describe("GET /api/reports/export", () => {
         }
       }
     });
-    vi.mocked(buildReportWorkbookBuffer).mockReturnValue(Buffer.from("xlsx"));
+    vi.mocked(buildReportWorkbookBuffer).mockResolvedValue(Buffer.from("xlsx"));
 
     const response = await GET(
       new Request("http://localhost/api/reports/export?from_date=2026-03-01&to_date=2026-03-10")

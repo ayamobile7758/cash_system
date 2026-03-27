@@ -38,11 +38,30 @@ export interface PosCartItem {
   track_stock: boolean;
 }
 
+export interface SplitPayment {
+  accountId: string;
+  amount: number;
+}
+
+export interface SaleCompletionPayment {
+  account_id: string;
+  account_name: string;
+  account_type: string;
+  amount: number;
+  fee_percentage: number;
+  fee_amount: number;
+}
+
 export interface SaleResponseData {
   invoice_id: string;
   invoice_number: string;
   total: number;
   change: number | null;
+  net_total?: number;
+  invoice_discount_amount?: number;
+  customer_name?: string | null;
+  debt_amount?: number;
+  payments?: SaleCompletionPayment[];
 }
 
 export interface ApiErrorPayload {
