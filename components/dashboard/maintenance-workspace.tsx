@@ -580,7 +580,7 @@ export function MaintenanceWorkspace({
       <ConfirmationDialog
         open={Boolean(confirmCancelJobId)}
         title="تأكيد إلغاء أمر الصيانة"
-        description="سيتم إيقاف أمر الصيانة الحالي وإغلاقه كملغى. استخدم هذا الإجراء فقط عندما تكون متأكدًا أن الطلب لن يعود لمساره التشغيلي."
+        description="سيتم إيقاف أمر الصيانة الحالي وإغلاقه كملغى."
         confirmLabel="تأكيد الإلغاء"
         cancelLabel="الرجوع"
         tone="danger"

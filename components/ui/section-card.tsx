@@ -19,15 +19,16 @@ export function SectionCard({
   className,
   ...props
 }: SectionCardProps) {
-  const classNames = ["section-card", `section-card--${tone}`, className].filter(Boolean).join(" ");
+  const classNames = ["section-card", `section-card--${tone}`, className]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <article className={classNames} {...props}>
-      {eyebrow || title || description ? (
+      {eyebrow || title ? (
         <header className="section-card__header">
           {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
           {title ? <h2>{title}</h2> : null}
-          {description ? <p className="section-card__description">{description}</p> : null}
         </header>
       ) : null}
 

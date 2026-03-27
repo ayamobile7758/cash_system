@@ -98,16 +98,14 @@ export function SearchWorkspace({ baseline }: SearchWorkspaceProps) {
 
       {!hasQuery ? (
         <SectionCard
-          eyebrow="ابدأ من هنا"
-          title="اكتب عبارة البحث أولًا"
-          description="يمكنك البحث باسم المنتج أو رقم الفاتورة أو اسم العميل أو رقم أمر الصيانة."
+          eyebrow="البحث"
+          title="أدخل عبارة البحث"
           tone="subtle"
         />
       ) : groups.length === 0 ? (
         <SectionCard
           eyebrow="لا توجد نتائج"
           title="لم نعثر على نتائج مطابقة"
-          description="جرّب صياغة مختلفة أو بدّل نوع النتائج إلى الكل ليوسّع نطاق البحث."
           tone="subtle"
         />
       ) : (

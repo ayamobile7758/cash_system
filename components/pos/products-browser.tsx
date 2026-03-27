@@ -314,8 +314,8 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
           <strong className="operational-page__meta-value">{role === "admin" ? "كتالوج إداري" : "عرض مخصص للبيع"}</strong>
           <span className="operational-page__meta-hint">
             {role === "admin"
-              ? "يمكنك مراجعة حالة المخزون وتعديل المنتجات مباشرة من هذه الشاشة."
-              : "المعرض هنا مناسب للبيع اليومي ويخفي التعقيد غير اللازم داخل نقطة البيع."}
+              ? "إدارة المخزون والتعديل المباشر متاحان في هذه الشاشة."
+              : "هذا العرض مخصص للبيع اليومي."}
           </span>
         </article>
       </section>

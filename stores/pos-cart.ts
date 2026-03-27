@@ -2,7 +2,12 @@
 
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import type { PosCartItem, PosProduct, SaleResponseData, SplitPayment } from "@/lib/pos/types";
+import type {
+  PosCartItem,
+  PosProduct,
+  SaleResponseData,
+  SplitPayment
+} from "@/lib/pos/types";
 
 function createDraftIdempotencyKey() {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
@@ -17,7 +22,9 @@ function roundCartAmount(value: number) {
 }
 
 export function calculateCartSubtotal(items: PosCartItem[]) {
-  return roundCartAmount(items.reduce((sum, item) => sum + item.sale_price * item.quantity, 0));
+  return roundCartAmount(
+    items.reduce((sum, item) => sum + item.sale_price * item.quantity, 0)
+  );
 }
 
 export function calculateCartDiscount(items: PosCartItem[]) {
@@ -252,7 +259,9 @@ export const usePosCartStore = create<PosCartStore>()(
       },
       removeSplitPayment(index) {
         set((state) => ({
-          splitPayments: state.splitPayments.filter((_, currentIndex) => currentIndex !== index),
+          splitPayments: state.splitPayments.filter(
+            (_, currentIndex) => currentIndex !== index
+          ),
           submissionState: "idle",
           lastErrorCode: null
         }));
@@ -315,7 +324,11 @@ export const usePosCartStore = create<PosCartStore>()(
         set((state) => {
           const normalizedLabel = label.trim();
 
-          if (state.items.length === 0 || state.heldCarts.length >= 5 || normalizedLabel.length === 0) {
+          if (
+            state.items.length === 0 ||
+            state.heldCarts.length >= 5 ||
+            normalizedLabel.length === 0
+          ) {
             return state;
           }
 
@@ -440,7 +453,8 @@ export const usePosCartStore = create<PosCartStore>()(
           ...currentState,
           ...snapshot,
           currentIdempotencyKey:
-            typeof snapshot.currentIdempotencyKey === "string" && snapshot.currentIdempotencyKey.trim().length > 0
+            typeof snapshot.currentIdempotencyKey === "string" &&
+            snapshot.currentIdempotencyKey.trim().length > 0
               ? snapshot.currentIdempotencyKey
               : createDraftIdempotencyKey()
         };

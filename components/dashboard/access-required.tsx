@@ -25,10 +25,9 @@ export function AccessRequired({
 
       <div className="workspace-panel">
         <div className="empty-panel">
-          <h2>هذه الشاشة غير متاحة بالحالة الحالية</h2>
+          <h2>هذه الشاشة غير متاحة في الوضع الحالي</h2>
           <p>
-            سجّل الدخول أولًا، ثم استخدم الحساب الذي يملك الصلاحية المناسبة لعرض هذه الشاشة أو
-            تنفيذ إجراءاتها.
+            سجّل الدخول أولًا، ثم استخدم الحساب المخوّل لعرض هذه الشاشة أو تنفيذ إجراءاتها.
           </p>
           <div className="action-row">
             <Link href={actionHref} className="primary-button">

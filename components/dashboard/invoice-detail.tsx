@@ -896,7 +896,7 @@ export function InvoiceDetail({ role, invoice, accounts }: InvoiceDetailProps) {
       <ConfirmationDialog
         open={confirmAction === "revoke-link"}
         title="إلغاء رابط الإيصال"
-        description="سيبطل هذا الإجراء رابط الإيصال العام الحالي. يمكنك إنشاء رابط جديد لاحقًا عند الحاجة."
+        description="سيبطل هذا الإجراء رابط الإيصال العام الحالي، ويمكن إنشاء رابط جديد لاحقًا."
         confirmLabel="إلغاء الرابط"
         onConfirm={handleRevokeReceiptLink}
         onCancel={() => setConfirmAction(null)}

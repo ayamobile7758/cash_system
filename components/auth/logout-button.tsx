@@ -21,7 +21,7 @@ export function LogoutButton() {
             const { error } = await supabase.auth.signOut();
 
             if (error) {
-              toast.error(getSafeArabicErrorMessage(error, "تعذر تسجيل الخروج. حاول مجددًا."));
+              toast.error(getSafeArabicErrorMessage(error, "تعذر تسجيل الخروج. أعد المحاولة."));
               return;
             }
 

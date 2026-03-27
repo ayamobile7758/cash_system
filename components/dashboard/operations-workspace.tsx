@@ -126,7 +126,7 @@ export function OperationsWorkspace({
 
   async function handleTopupSubmit() {
     if (!topupAccountId) {
-      failAction("اختر حساب الاستلام أولًا.", "topup");
+      failAction("يلزم تحديد حساب الاستلام.", "topup");
       return;
     }
 

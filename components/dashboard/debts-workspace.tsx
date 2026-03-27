@@ -346,7 +346,7 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                       ))
                     ) : (
                       <div className="empty-panel transaction-empty-panel">
-                        <p>لا توجد قيود مفتوحة لهذا العميل. انتقل إلى التسديد أو أنشئ دينًا يدويًا عند الحاجة.</p>
+                        <p>لا توجد قيود مفتوحة لهذا العميل.</p>
                       </div>
                     )}
                   </div>
@@ -355,7 +355,7 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                 {activeSection === "manual" && role === "admin" ? (
                   <div className="transaction-stack">
                     <div className="info-strip">
-                      <span>استخدم هذا المسار فقط عند الحاجة إلى تسجيل دين خارج مسار البيع المعتاد.</span>
+                      <span>تسجيل الدين اليدوي مخصص للحالات خارج مسار البيع.</span>
                     </div>
 
                     <div className="stack-form">
@@ -466,7 +466,7 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                       </label>
 
                       <div className="info-strip">
-                        <span>يمكنك ترك اختيار القيد فارغًا ليقوم النظام بتوزيع المبلغ على أقدم دين متاح.</span>
+                        <span>عند ترك اختيار القيد فارغًا، يوزع النظام المبلغ على أقدم دين متاح.</span>
                       </div>
 
                       <button

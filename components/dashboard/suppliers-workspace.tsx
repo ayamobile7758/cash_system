@@ -370,7 +370,7 @@ export function SuppliersWorkspace({
         <article className="operational-page__meta-card">
           <span className="operational-page__meta-label">موردون برصيد مستحق</span>
           <strong className="operational-page__meta-value">{formatCompactNumber(payableSuppliers.length)}</strong>
-          <span className="operational-page__meta-hint">استخدم هذا المؤشر لتحديد أولويات السداد قبل فتح قسم التسديدات.</span>
+          <span className="operational-page__meta-hint">مؤشر أولويات السداد الحالية.</span>
         </article>
         <article className="operational-page__meta-card">
           <span className="operational-page__meta-label">إجمالي المشتريات المعروضة</span>
@@ -399,7 +399,7 @@ export function SuppliersWorkspace({
       ) : null}
 
       <div className="operational-section-nav" aria-label="أقسام الموردين والمشتريات">
-        <span className="operational-section-nav__hint">انتقل بين الدليل وأوامر الشراء والتسديدات وسجل الحركة دون ازدحام.</span>
+        <span className="operational-section-nav__hint">أقسام الموردين والمشتريات.</span>
         <button
           type="button"
           className={activeSection === "directory" ? "chip-button is-selected" : "chip-button"}

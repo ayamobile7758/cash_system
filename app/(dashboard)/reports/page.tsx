@@ -30,7 +30,7 @@ export default async function ReportsPage({ searchParams }: ReportsPageProps) {
   if (access.state !== "ok" || access.role !== "admin") {
     return (
       <AccessRequired
-        title="التقارير محصورة بحساب Admin"
+        title="التقارير محصورة بالحساب الإداري"
         description="هذه الشاشة مخصصة للإدارة لأنها تعرض التقارير التفصيلية وعمليات التصدير."
       />
     );

@@ -17,7 +17,7 @@ export default async function PortabilityPage() {
     return (
       <AccessRequired
         title="يلزم تسجيل الدخول لمسارات النقل والنسخ"
-        description="عمليات التصدير والاستيراد والاستعادة محمية بجلسة صالحة وصلاحية Admin."
+        description="عمليات التصدير والاستيراد والاستعادة محمية بجلسة صالحة وصلاحية إدارية."
       />
     );
   }

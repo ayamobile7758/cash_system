@@ -297,12 +297,12 @@ export function NotificationsWorkspace({
         <article className="operational-page__meta-card">
           <span className="operational-page__meta-label">الرسائل غير المقروءة</span>
           <strong className="operational-page__meta-value">{formatCompactNumber(unreadCount)}</strong>
-          <span className="operational-page__meta-hint">يمكنك تعليمها دفعة واحدة أو مراجعة كل إشعار من قائمة المتابعة.</span>
+          <span className="operational-page__meta-hint">الرسائل غير المقروءة المتاحة للمتابعة.</span>
         </article>
       </section>
 
       <div className="operational-section-nav" aria-label="أقسام مركز الإشعارات">
-        <span className="operational-section-nav__hint">انتقل بين المتابعة اليومية والملخصات ونتائج البحث.</span>
+        <span className="operational-section-nav__hint">أقسام مركز الإشعارات.</span>
         <button
           type="button"
           className={activeSection === "inbox" ? "chip-button is-selected" : "chip-button"}
@@ -485,9 +485,8 @@ export function NotificationsWorkspace({
               </>
             ) : (
               <SectionCard
-                eyebrow="ابدأ من الأعلى"
+                eyebrow="البحث"
                 title="لا يوجد استعلام نشط الآن"
-                description="استخدم شريط البحث العلوي أو اكتب استعلامًا من حرفين على الأقل لعرض النتائج هنا."
                 tone="subtle"
               />
             )}

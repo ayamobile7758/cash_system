@@ -63,7 +63,10 @@ export function LoginForm() {
                 });
 
                 if (error) {
-                  const message = getSafeArabicErrorMessage(error, "تعذر إكمال تسجيل الدخول. حاول مجددًا.");
+                  const message = getSafeArabicErrorMessage(
+                    error,
+                    "تعذر إكمال تسجيل الدخول. حاول مجددًا."
+                  );
                   setErrorMessage(message);
                   toast.error(message);
                   return;
@@ -94,7 +97,10 @@ export function LoginForm() {
                 router.replace(nextRoute);
                 router.refresh();
               } catch (error) {
-                const message = getSafeArabicErrorMessage(error, "تعذر إكمال تسجيل الدخول الآن.");
+                const message = getSafeArabicErrorMessage(
+                  error,
+                  "تعذر إكمال تسجيل الدخول. حاول مجددًا."
+                );
                 setErrorMessage(message);
                 toast.error(message);
               }
@@ -106,7 +112,7 @@ export function LoginForm() {
           <StatusBanner
             variant="offline"
             title="الاتصال غير متاح"
-            message="رصدنا أن الجهاز يبدو غير متصل حاليًا."
+            message="يبدو أن الجهاز غير متصل حاليًا."
           />
         ) : null}
 

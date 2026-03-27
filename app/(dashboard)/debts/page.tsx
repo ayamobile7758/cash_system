@@ -26,7 +26,7 @@ export default async function DebtsPage() {
     return (
       <AccessRequired
         title="الحساب الحالي غير مخول لهذا المسار"
-        description="هذه الشاشة متاحة فقط لحسابات Admin وPOS النشطة."
+        description="هذه الشاشة متاحة فقط للحسابات الإدارية وحسابات POS النشطة."
       />
     );
   }

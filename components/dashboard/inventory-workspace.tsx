@@ -192,7 +192,7 @@ export function InventoryWorkspace({
 
   function handleCompleteCount() {
     if (!selectedCount) {
-      failAction("اختر عملية جرد أولًا.", "complete-count");
+      failAction("يلزم تحديد عملية الجرد.", "complete-count");
       return;
     }
 

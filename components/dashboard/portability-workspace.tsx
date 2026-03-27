@@ -183,7 +183,7 @@ export function PortabilityWorkspace({
 
   async function handleDryRunImport() {
     if (!selectedFile) {
-      failAction("اختر ملف JSON أو CSV أولًا.", "dry-run-import");
+      failAction("يلزم تحديد ملف JSON أو CSV.", "dry-run-import");
       return;
     }
 
@@ -249,7 +249,7 @@ export function PortabilityWorkspace({
 
   function handleRestoreDrill() {
     if (!selectedBackupId) {
-      failAction("اختر حزمة نسخ احتياطي أولًا.", "restore-drill");
+      failAction("يلزم تحديد حزمة نسخ احتياطي.", "restore-drill");
       return;
     }
 

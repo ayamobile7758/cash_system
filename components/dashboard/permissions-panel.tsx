@@ -125,7 +125,7 @@ export function PermissionsPanel({
 
   function manageAssignment(method: "POST" | "DELETE") {
     if (!selectedUser || !selectedBundle) {
-      failAction("اختر مستخدمًا وحزمة صالحة أولًا.", method === "POST" ? "assign-bundle" : "revoke-bundle");
+      failAction("يلزم تحديد مستخدم وحزمة صالحة.", method === "POST" ? "assign-bundle" : "revoke-bundle");
       return;
     }
 

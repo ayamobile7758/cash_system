@@ -1,3 +1,7 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const scriptSources = ["'self'", "'unsafe-inline'"];
 
 if (process.env.NODE_ENV !== "production") {
@@ -36,6 +40,34 @@ const securityHeaders = [
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  webpack(config) {
+    config.cache = false;
+    config.resolve.alias = {
+      ...(config.resolve.alias ?? {}),
+      "es-toolkit/compat/get": path.join(
+        __dirname,
+        "node_modules/es-toolkit/compat/get.js"
+      ),
+      "es-toolkit/compat/range": path.join(
+        __dirname,
+        "node_modules/es-toolkit/compat/range.js"
+      ),
+      "es-toolkit/compat/sortBy": path.join(
+        __dirname,
+        "node_modules/es-toolkit/compat/sortBy.js"
+      ),
+      "es-toolkit/compat/throttle": path.join(
+        __dirname,
+        "node_modules/es-toolkit/compat/throttle.js"
+      ),
+      "es-toolkit/compat/uniqBy": path.join(
+        __dirname,
+        "node_modules/es-toolkit/compat/uniqBy.js"
+      )
+    };
+
+    return config;
+  },
   async headers() {
     return [
       {

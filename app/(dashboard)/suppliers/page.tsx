@@ -17,7 +17,7 @@ export default async function SuppliersPage() {
     return (
       <AccessRequired
         title="يلزم تسجيل الدخول لإدارة الموردين والمشتريات"
-        description="إدارة الموردين، أوامر الشراء، وتسديدات الموردين محصورة بجلسة Admin صالحة."
+        description="إدارة الموردين، أوامر الشراء، وتسديدات الموردين محصورة بجلسة إدارية صالحة."
       />
     );
   }

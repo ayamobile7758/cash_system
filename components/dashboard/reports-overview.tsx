@@ -74,7 +74,6 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
       <PageHeader
         eyebrow="التقارير التحليلية"
         title="قراءة أوضح للأداء والمقارنات"
-        description="ابدأ بالفلاتر، راجع المؤشرات الأساسية، ثم انزل إلى الاتجاهات والتفاصيل من دون تكديس كل التقارير في مساحة واحدة."
         meta={
           <div className="analytical-page__meta-grid">
             <div className="analytical-page__meta-card">

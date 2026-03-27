@@ -18,7 +18,7 @@ export default async function OperationsPage() {
     return (
       <AccessRequired
         title="يلزم تسجيل الدخول لمسارات الشحن والتحويلات"
-        description="عمليات الشحن والتحويلات محمية بجلسة صالحة، والتحويل الداخلي محصور بالـ Admin."
+        description="عمليات الشحن والتحويلات محمية بجلسة صالحة، والتحويل الداخلي محصور بالحساب الإداري."
       />
     );
   }

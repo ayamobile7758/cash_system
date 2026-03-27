@@ -2,13 +2,7 @@
 
 import React from "react";
 
-import {
-  useDeferredValue,
-  useEffect,
-  useRef,
-  useState,
-  useTransition
-} from "react";
+import { useDeferredValue, useEffect, useRef, useState, useTransition } from "react";
 import {
   ArrowRight,
   Banknote,
@@ -28,7 +22,6 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
-import { PageHeader } from "@/components/ui/page-header";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBanner } from "@/components/ui/status-banner";
 import { useCustomerSearch } from "@/hooks/use-customer-search";
@@ -100,6 +93,38 @@ function getCategoryLabel(category: string) {
   return PRODUCT_CATEGORY_LABELS[category] ?? category;
 }
 
+function getProductStockState(product: {
+  track_stock: boolean;
+  stock_quantity: number;
+  min_stock_level: number;
+}) {
+  if (!product.track_stock) {
+    return {
+      label: "خدمة",
+      tone: "ok"
+    } as const;
+  }
+
+  if (product.stock_quantity <= 0) {
+    return {
+      label: "نفد",
+      tone: "out"
+    } as const;
+  }
+
+  if (product.stock_quantity <= Math.max(1, product.min_stock_level)) {
+    return {
+      label: `${formatCompactNumber(product.stock_quantity)} منخفض`,
+      tone: "low"
+    } as const;
+  }
+
+  return {
+    label: `${formatCompactNumber(product.stock_quantity)} متوفر`,
+    tone: "ok"
+  } as const;
+}
+
 function getAccountIcon(type: string) {
   if (type === "cash") {
     return Banknote;
@@ -116,7 +141,9 @@ function getAccountChipLabel(account: PosAccount) {
   const baseLabel =
     account.type === "cash"
       ? "كاش"
-      : account.type === "card" || account.type === "visa" || account.type === "mastercard"
+      : account.type === "card" ||
+          account.type === "visa" ||
+          account.type === "mastercard"
         ? "بطاقة"
         : account.type === "cliq"
           ? "CliQ"
@@ -209,19 +236,21 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   const [selectedCustomerBalance, setSelectedCustomerBalance] = useState<number | null>(
     null
   );
-  const [selectedCustomerPhone, setSelectedCustomerPhone] = useState<string | null>(
-    null
-  );
+  const [selectedCustomerPhone, setSelectedCustomerPhone] = useState<string | null>(null);
   const [submissionErrorMessage, setSubmissionErrorMessage] = useState<string | null>(
     null
   );
   const [primarySplitAmount, setPrimarySplitAmount] = useState<number | null>(null);
+  const [isCustomerExpanded, setIsCustomerExpanded] = useState(false);
+  const [isDiscountExpanded, setIsDiscountExpanded] = useState(false);
+  const [isTerminalCodeExpanded, setIsTerminalCodeExpanded] = useState(false);
   const [isNotesExpanded, setIsNotesExpanded] = useState(false);
+  const [isPrimarySplitSelectorOpen, setIsPrimarySplitSelectorOpen] = useState(false);
   const [isClearCartDialogOpen, setIsClearCartDialogOpen] = useState(false);
   const [productView, setProductView] = useState<ProductViewMode>("text");
   const [isCompactViewport, setIsCompactViewport] = useState(false);
   const [isCartSheetExpanded, setIsCartSheetExpanded] = useState(false);
-  const [isTyping, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
   const [isSubmitting, startSubmission] = useTransition();
 
   const deferredQuery = useDeferredValue(searchQuery);
@@ -251,10 +280,8 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     refresh: refreshAccounts
   } = usePosAccounts();
 
-  const {
-    results: customerResults,
-    isLoading: customersLoading
-  } = useCustomerSearch(deferredCustomerQuery);
+  const { results: customerResults, isLoading: customersLoading } =
+    useCustomerSearch(deferredCustomerQuery);
 
   const isOffline = productsOffline || accountsOffline;
   const categories = ["all", ...PRODUCT_CATEGORY_VALUES];
@@ -336,12 +363,15 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
       ? roundAmount(Math.abs(remainingToSettle))
       : null;
   const canCreateDebt = remainingToSettle > 0 && Boolean(selectedCustomerId);
-  const canConfirmSale =
-    items.length > 0 && (remainingToSettle <= 0 || canCreateDebt);
+  const canConfirmSale = items.length > 0 && (remainingToSettle <= 0 || canCreateDebt);
   const shouldBlockForDebt = remainingToSettle > 0 && !selectedCustomerId;
   const canHoldCart = items.length > 0 && heldCarts.length < 5;
   const shouldShowCustomerResults = customerSearchInput.trim().length >= 2;
   const usedAdditionalAccountIds = splitPayments.map((payment) => payment.accountId);
+  const availablePrimarySplitAccounts = accounts.filter(
+    (account) =>
+      account.id === selectedAccountId || !usedAdditionalAccountIds.includes(account.id)
+  );
 
   useEffect(() => {
     setCartHydrated(usePosCartStore.persist.hasHydrated());
@@ -393,7 +423,10 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   }, [isSplitMode, netTotal, primarySplitAmount, selectedAccountId, splitPayments]);
 
   useEffect(() => {
-    if (((!isSplitMode && selectedAccount?.type !== "cash") || isSplitMode) && amountReceived !== null) {
+    if (
+      ((!isSplitMode && selectedAccount?.type !== "cash") || isSplitMode) &&
+      amountReceived !== null
+    ) {
       setAmountReceived(null);
     }
   }, [amountReceived, isSplitMode, selectedAccount?.type, setAmountReceived]);
@@ -436,6 +469,18 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
       cancelled = true;
     };
   }, [customerResults, selectedCustomerId]);
+
+  useEffect(() => {
+    if (selectedCustomerId) {
+      setIsCustomerExpanded(true);
+    }
+  }, [selectedCustomerId]);
+
+  useEffect(() => {
+    if (!isSplitMode) {
+      setIsPrimarySplitSelectorOpen(false);
+    }
+  }, [isSplitMode]);
 
   useEffect(() => {
     if (typeof window.matchMedia !== "function") {
@@ -551,8 +596,21 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     setSelectedCustomerPhone(null);
     setIsHeldCartsOpen(false);
     setPrimarySplitAmount(null);
+    setIsCustomerExpanded(false);
+    setIsDiscountExpanded(false);
+    setIsTerminalCodeExpanded(false);
     setIsNotesExpanded(false);
+    setIsPrimarySplitSelectorOpen(false);
     setIsCartSheetExpanded(false);
+  }
+
+  function handleTopbarNewSale() {
+    if (items.length > 0 && panelState !== "success") {
+      setIsClearCartDialogOpen(true);
+      return;
+    }
+
+    handleStartNewSale();
   }
 
   function handleStartNewSale() {
@@ -600,10 +658,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     }
 
     const suggestedLabel = selectedCustomerName ?? `طلب ${heldCarts.length + 1}`;
-    const nextLabel = window.prompt(
-      "أدخل اسمًا مختصرًا للسلة المعلقة",
-      suggestedLabel
-    );
+    const nextLabel = window.prompt("أدخل اسمًا مختصرًا للسلة المعلقة", suggestedLabel);
 
     if (!nextLabel || !nextLabel.trim()) {
       return;
@@ -626,7 +681,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     clearSubmissionFeedback();
     restoreHeldCart(cartId);
     resetCheckoutState();
-    toast.info("تم استرجاع الطلب المحتجز");
+    toast.info("تم استرجاع السلة المعلقة.");
   }
 
   function handleDiscardHeldCart(cartId: string) {
@@ -641,19 +696,16 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
 
     const availableAccount = accounts.find(
       (account) =>
-        account.id !== selectedAccountId &&
-        !usedAdditionalAccountIds.includes(account.id)
+        account.id !== selectedAccountId && !usedAdditionalAccountIds.includes(account.id)
     );
 
     if (!availableAccount) {
       return;
     }
 
-    addSplitPayment(availableAccount.id, Math.max(0, remainingToSettle));
-
-    if (primarySplitAmount === null) {
-      setPrimarySplitAmount(Math.max(0, netTotal));
-    }
+    setPrimarySplitAmount(roundAmount(primarySplitAmount ?? primaryPaymentAmount));
+    addSplitPayment(availableAccount.id, 0);
+    setIsPrimarySplitSelectorOpen(false);
   }
 
   function getAvailableAccountsForSplitRow(currentAccountId: string) {
@@ -665,12 +717,18 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     );
   }
 
+  function selectPrimarySplitAccount(accountId: string) {
+    clearSubmissionFeedback();
+    setSelectedAccountId(accountId);
+    setIsPrimarySplitSelectorOpen(false);
+  }
+
   function buildSalePayloadPayments() {
     if (!selectedAccountId) {
       return [];
     }
 
-    return isSplitMode
+    const payments = isSplitMode
       ? [
           {
             account_id: selectedAccountId,
@@ -680,13 +738,19 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
             account_id: payment.accountId,
             amount: roundAmount(payment.amount)
           }))
-        ].filter((payment) => payment.amount > 0)
+        ]
       : [
           {
             account_id: selectedAccountId,
             amount: primaryPaymentAmount
           }
-        ].filter((payment) => payment.amount > 0);
+        ];
+
+    if (netTotal === 0) {
+      return payments.slice(0, 1);
+    }
+
+    return payments.filter((payment) => payment.amount > 0);
   }
 
   async function submitSale() {
@@ -702,7 +766,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     }
 
     if (!selectedAccountId) {
-      const message = "اختر طريقة الدفع أولًا.";
+      const message = "يلزم تحديد طريقة الدفع.";
       setSubmissionErrorMessage(message);
       toast.error(message);
       return;
@@ -765,10 +829,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
 
       if (!response.ok || !envelope.success || !envelope.data) {
         const errorCode = envelope.error?.code ?? "ERR_API_INTERNAL";
-        const message = getSafeArabicErrorMessage(
-          envelope.error,
-          "تعذر تنفيذ البيع."
-        );
+        const message = getSafeArabicErrorMessage(envelope.error, "تعذر تنفيذ البيع.");
 
         markError(errorCode);
         setPanelState("checkout");
@@ -811,14 +872,16 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
         payments: paymentRows
       });
 
+      setIsCustomerExpanded(false);
+      setIsDiscountExpanded(false);
+      setIsTerminalCodeExpanded(false);
+      setIsNotesExpanded(false);
+      setIsPrimarySplitSelectorOpen(false);
       setPanelState("success");
       toast.success(`تم إنشاء الفاتورة ${envelope.data.invoice_number} بنجاح.`);
       refreshOperationalData();
     } catch (error) {
-      const message = getSafeArabicErrorMessage(
-        error,
-        "تعذر الوصول إلى مسار البيع."
-      );
+      const message = getSafeArabicErrorMessage(error, "تعذر الوصول إلى مسار البيع.");
 
       markError("ERR_API_INTERNAL");
       setPanelState("checkout");
@@ -831,42 +894,32 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     "transaction-stack",
     !isCompactViewport ? "transaction-stack--sticky pos-cart-panel" : "",
     isCompactViewport ? "pos-cart-sheet" : "",
-    isCompactViewport && panelState === "cart" && !isCartSheetExpanded ? "pos-cart-sheet--collapsed" : "",
-    isCompactViewport && panelState === "cart" && isCartSheetExpanded ? "pos-cart-sheet--expanded" : "",
+    isCompactViewport && panelState === "cart" && !isCartSheetExpanded
+      ? "pos-cart-sheet--collapsed"
+      : "",
+    isCompactViewport && panelState === "cart" && isCartSheetExpanded
+      ? "pos-cart-sheet--expanded"
+      : "",
     isCompactViewport && panelState !== "cart" ? "pos-cart-sheet--fullscreen" : ""
   ]
     .filter(Boolean)
     .join(" ");
+  const completedSaleFeeTotal = lastCompletedSale
+    ? roundAmount(
+        (lastCompletedSale.payments ?? []).reduce(
+          (sum, payment) => sum + payment.fee_amount,
+          0
+        )
+      )
+    : 0;
 
   return (
     <section className="workspace-stack transaction-page">
-      <PageHeader
-        eyebrow="نقطة البيع"
-        title="نقطة البيع السريعة"
-        description="ابحث بسرعة، أضف المنتجات، ثم انتقل إلى الدفع في خطوة واضحة ومنفصلة."
-        meta={
-          <div className="transaction-page__meta" aria-label="ملخص نقطة البيع">
-            <article className="transaction-page__meta-card">
-              <span>عناصر السلة</span>
-              <strong>{formatCompactNumber(items.length)}</strong>
-            </article>
-            <article className="transaction-page__meta-card">
-              <span>الصافي</span>
-              <strong>{formatCurrency(netTotal)}</strong>
-            </article>
-            <article className="transaction-page__meta-card transaction-page__meta-card--safe">
-              <ShieldCheck size={18} />
-              <strong>{selectedAccount?.name ?? "اختر طريقة الدفع"}</strong>
-            </article>
-          </div>
-        }
-      />
-
       {isOffline ? (
         <StatusBanner
           variant="offline"
           title="لا يوجد اتصال بالإنترنت"
-          message="يمكنك مراجعة السلة الحالية، لكن إتمام البيع وتحديث الحسابات يحتاج اتصالًا نشطًا."
+          message="تعذرت مزامنة الحسابات والبيع حتى عودة الاتصال."
           actionLabel="إعادة تحميل البيانات"
           onAction={refreshOperationalData}
         />
@@ -898,240 +951,266 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
         />
       ) : null}
 
-      <div className="pos-layout pos-layout__body">
-        <div className="transaction-stack pos-products-area">
-          <SectionCard
-            eyebrow="تصفح سريع"
-            title="المنتجات الجاهزة للبيع"
-            description="البحث يدعم التطبيع العربي وSKU، مع إبراز الاسم والسعر والمخزون بوضوح."
-            tone="accent"
-            className="transaction-card transaction-card--filters"
-          >
-            <div className="transaction-toolbar pos-products-header">
-              <label className="workspace-search transaction-toolbar__search">
-                <Search size={18} />
-                <input
-                  ref={searchRef}
-                  type="search"
-                  autoFocus
-                  placeholder="ابحث عن منتج..."
-                  value={searchInput}
-                  onChange={(event) => {
-                    const nextValue = event.target.value;
-                    startTransition(() => {
-                      setSearchInput(nextValue);
-                    });
-                  }}
-                />
-              </label>
-
-              <div className="transaction-action-cluster">
-                <button
-                  type="button"
-                  className="secondary-button"
-                  onClick={() => {
-                    if (items.length > 0 && panelState !== "success") {
-                      setIsClearCartDialogOpen(true);
-                      return;
-                    }
-
-                    handleStartNewSale();
-                  }}
-                >
-                  بيع جديد
-                </button>
-                <button
-                  type="button"
-                  className="secondary-button"
-                  onClick={() => setIsHeldCartsOpen((currentValue) => !currentValue)}
-                >
-                  محتجز ({formatCompactNumber(heldCarts.length)})
-                </button>
-                <button
-                  type="button"
-                  className="secondary-button"
-                  onClick={refreshProducts}
-                >
-                  <RefreshCcw size={16} />
-                  تحديث
-                </button>
-                <div className="pos-view-toggle" aria-label="طريقة عرض المنتجات">
-                  <button
-                    type="button"
-                    className={
-                      productView === "text"
-                        ? "icon-button pos-view-toggle__button is-active"
-                        : "icon-button pos-view-toggle__button"
-                    }
-                    onClick={() => setProductView("text")}
-                    aria-label="عرض مدمج"
-                    title="عرض مدمج"
-                  >
-                    <List size={16} />
-                  </button>
-                  <button
-                    type="button"
-                    className={
-                      productView === "thumbnail"
-                        ? "icon-button pos-view-toggle__button is-active"
-                        : "icon-button pos-view-toggle__button"
-                    }
-                    onClick={() => setProductView("thumbnail")}
-                    aria-label="عرض بالصور"
-                    title="عرض بالصور"
-                  >
-                    <ImageIcon size={16} />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="chip-row transaction-chip-row" aria-label="فئات المنتجات">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  type="button"
-                  className={category === activeCategory ? "chip chip--active" : "chip"}
-                  aria-pressed={category === activeCategory}
-                  onClick={() => setActiveCategory(category)}
-                >
-                  {category === "all" ? "الكل" : getCategoryLabel(category)}
-                </button>
-              ))}
-            </div>
-
-            {quickAddProducts.length > 0 ? (
-              <div className="quick-add-row">
-                {quickAddProducts.map((product) => (
-                  <button
-                    key={product.id}
-                    type="button"
-                    className="quick-add-card pos-product-card pos-product-card--quick-add"
-                    onClick={() => {
-                      clearSubmissionFeedback();
-                      addProduct(product);
-                    }}
-                  >
-                    {productView === "thumbnail" ? (
-                      <div className="pos-product-card__thumbnail" aria-hidden="true">
-                        <ImageIcon size={18} />
-                      </div>
-                    ) : null}
-                    <strong className="pos-product-card__name">{product.name}</strong>
-                    <span className="pos-product-card__sku">
-                      {product.sku ?? "بدون SKU"}
-                    </span>
-                    <span className="pos-product-card__price">
-                      {formatCurrency(product.sale_price)}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            ) : null}
-          </SectionCard>
-
-          <SectionCard
-            eyebrow="المخزون المعروض"
-            title="المنتجات"
-            description="يعرض الاسم وSKU والسعر وحالة المخزون على كل بطاقة لتقليل الالتباس بين المنتجات المتشابهة."
-            className="transaction-card"
-          >
-            {productsLoading ? (
-              <div className="product-grid product-grid--compact" aria-label="جارٍ تحميل منتجات نقطة البيع">
-                {Array.from({ length: 8 }).map((_, index) => (
-                  <article
-                    key={`pos-product-skeleton-${index}`}
-                    className="product-card product-card--skeleton"
-                  >
-                    <div className="skeleton-line skeleton-line--sm" />
-                    <div className="skeleton-line skeleton-line--lg" />
-                    <div className="skeleton-line" />
-                    <div className="skeleton-line" />
-                  </article>
-                ))}
-              </div>
-            ) : (
-              <div className="pos-product-grid product-grid product-grid--compact transaction-product-grid">
-                {filteredProducts.map((product) => {
-                  const stockLabel = !product.track_stock
-                    ? "خدمة"
-                    : product.stock_quantity <= 0
-                      ? "نفد"
-                      : product.stock_quantity <= Math.max(1, product.min_stock_level)
-                        ? `${formatCompactNumber(product.stock_quantity)} منخفض`
-                        : `${formatCompactNumber(product.stock_quantity)} متوفر`;
-
-                  const stockTone = !product.track_stock
-                    ? "ok"
-                    : product.stock_quantity <= 0
-                      ? "out"
-                      : product.stock_quantity <= Math.max(1, product.min_stock_level)
-                        ? "low"
-                        : "ok";
-
-                  return (
-                    <button
-                      key={product.id}
-                      type="button"
-                      className="pos-product-card product-card product-card--interactive"
-                      onClick={() => {
-                        clearSubmissionFeedback();
-                        addProduct(product);
-                      }}
-                    >
-                      {productView === "thumbnail" ? (
-                        <div className="pos-product-card__thumbnail" aria-hidden="true">
-                          <ImageIcon size={18} />
-                        </div>
-                      ) : null}
-                      <strong className="pos-product-card__name">{product.name}</strong>
-                      <span className="pos-product-card__sku">
-                        {product.sku ?? "بدون SKU"}
-                      </span>
-                      <div className="pos-product-card__footer">
-                        <span className="pos-product-card__price">
-                          {formatCurrency(product.sale_price)}
-                        </span>
-                        <span
-                          className={`pos-product-card__stock-indicator pos-product-card__stock-indicator--${stockTone}`}
-                        >
-                          {stockLabel}
-                        </span>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-
-            <div className="transaction-card__footer">
-              <p className="workspace-footnote">
-                {isTyping
-                  ? "تحديث نتائج البحث..."
-                  : "استخدم / أو F1 للتركيز على البحث، وF2 للانتقال إلى الدفع."}
-              </p>
-
-              <div className="transaction-action-cluster">
-                {productsHasMore ? (
-                  <button
-                    type="button"
-                    className="secondary-button"
-                    onClick={loadMoreProducts}
-                    disabled={productsLoadingMore}
-                  >
-                    {productsLoadingMore ? "جارٍ تحميل المزيد..." : "تحميل المزيد"}
-                  </button>
-                ) : null}
-
-                <span className="product-pill product-pill--accent">
-                  {formatCompactNumber(filteredProducts.length)} منتجًا
-                  {productsTotalCount !== null
-                    ? ` من ${formatCompactNumber(productsTotalCount)}`
-                    : ""}
+      <div className="pos-layout">
+        <div className="pos-products">
+          <div className="pos-topbar">
+            <div className="pos-topbar__identity">
+              <span className="pos-topbar__label">نقطة البيع</span>
+              {selectedAccount ? (
+                <span className="pos-topbar__account">
+                  {selectedAccount.name}
                 </span>
-              </div>
+              ) : null}
             </div>
-          </SectionCard>
+
+            <div className="pos-topbar__actions">
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={handleTopbarNewSale}
+              >
+                بيع جديد
+              </button>
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={() => setIsHeldCartsOpen((currentValue) => !currentValue)}
+              >
+                السلال المعلقة ({formatCompactNumber(heldCarts.length)})
+              </button>
+            </div>
+          </div>
+
+          <div className="pos-products__content">
+            <div className="transaction-stack">
+              <SectionCard
+                tone="accent"
+                className="transaction-card transaction-card--filters"
+              >
+                <div className="transaction-toolbar pos-products-header">
+                  <label className="workspace-search transaction-toolbar__search">
+                    <Search size={18} />
+                    <input
+                      ref={searchRef}
+                      type="search"
+                      autoFocus
+                  placeholder="اسم المنتج أو SKU"
+                      value={searchInput}
+                      onChange={(event) => {
+                        const nextValue = event.target.value;
+                        startTransition(() => {
+                          setSearchInput(nextValue);
+                        });
+                      }}
+                    />
+                  </label>
+
+                  <div className="transaction-action-cluster">
+                    <button
+                      type="button"
+                      className="secondary-button"
+                      onClick={refreshProducts}
+                    >
+                      <RefreshCcw size={16} />
+                      تحديث
+                    </button>
+                    <div className="pos-view-toggle" aria-label="طريقة عرض المنتجات">
+                      <button
+                        type="button"
+                        className={
+                          productView === "text"
+                            ? "icon-button pos-view-toggle__button is-active"
+                            : "icon-button pos-view-toggle__button"
+                        }
+                        onClick={() => setProductView("text")}
+                        aria-label="عرض مدمج"
+                        title="عرض مدمج"
+                      >
+                        <List size={16} />
+                      </button>
+                      <button
+                        type="button"
+                        className={
+                          productView === "thumbnail"
+                            ? "icon-button pos-view-toggle__button is-active"
+                            : "icon-button pos-view-toggle__button"
+                        }
+                        onClick={() => setProductView("thumbnail")}
+                        aria-label="عرض بالصور"
+                        title="عرض بالصور"
+                      >
+                        <ImageIcon size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="chip-row transaction-chip-row" aria-label="فئات المنتجات">
+                  {categories.map((category) => (
+                    <button
+                      key={category}
+                      type="button"
+                      className={
+                        category === activeCategory ? "chip chip--active" : "chip"
+                      }
+                      aria-pressed={category === activeCategory}
+                      onClick={() => setActiveCategory(category)}
+                    >
+                      {category === "all" ? "الكل" : getCategoryLabel(category)}
+                    </button>
+                  ))}
+                </div>
+
+                {quickAddProducts.length > 0 ? (
+                  <div className="quick-add-row">
+                    {quickAddProducts.map((product) => {
+                      const stockState = getProductStockState(product);
+
+                      return (
+                        <button
+                          key={product.id}
+                          type="button"
+                          className="quick-add-card pos-product-card pos-product-card--quick-add"
+                          onClick={() => {
+                            clearSubmissionFeedback();
+                            addProduct(product);
+                          }}
+                        >
+                          {productView === "thumbnail" ? (
+                            <div
+                              className="pos-product-card__thumbnail"
+                              aria-hidden="true"
+                            >
+                              <ImageIcon size={18} />
+                            </div>
+                          ) : null}
+                          <strong className="pos-product-card__name">
+                            {product.name}
+                          </strong>
+                          <span className="pos-product-card__sku">
+                            {product.sku ?? "بدون SKU"}
+                          </span>
+                          <div className="pos-product-card__footer">
+                            <span className="pos-product-card__price">
+                              {formatCurrency(product.sale_price)}
+                            </span>
+                            <span
+                              className={`pos-product-card__stock-indicator pos-product-card__stock-indicator--${stockState.tone}`}
+                            >
+                              {stockState.label}
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : null}
+              </SectionCard>
+
+              <SectionCard title="المنتجات" className="transaction-card">
+                {productsLoading ? (
+                  <div
+                    className="product-grid product-grid--compact"
+                    aria-label="جارٍ تحميل منتجات نقطة البيع"
+                  >
+                    {Array.from({ length: 8 }).map((_, index) => (
+                      <article
+                        key={`pos-product-skeleton-${index}`}
+                        className="product-card product-card--skeleton"
+                      >
+                        <div className="skeleton-line skeleton-line--sm" />
+                        <div className="skeleton-line skeleton-line--lg" />
+                        <div className="skeleton-line" />
+                        <div className="skeleton-line" />
+                      </article>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="pos-product-grid product-grid product-grid--compact transaction-product-grid">
+                    {filteredProducts.length === 0 && normalizedQuery ? (
+                      <div className="empty-state pos-search-empty">
+                        <Search className="empty-state__icon" size={32} />
+                        <h3 className="empty-state__title">لا توجد نتائج</h3>
+                        <p className="empty-state__description">
+                          لم يُعثر على منتج يطابق &quot;{searchInput}&quot;
+                        </p>
+                        <button
+                          type="button"
+                          className="secondary-button"
+                          onClick={() => setSearchInput("")}
+                        >
+                          مسح البحث
+                        </button>
+                      </div>
+                    ) : (
+                      filteredProducts.map((product) => {
+                        const stockState = getProductStockState(product);
+
+                        return (
+                          <button
+                            key={product.id}
+                            type="button"
+                            className="pos-product-card product-card product-card--interactive"
+                            onClick={() => {
+                              clearSubmissionFeedback();
+                              addProduct(product);
+                            }}
+                          >
+                            {productView === "thumbnail" ? (
+                              <div
+                                className="pos-product-card__thumbnail"
+                                aria-hidden="true"
+                              >
+                                <ImageIcon size={18} />
+                              </div>
+                            ) : null}
+                            <strong className="pos-product-card__name">
+                              {product.name}
+                            </strong>
+                            <span className="pos-product-card__sku">
+                              {product.sku ?? "بدون SKU"}
+                            </span>
+                            <div className="pos-product-card__footer">
+                              <span className="pos-product-card__price">
+                                {formatCurrency(product.sale_price)}
+                              </span>
+                              <span
+                                className={`pos-product-card__stock-indicator pos-product-card__stock-indicator--${stockState.tone}`}
+                              >
+                                {stockState.label}
+                              </span>
+                            </div>
+                          </button>
+                        );
+                      })
+                    )}
+                  </div>
+                )}
+
+                <div className="transaction-card__footer">
+                  <div className="transaction-action-cluster">
+                    {productsHasMore ? (
+                      <button
+                        type="button"
+                        className="secondary-button"
+                        onClick={loadMoreProducts}
+                        disabled={productsLoadingMore}
+                      >
+                        {productsLoadingMore ? "جارٍ تحميل المزيد..." : "تحميل المزيد"}
+                      </button>
+                    ) : null}
+
+                    <span className="product-pill product-pill--accent">
+                      {formatCompactNumber(filteredProducts.length)} منتجًا
+                      {productsTotalCount !== null
+                        ? ` من ${formatCompactNumber(productsTotalCount)}`
+                        : ""}
+                    </span>
+                  </div>
+                </div>
+              </SectionCard>
+            </div>
+          </div>
         </div>
 
         <aside className={cartSheetClassName}>
@@ -1158,7 +1237,6 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
           ) : null}
 
           <SectionCard
-            eyebrow="الطلب الحالي"
             title={
               panelState === "success"
                 ? "تمت العملية بنجاح"
@@ -1166,21 +1244,14 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                   ? "السلة الحالية"
                   : "إتمام البيع"
             }
-            description={
-              panelState === "cart"
-                ? "راجع عناصر السلة ثم انتقل إلى الدفع عند الجاهزية."
-                : panelState === "success"
-                  ? "يمكنك طباعة الإيصال أو بدء بيع جديد. لن تُغلق هذه الشاشة تلقائيًا."
-                  : "اختر طريقة الدفع أولًا، ثم أكمل العميل والخصم والملاحظات قبل التأكيد."
-            }
             className="transaction-card transaction-card--checkout"
           >
             {panelState === "success" && lastCompletedSale ? (
               <div className="cart-success-overlay pos-success-screen">
                 <div className="cart-success-overlay__icon">
-                  <CheckCircle2 size={56} />
+                  <CheckCircle2 size={64} />
                 </div>
-                <h3 className="cart-success-overlay__title">تم البيع بنجاح</h3>
+                <h3 className="cart-success-overlay__title">تم إتمام البيع بنجاح</h3>
                 <strong className="pos-success-screen__total">
                   {formatCurrency(lastCompletedSale.net_total ?? lastCompletedSale.total)}
                 </strong>
@@ -1188,7 +1259,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                   فاتورة #{lastCompletedSale.invoice_number}
                 </span>
 
-                <div className="cart-success-overlay__details pos-success-screen__details">
+                <dl className="cart-success-overlay__details pos-success-screen__details">
                   {(lastCompletedSale.payments ?? []).map((payment) => (
                     <div key={`${payment.account_id}-${payment.amount}`}>
                       <dt>{payment.account_name}</dt>
@@ -1196,47 +1267,26 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                     </div>
                   ))}
 
-                  {(lastCompletedSale.payments ?? []).some(
-                    (payment) => payment.fee_amount > 0
-                  ) ? (
+                  {completedSaleFeeTotal > 0 ? (
                     <div>
                       <dt>رسوم الدفع</dt>
-                      <dd>
-                        {formatCurrency(
-                          (lastCompletedSale.payments ?? []).reduce(
-                            (sum, payment) => sum + payment.fee_amount,
-                            0
-                          )
-                        )}
-                      </dd>
-                    </div>
-                  ) : null}
-
-                  {lastCompletedSale.invoice_discount_amount ? (
-                    <div>
-                      <dt>خصم الفاتورة</dt>
-                      <dd>{formatCurrency(lastCompletedSale.invoice_discount_amount)}</dd>
+                      <dd>{formatCurrency(completedSaleFeeTotal)}</dd>
                     </div>
                   ) : null}
 
                   {lastCompletedSale.change !== null && lastCompletedSale.change > 0 ? (
-                    <div className="cart-change-display">
+                    <div>
                       <dt>الباقي للعميل</dt>
                       <dd>{formatCurrency(lastCompletedSale.change)}</dd>
                     </div>
                   ) : null}
-                </div>
-
-                {lastCompletedSale.debt_amount && lastCompletedSale.debt_amount > 0 ? (
-                  <div className="debt-preview-panel debt-preview-panel--success">
-                    <strong>
-                      ⚠ دين مسجل: {formatCurrency(lastCompletedSale.debt_amount)}
-                    </strong>
-                    {lastCompletedSale.customer_name ? (
-                      <span>على حساب: {lastCompletedSale.customer_name}</span>
-                    ) : null}
-                  </div>
-                ) : null}
+                  {lastCompletedSale.debt_amount && lastCompletedSale.debt_amount > 0 ? (
+                    <div className="pos-success-screen__detail pos-success-screen__detail--warning">
+                      <dt>دين مسجل</dt>
+                      <dd>{formatCurrency(lastCompletedSale.debt_amount)}</dd>
+                    </div>
+                  ) : null}
+                </dl>
 
                 {lastCompletedSale.customer_name ? (
                   <div className="info-strip">
@@ -1285,7 +1335,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                       className="secondary-button"
                       onClick={() => setIsHeldCartsOpen((currentValue) => !currentValue)}
                     >
-                      محتجز
+                      السلال المعلقة
                       <span className="product-pill product-pill--accent">
                         {formatCompactNumber(heldCarts.length)}
                       </span>
@@ -1305,9 +1355,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                 {isHeldCartsOpen ? (
                   <div className="held-carts-panel">
                     {heldCarts.length === 0 ? (
-                      <div className="held-carts-empty">
-                        لا توجد سلال معلقة حاليًا.
-                      </div>
+                      <div className="held-carts-empty">لا توجد سلال معلقة حاليًا.</div>
                     ) : (
                       <div className="held-carts-list">
                         {heldCarts.map((heldCart) => (
@@ -1353,9 +1401,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                   <div className="empty-state transaction-empty-panel">
                     <GripHorizontal className="empty-state__icon" />
                     <h3 className="empty-state__title">السلة فارغة</h3>
-                    <p className="empty-state__description">
-                      ابدأ بإضافة منتج من القائمة ليظهر ملخص الطلب هنا مباشرة.
-                    </p>
+                    <p className="empty-state__description">لا توجد بنود مضافة.</p>
                   </div>
                 ) : (
                   <div className="cart-line-list">
@@ -1450,7 +1496,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                     disabled={panelState === "processing"}
                   >
                     <ArrowRight size={16} />
-                    رجوع
+                    عودة
                   </button>
                 </div>
 
@@ -1462,35 +1508,37 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                   }
                   aria-busy={panelState === "processing"}
                 >
-                  <div className="stack-field">
-                    <span className="field-label">طريقة الدفع</span>
-                    <div className="chip-row pos-payment-chip-row">
-                      {accounts.map((account) => {
-                        const Icon = getAccountIcon(account.type);
-                        const isSelected = account.id === selectedAccountId;
+                  {!isSplitMode ? (
+                    <div className="stack-field">
+                      <span className="field-label">طريقة الدفع</span>
+                      <div className="chip-row pos-payment-chip-row">
+                        {accounts.map((account) => {
+                          const Icon = getAccountIcon(account.type);
+                          const isSelected = account.id === selectedAccountId;
 
-                        return (
-                          <button
-                            key={account.id}
-                            type="button"
-                            className={
-                              isSelected
-                                ? "chip chip--active pos-payment-chip is-selected"
-                                : "chip pos-payment-chip"
-                            }
-                            onClick={() => {
-                              clearSubmissionFeedback();
-                              setSelectedAccountId(account.id);
-                            }}
-                            disabled={panelState === "processing"}
-                          >
-                            <Icon size={16} />
-                            {getAccountChipLabel(account)}
-                          </button>
-                        );
-                      })}
+                          return (
+                            <button
+                              key={account.id}
+                              type="button"
+                              className={
+                                isSelected
+                                  ? "chip chip--active pos-payment-chip is-selected"
+                                  : "chip pos-payment-chip"
+                              }
+                              onClick={() => {
+                                clearSubmissionFeedback();
+                                setSelectedAccountId(account.id);
+                              }}
+                              disabled={panelState === "processing"}
+                            >
+                              <Icon size={16} />
+                              {getAccountChipLabel(account)}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
+                  ) : null}
 
                   {!isSplitMode && selectedAccount?.type === "cash" ? (
                     <label className="stack-field">
@@ -1507,7 +1555,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                           const parsedValue = parseAmount(rawValue);
                           setAmountReceived(rawValue === "" ? null : parsedValue);
                         }}
-                        placeholder="أدخل المبلغ المدفوع من العميل"
+                        placeholder="المبلغ المدفوع من العميل"
                         disabled={panelState === "processing"}
                       />
                     </label>
@@ -1515,36 +1563,26 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
 
                   {isSplitMode ? (
                     <div className="pos-split-payments">
-                      <div className="pos-split-payment-row">
-                        <div className="chip-row pos-payment-chip-row">
-                          {accounts.map((account) => {
-                            const Icon = getAccountIcon(account.type);
-                            const isSelected = account.id === selectedAccountId;
-
-                            return (
-                              <button
-                                key={`primary-${account.id}`}
-                                type="button"
-                                className={
-                                  isSelected
-                                    ? "chip chip--active pos-payment-chip is-selected"
-                                    : "chip pos-payment-chip"
-                                }
-                                onClick={() => {
-                                  clearSubmissionFeedback();
-                                  setSelectedAccountId(account.id);
-                                }}
-                                disabled={panelState === "processing"}
-                              >
-                                <Icon size={16} />
-                                {getAccountChipLabel(account)}
-                              </button>
-                            );
-                          })}
-                        </div>
-
+                      <div className="pos-split-payment-row pos-split-payment-row--primary">
+                        {selectedAccount ? (
+                          <button
+                            type="button"
+                            className="chip chip--active pos-payment-chip is-selected"
+                            onClick={() =>
+                              setIsPrimarySplitSelectorOpen(
+                                (currentValue) => !currentValue
+                              )
+                            }
+                            disabled={panelState === "processing"}
+                          >
+                            {React.createElement(getAccountIcon(selectedAccount.type), {
+                              size: 16
+                            })}
+                            {getAccountChipLabel(selectedAccount)}
+                          </button>
+                        ) : null}
                         <label className="stack-field">
-                          <span className="field-label">مبلغ الدفعة الأساسية</span>
+                          <span className="field-label">المبلغ</span>
                           <input
                             className="field-input"
                             type="number"
@@ -1562,6 +1600,32 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                           />
                         </label>
                       </div>
+
+                      {isPrimarySplitSelectorOpen ? (
+                        <div className="chip-row pos-split-primary-selector">
+                          {availablePrimarySplitAccounts.map((account) => {
+                            const Icon = getAccountIcon(account.type);
+                            const isSelected = account.id === selectedAccountId;
+
+                            return (
+                              <button
+                                key={`primary-selector-${account.id}`}
+                                type="button"
+                                className={
+                                  isSelected
+                                    ? "chip chip--active pos-payment-chip is-selected"
+                                    : "chip pos-payment-chip"
+                                }
+                                onClick={() => selectPrimarySplitAccount(account.id)}
+                                disabled={panelState === "processing"}
+                              >
+                                <Icon size={16} />
+                                {getAccountChipLabel(account)}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      ) : null}
 
                       {splitPayments.map((payment, index) => (
                         <div
@@ -1649,157 +1713,195 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                     أضف طريقة دفع أخرى
                   </button>
 
-                  <div className="stack-field customer-search-field">
-                    <span className="field-label">العميل (اختياري)</span>
-                    <input
-                      className="field-input"
-                      type="text"
-                      value={customerSearchInput}
-                      onChange={(event) => {
-                        clearSubmissionFeedback();
-                        setCustomerSearchInput(event.target.value);
-                      }}
-                      placeholder="ابحث عن عميل..."
-                      disabled={panelState === "processing"}
-                    />
+                  {isCustomerExpanded ? (
+                    <div className="stack-field customer-search-field">
+                      <span className="field-label">العميل</span>
+                      <input
+                        className="field-input"
+                        type="text"
+                        value={customerSearchInput}
+                        onChange={(event) => {
+                          clearSubmissionFeedback();
+                          setCustomerSearchInput(event.target.value);
+                        }}
+                        placeholder="بحث العميل"
+                        disabled={panelState === "processing"}
+                      />
 
-                    {shouldShowCustomerResults ? (
-                      <div className="customer-search-results">
-                        {customersLoading ? (
-                          <div className="customer-search-results__empty">
-                            جارٍ البحث عن العملاء...
-                          </div>
-                        ) : customerResults.length === 0 ? (
-                          <div className="customer-search-results__empty">
-                            لا توجد نتائج مطابقة.
-                          </div>
-                        ) : (
-                          customerResults.map((customer) => (
-                            <button
-                              key={customer.id}
-                              type="button"
-                              className="customer-search-option"
-                              onClick={() => selectCustomer(customer as CustomerSearchResult)}
-                            >
-                              <strong>{customer.name}</strong>
-                              <span>
-                                {customer.phone || "بدون هاتف"} • الرصيد الحالي{" "}
-                                {formatCurrency(customer.current_balance)}
-                              </span>
-                            </button>
-                          ))
-                        )}
-                      </div>
-                    ) : null}
-
-                    {selectedCustomerId && selectedCustomerName ? (
-                      <div className="selected-customer-card">
-                        <div>
-                          <strong>{selectedCustomerName}</strong>
-                          <span>
-                            الرصيد الحالي:{" "}
-                            {selectedCustomerBalance !== null
-                              ? formatCurrency(selectedCustomerBalance)
-                              : "جارٍ التحميل..."}
-                            {selectedCustomerPhone ? ` • ${selectedCustomerPhone}` : ""}
-                          </span>
+                      {shouldShowCustomerResults ? (
+                        <div className="customer-search-results">
+                          {customersLoading ? (
+                            <div className="customer-search-results__empty">
+                              جارٍ البحث عن العملاء...
+                            </div>
+                          ) : customerResults.length === 0 ? (
+                            <div className="customer-search-results__empty">
+                              لا توجد نتائج مطابقة.
+                            </div>
+                          ) : (
+                            customerResults.map((customer) => (
+                              <button
+                                key={customer.id}
+                                type="button"
+                                className="customer-search-option"
+                                onClick={() =>
+                                  selectCustomer(customer as CustomerSearchResult)
+                                }
+                              >
+                                <strong>{customer.name}</strong>
+                                <span>
+                                  {customer.phone || "بدون هاتف"} • الرصيد الحالي{" "}
+                                  {formatCurrency(customer.current_balance)}
+                                </span>
+                              </button>
+                            ))
+                          )}
                         </div>
+                      ) : null}
 
-                        <button
-                          type="button"
-                          className="secondary-button"
-                          onClick={clearCustomerSelection}
-                          disabled={panelState === "processing"}
-                        >
-                          إزالة
-                        </button>
-                      </div>
-                    ) : null}
-                  </div>
+                      {selectedCustomerId && selectedCustomerName ? (
+                        <div className="selected-customer-card">
+                          <div>
+                            <strong>{selectedCustomerName}</strong>
+                            <span>
+                              الرصيد الحالي:{" "}
+                              {selectedCustomerBalance !== null
+                                ? formatCurrency(selectedCustomerBalance)
+                                : "جارٍ التحميل..."}
+                              {selectedCustomerPhone ? ` • ${selectedCustomerPhone}` : ""}
+                            </span>
+                          </div>
 
-                  <label className="stack-field">
-                    <span className="field-label">خصم (اختياري)</span>
-                    <input
-                      className="field-input"
-                      type="number"
-                      min={0}
-                      max={effectiveMaxDiscount}
-                      value={invoiceDiscountPercentage}
-                      onChange={(event) => {
-                        clearSubmissionFeedback();
-                        const rawValue = Number(event.target.value);
-                        setInvoiceDiscountPercentage(
-                          Number.isNaN(rawValue)
-                            ? 0
-                            : Math.min(Math.max(rawValue, 0), effectiveMaxDiscount)
-                        );
-                      }}
+                          <button
+                            type="button"
+                            className="secondary-button"
+                            onClick={clearCustomerSelection}
+                            disabled={panelState === "processing"}
+                          >
+                            إزالة
+                          </button>
+                        </div>
+                      ) : null}
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      className="pos-optional-field-toggle"
+                      onClick={() => setIsCustomerExpanded(true)}
                       disabled={panelState === "processing"}
-                    />
-                  </label>
+                    >
+                      ▸ إضافة عميل (اختياري)
+                    </button>
+                  )}
 
-                  <div className="stack-field terminal-code-field">
-                    <span className="field-label">رمز الجهاز</span>
+                  {isDiscountExpanded ? (
+                    <label className="stack-field">
+                      <span className="field-label">خصم الفاتورة</span>
+                      <input
+                        className="field-input"
+                        type="number"
+                        min={0}
+                        max={effectiveMaxDiscount}
+                        value={invoiceDiscountPercentage}
+                        onChange={(event) => {
+                          clearSubmissionFeedback();
+                          const rawValue = Number(event.target.value);
+                          setInvoiceDiscountPercentage(
+                            Number.isNaN(rawValue)
+                              ? 0
+                              : Math.min(Math.max(rawValue, 0), effectiveMaxDiscount)
+                          );
+                        }}
+                        disabled={panelState === "processing"}
+                      />
+                    </label>
+                  ) : (
+                    <button
+                      type="button"
+                      className="pos-optional-field-toggle"
+                      onClick={() => setIsDiscountExpanded(true)}
+                      disabled={panelState === "processing"}
+                    >
+                      ▸ إضافة خصم (اختياري)
+                    </button>
+                  )}
 
-                    {terminalCodeLocked ? (
-                      <div className="terminal-code-field__locked">
-                        <strong>{posTerminalCode}</strong>
-                      </div>
-                    ) : (
-                      <div className="terminal-code-field__edit">
-                        <input
-                          className="field-input"
-                          type="text"
-                          maxLength={30}
-                          value={posTerminalCode}
-                          onChange={(event) => {
-                            clearSubmissionFeedback();
-                            setPosTerminalCode(event.target.value);
-                          }}
-                          placeholder="POS-01"
-                          disabled={panelState === "processing"}
-                        />
-                        <button
-                          type="button"
-                          className="secondary-button"
-                          onClick={() => {
-                            if (posTerminalCode.trim()) {
-                              lockTerminalCode();
+                  {isTerminalCodeExpanded ? (
+                    <div className="stack-field terminal-code-field">
+                      <span className="field-label">رمز الجهاز</span>
+
+                      {terminalCodeLocked ? (
+                        <div className="terminal-code-field__locked">
+                          <strong>{posTerminalCode}</strong>
+                        </div>
+                      ) : (
+                        <div className="terminal-code-field__edit">
+                          <input
+                            className="field-input"
+                            type="text"
+                            maxLength={30}
+                            value={posTerminalCode}
+                            onChange={(event) => {
+                              clearSubmissionFeedback();
+                              setPosTerminalCode(event.target.value);
+                            }}
+                            placeholder="POS-01"
+                            disabled={panelState === "processing"}
+                          />
+                          <button
+                            type="button"
+                            className="secondary-button"
+                            onClick={() => {
+                              if (posTerminalCode.trim()) {
+                                lockTerminalCode();
+                              }
+                            }}
+                            disabled={
+                              !posTerminalCode.trim() || panelState === "processing"
                             }
-                          }}
-                          disabled={!posTerminalCode.trim() || panelState === "processing"}
-                        >
-                          تثبيت
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                          >
+                            تثبيت
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      className="pos-optional-field-toggle"
+                      onClick={() => setIsTerminalCodeExpanded(true)}
+                      disabled={panelState === "processing"}
+                    >
+                      ▸ رمز الجهاز (اختياري)
+                    </button>
+                  )}
 
                   <div className="stack-field pos-notes-field">
-                    <span className="field-label">ملاحظات</span>
-
                     {!isNotesExpanded ? (
                       <button
                         type="button"
-                        className="ghost-button btn btn--ghost"
+                        className="pos-optional-field-toggle"
                         onClick={() => setIsNotesExpanded(true)}
                         disabled={panelState === "processing"}
                       >
-                        ▸ إضافة ملاحظة
+                        ▸ إضافة ملاحظة (اختياري)
                       </button>
                     ) : (
-                      <textarea
-                        className="field-input pos-notes-field__textarea"
-                        rows={3}
-                        maxLength={500}
-                        value={notes}
-                        onChange={(event) => {
-                          clearSubmissionFeedback();
-                          setNotes(event.target.value);
-                        }}
-                        placeholder="ملاحظات اختيارية للفاتورة"
-                        disabled={panelState === "processing"}
-                      />
+                      <>
+                        <span className="field-label">ملاحظات</span>
+                        <textarea
+                          className="field-input pos-notes-field__textarea"
+                          rows={3}
+                          maxLength={500}
+                          value={notes}
+                          onChange={(event) => {
+                            clearSubmissionFeedback();
+                            setNotes(event.target.value);
+                          }}
+                          placeholder="ملاحظة على الفاتورة"
+                          disabled={panelState === "processing"}
+                        />
+                      </>
                     )}
                   </div>
                 </div>
@@ -1840,13 +1942,11 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                     }
                   >
                     {remainingToSettle > 0 ? (
-                      <strong>
-                        المتبقي للسداد: {formatCurrency(remainingToSettle)}
-                      </strong>
+                      <strong>المتبقي للسداد: {formatCurrency(remainingToSettle)}</strong>
                     ) : changeToReturn !== null ? (
                       <strong>الباقي للعميل: {formatCurrency(changeToReturn)}</strong>
                     ) : (
-                      <strong>✓ المبلغ مكتمل</strong>
+                      <strong>تم تسديد المبلغ</strong>
                     )}
                   </div>
 
