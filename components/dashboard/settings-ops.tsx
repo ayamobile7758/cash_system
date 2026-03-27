@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { AlertTriangle, Loader2, RefreshCcw } from "lucide-react";
@@ -284,25 +284,21 @@ export function SettingsOps({
       <PageHeader
         eyebrow="الإعدادات"
         title="الإعدادات التشغيلية والإغلاق اليومي"
-        description="قسّم العمل بين الصلاحيات، اللقطة اليومية، سلامة الأرصدة، والتسويات بدل عرض جميع الأدوات دفعة واحدة."
         meta={
           <div className="configuration-page__meta-grid" aria-label="ملخص شاشة الإعدادات">
             <article className="configuration-page__meta-card">
               <span className="configuration-page__meta-label">الحِزم النشطة</span>
               <strong className="configuration-page__meta-value">{formatCompactNumber(activeAssignments.length)}</strong>
-              <span className="configuration-page__meta-hint">تعيينات تشغيلية جارية على الحسابات الحالية</span>
             </article>
             <article className="configuration-page__meta-card">
               <span className="configuration-page__meta-label">اللقطات المحفوظة</span>
               <strong className="configuration-page__meta-value">{formatCompactNumber(snapshots.length)}</strong>
-              <span className="configuration-page__meta-hint">أحدث الإغلاقات اليومية الجاهزة للمراجعة</span>
             </article>
             <article className="configuration-page__meta-card">
               <span className="configuration-page__meta-label">الجرد المفتوح</span>
               <strong className="configuration-page__meta-value">
                 {formatCompactNumber(inventoryCounts.filter((count) => count.status !== "completed").length)}
               </strong>
-              <span className="configuration-page__meta-hint">عدادات تحتاج إكمالًا أو متابعة من الإدارة</span>
             </article>
           </div>
         }
@@ -569,7 +565,7 @@ export function SettingsOps({
 
             {inventoryCounts.length === 0 ? (
               <div className="empty-panel">
-                <p>لا توجد عمليات جرد مفتوحة حاليًا. ابدأ عملية جرد من شاشة الجرد لتظهر هنا.</p>
+                <p>لا توجد عمليات جرد مفتوحة حاليًا.</p>
               </div>
             ) : (
               <>
@@ -671,14 +667,12 @@ export function SettingsOps({
           <SectionCard
             eyebrow="الطباعة"
             title="قرار الطباعة في MVP"
-            description="يمكن طباعة الفاتورة مباشرة من المتصفح مع إخفاء عناصر التنقل والإبقاء على محتوى الإيصال فقط."
             className="configuration-card"
           />
 
           <SectionCard
             eyebrow="الوصول من الأجهزة"
             title="قرار المستخدم/الجهاز"
-            description="إدارة كلمات المرور والأجهزة المفقودة وإنهاء الجلسات تتم ضمن إجراءات التشغيل المعتمدة دون شاشة داخلية مخصصة لهذه التفاصيل."
             className="configuration-card configuration-card--danger"
           >
             <p className="warning-inline">
@@ -689,8 +683,7 @@ export function SettingsOps({
 
           <SectionCard
             eyebrow="التشغيل اليومي"
-            title="متى تستخدم كل أداة؟"
-            description="استخدم اللقطة اليومية عند إغلاق اليوم، وفحص الأرصدة قبل التسوية، وإكمال الجرد عند انتهاء العد الفعلي."
+            title="الأدوات اليومية"
             className="configuration-card"
           />
         </div>
@@ -699,7 +692,6 @@ export function SettingsOps({
       <ConfirmationDialog
         open={confirmAction === "snapshot"}
         title="حفظ اللقطة اليومية"
-        description="سيتم حفظ لقطة تشغيلية لليوم الحالي. إذا كانت موجودة سابقًا فسيعيد النظام نفس اللقطة بدل إنشاء لقطة جديدة."
         confirmLabel="حفظ اللقطة"
         cancelLabel="الرجوع"
         isPending={isPending}
@@ -710,7 +702,6 @@ export function SettingsOps({
       <ConfirmationDialog
         open={confirmAction === "reconciliation"}
         title="تأكيد التسوية"
-        description="سيُنشئ النظام قيد تسوية ماليًا بناءً على الرصيد الفعلي والسبب الذي أدخلته. راجع الفرق قبل المتابعة."
         confirmLabel="تنفيذ التسوية"
         cancelLabel="الرجوع"
         tone="danger"
@@ -722,7 +713,6 @@ export function SettingsOps({
       <ConfirmationDialog
         open={confirmAction === "inventory-complete"}
         title="إكمال الجرد"
-        description="سيتم اعتماد الكميات الفعلية الحالية وإنشاء التسويات اللازمة على المخزون. تأكد من مراجعة العناصر قبل الإغلاق."
         confirmLabel="إكمال الجرد"
         cancelLabel="الرجوع"
         tone="danger"

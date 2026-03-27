@@ -282,7 +282,6 @@ export function InventoryWorkspace({
       <PageHeader
         eyebrow="الجرد"
         title="الجرد والتسوية المحسنة"
-        description="ابدأ الجرد، أكمل العمليات المفتوحة، وراجع التسويات من مسار أوضح وأسهل على الأجهزة الصغيرة."
       />
 
       {isPending ? (
@@ -341,17 +340,14 @@ export function InventoryWorkspace({
         <article className="operational-page__meta-card">
           <span className="operational-page__meta-label">عمليات مفتوحة</span>
           <strong className="operational-page__meta-value">{formatCompactNumber(inProgressCounts.length)}</strong>
-          <p className="operational-page__meta-hint">عمليات الجرد التي ما زالت بانتظار الإكمال.</p>
         </article>
         <article className="operational-page__meta-card">
           <span className="operational-page__meta-label">نتائج مكتملة</span>
           <strong className="operational-page__meta-value">{formatCompactNumber(recentCompletedCounts.length)}</strong>
-          <p className="operational-page__meta-hint">النتائج المتاحة للمراجعة السريعة.</p>
         </article>
         <article className="operational-page__meta-card">
           <span className="operational-page__meta-label">التسويات الأخيرة</span>
           <strong className="operational-page__meta-value">{formatCompactNumber(recentReconciliations.length)}</strong>
-          <p className="operational-page__meta-hint">قيود التسوية المسجلة مؤخرًا.</p>
         </article>
       </div>
 
@@ -673,7 +669,6 @@ export function InventoryWorkspace({
       <ConfirmationDialog
         open={confirmAction?.type === "complete-count"}
         title="تأكيد إكمال الجرد"
-        description="سيطبق هذا الإجراء الفروقات الحالية ويحدّث المخزون وفق القيم الفعلية التي أدخلتها."
         confirmLabel="إكمال الجرد"
         onConfirm={handleCompleteCount}
         onCancel={() => setConfirmAction(null)}
@@ -683,7 +678,6 @@ export function InventoryWorkspace({
       <ConfirmationDialog
         open={confirmAction?.type === "reconcile-account"}
         title="تأكيد التسوية"
-        description="سيُنشئ هذا الإجراء قيد تسوية جديدًا على الحساب المحدد اعتمادًا على الرصيد الفعلي المدخل."
         confirmLabel="تنفيذ التسوية"
         onConfirm={handleReconciliation}
         onCancel={() => setConfirmAction(null)}

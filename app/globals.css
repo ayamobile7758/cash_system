@@ -1,39 +1,39 @@
-:root {
+﻿:root {
   color-scheme: light;
-  background: #F8F9FC;
-  color: #1E293B;
+  background: #F5F4F1;
+  color: #1C1C1E;
 
   /* Surfaces */
-  --aya-bg: #F8F9FC;
-  --aya-bg-soft: #F1F3F8;
-  --aya-panel: #FFFFFF;
-  --aya-panel-muted: #F8F9FC;
+  --aya-bg: #F5F4F1;
+  --aya-bg-soft: #EFEEE9;
+  --aya-panel: #FDFCFA;
+  --aya-panel-muted: #F8F7F4;
   --aya-panel-strong: #FFFFFF;
 
   /* Borders */
-  --aya-line: #E2E6EF;
-  --aya-line-strong: #CBD5E1;
+  --aya-line: #E0DDD6;
+  --aya-line-strong: #C8C4BB;
 
   /* Typography */
-  --aya-ink: #1E293B;
-  --aya-ink-soft: #334155;
-  --aya-muted: #64748B;
+  --aya-ink: #1C1C1E;
+  --aya-ink-soft: #3A3A3C;
+  --aya-muted: #8E8E93;
 
   /* Primary */
-  --aya-primary: #4F46E5;
-  --aya-primary-hover: #4338CA;
-  --aya-primary-soft: #EEF2FF;
-  --aya-primary-ring: 0 0 0 2px #4F46E5;
+  --aya-primary: #1A3A5C;
+  --aya-primary-hover: #153050;
+  --aya-primary-soft: #E8EFF5;
+  --aya-primary-ring: 0 0 0 2px #1A3A5C;
 
   /* Semantic */
   --aya-success: #059669;
-  --aya-success-soft: #ECFDF5;
+  --aya-success-soft: #E8F5EE;
   --aya-warning: #D97706;
-  --aya-warning-soft: #FFFBEB;
+  --aya-warning-soft: #FBF6E6;
   --aya-danger: #DC2626;
-  --aya-danger-soft: #FEF2F2;
-  --aya-info: #4F46E5;
-  --aya-info-soft: #EEF2FF;
+  --aya-danger-soft: #F9EDEC;
+  --aya-info: #1A3A5C;
+  --aya-info-soft: #E8EFF5;
 
   /* Font */
   --aya-font-body: "Tajawal", "Segoe UI", system-ui, sans-serif;
@@ -83,7 +83,7 @@
   --z-fullscreen-checkout: 110;
 
   /* Compatibility aliases */
-  --aya-page-accent: rgba(79, 70, 229, 0.08);
+  --aya-page-accent: rgba(26, 58, 92, 0.08);
   --aya-page-leaf: rgba(5, 150, 105, 0.06);
   --aya-accent: var(--aya-primary);
   --aya-accent-deep: var(--aya-ink);
@@ -91,7 +91,7 @@
   --aya-cyan-soft: var(--aya-primary-soft);
   --aya-leaf: var(--aya-success);
   --aya-amber: var(--aya-warning);
-  --aya-chart-grid: rgba(30, 41, 59, 0.08);
+  --aya-chart-grid: rgba(28, 28, 30, 0.08);
   --aya-chart-primary: var(--aya-primary);
   --aya-chart-secondary: #0F766E;
   --aya-chart-tertiary: var(--aya-warning);
@@ -101,8 +101,8 @@
   --aya-shadow-sm: var(--shadow-sm);
   --aya-shadow: var(--shadow-md);
   --aya-shadow-lg: 0 10px 28px rgba(0, 0, 0, 0.14);
-  --aya-focus-ring: rgba(79, 70, 229, 0.35);
-  --aya-focus-shadow: 0 0 0 3px rgba(79, 70, 229, 0.16);
+  --aya-focus-ring: rgba(26, 58, 92, 0.35);
+  --aya-focus-shadow: 0 0 0 3px rgba(26, 58, 92, 0.16);
 }
 
 * {
@@ -119,7 +119,6 @@ html {
   font-size: 14px;
   scroll-behavior: smooth;
 }
-
 body {
   color: var(--aya-ink);
   font-family: var(--aya-font-body);
@@ -146,7 +145,7 @@ a {
 }
 
 ::selection {
-  background: rgba(29, 78, 216, 0.18);
+  background: rgba(26, 58, 92, 0.18);
   color: var(--aya-ink);
 }
 
@@ -280,8 +279,8 @@ code {
 }
 
 .status-pill--brand {
-  background: rgba(29, 78, 216, 0.12);
-  border-color: rgba(29, 78, 216, 0.18);
+  background: rgba(26, 58, 92, 0.12);
+  border-color: rgba(26, 58, 92, 0.18);
   color: var(--aya-accent-deep);
 }
 
@@ -320,7 +319,7 @@ code {
 
 .landing-hero {
   background:
-    radial-gradient(circle at top left, rgba(29, 78, 216, 0.12), transparent 34%),
+    radial-gradient(circle at top left, rgba(26, 58, 92, 0.12), transparent 34%),
     radial-gradient(circle at bottom right, rgba(8, 145, 178, 0.12), transparent 32%),
     linear-gradient(180deg, var(--aya-panel-strong), var(--aya-panel));
 }
@@ -377,9 +376,9 @@ code {
 
 .section-card--accent {
   background:
-    radial-gradient(circle at top left, rgba(29, 78, 216, 0.12), transparent 34%),
+    radial-gradient(circle at top left, rgba(26, 58, 92, 0.12), transparent 34%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(236, 243, 251, 0.92));
-  border-color: rgba(29, 78, 216, 0.16);
+  border-color: rgba(26, 58, 92, 0.16);
 }
 
 .section-card--subtle {
@@ -703,12 +702,12 @@ code {
 
 .baseline-link-card:hover {
   transform: translateY(-3px);
-  border-color: rgba(29, 78, 216, 0.28);
+  border-color: rgba(26, 58, 92, 0.28);
   box-shadow: var(--aya-shadow-lg);
 }
 
 .baseline-link-card--accent {
-  background: linear-gradient(145deg, rgba(29, 78, 216, 0.14), var(--aya-panel-strong));
+  background: linear-gradient(145deg, rgba(26, 58, 92, 0.14), var(--aya-panel-strong));
 }
 
 .install-card {
@@ -784,8 +783,8 @@ code {
 
 .chip--active,
 .chip:hover {
-  background: rgba(29, 78, 216, 0.1);
-  border-color: rgba(29, 78, 216, 0.2);
+  background: rgba(26, 58, 92, 0.1);
+  border-color: rgba(26, 58, 92, 0.2);
 }
 
 .icon-button {
@@ -962,7 +961,7 @@ code {
 .dashboard-shortcut-tile:hover,
 .dashboard-shortcut-tile[aria-current="page"] {
   transform: translateY(-2px);
-  border-color: rgba(29, 78, 216, 0.2);
+  border-color: rgba(26, 58, 92, 0.2);
   box-shadow: var(--aya-shadow-sm);
 }
 
@@ -1013,8 +1012,8 @@ code {
 .dashboard-nav__item:hover,
 .dashboard-nav__item.is-active {
   transform: translateY(-1px);
-  border-color: rgba(29, 78, 216, 0.22);
-  background: rgba(29, 78, 216, 0.08);
+  border-color: rgba(26, 58, 92, 0.22);
+  background: rgba(26, 58, 92, 0.08);
   box-shadow: var(--aya-shadow-sm);
 }
 
@@ -1025,7 +1024,7 @@ code {
   width: 2.4rem;
   height: 2.4rem;
   border-radius: 0.9rem;
-  background: rgba(23, 48, 65, 0.08);
+  background: rgba(26, 58, 92, 0.08);
   color: var(--aya-ink);
 }
 
@@ -1048,7 +1047,7 @@ code {
   height: 1.5rem;
   padding: 0 0.35rem;
   border-radius: 999px;
-  background: rgba(29, 78, 216, 0.12);
+  background: rgba(26, 58, 92, 0.12);
   color: var(--aya-accent-deep);
   font-size: 0.8rem;
 }
@@ -1171,8 +1170,8 @@ code {
 }
 
 .ghost-button:hover:not(:disabled) {
-  border-color: rgba(29, 78, 216, 0.22);
-  background: rgba(29, 78, 216, 0.08);
+  border-color: rgba(26, 58, 92, 0.22);
+  background: rgba(26, 58, 92, 0.08);
   box-shadow: var(--aya-shadow-sm);
 }
 
@@ -1315,7 +1314,7 @@ code {
   font-size: 0.82rem;
   font-weight: 700;
   text-transform: uppercase;
-  background: rgba(23, 48, 65, 0.1);
+  background: rgba(26, 58, 92, 0.1);
   color: var(--aya-ink);
 }
 
@@ -1346,7 +1345,7 @@ code {
 
 .login-panel--accent {
   background:
-    radial-gradient(circle at top left, rgba(29, 78, 216, 0.12), transparent 28%),
+    radial-gradient(circle at top left, rgba(26, 58, 92, 0.12), transparent 28%),
     radial-gradient(circle at bottom right, rgba(8, 145, 178, 0.1), transparent 32%),
     linear-gradient(145deg, rgba(244, 248, 252, 0.98), rgba(255, 255, 255, 0.88));
 }
@@ -1705,7 +1704,7 @@ a:focus-visible {
 
 .product-card--interactive:hover {
   transform: translateY(-3px);
-  border-color: rgba(29, 78, 216, 0.22);
+  border-color: rgba(26, 58, 92, 0.22);
   box-shadow: var(--aya-shadow);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(237, 244, 251, 0.88));
 }
@@ -1723,7 +1722,7 @@ a:focus-visible {
   gap: 0.35rem;
   padding: 0.35rem 0.65rem;
   border-radius: 999px;
-  background: rgba(23, 48, 65, 0.08);
+  background: rgba(26, 58, 92, 0.08);
   color: var(--aya-muted);
   font-size: 0.82rem;
 }
@@ -2733,7 +2732,7 @@ section[id] {
   border-radius: var(--aya-radius-lg);
   border: 1px solid var(--aya-line);
   background:
-    radial-gradient(circle at 10% 20%, rgba(29, 78, 216, 0.09), transparent 40%),
+    radial-gradient(circle at 10% 20%, rgba(26, 58, 92, 0.09), transparent 40%),
     radial-gradient(circle at 90% 80%, rgba(8, 145, 178, 0.07), transparent 40%),
     linear-gradient(160deg, var(--aya-panel-strong) 0%, var(--aya-panel) 100%);
   box-shadow: var(--aya-shadow);
@@ -2807,8 +2806,8 @@ section[id] {
 }
 
 .lp-stat-card--accent {
-  background: rgba(29, 78, 216, 0.07);
-  border-color: rgba(29, 78, 216, 0.16);
+  background: rgba(26, 58, 92, 0.07);
+  border-color: rgba(26, 58, 92, 0.16);
 }
 
 .lp-stat-card--accent svg {
@@ -2885,7 +2884,7 @@ section[id] {
 }
 
 .lp-feature-icon--blue {
-  background: rgba(29, 78, 216, 0.1);
+  background: rgba(26, 58, 92, 0.1);
   color: var(--aya-accent);
 }
 
@@ -2962,11 +2961,11 @@ section[id] {
   background: linear-gradient(135deg, var(--aya-accent) 0%, var(--aya-accent-deep) 100%);
   border-color: transparent;
   color: white;
-  box-shadow: 0 12px 40px rgba(29, 78, 216, 0.35);
+  box-shadow: 0 12px 40px rgba(26, 58, 92, 0.35);
 }
 
 .lp-action-card--primary:hover {
-  box-shadow: 0 20px 60px rgba(29, 78, 216, 0.45);
+  box-shadow: 0 20px 60px rgba(26, 58, 92, 0.45);
 }
 
 .lp-action-card--primary > svg:first-child,
@@ -3045,7 +3044,7 @@ section[id] {
   background: linear-gradient(135deg, var(--aya-accent) 0%, var(--aya-accent-deep) 100%) !important;
   color: white !important;
   border-color: transparent !important;
-  box-shadow: 0 4px 16px rgba(29, 78, 216, 0.32);
+  box-shadow: 0 4px 16px rgba(26, 58, 92, 0.32);
 }
 
 .dashboard-nav__item.is-active svg {
@@ -3591,9 +3590,9 @@ h3 {
 
 .section-card--accent {
   background:
-    radial-gradient(circle at top left, rgba(79, 70, 229, 0.08), transparent 32%),
+    radial-gradient(circle at top left, rgba(26, 58, 92, 0.08), transparent 32%),
     linear-gradient(180deg, var(--aya-panel), var(--aya-panel-muted));
-  border-color: rgba(79, 70, 229, 0.18);
+  border-color: rgba(26, 58, 92, 0.18);
 }
 
 .section-card--subtle {
@@ -4141,9 +4140,9 @@ h3 {
 
 .pos-layout {
   display: grid;
-  grid-template-columns: 1fr var(--pos-cart-width) var(--sidebar-collapsed);
+  grid-template-columns: 1fr var(--pos-cart-width);
   grid-template-rows: 1fr;
-  height: 100vh;
+  height: calc(100vh - var(--topbar-height));
   overflow: hidden;
 }
 
@@ -4321,7 +4320,7 @@ h3 {
   position: sticky;
   top: 0;
   align-self: start;
-  height: 100vh;
+  height: calc(100vh - var(--topbar-height));
   overflow: hidden auto;
 }
 
@@ -4394,6 +4393,7 @@ h3 {
 /* --- POS Checkout - Payment chips --- */
 
 .pos-payment-chip-row {
+  display: flex;
   flex-wrap: wrap;
   gap: var(--sp-2);
 }
@@ -4570,6 +4570,7 @@ h3 {
 }
 
 .pos-success-screen__details {
+  display: grid;
   width: 100%;
   padding: var(--sp-4);
   border: 1px solid var(--aya-line);
@@ -4692,10 +4693,6 @@ h3 {
   .dashboard-nav-group__title,
   .dashboard-brandmark__copy {
     display: none;
-  }
-
-  .pos-layout {
-    grid-template-columns: 1fr var(--pos-cart-width);
   }
 }
 

@@ -412,7 +412,6 @@ export function InvoiceDetail({ role, invoice, accounts }: InvoiceDetailProps) {
       <PageHeader
         eyebrow="الفواتير"
         title={invoice.invoice_number}
-        description="تفاصيل الفاتورة والمرتجعات ورابط الإيصال والإجراءات الإدارية في صفحة واحدة."
         meta={
           <div className="transaction-page__meta" aria-label="ملخص الفاتورة">
             <article className="transaction-page__meta-card stat-card">
@@ -504,7 +503,6 @@ export function InvoiceDetail({ role, invoice, accounts }: InvoiceDetailProps) {
           <SectionCard
             eyebrow="تفاصيل الفاتورة"
             title={invoice.invoice_number}
-            description="أرقام وبيانات هذه الفاتورة مع ملخص الخصومات وحركات الدفع المرتبطة بها."
             className="transaction-card"
           >
             <div className="transaction-summary-grid">
@@ -834,8 +832,7 @@ export function InvoiceDetail({ role, invoice, accounts }: InvoiceDetailProps) {
               >
                 <div className="info-strip">
                   <span>
-                    استخدم الإلغاء الإداري فقط بعد التحقق من السبب والرجوع إلى سياسة
-                    المتجر.
+                    الرجوع إلى سياسة المتجر قبل تنفيذ الإلغاء الإداري.
                   </span>
                 </div>
 
@@ -896,7 +893,6 @@ export function InvoiceDetail({ role, invoice, accounts }: InvoiceDetailProps) {
       <ConfirmationDialog
         open={confirmAction === "revoke-link"}
         title="إلغاء رابط الإيصال"
-        description="سيبطل هذا الإجراء رابط الإيصال العام الحالي، ويمكن إنشاء رابط جديد لاحقًا."
         confirmLabel="إلغاء الرابط"
         onConfirm={handleRevokeReceiptLink}
         onCancel={() => setConfirmAction(null)}
@@ -907,7 +903,6 @@ export function InvoiceDetail({ role, invoice, accounts }: InvoiceDetailProps) {
       <ConfirmationDialog
         open={confirmAction === "create-return"}
         title="تأكيد إنشاء المرتجع"
-        description="سيسجل النظام المرتجع ويحدث أرصدة الفاتورة والمخزون والحساب المرتبط تلقائيًا."
         confirmLabel="تنفيذ المرتجع"
         onConfirm={handleCreateReturn}
         onCancel={() => setConfirmAction(null)}
@@ -917,7 +912,6 @@ export function InvoiceDetail({ role, invoice, accounts }: InvoiceDetailProps) {
       <ConfirmationDialog
         open={confirmAction === "cancel-invoice"}
         title="تأكيد الإلغاء الإداري"
-        description="سيلغي هذا الإجراء الفاتورة ويعكس القيود المرتبطة بها. استخدمه فقط بعد التحقق من السبب الإداري."
         confirmLabel="تنفيذ الإلغاء"
         onConfirm={handleCancelInvoice}
         onCancel={() => setConfirmAction(null)}

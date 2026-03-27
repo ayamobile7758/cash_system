@@ -45,7 +45,6 @@ export function InvoicesWorkspace({ role, invoices }: InvoicesWorkspaceProps) {
       <PageHeader
         eyebrow="الفواتير"
         title="الفواتير والإيصالات والمرتجعات"
-        description="تصفح الفواتير الحديثة وافتح أي فاتورة لعرض تفاصيلها وعملياتها في صفحة مستقلة أوضح."
         meta={
           <div className="transaction-page__meta" aria-label="ملخص شاشة الفواتير">
             <article className="transaction-page__meta-card stat-card">
@@ -58,7 +57,7 @@ export function InvoicesWorkspace({ role, invoices }: InvoicesWorkspaceProps) {
             </article>
             <article className="transaction-page__meta-card transaction-page__meta-card--safe stat-card">
               <ChevronLeft size={18} />
-              <strong>اضغط على أي فاتورة لفتح التفاصيل</strong>
+              <strong>الفواتير الحديثة</strong>
             </article>
           </div>
         }
@@ -67,7 +66,6 @@ export function InvoicesWorkspace({ role, invoices }: InvoicesWorkspaceProps) {
       <SectionCard
         eyebrow="سجل الفواتير"
         title="قائمة الفواتير"
-        description="ابحث برقم الفاتورة أو اسم العميل أو رمز الجهاز، ثم افتح الفاتورة المطلوبة لعرض التفاصيل."
         className="transaction-card"
       >
         <div className="workspace-toolbar transaction-toolbar">
@@ -87,7 +85,7 @@ export function InvoicesWorkspace({ role, invoices }: InvoicesWorkspaceProps) {
           <div className="empty-panel transaction-empty-panel">
             <FileText size={18} />
             <h3>لا توجد فواتير مطابقة</h3>
-            <p>غيّر نص البحث أو امسحه لعرض الفواتير المتاحة.</p>
+            <p>لا توجد فواتير متاحة حاليًا.</p>
           </div>
         ) : (
           <div className="stack-list transaction-list-shell">

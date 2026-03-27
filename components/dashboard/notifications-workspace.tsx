@@ -122,12 +122,6 @@ function getNotificationStatusLabel(notification: NotificationItem) {
   return notification.is_read ? "مقروء" : "غير مقروء";
 }
 
-function getRoleHint(role: "admin" | "pos_staff") {
-  return role === "admin"
-    ? "يعرض الحساب الإداري التنبيهات العامة والملخصات التشغيلية القابلة للمتابعة."
-    : "يعرض حساب نقطة البيع الإشعارات المرتبطة بالمستخدم الحالي فقط.";
-}
-
 export function NotificationsWorkspace({
   role,
   alertsSummary,
@@ -263,7 +257,6 @@ export function NotificationsWorkspace({
       <PageHeader
         eyebrow="الإشعارات"
         title="مركز التنبيهات والمتابعة"
-        description="تابع صندوق الإشعارات، افتح التنبيهات المجمعة، وانتقل سريعًا إلى نتائج البحث المرتبطة بكل مساحة تشغيلية."
         meta={
           <>
             <span className="status-pill status-pill--brand">الدور: {getRoleLabel(role)}</span>
@@ -287,22 +280,18 @@ export function NotificationsWorkspace({
         <article className="operational-page__meta-card">
           <span className="operational-page__meta-label">نطاق الحساب</span>
           <strong className="operational-page__meta-value">{getRoleLabel(role)}</strong>
-          <span className="operational-page__meta-hint">{getRoleHint(role)}</span>
         </article>
         <article className="operational-page__meta-card">
           <span className="operational-page__meta-label">الإشعارات الظاهرة</span>
           <strong className="operational-page__meta-value">{formatCompactNumber(totalCount)}</strong>
-          <span className="operational-page__meta-hint">يشمل هذا الرقم الفلاتر الحالية والنتائج الملائمة للدور الحالي.</span>
         </article>
         <article className="operational-page__meta-card">
           <span className="operational-page__meta-label">الرسائل غير المقروءة</span>
           <strong className="operational-page__meta-value">{formatCompactNumber(unreadCount)}</strong>
-          <span className="operational-page__meta-hint">الرسائل غير المقروءة المتاحة للمتابعة.</span>
         </article>
       </section>
 
       <div className="operational-section-nav" aria-label="أقسام مركز الإشعارات">
-        <span className="operational-section-nav__hint">أقسام مركز الإشعارات.</span>
         <button
           type="button"
           className={activeSection === "inbox" ? "chip-button is-selected" : "chip-button"}
@@ -354,7 +343,6 @@ export function NotificationsWorkspace({
               key={key}
               eyebrow="تنبيه مجمع"
               title={getAlertLabel(key)}
-              description="يعرض هذا الرقم أحدث حالة تشغيلية دون تكرار الرسائل المتشابهة داخل الصندوق."
               tone="accent"
             >
               <div className="operational-page__meta-card">
@@ -376,7 +364,6 @@ export function NotificationsWorkspace({
           <SectionCard
             eyebrow="بحث تشغيلي"
             title="نتائج البحث الحالية"
-            description="نفّذ البحث من الشريط العلوي أو عدّل الاستعلام هنا للوصول السريع إلى المنتجات والفواتير والديون والصيانة."
             tone="accent"
             className="operational-sidebar operational-sidebar--sticky"
           >
@@ -429,7 +416,6 @@ export function NotificationsWorkspace({
                 <SectionCard
                   eyebrow="ملخص النتائج"
                   title="نتائج البحث الحالية"
-                  description={`النتائج الحالية: ${formatCompactNumber(searchBaseline.totalCount)} ضمن الحدود المتاحة للدور الحالي.`}
                   tone="subtle"
                 >
                   <div className="operational-inline-summary">
@@ -448,7 +434,6 @@ export function NotificationsWorkspace({
                         key={group.entity}
                         eyebrow="نتائج حسب الكيان"
                         title={group.title}
-                        description="افتح المسار المرتبط للوصول إلى السجل الكامل داخل مساحة التشغيل المناسبة."
                       >
                         <div className="operational-list">
                           {group.items.map((item) => (
@@ -478,7 +463,6 @@ export function NotificationsWorkspace({
                   <SectionCard
                     eyebrow="لا توجد نتائج"
                     title="لم نعثر على سجلات مطابقة"
-                    description="جرّب عبارة أخرى أو افتح مساحة التشغيل المرتبطة مباشرةً لمتابعة البحث من المصدر."
                     tone="subtle"
                   />
                 )}
@@ -499,7 +483,6 @@ export function NotificationsWorkspace({
           <SectionCard
             eyebrow="إعدادات الصندوق"
             title="فلاتر المتابعة"
-            description="اضبط حالة الرسائل ونوعها وعدد السجلات المعروضة قبل مراجعة الصندوق."
             className="operational-sidebar operational-sidebar--sticky"
           >
             <form className="workspace-stack" method="GET">
@@ -543,7 +526,6 @@ export function NotificationsWorkspace({
             <SectionCard
               eyebrow="صندوق الإشعارات"
               title="الإشعارات الحالية"
-              description="راجع الرسائل المرتبطة بالعمليات اليومية وافتح المرجع المطلوب أو علّم الرسالة كمقروءة بعد المتابعة."
               tone="accent"
             >
               <div className="operational-list">
@@ -609,7 +591,6 @@ export function NotificationsWorkspace({
                   <SectionCard
                     eyebrow="صندوق فارغ"
                     title="لا توجد إشعارات مطابقة الآن"
-                    description="جرّب فلترًا آخر أو افتح الملخصات المجمعة لمراجعة أهم التنبيهات الحالية."
                     tone="subtle"
                   />
                 )}

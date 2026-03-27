@@ -222,28 +222,20 @@ export function OperationsWorkspace({
       <PageHeader
         eyebrow="العمليات"
         title="الشحن والتحويلات"
-        description="تابع عمليات الشحن اليومية والتحويلات الداخلية من مساحة تشغيلية أهدأ وأوضح."
       />
 
       <div className="operational-page__meta-grid">
         <article className="operational-page__meta-card stat-card">
           <span className="operational-page__meta-label">ربح الشحن</span>
           <strong className="operational-page__meta-value">{formatCurrency(topupSummary.total_profit)}</strong>
-          <p className="operational-page__meta-hint">إجمالي ربح الشحن خلال آخر 30 يومًا.</p>
         </article>
         <article className="operational-page__meta-card stat-card">
           <span className="operational-page__meta-label">إجمالي التحصيل</span>
           <strong className="operational-page__meta-value">{formatCurrency(topupSummary.total_amount)}</strong>
-          <p className="operational-page__meta-hint">إجمالي المبالغ المستلمة من عمليات الشحن.</p>
         </article>
         <article className="operational-page__meta-card stat-card">
           <span className="operational-page__meta-label">النشاط</span>
           <strong className="operational-page__meta-value">{formatCompactNumber(topupSummary.entry_count)}</strong>
-          <p className="operational-page__meta-hint">
-            {topupSummary.top_supplier_name
-              ? `أعلى مزود ربحًا: ${topupSummary.top_supplier_name}`
-              : "لا يوجد مزود مهيمن خلال الفترة الحالية."}
-          </p>
         </article>
       </div>
 

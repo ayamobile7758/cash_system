@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState, useTransition } from "react";
 import { AlertTriangle, Download, Loader2, ShieldCheck, Upload } from "lucide-react";
@@ -312,7 +312,6 @@ export function PortabilityWorkspace({
       <PageHeader
         eyebrow="النقل والنسخ"
         title="مركز النقل والاستيراد والاستعادة التجريبية"
-        description="قسّم العمل بين إنشاء الحزم، فحص الاستيراد، وتجارب الاستعادة المعزولة، مع إبقاء السجل الأخير ظاهرًا في مكان أهدأ وأوضح."
         meta={
           <div className="configuration-page__meta-grid">
             <article className="configuration-page__meta-card">
@@ -320,17 +319,14 @@ export function PortabilityWorkspace({
               <strong className="configuration-page__meta-value">
                 {formatCompactNumber(packages.filter((item) => item.status === "ready" && !item.is_expired).length)}
               </strong>
-              <span className="configuration-page__meta-hint">جاهزة للتنزيل أو الإبطال عند الحاجة</span>
             </article>
             <article className="configuration-page__meta-card">
               <span className="configuration-page__meta-label">عمليات الاستيراد</span>
               <strong className="configuration-page__meta-value">{formatCompactNumber(importJobs.length)}</strong>
-              <span className="configuration-page__meta-hint">تتبع نتائج الفحص الأولي والالتزامات المنفذة</span>
             </article>
             <article className="configuration-page__meta-card">
               <span className="configuration-page__meta-label">تجارب الاستعادة</span>
               <strong className="configuration-page__meta-value">{formatCompactNumber(restoreDrills.length)}</strong>
-              <span className="configuration-page__meta-hint">كل الاستعادات هنا تبقى داخل بيئة معزولة فقط</span>
             </article>
           </div>
         }
@@ -389,13 +385,10 @@ export function PortabilityWorkspace({
       <SectionCard
         eyebrow="الخصوصية والتتبع"
         title="كل إجراء هنا مؤقت ومراقب"
-        description="الحزم تُسجّل إداريًا، تبقى صالحة لفترة محددة، والاستعادة لا تعمل إلا داخل بيئة تجريبية معزولة."
         tone="subtle"
         className="configuration-card configuration-card--danger"
       >
-        <p className="configuration-inline-note">
-          لا تُجرى أي استعادة مباشرة على البيئة الأساسية من هذه الشاشة، ويُفضّل إبطال الحزم فور انتهاء الحاجة التشغيلية إليها.
-        </p>
+        <p className="configuration-inline-note">الاستعادة المباشرة غير متاحة من هذه الشاشة.</p>
       </SectionCard>
 
       {activeSection === "export" ? (
@@ -403,7 +396,6 @@ export function PortabilityWorkspace({
           <SectionCard
             eyebrow="التصدير"
             title="أنشئ الحزمة المناسبة للنطاق"
-            description="حدد نطاق البيانات ونوع الحزمة أولًا، ثم راجع تاريخ الانتهاء قبل إرسالها للمستخدم المعني."
             tone="accent"
             className="configuration-card"
           >
@@ -462,8 +454,7 @@ export function PortabilityWorkspace({
 
           <SectionCard
             eyebrow="آخر نتيجة"
-            title="راجع الصلاحية قبل التنزيل"
-            description="اعرض آخر حزمة أُنشئت ثم انتقل إلى سجل الحزم إذا احتجت التنزيل أو الإبطال."
+            title="آخر نتيجة الفحص"
             className="configuration-card"
           >
             {lastExport ? (
@@ -474,7 +465,7 @@ export function PortabilityWorkspace({
               </div>
             ) : (
               <div className="empty-panel">
-                <p>لم تُنشأ حزمة في هذه الجلسة بعد. استخدم النموذج المجاور ليظهر ملخص الحزمة هنا.</p>
+                <p>لا توجد حزمة محفوظة في هذه الجلسة.</p>
               </div>
             )}
           </SectionCard>
@@ -486,7 +477,6 @@ export function PortabilityWorkspace({
           <SectionCard
             eyebrow="الاستيراد"
             title="افحص الملف أولًا ثم اعتمد الصفوف السليمة"
-            description="ابدأ دائمًا بالفحص الأولي قبل أي التزام فعلي، واسمح بالاستيراد فقط عندما تكون النتيجة خالية من الصفوف غير السليمة."
             tone="accent"
             className="configuration-card"
           >
@@ -513,8 +503,7 @@ export function PortabilityWorkspace({
 
           <SectionCard
             eyebrow="النتيجة"
-            title="لا تُنفّذ الالتزام إلا بعد مراجعة الأرقام"
-            description="راقب الصفوف السليمة وغير السليمة أولًا، ثم نفّذ الاستيراد الفعلي إذا كانت نتيجة الفحص مناسبة."
+            title="نتيجة الفحص"
             className="configuration-card"
           >
             {dryRunResult ? (
@@ -536,7 +525,7 @@ export function PortabilityWorkspace({
               </div>
             ) : (
               <div className="empty-panel">
-                <p>ارفع ملفًا وشغّل الفحص الأولي لتظهر نتائج الاعتماد هنا.</p>
+                <p>لا توجد نتائج استيراد معتمدة بعد.</p>
               </div>
             )}
           </SectionCard>
@@ -547,7 +536,6 @@ export function PortabilityWorkspace({
         <SectionCard
           eyebrow="الاستعادة التجريبية"
           title="استعادة معزولة داخل بيئة الاختبار"
-          description="اختر حزمة النسخ الاحتياطي المناسبة ثم شغّل الاستعادة داخل البيئة المعزولة فقط، مع إبقاء نتيجة آخر تجربة مرئية للمراجعة السريعة."
           tone="subtle"
           className="configuration-card configuration-card--danger"
         >
@@ -556,7 +544,7 @@ export function PortabilityWorkspace({
               <label className="stack-field">
                 <span>حزمة النسخ الاحتياطي</span>
                 <select value={selectedBackupId} onChange={(event) => setSelectedBackupId(event.target.value)}>
-                  <option value="">اختر حزمة</option>
+                  <option value="">حزمة النسخ الاحتياطي</option>
                   {backupPackages.map((item) => (
                     <option key={item.id} value={item.id}>
                       {item.file_name}
@@ -584,7 +572,7 @@ export function PortabilityWorkspace({
               </div>
             ) : (
               <div className="empty-panel">
-                <p>شغّل استعادة تجريبية من الحزمة المناسبة لتظهر خلاصة النتيجة هنا.</p>
+                <p>لا توجد استعادة تجريبية محفوظة بعد.</p>
               </div>
             )}
           </div>
@@ -596,13 +584,12 @@ export function PortabilityWorkspace({
           <SectionCard
             eyebrow="الحزم الأخيرة"
             title="سجل الحزم الجاهزة والملغاة"
-            description="تابع حالة كل حزمة، تاريخ الانتهاء، وخيارات التنزيل أو الإبطال من مساحة واحدة أكثر هدوءًا."
             className="configuration-card"
           >
             <div className="stack-list">
               {packages.length === 0 ? (
                 <div className="empty-panel">
-                  <p>لا توجد حزم محفوظة بعد. ابدأ بإنشاء حزمة تصدير لتظهر نتائجها هنا.</p>
+                  <p>لا توجد حزم محفوظة بعد.</p>
                 </div>
               ) : (
                 packages.map((item) => (
@@ -646,7 +633,6 @@ export function PortabilityWorkspace({
           <SectionCard
             eyebrow="آخر العمليات"
             title="فحوص الاستيراد وتجارب الاستعادة"
-            description="اجمع آخر محاولات الفحص، الالتزامات الفعلية، وتجارب الاستعادة المعزولة في سجل واحد سهل المراجعة."
             className="configuration-card"
           >
             <div className="stack-list">
@@ -691,7 +677,6 @@ export function PortabilityWorkspace({
       <ConfirmationDialog
         open={confirmAction?.type === "revoke-package"}
         title="إبطال حزمة التصدير"
-        description="سيُبطل هذا الإجراء الحزمة الحالية ويمنع تنزيلها لاحقًا. استخدمه فقط إذا انتهت الحاجة إليها أو تغير نطاق البيانات."
         confirmLabel="إبطال الحزمة"
         onConfirm={() => {
           if (confirmAction?.type === "revoke-package") {
@@ -706,7 +691,6 @@ export function PortabilityWorkspace({
       <ConfirmationDialog
         open={confirmAction?.type === "commit-import"}
         title="تأكيد استيراد المنتجات"
-        description="سيتحول الفحص الأولي الحالي إلى استيراد فعلي للصفوف السليمة فقط. أكمل العملية بعد مراجعة نتيجة الفحص."
         confirmLabel="تنفيذ الاستيراد"
         onConfirm={() => {
           if (confirmAction?.type === "commit-import") {
@@ -720,7 +704,6 @@ export function PortabilityWorkspace({
       <ConfirmationDialog
         open={confirmAction?.type === "restore-drill"}
         title="تأكيد الاستعادة التجريبية"
-        description="سيُشغّل هذا الإجراء استعادة معزولة باستخدام حزمة النسخ الاحتياطي المحددة دون التأثير على البيئة الأساسية."
         confirmLabel="تشغيل الاستعادة"
         onConfirm={handleRestoreDrill}
         onCancel={() => setConfirmAction(null)}

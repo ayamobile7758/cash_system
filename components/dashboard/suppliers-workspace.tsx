@@ -351,7 +351,6 @@ export function SuppliersWorkspace({
       <PageHeader
         eyebrow="الموردون"
         title="الموردون والمشتريات"
-        description="نظّم دليل الموردين، أنشئ أوامر الشراء، وتابع التسديدات وسجل الحركة من مساحة تشغيلية أكثر هدوءًا."
         meta={
           <>
             <span className="status-pill status-pill--brand">الموردون: {formatCompactNumber(suppliers.length)}</span>
@@ -365,17 +364,14 @@ export function SuppliersWorkspace({
         <article className="operational-page__meta-card">
           <span className="operational-page__meta-label">الدليل النشط</span>
           <strong className="operational-page__meta-value">{formatCompactNumber(suppliers.filter((supplier) => supplier.is_active).length)}</strong>
-          <span className="operational-page__meta-hint">راجع الموردين بحسب الرصيد، النشاط، أو آخر تحديث.</span>
         </article>
         <article className="operational-page__meta-card">
           <span className="operational-page__meta-label">موردون برصيد مستحق</span>
           <strong className="operational-page__meta-value">{formatCompactNumber(payableSuppliers.length)}</strong>
-          <span className="operational-page__meta-hint">مؤشر أولويات السداد الحالية.</span>
         </article>
         <article className="operational-page__meta-card">
           <span className="operational-page__meta-label">إجمالي المشتريات المعروضة</span>
           <strong className="operational-page__meta-value">{formatCompactNumber(purchaseOrders.length)}</strong>
-          <span className="operational-page__meta-hint">تعرض القائمة أحدث أوامر الشراء وتفاصيل الأصناف المرتبطة بها.</span>
         </article>
       </section>
 
@@ -399,7 +395,6 @@ export function SuppliersWorkspace({
       ) : null}
 
       <div className="operational-section-nav" aria-label="أقسام الموردين والمشتريات">
-        <span className="operational-section-nav__hint">أقسام الموردين والمشتريات.</span>
         <button
           type="button"
           className={activeSection === "directory" ? "chip-button is-selected" : "chip-button"}

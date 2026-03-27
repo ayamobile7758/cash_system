@@ -230,24 +230,20 @@ export function MaintenanceWorkspace({
       <PageHeader
         eyebrow="الصيانة"
         title="الصيانة الأساسية"
-        description="أنشئ أوامر الصيانة، تابع حالة كل جهاز، وسجّل التحصيل من مساحة تشغيلية أوضح وأهدأ."
       />
 
       <div className="operational-page__meta-grid">
         <article className="operational-page__meta-card">
           <span className="operational-page__meta-label">أوامر مفتوحة</span>
           <strong className="operational-page__meta-value">{formatCompactNumber(summary.open_count)}</strong>
-          <p className="operational-page__meta-hint">الأجهزة التي ما زالت قيد المتابعة.</p>
         </article>
         <article className="operational-page__meta-card">
           <span className="operational-page__meta-label">جاهزة للتسليم</span>
           <strong className="operational-page__meta-value">{formatCompactNumber(summary.ready_count)}</strong>
-          <p className="operational-page__meta-hint">طلبات تنتظر التسليم أو التحصيل.</p>
         </article>
         <article className="operational-page__meta-card">
           <span className="operational-page__meta-label">إيراد الصيانة</span>
           <strong className="operational-page__meta-value">{formatCurrency(summary.delivered_revenue)}</strong>
-          <p className="operational-page__meta-hint">إجمالي الإيراد من أوامر الصيانة المسلّمة.</p>
         </article>
       </div>
 
@@ -580,7 +576,6 @@ export function MaintenanceWorkspace({
       <ConfirmationDialog
         open={Boolean(confirmCancelJobId)}
         title="تأكيد إلغاء أمر الصيانة"
-        description="سيتم إيقاف أمر الصيانة الحالي وإغلاقه كملغى."
         confirmLabel="تأكيد الإلغاء"
         cancelLabel="الرجوع"
         tone="danger"

@@ -241,24 +241,20 @@ export function ExpensesWorkspace({
       <PageHeader
         eyebrow="المصروفات"
         title="المصروفات ومركز الفئات"
-        description="سجّل المصروفات اليومية، راقب أثرها سريعًا، ونظّم الفئات التشغيلية من مساحة واحدة أوضح."
       />
 
       <div className="operational-page__meta-grid">
         <article className="operational-page__meta-card stat-card">
           <span className="operational-page__meta-label">إجمالي الشهر</span>
           <strong className="operational-page__meta-value">{formatCurrency(summary.total_expenses)}</strong>
-          <p className="operational-page__meta-hint">إجمالي المصروفات في الشهر الحالي.</p>
         </article>
         <article className="operational-page__meta-card stat-card">
           <span className="operational-page__meta-label">عدد القيود</span>
           <strong className="operational-page__meta-value">{formatCompactNumber(summary.expense_count)}</strong>
-          <p className="operational-page__meta-hint">عدد المصروفات المسجلة خلال الفترة الحالية.</p>
         </article>
         <article className="operational-page__meta-card stat-card">
           <span className="operational-page__meta-label">الفئات النشطة</span>
           <strong className="operational-page__meta-value">{formatCompactNumber(summary.active_category_count)}</strong>
-          <p className="operational-page__meta-hint">فئات المصروف المتاحة للفريق حاليًا.</p>
         </article>
       </div>
 

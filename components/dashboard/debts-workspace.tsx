@@ -189,7 +189,6 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
       <PageHeader
         eyebrow="الديون"
         title="الديون والتسديد"
-        description="راجع أرصدة العملاء، افتح القيود المعلقة، وسجل التسديدات أو الديون اليدوية من مساحة تقلل التشتيت وتبقي الإجراءات الحرجة في متناولك."
         meta={
           <div className="transaction-page__meta" aria-label="ملخص شاشة الديون">
             <article className="transaction-page__meta-card stat-card">
@@ -257,7 +256,6 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
         <SectionCard
           eyebrow="سجل العملاء"
           title="العملاء والرصيد المفتوح"
-          description="ابحث باسم العميل أو هاتفه ثم انتقل بسرعة إلى القيود المفتوحة أو لوحة التسديد."
           className="transaction-card"
         >
           <div className="workspace-toolbar transaction-toolbar">
@@ -304,7 +302,6 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
           <SectionCard
             eyebrow="ملف العميل"
             title={selectedCustomer?.name ?? "اختر عميلًا"}
-            description="الملخص الثابت يعرض الرصيد الحالي وعدد القيود المفتوحة، ثم يترك لك مساحة أوضح لقراءة التاريخ أو تسجيل التسديد."
             className="transaction-card"
           >
             {selectedCustomer ? (
@@ -497,11 +494,11 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                   </div>
                 ) : null}
               </>
-            ) : (
-              <div className="empty-panel transaction-empty-panel">
-                <p>اختر عميلًا من القائمة لعرض التفاصيل.</p>
-              </div>
-            )}
+                ) : (
+                  <div className="empty-panel transaction-empty-panel">
+                    <p>لا توجد تفاصيل متاحة.</p>
+                  </div>
+                )}
           </SectionCard>
         </div>
       </div>

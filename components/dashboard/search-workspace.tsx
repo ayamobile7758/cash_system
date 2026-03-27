@@ -58,7 +58,6 @@ export function SearchWorkspace({ baseline }: SearchWorkspaceProps) {
       <PageHeader
         eyebrow="البحث الشامل"
         title="نتائج البحث"
-        description="ابحث بين المنتجات والفواتير والديون والصيانة من نقطة واحدة، ثم افتح المسار المناسب مباشرة."
         meta={
           <div className="transaction-page__meta" aria-label="ملخص البحث">
             <article className="transaction-page__meta-card stat-card">
@@ -81,7 +80,7 @@ export function SearchWorkspace({ baseline }: SearchWorkspaceProps) {
         <StatusBanner variant="danger" title="تعذر تفسير طلب البحث" message={errorMessage} />
       ) : null}
 
-      <SectionCard eyebrow="التصفية" title="حدد نوع النتائج" description="فلتر النتائج حسب النوع المتاح لهذا الحساب." tone="accent">
+      <SectionCard eyebrow="التصفية" title="حدد نوع النتائج" tone="accent">
         <div className="chip-row" aria-label="تصفية نتائج البحث">
           {entityChips.map((entity) => (
             <Link
@@ -115,7 +114,6 @@ export function SearchWorkspace({ baseline }: SearchWorkspaceProps) {
               key={group.entity}
               eyebrow={group.title}
               title={`${group.title} (${group.items.length})`}
-              description="النتائج الأقرب تطابقًا تظهر أولًا."
               className="transaction-card"
             >
               <div className="transaction-stack">

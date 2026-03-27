@@ -6,7 +6,7 @@ import { AlertTriangle, Loader2 } from "lucide-react";
 type ConfirmationDialogProps = {
   open: boolean;
   title: string;
-  description: string;
+  description?: string;
   confirmLabel: string;
   cancelLabel?: string;
   onConfirm: () => void;
@@ -30,6 +30,8 @@ export function ConfirmationDialog({
     return null;
   }
 
+  const descriptionId = description ? "confirmation-dialog-description" : undefined;
+
   return (
     <div className="dialog-backdrop" role="presentation" onClick={isPending ? undefined : onCancel}>
       <div
@@ -37,7 +39,7 @@ export function ConfirmationDialog({
         role="dialog"
         aria-modal="true"
         aria-labelledby="confirmation-dialog-title"
-        aria-describedby="confirmation-dialog-description"
+        aria-describedby={descriptionId}
         onClick={(event) => event.stopPropagation()}
       >
         <div className="confirmation-dialog__icon">
@@ -46,7 +48,7 @@ export function ConfirmationDialog({
 
         <div className="confirmation-dialog__copy">
           <h2 id="confirmation-dialog-title">{title}</h2>
-          <p id="confirmation-dialog-description">{description}</p>
+          {description ? <p id={descriptionId}>{description}</p> : null}
         </div>
 
         <div className="confirmation-dialog__actions">

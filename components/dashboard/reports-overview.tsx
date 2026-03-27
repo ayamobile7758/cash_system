@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { ReportsAdvancedCharts } from "@/components/dashboard/reports-advanced-charts";
 import { PageHeader } from "@/components/ui/page-header";
 import { SectionCard } from "@/components/ui/section-card";
@@ -120,8 +120,7 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
       <SectionCard
         id="reports-filters"
         eyebrow="الفلاتر"
-        title="حدد النطاق أولًا"
-        description="أبقِ فترة التقرير واضحة ثم أضف المقارنة أو التجميع أو التصفية حسب المستخدم والحالة والجهاز."
+        title="نطاق التقرير"
         tone="accent"
         className="analytical-card analytical-card--filters"
       >
@@ -223,7 +222,6 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
         <SectionCard
           eyebrow="المقارنة"
           title="ملخص سريع قبل النزول إلى التفاصيل"
-          description="اعرض الفترة الحالية مقابل فترة المقارنة ثم راقب فرق المبيعات والربح قبل فتح الجداول."
           className="analytical-card"
         >
           <div className="analytical-kpi-grid">
@@ -259,7 +257,6 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
         <SectionCard
           eyebrow="الاتجاهات"
           title="اتجاه المبيعات وتفكيك البعد الحالي"
-          description="الرسوم البيانية تأتي قبل الجدول حتى يبدأ التحليل بالصورة العامة ثم ينتقل إلى القراءة الدقيقة."
           className="analytical-card"
         >
           <ReportsAdvancedCharts trend={advancedReport.trend} breakdown={advancedReport.breakdown} />
@@ -268,7 +265,6 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
         <SectionCard
           eyebrow="جدول المقارنة"
           title="تفصيل القيم بعد التجميع"
-          description="راجع القيم الأساسية والثانوية وعدد العناصر في جدول واحد بعد حسم الفلاتر."
           className="analytical-card"
         >
           <div className="table-wrap">
@@ -308,7 +304,6 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
         <SectionCard
           eyebrow="لوحة المؤشرات"
           title="مؤشرات سريعة من المتابعة اليومية"
-          description="هذه اللوحة تختصر النشاط المالي والتشغيلي قبل فتح أي جداول تفصيلية."
           className="analytical-card"
         >
           <div className="analytical-kpi-grid">
@@ -384,7 +379,6 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
         <SectionCard
           eyebrow="سجل المبيعات"
           title="الفواتير المطابقة للفلاتر"
-          description={`العدد الكلي بعد الفلاتر: ${formatCompactNumber(reportBaseline.salesHistory.total_count)}`}
           className="analytical-card"
         >
           <div className="action-row action-row--end">
@@ -434,7 +428,6 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
         <SectionCard
           eyebrow="اللقطات اليومية"
           title="آخر اللقطات اليومية"
-          description="تظهر هنا أحدث اللقطات اليومية المرتبطة بالنشاط الحالي لتسهيل الربط بين الحركة اليومية والأرقام."
           tone="subtle"
           className="analytical-card"
         >
@@ -504,7 +497,6 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
                     {formatCompactNumber(product.stock_quantity)} / {formatCompactNumber(product.min_stock_level)}
                   </span>
                 </div>
-                <p className="workspace-footnote">يعرض الكمية الحالية مقابل حد التنبيه.</p>
               </article>
             ))}
           </div>
@@ -515,7 +507,6 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
         id="reports-returns"
         eyebrow="تحليل المرتجعات"
         title="الأسباب والعمليات المرتبطة بالمرتجعات"
-        description={`${formatCompactNumber(reportBaseline.returnsReport.return_count)} عملية | ${formatCurrency(reportBaseline.returnsReport.total_returns)}`}
         className="analytical-card"
       >
         <div className="analytical-shell analytical-shell--split">
@@ -577,7 +568,6 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
       <SectionCard
         eyebrow="حركات الحسابات"
         title="الحركة التفصيلية حسب الحسابات"
-        description={`${formatCompactNumber(reportBaseline.accountMovementReport.total_movements)} حركة داخل الفترة`}
         className="analytical-card"
       >
         <div className="analytical-shell analytical-shell--split">
@@ -600,7 +590,7 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
               ))
             ) : (
               <div className="empty-panel">
-                <p>لا توجد حركات حسابات ضمن الفترة الحالية. غيّر الفترة أو راجع نشاط الحسابات.</p>
+                <p>لا توجد حركات حسابات ضمن الفترة الحالية.</p>
               </div>
             )}
           </div>
@@ -646,7 +636,6 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
         id="reports-maintenance"
         eyebrow="أداء الصيانة"
         title="ملخص الصيانة والإيراد المسلّم"
-        description={`المسلّم: ${formatCompactNumber(reportBaseline.maintenanceReport.delivered_count)} | الجاهز: ${formatCompactNumber(reportBaseline.maintenanceReport.ready_count)} | المفتوح: ${formatCompactNumber(reportBaseline.maintenanceReport.open_count)}`}
         className="analytical-card"
       >
         <div className="analytical-kpi-grid">
@@ -688,7 +677,7 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
               ) : (
                 <tr>
                   <td colSpan={6} className="table-empty">
-                    لا توجد أوامر صيانة داخل الفترة الحالية. غيّر المدة أو راجع شاشة الصيانة.
+                    لا توجد أوامر صيانة داخل الفترة الحالية.
                   </td>
                 </tr>
               )}

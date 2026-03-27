@@ -274,7 +274,6 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
       <PageHeader
         eyebrow="فهرس المنتجات"
         title="المنتجات الجاهزة للبيع"
-        description="تصفح الكتالوج بحسب التصنيف، راقب حالة المخزون، وادِر المنتجات مباشرة إذا كان الحساب إداريًا."
         meta={
           <>
             <span className="status-pill badge badge--brand">الدور: {role === "admin" ? "إداري" : "نقطة بيع"}</span>
@@ -302,21 +301,14 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
         <article className="operational-page__meta-card stat-card">
           <span className="operational-page__meta-label">المنتجات الظاهرة</span>
           <strong className="operational-page__meta-value">{formatCompactNumber(filteredProducts.length)}</strong>
-          <span className="operational-page__meta-hint">العدد يتغير مباشرة بحسب البحث والتصنيف الحاليين.</span>
         </article>
         <article className="operational-page__meta-card stat-card">
           <span className="operational-page__meta-label">مخزون منخفض</span>
           <strong className="operational-page__meta-value">{formatCompactNumber(lowStockCount)}</strong>
-          <span className="operational-page__meta-hint">يعرض المنتجات التي تحتاج متابعة سريعة قبل نفاد الكمية.</span>
         </article>
         <article className="operational-page__meta-card stat-card">
           <span className="operational-page__meta-label">حالة العرض</span>
           <strong className="operational-page__meta-value">{role === "admin" ? "كتالوج إداري" : "عرض مخصص للبيع"}</strong>
-          <span className="operational-page__meta-hint">
-            {role === "admin"
-              ? "إدارة المخزون والتعديل المباشر متاحان في هذه الشاشة."
-              : "هذا العرض مخصص للبيع اليومي."}
-          </span>
         </article>
       </section>
 
@@ -324,7 +316,6 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
         <SectionCard
           eyebrow="إدارة المنتجات"
           title={selectedProduct ? `تعديل المنتج: ${selectedProduct.name}` : "إضافة منتج جديد"}
-          description="أنشئ منتجًا جديدًا أو عدّل منتجًا موجودًا مباشرة من نفس الصفحة، ثم احفظ التغييرات فورًا."
           tone="accent"
           className="operational-card product-admin-card"
         >
@@ -505,7 +496,6 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
         <SectionCard
           eyebrow="البحث والتصنيف"
           title="ابدأ من المنتج أو التصنيف"
-          description="حرّك الكتالوج بسرعة عبر البحث المباشر أو تصفية النتائج بحسب نوع المنتج."
           tone="accent"
           className="operational-sidebar operational-sidebar--sticky"
         >
@@ -599,7 +589,6 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
             <SectionCard
               eyebrow="لا توجد نتائج"
               title="لم نصل إلى منتجات مطابقة"
-              description="جرّب عبارة أخرى أو انتقل إلى تصنيف مختلف لإظهار المنتجات المتاحة للبيع."
               tone="subtle"
             >
               {hasMore ? (
@@ -614,7 +603,6 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
             <SectionCard
               eyebrow="الكتالوج"
               title="بطاقات المنتجات"
-              description="بطاقات مضغوطة تسهّل قراءة الاسم والسعر والمخزون دون إخفاء المعلومات الضرورية للبيع."
             >
               <div className="product-grid">
                 {filteredProducts.map((product) => (
@@ -718,7 +706,6 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
           <SectionCard
             eyebrow="ملاحظات العرض"
             title="استخدام تشغيلي أوضح"
-            description="الكتالوج هنا مخصص للمراجعة والبحث السريع فقط. عمليات البيع والتحكم بالكميات تبقى داخل مساحة نقطة البيع نفسها."
             tone="subtle"
           >
             <div className="operational-inline-summary">

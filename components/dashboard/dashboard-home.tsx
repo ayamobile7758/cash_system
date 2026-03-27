@@ -81,7 +81,6 @@ export function DashboardHome({ alertsSummary, recentInvoices, today, todaySales
       <PageHeader
         eyebrow="لوحة المتابعة"
         title="ملخص يومي سريع"
-        description="راجع اليوم، راقب التنبيهات، وافتح آخر الفواتير من شاشة واحدة قبل الانتقال إلى المسار المناسب."
         meta={
           <div className="transaction-page__meta" aria-label="ملخص اليوم">
             <article className="transaction-page__meta-card stat-card">
@@ -100,7 +99,7 @@ export function DashboardHome({ alertsSummary, recentInvoices, today, todaySales
         }
       />
 
-      <SectionCard eyebrow="التنبيهات" title="حركة تحتاج متابعة" description="القراءة السريعة للأولويات التشغيلية اليوم." tone="accent">
+      <SectionCard eyebrow="التنبيهات" title="حركة تحتاج متابعة" tone="accent">
         <div className="operational-page__meta-grid" aria-label="بطاقات التنبيهات">
           {alertKeys.map((key) => (
             <Link key={key} href={getAlertHref(key)} className="transaction-page__meta-card stat-card">
@@ -112,7 +111,7 @@ export function DashboardHome({ alertsSummary, recentInvoices, today, todaySales
         </div>
       </SectionCard>
 
-      <SectionCard eyebrow="الفواتير" title="آخر 5 فواتير اليوم" description="عرض سريع للحركة الأخيرة قبل فتح شاشة الفواتير التفصيلية.">
+      <SectionCard eyebrow="الفواتير" title="آخر 5 فواتير اليوم">
         {recentInvoices.length === 0 ? (
           <p className="workspace-footnote">لا توجد فواتير مسجلة لهذا اليوم بعد.</p>
         ) : (

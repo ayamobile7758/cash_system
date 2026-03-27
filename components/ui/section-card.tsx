@@ -5,7 +5,6 @@ type SectionCardTone = "default" | "accent" | "subtle";
 type SectionCardProps = HTMLAttributes<HTMLElement> & {
   eyebrow?: string;
   title?: string;
-  description?: string;
   tone?: SectionCardTone;
   children?: ReactNode;
 };
@@ -13,7 +12,6 @@ type SectionCardProps = HTMLAttributes<HTMLElement> & {
 export function SectionCard({
   eyebrow,
   title,
-  description,
   tone = "default",
   children,
   className,

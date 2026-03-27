@@ -2006,7 +2006,6 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
       <ConfirmationDialog
         open={isClearCartDialogOpen}
         title="تفريغ السلة الحالية"
-        description="سيتم حذف جميع البنود المختارة وإعادة السلة إلى وضعها الفارغ."
         confirmLabel="تفريغ السلة"
         cancelLabel="إلغاء"
         tone="danger"

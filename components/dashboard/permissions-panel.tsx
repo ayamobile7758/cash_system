@@ -178,7 +178,6 @@ export function PermissionsPanel({
       <PageHeader
         eyebrow="الصلاحيات"
         title="مركز الحِزم والصلاحيات الدقيقة"
-        description="عاين الحزمة أولًا، ثم راقب أثرها على الدور الأساسي وحدود الخصم قبل الإسناد أو الإلغاء."
         meta={
           <div className="configuration-summary-grid">
             <article className="configuration-summary-card">
@@ -221,7 +220,6 @@ export function PermissionsPanel({
         <SectionCard
           eyebrow="إدارة الإسناد"
           title="حدّد الحزمة والمستخدم أولًا"
-          description="استخدم هذه المساحة لمعاينة الحزمة، ثم أكمل الإسناد أو الإلغاء بعد مراجعة أثرها على الدور الأساسي."
           tone="accent"
           className="configuration-card"
         >
@@ -298,7 +296,6 @@ export function PermissionsPanel({
             <SectionCard
               eyebrow="معاينة الحزمة"
               title={selectedBundle?.label ?? preview.bundle_key}
-              description={selectedBundle?.description ?? "هذه المعاينة توضّح أثر الحزمة قبل إسنادها فعليًا."}
               className="configuration-card"
             >
               <div className="configuration-summary-grid">
@@ -325,7 +322,6 @@ export function PermissionsPanel({
             <SectionCard
               eyebrow="الإسنادات الحالية"
               title={selectedUser.full_name ?? selectedUser.id}
-              description="راجع الحِزم الحالية للمستخدم قبل تنفيذ أي تعديل إضافي."
               tone="subtle"
               className="configuration-card"
             >
@@ -349,7 +345,6 @@ export function PermissionsPanel({
       <ConfirmationDialog
         open={confirmAction?.type === "assign-bundle"}
         title="تأكيد إسناد الحزمة"
-        description="سيُضاف هذا الإسناد إلى المستخدم المحدد ويُطبق مباشرة على الصلاحيات الممنوحة له."
         confirmLabel="إسناد الحزمة"
         onConfirm={() => manageAssignment("POST")}
         onCancel={() => setConfirmAction(null)}
@@ -359,7 +354,6 @@ export function PermissionsPanel({
       <ConfirmationDialog
         open={confirmAction?.type === "revoke-bundle"}
         title="تأكيد إلغاء الحزمة"
-        description="سيُزال هذا الإسناد من المستخدم المحدد. استخدمه فقط بعد التحقق من الأثر التشغيلي على دوره الحالي."
         confirmLabel="إلغاء الحزمة"
         onConfirm={() => manageAssignment("DELETE")}
         onCancel={() => setConfirmAction(null)}
