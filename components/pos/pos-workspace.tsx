@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-
+import * as React from "react";
 import { useDeferredValue, useEffect, useRef, useState, useTransition } from "react";
 import {
   ArrowRight,
@@ -30,6 +29,7 @@ import { useProducts } from "@/hooks/use-products";
 import { getSafeArabicErrorMessage } from "@/lib/error-messages";
 import type {
   PosAccount,
+  PosProduct,
   SaleCompletionPayment,
   SaleResponseData,
   StandardEnvelope
@@ -100,8 +100,8 @@ function getProductStockState(product: {
 }) {
   if (!product.track_stock) {
     return {
-      label: "خدمة",
-      tone: "ok"
+      label: "متوفر",
+      tone: "available"
     } as const;
   }
 
@@ -112,16 +112,16 @@ function getProductStockState(product: {
     } as const;
   }
 
-  if (product.stock_quantity <= Math.max(1, product.min_stock_level)) {
+  if (product.stock_quantity <= 5) {
     return {
-      label: `${formatCompactNumber(product.stock_quantity)} منخفض`,
+      label: `${formatCompactNumber(product.stock_quantity)} فقط`,
       tone: "low"
     } as const;
   }
 
   return {
     label: `${formatCompactNumber(product.stock_quantity)} متوفر`,
-    tone: "ok"
+    tone: "available"
   } as const;
 }
 
@@ -372,6 +372,59 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     (account) =>
       account.id === selectedAccountId || !usedAdditionalAccountIds.includes(account.id)
   );
+
+  function renderCompactProductCard(product: PosProduct, variant: "quick-add" | "grid") {
+    const stockState = getProductStockState(product);
+    const isThumbnailView = productView === "thumbnail";
+    const productCardClassName = [
+      "pos-product-card",
+      "pos-product-card--compact",
+      isThumbnailView ? "pos-product-card--compact-thumbnail" : "",
+      variant === "quick-add" ? "pos-product-card--quick-add" : ""
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    return (
+      <button
+        key={product.id}
+        type="button"
+        className={productCardClassName}
+        onClick={() => {
+          clearSubmissionFeedback();
+          addProduct(product);
+        }}
+        disabled={product.track_stock && product.stock_quantity <= 0}
+      >
+        <span
+          className={
+            isThumbnailView
+              ? "pos-product-card__thumb pos-product-card__thumb--thumbnail"
+              : "pos-product-card__thumb"
+          }
+          aria-hidden="true"
+        >
+          <ImageIcon size={isThumbnailView ? 24 : 18} />
+        </span>
+
+        <span className="pos-product-card__info">
+          <span className="pos-product-card__name">{product.name}</span>
+          <span className="pos-product-card__sku">{product.sku ?? "بدون SKU"}</span>
+        </span>
+
+        <span className="pos-product-card__pricing">
+          <span className="pos-product-card__price">
+            {formatCurrency(product.sale_price)}
+          </span>
+          <span
+            className={`pos-product-card__stock pos-product-card__stock--${stockState.tone}`}
+          >
+            {stockState.label}
+          </span>
+        </span>
+      </button>
+    );
+  }
 
   useEffect(() => {
     setCartHydrated(usePosCartStore.persist.hasHydrated());
@@ -957,9 +1010,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
             <div className="pos-topbar__identity">
               <h1 className="pos-topbar__label">نقطة البيع السريعة</h1>
               {selectedAccount ? (
-                <span className="pos-topbar__account">
-                  {selectedAccount.name}
-                </span>
+                <span className="pos-topbar__account">{selectedAccount.name}</span>
               ) : null}
             </div>
 
@@ -1062,47 +1113,10 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                 </div>
 
                 {quickAddProducts.length > 0 ? (
-                  <div className="quick-add-row">
-                    {quickAddProducts.map((product) => {
-                      const stockState = getProductStockState(product);
-
-                      return (
-                        <button
-                          key={product.id}
-                          type="button"
-                          className="quick-add-card pos-product-card pos-product-card--quick-add"
-                          onClick={() => {
-                            clearSubmissionFeedback();
-                            addProduct(product);
-                          }}
-                        >
-                          {productView === "thumbnail" ? (
-                            <div
-                              className="pos-product-card__thumbnail"
-                              aria-hidden="true"
-                            >
-                              <ImageIcon size={18} />
-                            </div>
-                          ) : null}
-                          <strong className="pos-product-card__name">
-                            {product.name}
-                          </strong>
-                          <span className="pos-product-card__sku">
-                            {product.sku ?? "بدون SKU"}
-                          </span>
-                          <div className="pos-product-card__footer">
-                            <span className="pos-product-card__price">
-                              {formatCurrency(product.sale_price)}
-                            </span>
-                            <span
-                              className={`pos-product-card__stock-indicator pos-product-card__stock-indicator--${stockState.tone}`}
-                            >
-                              {stockState.label}
-                            </span>
-                          </div>
-                        </button>
-                      );
-                    })}
+                  <div className="quick-add-row pos-quick-add-row">
+                    {quickAddProducts.map((product) =>
+                      renderCompactProductCard(product, "quick-add")
+                    )}
                   </div>
                 ) : null}
               </SectionCard>
@@ -1110,13 +1124,13 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
               <SectionCard title="المنتجات" className="transaction-card">
                 {productsLoading ? (
                   <div
-                    className="product-grid product-grid--compact"
+                    className="product-grid product-grid--compact pos-product-grid pos-product-grid--loading"
                     aria-label="جارٍ تحميل منتجات نقطة البيع"
                   >
                     {Array.from({ length: 8 }).map((_, index) => (
                       <article
                         key={`pos-product-skeleton-${index}`}
-                        className="product-card product-card--skeleton"
+                        className="product-card product-card--skeleton pos-product-card-skeleton"
                       >
                         <div className="skeleton-line skeleton-line--sm" />
                         <div className="skeleton-line skeleton-line--lg" />
@@ -1143,46 +1157,9 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                         </button>
                       </div>
                     ) : (
-                      filteredProducts.map((product) => {
-                        const stockState = getProductStockState(product);
-
-                        return (
-                          <button
-                            key={product.id}
-                            type="button"
-                            className="pos-product-card product-card product-card--interactive"
-                            onClick={() => {
-                              clearSubmissionFeedback();
-                              addProduct(product);
-                            }}
-                          >
-                            {productView === "thumbnail" ? (
-                              <div
-                                className="pos-product-card__thumbnail"
-                                aria-hidden="true"
-                              >
-                                <ImageIcon size={18} />
-                              </div>
-                            ) : null}
-                            <strong className="pos-product-card__name">
-                              {product.name}
-                            </strong>
-                            <span className="pos-product-card__sku">
-                              {product.sku ?? "بدون SKU"}
-                            </span>
-                            <div className="pos-product-card__footer">
-                              <span className="pos-product-card__price">
-                                {formatCurrency(product.sale_price)}
-                              </span>
-                              <span
-                                className={`pos-product-card__stock-indicator pos-product-card__stock-indicator--${stockState.tone}`}
-                              >
-                                {stockState.label}
-                              </span>
-                            </div>
-                          </button>
-                        );
-                      })
+                      filteredProducts.map((product) =>
+                        renderCompactProductCard(product, "grid")
+                      )
                     )}
                   </div>
                 )}
@@ -1242,14 +1219,21 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                     ? "pos-cart-sheet__confirm-cta btn btn--warning"
                     : "pos-cart-sheet__confirm-cta btn btn--primary"
                 }
-                disabled={panelState === "processing" || isSubmitting || !canConfirmSale || isOffline}
+                disabled={
+                  panelState === "processing" ||
+                  isSubmitting ||
+                  !canConfirmSale ||
+                  isOffline
+                }
                 onClick={() => {
                   startSubmission(() => {
                     void submitSale();
                   });
                 }}
               >
-                {panelState === "processing" || isSubmitting ? "جارٍ التنفيذ..." : "تأكيد البيع"}
+                {panelState === "processing" || isSubmitting
+                  ? "جارٍ التنفيذ..."
+                  : "تأكيد البيع"}
               </button>
             </div>
           ) : null}
@@ -1342,7 +1326,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                   <div className="cart-panel__actions">
                     <button
                       type="button"
-                      className="secondary-button"
+                      className="secondary-button cart-panel__header-button"
                       onClick={handleHoldCart}
                       disabled={!canHoldCart}
                     >
@@ -1350,7 +1334,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                     </button>
                     <button
                       type="button"
-                      className="secondary-button"
+                      className="secondary-button cart-panel__header-button"
                       onClick={() => setIsHeldCartsOpen((currentValue) => !currentValue)}
                     >
                       السلال المعلقة
@@ -1362,7 +1346,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
 
                   <button
                     type="button"
-                    className="ghost-button btn btn--ghost"
+                    className="ghost-button btn btn--ghost cart-panel__header-button cart-panel__clear-button"
                     onClick={() => setIsClearCartDialogOpen(true)}
                     disabled={items.length === 0}
                   >
@@ -1494,14 +1478,39 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                     </div>
                   </dl>
 
-                  <button
-                    type="button"
-                    className="primary-button btn btn--primary transaction-checkout-button"
-                    disabled={items.length === 0}
-                    onClick={openCheckout}
-                  >
-                    ادفع {formatCurrency(netTotal)}
-                  </button>
+                  <div className="cart-panel__cta-row">
+                    <button
+                      type="button"
+                      className="primary-button btn btn--primary transaction-checkout-button"
+                      disabled={items.length === 0}
+                      onClick={openCheckout}
+                    >
+                      ادفع {formatCurrency(netTotal)}
+                    </button>
+                    <button
+                      type="button"
+                      className={
+                        canCreateDebt
+                          ? "primary-button btn btn--warning transaction-checkout-button"
+                          : "primary-button btn btn--primary transaction-checkout-button"
+                      }
+                      disabled={isSubmitting || !canConfirmSale || isOffline}
+                      onClick={() => {
+                        startSubmission(() => {
+                          void submitSale();
+                        });
+                      }}
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="spin" size={16} />
+                          جارٍ التنفيذ...
+                        </>
+                      ) : (
+                        "تأكيد البيع"
+                      )}
+                    </button>
+                  </div>
                 </div>
               </>
             ) : (
@@ -1509,7 +1518,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                 <div className="cart-panel__header pos-checkout-header">
                   <button
                     type="button"
-                    className="ghost-button btn btn--ghost"
+                    className="ghost-button btn btn--ghost cart-panel__header-button"
                     onClick={goBackToCart}
                     disabled={panelState === "processing"}
                   >
@@ -1582,23 +1591,29 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                   {isSplitMode ? (
                     <div className="pos-split-payments">
                       <div className="pos-split-payment-row pos-split-payment-row--primary">
-                        {selectedAccount ? (
-                          <button
-                            type="button"
-                            className="chip chip--active pos-payment-chip is-selected"
-                            onClick={() =>
-                              setIsPrimarySplitSelectorOpen(
-                                (currentValue) => !currentValue
-                              )
-                            }
-                            disabled={panelState === "processing"}
-                          >
-                            {React.createElement(getAccountIcon(selectedAccount.type), {
-                              size: 16
-                            })}
-                            {getAccountChipLabel(selectedAccount)}
-                          </button>
-                        ) : null}
+                        {selectedAccount
+                          ? (() => {
+                              const SelectedAccountIcon = getAccountIcon(
+                                selectedAccount.type
+                              );
+
+                              return (
+                                <button
+                                  type="button"
+                                  className="chip chip--active pos-payment-chip is-selected"
+                                  onClick={() =>
+                                    setIsPrimarySplitSelectorOpen(
+                                      (currentValue) => !currentValue
+                                    )
+                                  }
+                                  disabled={panelState === "processing"}
+                                >
+                                  <SelectedAccountIcon size={16} />
+                                  {getAccountChipLabel(selectedAccount)}
+                                </button>
+                              );
+                            })()
+                          : null}
                         <label className="stack-field">
                           <span className="field-label">المبلغ</span>
                           <input
