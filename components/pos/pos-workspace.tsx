@@ -585,7 +585,8 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
       return;
     }
 
-    const compactQuery = window.matchMedia("(max-width: 767px)");
+    // Changed from (max-width: 767px) to (max-width: 1023px) to ensure sidebar is visible on laptop screens
+    const compactQuery = window.matchMedia("(max-width: 1023px)");
 
     const handleViewportChange = () => {
       setIsCompactViewport(compactQuery.matches);

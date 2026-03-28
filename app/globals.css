@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   color-scheme: light;
   background: #f5f4f1;
   color: #1c1c1e;
@@ -1463,6 +1463,24 @@ code {
 .status-banner--offline {
   border-color: rgba(23, 33, 43, 0.14);
   background: rgba(23, 33, 43, 0.06);
+}
+
+/* POS Status Banner - floating position to not affect layout */
+.transaction-page .status-banner {
+  position: fixed;
+  top: var(--topbar-height);
+  left: 0;
+  right: 0;
+  margin: var(--sp-3);
+  margin-inline-start: calc(56px + var(--sp-3));
+  width: auto;
+  z-index: var(--z-offline-bar);
+  border-radius: var(--radius-lg);
+}
+
+/* Ensure section container is properly sized */
+.transaction-page.workspace-stack + .pos-layout {
+  height: calc(100vh - var(--topbar-height));
 }
 
 .dialog-backdrop {
@@ -4522,6 +4540,12 @@ h3 {
   height: calc(100vh - var(--topbar-height));
   overflow: hidden;
   font-size: var(--pos-body-size);
+  gap: 0;
+}
+
+/* Ensure no gap appears between products and sidebar */
+.pos-layout > * {
+  min-width: 0;
 }
 
 .pos-products {
@@ -4705,7 +4729,11 @@ h3 {
 .pos-cart-panel,
 .transaction-stack--sticky {
   height: 100%;
-  overflow: hidden auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .pos-cart-sheet {
@@ -5132,6 +5160,18 @@ h3 {
   );
   border-inline-start: 1px solid var(--aya-line);
   box-shadow: -10px 0 28px rgba(23, 33, 43, 0.06);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* POS Page specific - fix the entire section layout */
+.workspace-stack.transaction-page {
+  height: 100vh;
+  overflow: hidden;
+  display: contents;
+  padding: 0;
+  gap: 0;
 }
 
 .cart-line-card:last-child {
@@ -5153,7 +5193,7 @@ h3 {
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1023px) {
   .pos-layout {
     grid-template-columns: 1fr;
   }
