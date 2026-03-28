@@ -4516,6 +4516,109 @@ h3 {
   padding: var(--sp-3);
 }
 
+.dashboard-layout--pos,
+.dashboard-shell--pos {
+  height: 100vh;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.dashboard-layout--pos .dashboard-content,
+.dashboard-shell--pos .dashboard-content,
+.dashboard-layout--pos .dashboard-main,
+.dashboard-shell--pos .dashboard-main {
+  min-height: 0;
+}
+
+@media (min-width: 1024px) {
+  .dashboard-layout--pos.dashboard-layout--sidebar,
+  .dashboard-shell--pos.dashboard-shell--sidebar {
+    grid-template-columns: minmax(0, 1fr) var(--sidebar-collapsed);
+  }
+
+  .dashboard-layout--pos .dashboard-content,
+  .dashboard-shell--pos .dashboard-content,
+  .dashboard-layout--pos .dashboard-main,
+  .dashboard-shell--pos .dashboard-main {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .dashboard-layout--pos .dashboard-main,
+  .dashboard-shell--pos .dashboard-main {
+    padding: 0;
+  }
+
+  .dashboard-layout--pos .dashboard-sidebar,
+  .dashboard-shell--pos .dashboard-sidebar {
+    width: var(--sidebar-collapsed);
+    min-width: var(--sidebar-collapsed);
+    padding-inline: var(--sp-2);
+    align-items: center;
+    overflow-x: hidden;
+  }
+
+  .dashboard-layout--pos .dashboard-sidebar__brand,
+  .dashboard-shell--pos .dashboard-sidebar__brand,
+  .dashboard-layout--pos .dashboard-sidebar__nav,
+  .dashboard-shell--pos .dashboard-sidebar__nav,
+  .dashboard-layout--pos .dashboard-nav-group,
+  .dashboard-shell--pos .dashboard-nav-group,
+  .dashboard-layout--pos .dashboard-sidebar__footer,
+  .dashboard-shell--pos .dashboard-sidebar__footer {
+    justify-content: center;
+    justify-items: center;
+  }
+
+  .dashboard-layout--pos .dashboard-nav-group,
+  .dashboard-shell--pos .dashboard-nav-group {
+    width: 100%;
+  }
+
+  .dashboard-layout--pos .dashboard-nav-group__header,
+  .dashboard-shell--pos .dashboard-nav-group__header,
+  .dashboard-layout--pos .dashboard-nav__content,
+  .dashboard-shell--pos .dashboard-nav__content {
+    display: none;
+  }
+
+  .dashboard-layout--pos .dashboard-brandmark,
+  .dashboard-shell--pos .dashboard-brandmark,
+  .dashboard-layout--pos .dashboard-nav__item,
+  .dashboard-shell--pos .dashboard-nav__item {
+    justify-content: center;
+  }
+
+  .dashboard-layout--pos .dashboard-nav__item,
+  .dashboard-shell--pos .dashboard-nav__item {
+    gap: 0;
+    padding-inline: 0;
+    width: 100%;
+  }
+
+  .dashboard-layout--pos .dashboard-sidebar__footer,
+  .dashboard-shell--pos .dashboard-sidebar__footer {
+    margin-top: auto;
+    width: 100%;
+  }
+
+  .dashboard-layout--pos .dashboard-sidebar__footer button.secondary-button,
+  .dashboard-shell--pos .dashboard-sidebar__footer button.secondary-button {
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+    padding: 0;
+    justify-content: center;
+    font-size: 0;
+    gap: 0;
+  }
+
+  .dashboard-layout--pos .dashboard-sidebar__footer button.secondary-button svg,
+  .dashboard-shell--pos .dashboard-sidebar__footer button.secondary-button svg {
+    flex-shrink: 0;
+  }
+}
+
 .dashboard-layout--pos .dashboard-content,
 .dashboard-shell--pos .dashboard-content {
   padding: 0;
