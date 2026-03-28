@@ -67,7 +67,7 @@
 
   /* POS */
   --pos-body-size: 15px;
-  --pos-cart-width: min(320px, 30vw);
+  --pos-cart-width: clamp(320px, 30vw, 400px);
 
   /* Safe area */
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
@@ -3370,10 +3370,6 @@ h3 {
   font-size: 12px;
 }
 
-.pos-layout {
-  font-size: var(--pos-body-size);
-}
-
 .pos-product-card__name {
   font-size: 14px;
   font-weight: 600;
@@ -4128,6 +4124,13 @@ h3 {
   padding: var(--sp-3);
 }
 
+.dashboard-layout--pos .dashboard-content,
+.dashboard-shell--pos .dashboard-content {
+  padding: 0;
+  gap: 0;
+  overflow: hidden;
+}
+
 .dashboard-layout--pos .dashboard-nav__label,
 .dashboard-layout--pos .dashboard-nav-group__title,
 .dashboard-layout--pos .dashboard-brandmark__copy,
@@ -4144,6 +4147,7 @@ h3 {
   grid-template-rows: 1fr;
   height: calc(100vh - var(--topbar-height));
   overflow: hidden;
+  font-size: var(--pos-body-size);
 }
 
 .pos-products {
@@ -4168,9 +4172,7 @@ h3 {
   background: var(--aya-panel);
   border-bottom: 1px solid var(--aya-line);
   min-height: 48px;
-  position: sticky;
-  top: 0;
-  z-index: calc(var(--z-base) + 2);
+  z-index: 1;
 }
 
 .pos-topbar__identity {
@@ -4200,25 +4202,11 @@ h3 {
   gap: var(--sp-2);
 }
 
-.pos-products__header {
-  position: sticky;
-  top: 0;
-  z-index: calc(var(--z-base) + 2);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--sp-2);
-  padding: var(--sp-3);
-  background: var(--aya-panel);
-  border-bottom: 1px solid var(--aya-line);
-}
-
 .pos-product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(130px, 200px));
   gap: var(--sp-2);
   overflow-y: auto;
-  padding: var(--sp-3);
 }
 
 .pos-product-card {
@@ -4317,10 +4305,7 @@ h3 {
 
 .pos-cart-panel,
 .transaction-stack--sticky {
-  position: sticky;
-  top: 0;
-  align-self: start;
-  height: calc(100vh - var(--topbar-height));
+  height: 100%;
   overflow: hidden auto;
 }
 
@@ -4696,13 +4681,11 @@ h3 {
   }
 }
 
-@media (max-width: 1023px) {
+@media (max-width: 767px) {
   .pos-layout {
     grid-template-columns: 1fr;
   }
-}
 
-@media (max-width: 767px) {
   .pos-mobile-fullscreen-checkout .dashboard-bottom-bar {
     display: none;
   }

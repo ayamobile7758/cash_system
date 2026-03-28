@@ -249,7 +249,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   const [isClearCartDialogOpen, setIsClearCartDialogOpen] = useState(false);
   const [productView, setProductView] = useState<ProductViewMode>("text");
   const [isCompactViewport, setIsCompactViewport] = useState(false);
-  const [isCartSheetExpanded, setIsCartSheetExpanded] = useState(false);
+  const [isCartSheetExpanded, setIsCartSheetExpanded] = useState(true);
   const [, startTransition] = useTransition();
   const [isSubmitting, startSubmission] = useTransition();
 
@@ -488,7 +488,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
       return;
     }
 
-    const compactQuery = window.matchMedia("(max-width: 1023px)");
+    const compactQuery = window.matchMedia("(max-width: 767px)");
 
     const handleViewportChange = () => {
       setIsCompactViewport(compactQuery.matches);
