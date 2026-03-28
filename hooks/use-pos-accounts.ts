@@ -20,7 +20,7 @@ export function usePosAccounts() {
   const [accounts, setAccounts] = useState<PosAccount[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isOffline, setIsOffline] = useState(() => (typeof navigator === "undefined" ? false : !navigator.onLine));
+  const [isOffline, setIsOffline] = useState(false);
   const [reloadToken, setReloadToken] = useState(0);
 
   useEffect(() => {
