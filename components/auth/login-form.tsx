@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 import { Loader2, Store } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -15,7 +15,7 @@ export function LoginForm() {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isOffline, setIsOffline] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [isPending, setIsPending] = useState(false);
 
   useEffect(() => {
     setIsOffline(!navigator.onLine);
@@ -52,60 +52,53 @@ export function LoginForm() {
         onSubmit={(event) => {
           event.preventDefault();
           setErrorMessage(null);
+          setIsPending(true);
 
-          startTransition(() => {
-            void (async () => {
-              try {
-                const supabase = createSupabaseBrowserClient();
-                const { error } = await supabase.auth.signInWithPassword({
-                  email,
-                  password
-                });
+          void (async () => {
+            try {
+              const supabase = createSupabaseBrowserClient();
+              const { data, error } = await supabase.auth.signInWithPassword({
+                email,
+                password
+              });
 
-                if (error) {
-                  const message = getSafeArabicErrorMessage(
-                    error,
-                    "تعذر إكمال تسجيل الدخول. حاول مجددًا."
-                  );
-                  setErrorMessage(message);
-                  toast.error(message);
-                  return;
-                }
-
-                await supabase.auth.getSession();
-
-                const {
-                  data: { user }
-                } = await supabase.auth.getUser();
-
-                let nextRoute = "/pos";
-
-                if (user) {
-                  const { data: profile } = await supabase
-                    .from("profiles")
-                    .select("role")
-                    .eq("id", user.id)
-                    .single();
-
-                  if (profile?.role === "admin") {
-                    nextRoute = "/reports";
-                  } else if (profile?.role === "pos_staff") {
-                    nextRoute = "/pos";
-                  }
-                }
-
-                router.replace(nextRoute);
-                router.refresh();
-              } catch (error) {
+              if (error) {
                 const message = getSafeArabicErrorMessage(
                   error,
                   "تعذر إكمال تسجيل الدخول. حاول مجددًا."
                 );
                 setErrorMessage(message);
                 toast.error(message);
+                setIsPending(false);
+                return;
               }
-            })();
-          });
+
+              let nextRoute = "/pos";
+
+              if (data.user) {
+                const { data: profile } = await supabase
+                  .from("profiles")
+                  .select("role")
+                  .eq("id", data.user.id)
+                  .single();
+
+                if (profile?.role === "admin") {
+                  nextRoute = "/reports";
+                }
+              }
+
+              router.replace(nextRoute);
+              router.refresh();
+            } catch (error) {
+              const message = getSafeArabicErrorMessage(
+                error,
+                "تعذر إكمال تسجيل الدخول. حاول مجددًا."
+              );
+              setErrorMessage(message);
+              toast.error(message);
+              setIsPending(false);
+            }
+          })();
         }}
       >
         {isOffline ? (

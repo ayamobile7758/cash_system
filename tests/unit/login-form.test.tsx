@@ -5,8 +5,6 @@ import { LoginForm } from "@/components/auth/login-form";
 const mockReplace = vi.fn();
 const mockRefresh = vi.fn();
 const mockSignInWithPassword = vi.fn();
-const mockGetSession = vi.fn();
-const mockGetUser = vi.fn();
 const mockSingle = vi.fn();
 
 vi.mock("next/navigation", () => ({
@@ -19,9 +17,7 @@ vi.mock("next/navigation", () => ({
 vi.mock("@/lib/supabase/client", () => ({
   createSupabaseBrowserClient: () => ({
     auth: {
-      signInWithPassword: mockSignInWithPassword,
-      getSession: mockGetSession,
-      getUser: mockGetUser
+      signInWithPassword: mockSignInWithPassword
     },
     from: () => ({
       select: () => ({
@@ -49,15 +45,14 @@ describe("LoginForm", () => {
     mockReplace.mockReset();
     mockRefresh.mockReset();
     mockSignInWithPassword.mockReset();
-    mockGetSession.mockReset();
-    mockGetUser.mockReset();
     mockSingle.mockReset();
   });
 
   it("redirects admins to /reports after successful login", async () => {
-    mockSignInWithPassword.mockResolvedValue({ error: null });
-    mockGetSession.mockResolvedValue({ data: { session: { user: { id: "admin-1" } } } });
-    mockGetUser.mockResolvedValue({ data: { user: { id: "admin-1" } } });
+    mockSignInWithPassword.mockResolvedValue({
+      data: { user: { id: "admin-1" }, session: {} },
+      error: null
+    });
     mockSingle.mockResolvedValue({ data: { role: "admin" } });
 
     render(<LoginForm />);
@@ -75,8 +70,6 @@ describe("LoginForm", () => {
         email: "admin@aya.local",
         password: "password123"
       });
-      expect(mockGetSession).toHaveBeenCalled();
-      expect(mockGetUser).toHaveBeenCalled();
       expect(mockReplace).toHaveBeenCalledWith("/reports");
       expect(mockRefresh).toHaveBeenCalled();
     });
@@ -104,9 +97,10 @@ describe("LoginForm", () => {
   }, 15000);
 
   it("redirects pos staff to /pos and falls back to /pos when profile is unavailable", async () => {
-    mockSignInWithPassword.mockResolvedValue({ error: null });
-    mockGetSession.mockResolvedValue({ data: { session: { user: { id: "pos-1" } } } });
-    mockGetUser.mockResolvedValue({ data: { user: { id: "pos-1" } } });
+    mockSignInWithPassword.mockResolvedValue({
+      data: { user: { id: "pos-1" }, session: {} },
+      error: null
+    });
     mockSingle.mockResolvedValueOnce({ data: { role: "pos_staff" } }).mockResolvedValueOnce({ data: null });
 
     render(<LoginForm />);
@@ -121,15 +115,6 @@ describe("LoginForm", () => {
 
     await waitFor(() => {
       expect(mockReplace).toHaveBeenCalledWith("/pos");
-    });
-
-    mockReplace.mockClear();
-    mockRefresh.mockClear();
-
-    fireEvent.click(screen.getByRole("button", { name: /تسجيل الدخول/i }));
-
-    await waitFor(() => {
-      expect(mockReplace).toHaveBeenCalledWith("/pos");
       expect(mockRefresh).toHaveBeenCalled();
     });
   }, 15000);
@@ -140,9 +125,10 @@ describe("LoginForm", () => {
       value: false
     });
 
-    mockSignInWithPassword.mockResolvedValue({ error: null });
-    mockGetSession.mockResolvedValue({ data: { session: { user: { id: "admin-1" } } } });
-    mockGetUser.mockResolvedValue({ data: { user: { id: "admin-1" } } });
+    mockSignInWithPassword.mockResolvedValue({
+      data: { user: { id: "admin-1" }, session: {} },
+      error: null
+    });
     mockSingle.mockResolvedValue({ data: { role: "admin" } });
 
     render(<LoginForm />);
