@@ -442,11 +442,7 @@ npx vitest run
 npm run build
 # Expected: no Error lines
 
-# AC-4: CLAUDE.md exists and has all 7 required sections
-grep -c "^## " CLAUDE.md
-# Expected: exactly 7
-
-# AC-5: All 7 section headings are present — verify each by name
+# AC-4: All 7 section headings present in CLAUDE.md — verify each by name
 grep "^## Project Identity" CLAUDE.md
 grep "^## Mandatory Pre-Edit Checklist" CLAUDE.md
 grep "^## Protected Entities" CLAUDE.md
@@ -454,7 +450,9 @@ grep "^## Test Commands" CLAUDE.md
 grep "^## File Ownership Map" CLAUDE.md
 grep "^## CSS and Layout Rules" CLAUDE.md
 grep "^## Commit Convention" CLAUDE.md
-# Expected: each command returns 1 result
+# Expected: each command returns exactly 1 result
+# Note: do NOT use grep -c "^## " — it counts all level-2 headings including
+# examples and sub-sections, not just the 7 required top-level sections
 
 # AC-6: docs/PROTECTED_STRINGS.md exists
 ls docs/PROTECTED_STRINGS.md
@@ -487,9 +485,11 @@ grep "تأكيد البيع" docs/PROTECTED_STRINGS.md
 grep "pos-cart-sheet__summary" docs/PROTECTED_STRINGS.md
 # Expected: 1 or more results
 
-# AC-13: AGENTS.md still exists and is unmodified
-git diff AGENTS.md
+# AC-13: AGENTS.md still exists and is unmodified (checks both staged and unstaged)
+git diff HEAD AGENTS.md
 # Expected: no output (file unchanged)
+# Note: plain "git diff AGENTS.md" only catches unstaged changes — if the file
+# was modified and staged it would show nothing. "git diff HEAD" catches both.
 
 # AC-14: No new files were created inside tests/e2e/ (docs/ is the correct location)
 ls tests/e2e/*.md 2>/dev/null
@@ -508,9 +508,10 @@ ls tests/e2e/*.md 2>/dev/null
 6. Create `docs/PROTECTED_STRINGS.md` (Part 2) — header + 4 sections starting with `## Section`
 7. Create `EXECUTOR_TEMPLATE.md` (Part 3)
 8. Run verification checklist (AC-1 through AC-14) — fix any failure before proceeding
-9. Commit with message: `docs(safety): add CLAUDE.md, PROTECTED_STRINGS.md, and EXECUTOR_TEMPLATE`
-10. Push to git: `git push origin main`
-11. Create report file `SAFETY_INFRASTRUCTURE_REPORT_[DATE].md`
+9. Create report file `SAFETY_INFRASTRUCTURE_REPORT_[DATE].md` (Post-Execution Report section)
+10. Stage all new files: `git add CLAUDE.md docs/PROTECTED_STRINGS.md EXECUTOR_TEMPLATE.md SAFETY_INFRASTRUCTURE_REPORT_[DATE].md`
+11. Commit: `docs(safety): add CLAUDE.md, PROTECTED_STRINGS.md, and EXECUTOR_TEMPLATE`
+12. Push: `git push origin main`
 
 ---
 
@@ -535,8 +536,7 @@ After completing all steps, create `SAFETY_INFRASTRUCTURE_REPORT_[DATE].md` in t
 | AC-1 | TypeScript compiles clean | `npx tsc --noEmit --pretty false` → 0 errors |
 | AC-2 | All unit tests pass | `npx vitest run` → all pass |
 | AC-3 | Build succeeds | `npm run build` → no errors |
-| AC-4 | CLAUDE.md has exactly 7 `## ` headings | `grep -c "^## " CLAUDE.md` → 7 |
-| AC-5 | All 7 section names present in CLAUDE.md | grep each name individually → 1 each |
+| AC-4 | All 7 section names present in CLAUDE.md | grep each name individually → 1 each |
 | AC-6 | `docs/PROTECTED_STRINGS.md` exists | `ls docs/PROTECTED_STRINGS.md` |
 | AC-7 | All 4 `## Section` headings present | grep each individually → 1 each |
 | AC-8 | `EXECUTOR_TEMPLATE.md` exists | `ls EXECUTOR_TEMPLATE.md` |
@@ -544,5 +544,5 @@ After completing all steps, create `SAFETY_INFRASTRUCTURE_REPORT_[DATE].md` in t
 | AC-10 | Template has Global Rules | `grep "^## Global Rules"` → 1 |
 | AC-11 | `"تأكيد البيع"` catalogued | grep in PROTECTED_STRINGS.md → ≥1 |
 | AC-12 | `"pos-cart-sheet__summary"` catalogued | grep in PROTECTED_STRINGS.md → ≥1 |
-| AC-13 | `AGENTS.md` unmodified | `git diff AGENTS.md` → no output |
+| AC-13 | `AGENTS.md` unmodified | `git diff HEAD AGENTS.md` → no output |
 | AC-14 | No `.md` files added inside `tests/e2e/` | `ls tests/e2e/*.md` → none new |
