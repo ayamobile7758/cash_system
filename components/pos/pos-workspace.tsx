@@ -1993,7 +1993,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                     ) : canCreateDebt ? (
                       "تأكيد البيع وتسجيل الدين"
                     ) : (
-                      "✓ تأكيد البيع"
+                      "تأكيد البيع"
                     )}
                   </button>
                 </div>
