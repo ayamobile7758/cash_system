@@ -128,7 +128,7 @@ export function DashboardShell({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isOffline, setIsOffline] = useState(() => (typeof navigator !== "undefined" ? !navigator.onLine : false));
+  const [isOffline, setIsOffline] = useState(false);
   const [isMobileViewport, setIsMobileViewport] = useState(false);
 
   const groupedNavigation = useMemo(() => {
