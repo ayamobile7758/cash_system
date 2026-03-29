@@ -30,10 +30,12 @@ jobs:
 
       - name: Setup environment variables
         run: |
-          npx supabase status -o env --override-name api.url=NEXT_PUBLIC_SUPABASE_URL --override-name anon.key=NEXT_PUBLIC_SUPABASE_ANON_KEY --override-name service_role.key=SUPABASE_SERVICE_ROLE_KEY > .env.local
+          npx supabase status -o env > supabase.env
+          echo "NEXT_PUBLIC_SUPABASE_URL=$(grep -E '^API_URL=' supabase.env | cut -d '=' -f2- | tr -d '\"')" > .env.local
+          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=$(grep -E '^ANON_KEY=' supabase.env | cut -d '=' -f2- | tr -d '\"')" >> .env.local
+          echo "SUPABASE_SERVICE_ROLE_KEY=$(grep -E '^SERVICE_ROLE_KEY=' supabase.env | cut -d '=' -f2- | tr -d '\"')" >> .env.local
           echo "CRON_SECRET=test-secret-ci-runner" >> .env.local
-          # Extract only valid KEY=VALUE lines, discarding CLI warnings from supabase status
-          grep -E '^[A-Za-z_][A-Za-z0-9_]*=' .env.local | sed 's/"//g' >> $GITHUB_ENV
+          cat .env.local >> $GITHUB_ENV
 
       - name: Lint
         run: npm run lint
