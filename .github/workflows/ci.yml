@@ -32,8 +32,8 @@ jobs:
         run: |
           npx supabase status -o env --override-name api.url=NEXT_PUBLIC_SUPABASE_URL --override-name anon.key=NEXT_PUBLIC_SUPABASE_ANON_KEY --override-name service_role.key=SUPABASE_SERVICE_ROLE_KEY > .env.local
           echo "CRON_SECRET=test-secret-ci-runner" >> .env.local
-          # GitHub Actions parses quotes literally, so strip them before setting GITHUB_ENV
-          cat .env.local | sed 's/"//g' >> $GITHUB_ENV
+          # Extract only valid KEY=VALUE lines, discarding CLI warnings from supabase status
+          grep -E '^[A-Za-z_][A-Za-z0-9_]*=' .env.local | sed 's/"//g' >> $GITHUB_ENV
 
       - name: Lint
         run: npm run lint
