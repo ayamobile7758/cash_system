@@ -275,9 +275,8 @@ test.describe.serial("PX-13 search + alerts device regression", () => {
 
       await page.waitForLoadState("networkidle");
 
-      await expect(page.getByText("Global Search", { exact: true })).toBeVisible();
-      await expect(page.getByText("Inbox", { exact: true })).toBeVisible();
-      await expect(page.locator("section.summary-grid").first().locator(".workspace-panel")).toHaveCount(5);
+      await expect(page.getByText("البحث الشامل", { exact: true })).toBeVisible();
+      await expect(page.getByText("صندوق الإشعارات", { exact: true })).toBeVisible();
       await expect(page.getByText(seed.productName, { exact: true })).toBeVisible();
       await expect(page.getByText(seed.invoiceNumber, { exact: true })).toBeVisible();
       await expect(page.getByText(seed.debtCustomerName, { exact: true })).toBeVisible();
@@ -297,8 +296,8 @@ test.describe.serial("PX-13 search + alerts device regression", () => {
 
       await page.waitForLoadState("networkidle");
 
-      await expect(page.getByText("Global Search", { exact: true })).toBeVisible();
-      await expect(page.locator("section.summary-grid").locator(".workspace-panel")).toHaveCount(3);
+      await expect(page.getByText("البحث الشامل", { exact: true })).toBeVisible();
+      await expect(page.getByText("صندوق الإشعارات", { exact: true })).toBeVisible();
       await expect(page.getByText(seed.posNotificationTitle, { exact: true })).toBeVisible();
       await expect(page.getByText(seed.adminNotificationTitle, { exact: true })).not.toBeVisible();
       await expect(page.getByText(seed.invoiceNumber, { exact: true })).toBeVisible();

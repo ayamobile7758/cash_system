@@ -23,10 +23,10 @@ test.describe.serial("PX-24 analytical and configuration surfaces", () => {
     await page.goto("/reports", { waitUntil: "domcontentloaded" });
     await page.waitForLoadState("networkidle");
 
-    await expect(page.getByRole("heading", { name: "قراءة أوضح للأداء والمقارنات" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "التقارير المتقدمة والتحليلات المقارنة" })).toBeVisible();
     await expect(page.getByRole("button", { name: "تطبيق الفلاتر" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "حدد النطاق أولًا" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "ملخص سريع قبل النزول إلى التفاصيل" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "نطاق التقرير" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "ملخص الفترة الحالية مقابل فترة المقارنة" })).toBeVisible();
     await expectNoHorizontalOverflow(page);
   });
 

@@ -23,7 +23,8 @@ export const metadata: Metadata = {
     default: "Aya Mobile",
     template: "%s | Aya Mobile"
   },
-  description: "نظام تشغيل للمبيعات والمخزون والمحاسبة اليومية على الهاتف والتابلت والكمبيوتر.",
+  description:
+    "نظام تشغيل للمبيعات والمخزون والمحاسبة اليومية على الهاتف والتابلت والكمبيوتر.",
   applicationName: "Aya Mobile",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
@@ -40,7 +41,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#1A3A5C"
+  themeColor: "#4F46E5"
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

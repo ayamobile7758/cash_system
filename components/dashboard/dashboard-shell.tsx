@@ -51,7 +51,12 @@ const GROUP_LABELS: Record<DashboardNavGroup, string> = {
   management: "المتابعة والإدارة"
 };
 
-const PRIMARY_BOTTOM_NAV_HREFS = ["/pos", "/products", "/invoices", "/inventory"] as const;
+const PRIMARY_BOTTOM_NAV_HREFS = [
+  "/pos",
+  "/products",
+  "/invoices",
+  "/inventory"
+] as const;
 
 const ICONS = {
   home: Home,
@@ -88,13 +93,15 @@ function getPageContext(pathname: string, navigation: DashboardNavItem[]) {
   if (!item) {
     return {
       title: "مساحات التشغيل",
-      groupLabel: "لوحة العمل"
+      groupLabel: "لوحة العمل",
+      description: "اختر المسار التشغيلي المناسب للمهمة الحالية."
     };
   }
 
   return {
     title: item.label,
-    groupLabel: GROUP_LABELS[item.group]
+    groupLabel: GROUP_LABELS[item.group],
+    description: item.description
   };
 }
 
@@ -141,13 +148,16 @@ export function DashboardShell({
     );
   }, [navigation]);
 
-  const pageContext = useMemo(() => getPageContext(pathname, navigation), [navigation, pathname]);
+  const pageContext = useMemo(
+    () => getPageContext(pathname, navigation),
+    [navigation, pathname]
+  );
   const isPosPage = pathname === "/pos" || pathname.startsWith("/pos/");
   const bottomBarItems = useMemo(
     () =>
-      PRIMARY_BOTTOM_NAV_HREFS.map((href) => navigation.find((item) => item.href === href)).filter(
-        (item): item is DashboardNavItem => Boolean(item)
-      ),
+      PRIMARY_BOTTOM_NAV_HREFS.map((href) =>
+        navigation.find((item) => item.href === href)
+      ).filter((item): item is DashboardNavItem => Boolean(item)),
     [navigation]
   );
   const hasNotificationsPage = navigation.some((item) => item.href === "/notifications");
@@ -246,7 +256,11 @@ export function DashboardShell({
         .join(" ")}
     >
       {showMobileBackdrop ? (
-        <div className="dashboard-mobile-backdrop is-open" onClick={closeMenu} aria-hidden="true" />
+        <div
+          className="dashboard-mobile-backdrop is-open"
+          onClick={closeMenu}
+          aria-hidden="true"
+        />
       ) : null}
 
       <aside
@@ -279,10 +293,16 @@ export function DashboardShell({
           </button>
         </div>
 
-        <nav className="dashboard-sidebar__nav dashboard-layout__sidebar-nav" aria-label="التنقل داخل مساحات التشغيل">
+        <nav
+          className="dashboard-sidebar__nav dashboard-layout__sidebar-nav"
+          aria-label="التنقل داخل مساحات التشغيل"
+        >
           {(Object.keys(groupedNavigation) as DashboardNavGroup[]).map((groupKey) =>
             groupedNavigation[groupKey].length > 0 ? (
-              <section key={groupKey} className={`dashboard-nav-group dashboard-nav-group--${groupKey}`}>
+              <section
+                key={groupKey}
+                className={`dashboard-nav-group dashboard-nav-group--${groupKey}`}
+              >
                 <div className="dashboard-nav-group__header">
                   <p className="dashboard-nav-group__title">{GROUP_LABELS[groupKey]}</p>
                 </div>
@@ -296,7 +316,11 @@ export function DashboardShell({
                       <Link
                         key={item.href}
                         href={item.href}
-                        className={isActive ? "dashboard-nav__item is-active" : "dashboard-nav__item"}
+                        className={
+                          isActive
+                            ? "dashboard-nav__item is-active"
+                            : "dashboard-nav__item"
+                        }
                         aria-current={isActive ? "page" : undefined}
                         title={item.description}
                         onClick={closeMenu}
@@ -309,9 +333,14 @@ export function DashboardShell({
                           <strong>
                             {item.label}
                             {item.href === "/notifications" && unreadNotifications > 0 ? (
-                              <span className="dashboard-nav__badge">{unreadNotifications}</span>
+                              <span className="dashboard-nav__badge">
+                                {unreadNotifications}
+                              </span>
                             ) : null}
                           </strong>
+                          <span className="dashboard-nav__description">
+                            {item.description}
+                          </span>
                         </span>
                       </Link>
                     );
@@ -334,7 +363,10 @@ export function DashboardShell({
       </aside>
 
       {isMobileViewport ? (
-        <nav className="dashboard-bottom-bar dashboard-layout__bottom-bar" aria-label="التنقل السريع">
+        <nav
+          className="dashboard-bottom-bar dashboard-layout__bottom-bar"
+          aria-label="التنقل السريع"
+        >
           {bottomBarItems.map((item) => {
             const Icon = getIcon(item.icon);
             const isActive = isPathActive(pathname, item.href);
@@ -343,7 +375,11 @@ export function DashboardShell({
               <Link
                 key={item.href}
                 href={item.href}
-                className={isActive ? "dashboard-bottom-bar__item is-active" : "dashboard-bottom-bar__item"}
+                className={
+                  isActive
+                    ? "dashboard-bottom-bar__item is-active"
+                    : "dashboard-bottom-bar__item"
+                }
                 aria-current={isActive ? "page" : undefined}
                 title={item.label}
                 onClick={closeMenu}
@@ -391,16 +427,26 @@ export function DashboardShell({
             </button>
 
             <div className="dashboard-header-title">
-              <h1>{pageContext.title}</h1>
-              {pageContext.groupLabel !== "لوحة العمل" ? (
-                <span className="status-pill status-pill--neutral dashboard-header-badge">{pageContext.groupLabel}</span>
+              <div className="dashboard-header-title__row">
+                <h1>{pageContext.title}</h1>
+                {pageContext.groupLabel !== "لوحة العمل" ? (
+                  <span className="status-pill status-pill--neutral dashboard-header-badge">
+                    {pageContext.groupLabel}
+                  </span>
+                ) : null}
+              </div>
+              {pageContext.description ? (
+                <p className="dashboard-header-description">{pageContext.description}</p>
               ) : null}
             </div>
           </div>
 
           <div className="dashboard-topbar__end dashboard-topbar__actions">
             {isSearchOpen ? (
-              <form className="dashboard-quick-search-minimal" onSubmit={handleSearchSubmit}>
+              <form
+                className="dashboard-quick-search-minimal"
+                onSubmit={handleSearchSubmit}
+              >
                 <Search size={16} className="search-icon" />
                 <input
                   type="search"
@@ -426,10 +472,18 @@ export function DashboardShell({
               <Link
                 href="/notifications"
                 className="icon-button ghost-button dashboard-topbar__notifications"
-                aria-label={unreadNotifications > 0 ? `الإشعارات (${unreadNotifications})` : "الإشعارات"}
+                aria-label={
+                  unreadNotifications > 0
+                    ? `الإشعارات (${unreadNotifications})`
+                    : "الإشعارات"
+                }
               >
                 <Bell size={18} />
-                {unreadNotifications > 0 ? <span className="dashboard-topbar__notifications-badge">{unreadNotifications}</span> : null}
+                {unreadNotifications > 0 ? (
+                  <span className="dashboard-topbar__notifications-badge">
+                    {unreadNotifications}
+                  </span>
+                ) : null}
               </Link>
             ) : null}
 

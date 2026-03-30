@@ -15,8 +15,14 @@ export default defineConfig({
   },
   projects: [
     {
+      name: "setup",
+      testMatch: /warmup\.setup\.ts/,
+      teardown: undefined
+    },
+    {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] }
+      use: { ...devices["Desktop Chrome"] },
+      dependencies: ["setup"]
     }
   ],
   webServer: {

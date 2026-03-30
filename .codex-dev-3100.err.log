@@ -1,0 +1,159 @@
+Error: Route "/reports" used `Object.keys(searchParams)` or similar. `searchParams` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Object.entries (<anonymous>)
+    at toUrlSearchParams (lib\api\dashboard.ts:563:37)
+    at getReportsPageBaseline (lib\api\dashboard.ts:650:44)
+    at ReportsPage (app\(dashboard)\reports\page.tsx:39:48)
+  561 |   const params = new URLSearchParams();
+  562 |
+> 563 |   for (const [key, value] of Object.entries(searchParams)) {
+      |                                     ^
+  564 |     appendSearchParam(params, key, value);
+  565 |   }
+  566 |
+Error: Route "/reports" used `Object.keys(searchParams)` or similar. `searchParams` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at Object.entries (<anonymous>)
+    at toUrlSearchParams (lib\api\dashboard.ts:563:37)
+    at getReportsPageBaseline (lib\api\dashboard.ts:650:44)
+    at ReportsPage (app\(dashboard)\reports\page.tsx:39:48)
+  561 |   const params = new URLSearchParams();
+  562 |
+> 563 |   for (const [key, value] of Object.entries(searchParams)) {
+      |                                     ^
+  564 |     appendSearchParam(params, key, value);
+  565 |   }
+  566 |
+ ⨯ ./components/runtime/install-prompt.tsx
+Error:   [31mx[0m Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+    ,-[[36;1;4mC:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\runtime\install-prompt.tsx[0m:98:1]
+ [2m95[0m |       </div>
+ [2m96[0m |     </section>
+ [2m97[0m |   );
+ [2m98[0m | }
+    : [35;1m^[0m
+    `----
+  [31mx[0m Expected '</', got 'jsx text (
+  [31m|[0m   );
+  [31m|[0m }
+  [31m|[0m )'
+    ,-[[36;1;4mC:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\runtime\install-prompt.tsx[0m:96:1]
+ [2m93[0m |               {statusLabel}
+ [2m94[0m |             </p>
+ [2m95[0m |           </div>
+ [2m96[0m | [35;1m,[0m[35;1m-[0m[35;1m>[0m     </section>
+ [2m97[0m | [35;1m|[0m     );
+ [2m98[0m | [35;1m`[0m[35;1m-[0m[35;1m>[0m }
+    `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/runtime/install-prompt.tsx
+./app/page.tsx
+ ⨯ ./components/runtime/install-prompt.tsx
+Error:   [31mx[0m Expression expected
+    ,-[[36;1;4mC:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\runtime\install-prompt.tsx[0m:87:1]
+ [2m84[0m | 
+ [2m85[0m |       </div>
+ [2m86[0m | 
+ [2m87[0m |       <div className="install-card__actions">
+    : [35;1m      ^[0m
+ [2m88[0m |         <button
+ [2m89[0m |           type="button"
+ [2m89[0m |           className="ghost-button"
+    `----
+  [31mx[0m Expected ',', got 'className'
+    ,-[[36;1;4mC:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\runtime\install-prompt.tsx[0m:87:1]
+ [2m84[0m | 
+ [2m85[0m |       </div>
+ [2m86[0m | 
+ [2m87[0m |       <div className="install-card__actions">
+    : [35;1m           ^^^^^^^^^[0m
+ [2m88[0m |         <button
+ [2m89[0m |           type="button"
+ [2m89[0m |           className="ghost-button"
+    `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/runtime/install-prompt.tsx
+./app/page.tsx
+<w> [webpack.cache.PackFileCacheStrategy] Restoring failed for ResolverCachePlugin|loader|default|path=|C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\app|request=|C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\build\webpack\loaders\css-loader\src\index.js from pack: Error: Unexpected end of object at position 1332
+<w> (during deserialization of webpack/lib/NormalModule)
+<w> (during deserialization of Map)
+<w> (during deserialization of webpack/lib/cache/PackFileCacheStrategy PackContentItems)
+<w> [webpack.cache.PackFileCacheStrategy] Restoring failed for ResolverCachePlugin|loader|default|path=|C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\app|request=|C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\build\webpack\loaders\postcss-loader\src\index.js from pack: Error: Unexpected end of object at position 1332
+<w> (during deserialization of webpack/lib/NormalModule)
+<w> (during deserialization of Map)
+<w> (during deserialization of webpack/lib/cache/PackFileCacheStrategy PackContentItems)
+<w> [webpack.cache.PackFileCacheStrategy] Restoring failed for ResolverCachePlugin|normal|default|dependencyType=|esm|path=|C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\app|request=|../node_modules/next/dist/build/webpack/loaders/css-loader/src/runtime/api.js from pack: Error: Unexpected end of object at position 1332
+<w> (during deserialization of webpack/lib/NormalModule)
+<w> (during deserialization of Map)
+<w> (during deserialization of webpack/lib/cache/PackFileCacheStrategy PackContentItems)
+<w> [webpack.cache.PackFileCacheStrategy] Restoring failed for Compilation/modules|C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\build\webpack\loaders\css-loader\src\runtime\api.js from pack: Error: Unexpected end of object at position 1332
+<w> (during deserialization of webpack/lib/NormalModule)
+<w> (during deserialization of Map)
+<w> (during deserialization of webpack/lib/cache/PackFileCacheStrategy PackContentItems)
+<w> [webpack.cache.PackFileCacheStrategy] Restoring failed for Compilation/codeGeneration|C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\build\webpack\loaders\css-loader\src\runtime\api.js|build time from pack: Error: Unexpected end of object at position 1332
+<w> (during deserialization of webpack/lib/NormalModule)
+<w> (during deserialization of Map)
+<w> (during deserialization of webpack/lib/cache/PackFileCacheStrategy PackContentItems)
+<w> [webpack.cache.PackFileCacheStrategy] Restoring failed for Compilation/codeGeneration|webpack/runtime/react refresh|build time from pack: Error: Unexpected end of object at position 1332
+<w> (during deserialization of webpack/lib/NormalModule)
+<w> (during deserialization of Map)
+<w> (during deserialization of webpack/lib/cache/PackFileCacheStrategy PackContentItems)
+<w> [webpack.cache.PackFileCacheStrategy] Restoring failed for Compilation/codeGeneration|webpack/runtime/hot module replacement|build time from pack: Error: Unexpected end of object at position 1332
+<w> (during deserialization of webpack/lib/NormalModule)
+<w> (during deserialization of Map)
+<w> (during deserialization of webpack/lib/cache/PackFileCacheStrategy PackContentItems)
+<w> [webpack.cache.PackFileCacheStrategy] Restoring failed for Compilation/codeGeneration|webpack/runtime/compat|build time from pack: Error: Unexpected end of object at position 1332
+<w> (during deserialization of webpack/lib/NormalModule)
+<w> (during deserialization of Map)
+<w> (during deserialization of webpack/lib/cache/PackFileCacheStrategy PackContentItems)
+<w> [webpack.cache.PackFileCacheStrategy] Restoring failed for Compilation/codeGeneration|webpack/runtime/compat get default export|build time from pack: Error: Unexpected end of object at position 1332
+<w> (during deserialization of webpack/lib/NormalModule)
+<w> (during deserialization of Map)
+<w> (during deserialization of webpack/lib/cache/PackFileCacheStrategy PackContentItems)
+<w> [webpack.cache.PackFileCacheStrategy] Restoring failed for Compilation/codeGeneration|webpack/runtime/make namespace object|build time from pack: Error: Unexpected end of object at position 1332
+<w> (during deserialization of webpack/lib/NormalModule)
+<w> (during deserialization of Map)
+<w> (during deserialization of webpack/lib/cache/PackFileCacheStrategy PackContentItems)
+<w> [webpack.cache.PackFileCacheStrategy] Restoring failed for Compilation/codeGeneration|webpack/runtime/define property getters|build time from pack: Error: Unexpected end of object at position 1332
+<w> (during deserialization of webpack/lib/NormalModule)
+<w> (during deserialization of Map)
+<w> (during deserialization of webpack/lib/cache/PackFileCacheStrategy PackContentItems)
+<w> [webpack.cache.PackFileCacheStrategy] Restoring failed for Compilation/codeGeneration|webpack/runtime/trusted types script|build time from pack: Error: Unexpected end of object at position 1332
+<w> (during deserialization of webpack/lib/NormalModule)
+<w> (during deserialization of Map)
+<w> (during deserialization of webpack/lib/cache/PackFileCacheStrategy PackContentItems)
+<w> [webpack.cache.PackFileCacheStrategy] Restoring failed for Compilation/codeGeneration|webpack/runtime/get mini-css chunk filename|build time from pack: Error: Unexpected end of object at position 1332
+<w> (during deserialization of webpack/lib/NormalModule)
+<w> (during deserialization of Map)
+<w> (during deserialization of webpack/lib/cache/PackFileCacheStrategy PackContentItems)
+<w> [webpack.cache.PackFileCacheStrategy] Restoring failed for Compilation/codeGeneration|webpack/runtime/css loading|build time from pack: Error: Unexpected end of object at position 1332
+<w> (during deserialization of webpack/lib/NormalModule)
+<w> (during deserialization of Map)
+<w> (during deserialization of webpack/lib/cache/PackFileCacheStrategy PackContentItems)
+<w> [webpack.cache.PackFileCacheStrategy] Restoring failed for Compilation/codeGeneration|webpack/runtime/hasOwnProperty shorthand|build time from pack: Error: Unexpected end of object at position 1332
+<w> (during deserialization of webpack/lib/NormalModule)
+<w> (during deserialization of Map)
+<w> (during deserialization of webpack/lib/cache/PackFileCacheStrategy PackContentItems)
+<w> [webpack.cache.PackFileCacheStrategy] Restoring failed for Compilation/codeGeneration|webpack/runtime/trusted types policy|build time from pack: Error: Unexpected end of object at position 1332
+<w> (during deserialization of webpack/lib/NormalModule)
+<w> (during deserialization of Map)
+<w> (during deserialization of webpack/lib/cache/PackFileCacheStrategy PackContentItems)
+<w> [webpack.cache.PackFileCacheStrategy] Restoring failed for Compilation/codeGeneration|webpack/runtime/publicPath|build time from pack: Error: Unexpected end of object at position 1332
+<w> (during deserialization of webpack/lib/NormalModule)
+<w> (during deserialization of Map)
+<w> (during deserialization of webpack/lib/cache/PackFileCacheStrategy PackContentItems)
+ ⨯ Error: ENOENT: no such file or directory, open 'C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\server\vendor-chunks\next.js'
+    at <unknown> (C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\server\app\page.js:368:47)
+    at Object.<anonymous> (C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\server\app\page.js:371:3) {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Qaysk\\OneDrive\\Desktop\\Aya Mobile\\.next\\server\\vendor-chunks\\next.js',
+  page: '/'
+}

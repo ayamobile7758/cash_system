@@ -1,0 +1,49 @@
+
+> aya-mobile-runtime-skeleton@0.1.0 dev
+> next dev --hostname 127.0.0.1 --port 3100
+
+   ▲ Next.js 15.5.14
+   - Local:        http://127.0.0.1:3100
+   - Network:      http://127.0.0.1:3100
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 11s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 905ms (115 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 6.1s (914 modules)
+ GET / 200 in 11434ms
+ GET / 200 in 1011ms
+ GET / 200 in 459ms
+ ○ Compiling /manifest.webmanifest ...
+ ✓ Compiled /unsupported-device in 16.8s (943 modules)
+ GET /manifest.webmanifest?fresh=1774596778440 200 in 17739ms
+ GET /unsupported-device 200 in 20069ms
+ GET /login 200 in 20078ms
+ GET / 200 in 20139ms
+ GET / 200 in 1082ms
+ GET /manifest.webmanifest?fresh=1774596803478 200 in 142ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 40.6s (2175 modules)
+ GET /reports 200 in 57931ms
+ GET /reports 200 in 9558ms
+ GET /manifest.webmanifest?fresh=1774596863689 200 in 462ms
+ ✓ Compiled in 3.9s (2176 modules)
+ ✓ Compiled in 1366ms (1264 modules)
+ ✓ Compiled in 484ms (1264 modules)
+ ✓ Compiled in 1411ms (2162 modules)
+ ✓ Compiled in 1016ms (2162 modules)
+ ✓ Compiled in 1925ms (2162 modules)
+ ✓ Compiled in 1356ms (2176 modules)
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 3s (2507 modules)
+ GET / 500 in 3999ms
+ GET / 200 in 934ms
+ GET / 200 in 256ms
+ GET / 200 in 259ms
+ GET / 200 in 261ms
+ GET / 200 in 274ms
+ GET /? 200 in 190ms
+ GET /? 200 in 186ms
+[?25h

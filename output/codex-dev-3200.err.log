@@ -1,0 +1,130 @@
+ ⚠ Cross origin request detected from 127.0.0.1 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\server\app-paths-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Qaysk\\OneDrive\\Desktop\\Aya Mobile\\.next\\server\\app-paths-manifest.json',
+  page: '/manifest.webmanifest'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Qaysk\\OneDrive\\Desktop\\Aya Mobile\\.next\\routes-manifest.json',
+  page: '/pos'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Qaysk\\OneDrive\\Desktop\\Aya Mobile\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Qaysk\\OneDrive\\Desktop\\Aya Mobile\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\server\app-paths-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Qaysk\\OneDrive\\Desktop\\Aya Mobile\\.next\\server\\app-paths-manifest.json',
+  page: '/manifest.webmanifest'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Qaysk\\OneDrive\\Desktop\\Aya Mobile\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Qaysk\\OneDrive\\Desktop\\Aya Mobile\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Qaysk\\OneDrive\\Desktop\\Aya Mobile\\.next\\routes-manifest.json',
+  page: '/pos'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Qaysk\\OneDrive\\Desktop\\Aya Mobile\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Qaysk\\OneDrive\\Desktop\\Aya Mobile\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Qaysk\\OneDrive\\Desktop\\Aya Mobile\\.next\\routes-manifest.json',
+  page: '/pos'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Qaysk\\OneDrive\\Desktop\\Aya Mobile\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Qaysk\\OneDrive\\Desktop\\Aya Mobile\\.next\\routes-manifest.json',
+  page: '/pos'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Qaysk\\OneDrive\\Desktop\\Aya Mobile\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Qaysk\\OneDrive\\Desktop\\Aya Mobile\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Qaysk\\OneDrive\\Desktop\\Aya Mobile\\.next\\routes-manifest.json',
+  page: '/pos'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Qaysk\\OneDrive\\Desktop\\Aya Mobile\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Qaysk\\OneDrive\\Desktop\\Aya Mobile\\.next\\routes-manifest.json',
+  page: '/pos'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Qaysk\\OneDrive\\Desktop\\Aya Mobile\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\Qaysk\\OneDrive\\Desktop\\Aya Mobile\\.next\\routes-manifest.json'
+}

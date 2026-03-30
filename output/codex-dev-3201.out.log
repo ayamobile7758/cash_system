@@ -1,0 +1,11 @@
+
+> aya-mobile-runtime-skeleton@0.1.0 dev
+> next dev --port 3201
+
+   ▲ Next.js 15.5.14
+   - Local:        http://localhost:3201
+   - Network:      http://192.168.1.110:3201
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 6.1s

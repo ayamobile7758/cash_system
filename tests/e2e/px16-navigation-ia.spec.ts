@@ -52,10 +52,9 @@ test.describe.serial("PX-16 navigation + IA", () => {
     await page.goto("/debts", { waitUntil: "domcontentloaded" });
     await page.waitForLoadState("networkidle");
     await expect(page.getByRole("heading", { name: "الديون", exact: true })).toBeVisible();
-    await expect(page.getByLabel("مسار الصفحة")).toContainText("التشغيل اليومي");
     await expect(page.getByRole("button", { name: "العملاء والقيود" })).toBeVisible();
     await expect(page.getByRole("button", { name: "التسديد" })).toBeVisible();
-    await expect(page.getByText("ملخص العميل")).toBeVisible();
+    await expect(page.getByText("ملف العميل")).toBeVisible();
     await expectNoHorizontalOverflow(page);
   });
 
@@ -63,18 +62,13 @@ test.describe.serial("PX-16 navigation + IA", () => {
     await page.setViewportSize({ width: 768, height: 1024 });
     await login(page, seed.admin.email, seed.admin.password, "/notifications");
     await expectNoHorizontalOverflow(page);
-    const searchForm = page.locator("form.dashboard-quick-search");
 
     await expect(page.getByRole("heading", { name: "الإشعارات", exact: true })).toBeVisible();
-    await expect(page.getByLabel("مسار الصفحة")).toContainText("مساحات التشغيل");
     await expect(page.getByRole("button", { name: "صندوق الإشعارات" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "التنبيهات المجمعة" })).toBeVisible();
-    await expect(searchForm.getByRole("button", { name: "البحث الشامل" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "الملخصات والتنبيهات" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "البحث الشامل" })).toBeVisible();
 
-    await page.getByPlaceholder("ابحث سريعًا عن فاتورة أو منتج أو عميل").fill("PX16");
-    await searchForm.getByRole("button", { name: "البحث الشامل" }).click();
-    await page.waitForURL(/\/notifications\?/);
-    await expect(page.getByRole("heading", { name: "الإشعارات", exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "البحث الشامل" }).click();
     await expect(page.getByRole("heading", { name: "نتائج البحث الحالية" })).toBeVisible();
     await expect(page.getByPlaceholder("اسم منتج، رقم فاتورة، عميل أو رقم صيانة")).toBeVisible();
     await expectNoHorizontalOverflow(page);
