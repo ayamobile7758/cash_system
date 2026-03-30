@@ -5206,6 +5206,12 @@ h3 {
   gap: var(--sp-2);
 }
 
+@media (max-width: 1023px) {
+  .cart-panel__cta-row {
+    display: none;
+  }
+}
+
 .cart-panel__cta-row .transaction-checkout-button {
   flex: 1;
   min-height: 44px;

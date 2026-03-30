@@ -40,7 +40,7 @@ export function ReportsAdvancedCharts({ trend, breakdown }: ReportsAdvancedChart
         <div className="section-heading">
           <div>
             <p className="eyebrow">الاتجاه</p>
-            <h3>اتجاه المبيعات وصافي الربح</h3>
+            <h3>تفاصيل الاتجاه</h3>
           </div>
         </div>
 
