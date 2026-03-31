@@ -29,13 +29,49 @@ jobs:
         run: npx supabase start
 
       - name: Setup environment variables
+        shell: bash
         run: |
-          npx supabase status -o env > supabase.env
-          echo "NEXT_PUBLIC_SUPABASE_URL=$(grep -E '^API_URL=' supabase.env | cut -d '=' -f2- | tr -d '\"')" > .env.local
-          echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=$(grep -E '^ANON_KEY=' supabase.env | cut -d '=' -f2- | tr -d '\"')" >> .env.local
-          echo "SUPABASE_SERVICE_ROLE_KEY=$(grep -E '^SERVICE_ROLE_KEY=' supabase.env | cut -d '=' -f2- | tr -d '\"')" >> .env.local
-          echo "CRON_SECRET=test-secret-ci-runner" >> .env.local
-          cat .env.local >> $GITHUB_ENV
+          set -euo pipefail
+
+          rm -f supabase.env .env.local
+
+          for attempt in {1..12}; do
+            npx supabase status -o env > supabase.env || true
+
+            NEXT_PUBLIC_SUPABASE_URL="$(grep -E '^API_URL=' supabase.env | cut -d '=' -f2- | tr -d '\"' || true)"
+            NEXT_PUBLIC_SUPABASE_ANON_KEY="$(grep -E '^ANON_KEY=' supabase.env | cut -d '=' -f2- | tr -d '\"' || true)"
+            SUPABASE_SERVICE_ROLE_KEY="$(grep -E '^SERVICE_ROLE_KEY=' supabase.env | cut -d '=' -f2- | tr -d '\"' || true)"
+
+            if [[ -n "${NEXT_PUBLIC_SUPABASE_URL}" && -n "${NEXT_PUBLIC_SUPABASE_ANON_KEY}" && -n "${SUPABASE_SERVICE_ROLE_KEY}" ]]; then
+              break
+            fi
+
+            if [[ "${attempt}" -eq 12 ]]; then
+              echo "Supabase environment variables were not ready after 12 attempts." >&2
+              cat supabase.env >&2 || true
+              exit 1
+            fi
+
+            echo "Supabase env not ready yet; retrying (${attempt}/12)..."
+            sleep 5
+          done
+
+          echo "::add-mask::${NEXT_PUBLIC_SUPABASE_ANON_KEY}"
+          echo "::add-mask::${SUPABASE_SERVICE_ROLE_KEY}"
+
+          {
+            echo "NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}"
+            echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}"
+            echo "SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}"
+            echo "CRON_SECRET=test-secret-ci-runner"
+          } > .env.local
+
+          if grep -Eq '^(NEXT_PUBLIC_SUPABASE_URL|NEXT_PUBLIC_SUPABASE_ANON_KEY|SUPABASE_SERVICE_ROLE_KEY)=$' .env.local; then
+            echo ".env.local contains empty required Supabase values." >&2
+            exit 1
+          fi
+
+          cat .env.local >> "$GITHUB_ENV"
 
       - name: Lint
         run: npm run lint

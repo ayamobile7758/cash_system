@@ -1184,6 +1184,10 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
       : changeToReturn !== null
         ? `الباقي ${formatCurrency(changeToReturn)}`
         : "جاهز للإتمام";
+  const productResultsLabel =
+    productsTotalCount !== null
+      ? `${formatCompactNumber(filteredProducts.length)} من ${formatCompactNumber(productsTotalCount)}`
+      : `${formatCompactNumber(filteredProducts.length)} منتجًا`;
 
   return (
     <section className="workspace-stack transaction-page">
@@ -1227,41 +1231,78 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
         <div className="pos-products">
           <div className="pos-topbar">
             <div className="pos-topbar__identity">
-              <h1 className="pos-topbar__label">نقطة البيع السريعة</h1>
-              {selectedAccount ? (
-                <span className="pos-topbar__account">{selectedAccount.name}</span>
-              ) : null}
+              <div className="pos-topbar__title-block">
+                <h1 className="pos-topbar__label">نقطة البيع</h1>
+                <span className="pos-topbar__account">
+                  {selectedAccount ? selectedAccount.name : "جاهز للبيع"}
+                </span>
+              </div>
             </div>
 
             <div className="pos-topbar__actions">
               <button
                 type="button"
-                className="secondary-button"
+                className="primary-button pos-topbar__primary-action"
                 onClick={handleTopbarNewSale}
               >
+                <Plus size={16} />
                 بيع جديد
               </button>
               <button
                 type="button"
-                className="secondary-button"
+                className="secondary-button pos-topbar__held-button"
                 onClick={() => setIsHeldCartsOpen((currentValue) => !currentValue)}
               >
-                السلال المعلقة ({formatCompactNumber(heldCarts.length)})
+                <span>السلال المعلقة</span>
+                <span className="product-pill product-pill--accent">
+                  {formatCompactNumber(heldCarts.length)}
+                </span>
               </button>
             </div>
           </div>
 
           <div className="pos-products__content">
-            <div className="transaction-stack">
+            <div className="transaction-stack pos-products-stack">
               <SectionCard
                 tone="accent"
-                className="transaction-card transaction-card--filters"
-                title="ابحث وأضف"
-                actions={
-                  <div className="transaction-action-cluster">
+                className="transaction-card transaction-card--filters pos-discovery-card"
+              >
+                <div className="pos-discovery-card__header">
+                  <label className="workspace-search transaction-toolbar__search pos-search-shell">
+                    <Search size={18} />
+                    <input
+                      ref={searchRef}
+                      type="search"
+                      autoFocus
+                      placeholder="ابحث بالاسم أو رمز المنتج..."
+                      value={searchInput}
+                      onChange={(event) => {
+                        const nextValue = event.target.value;
+                        startTransition(() => {
+                          setSearchInput(nextValue);
+                        });
+                      }}
+                    />
+                    {searchInput.trim().length > 0 ? (
+                      <button
+                        type="button"
+                        className="icon-button pos-search-clear"
+                        onClick={() => {
+                          setSearchInput("");
+                          setSearchQuery("");
+                          searchRef.current?.focus();
+                        }}
+                        aria-label="مسح البحث"
+                      >
+                        <X size={16} />
+                      </button>
+                    ) : null}
+                  </label>
+
+                  <div className="pos-discovery-card__actions">
                     <button
                       type="button"
-                      className="secondary-button"
+                      className="secondary-button pos-discovery-card__refresh"
                       onClick={refreshProducts}
                     >
                       <RefreshCcw size={16} />
@@ -1296,43 +1337,10 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                       </button>
                     </div>
                   </div>
-                }
-              >
-                <div className="transaction-toolbar pos-products-header">
-                  <label className="workspace-search transaction-toolbar__search pos-search-shell">
-                    <Search size={18} />
-                    <input
-                      ref={searchRef}
-                      type="search"
-                      autoFocus
-                      placeholder="ابحث عن منتج..."
-                      value={searchInput}
-                      onChange={(event) => {
-                        const nextValue = event.target.value;
-                        startTransition(() => {
-                          setSearchInput(nextValue);
-                        });
-                      }}
-                    />
-                    {searchInput.trim().length > 0 ? (
-                      <button
-                        type="button"
-                        className="icon-button pos-search-clear"
-                        onClick={() => {
-                          setSearchInput("");
-                          setSearchQuery("");
-                          searchRef.current?.focus();
-                        }}
-                        aria-label="مسح البحث"
-                      >
-                        <X size={16} />
-                      </button>
-                    ) : null}
-                  </label>
                 </div>
 
                 <div
-                  className="chip-row transaction-chip-row pos-category-row"
+                  className="chip-row transaction-chip-row pos-category-row pos-discovery-card__filters"
                   aria-label="فئات المنتجات"
                 >
                   {categories.map((category) => (
@@ -1353,18 +1361,32 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                 </div>
 
                 {quickAddProducts.length > 0 ? (
-                  <div className="quick-add-row pos-quick-add-row">
-                    {quickAddProducts.map((product) =>
-                      renderCompactProductCard(product, "quick-add")
-                    )}
+                  <div className="pos-quick-add-panel">
+                    <div className="pos-quick-add-panel__header">
+                      <strong>إضافة سريعة</strong>
+                      <span>{formatCompactNumber(quickAddProducts.length)} اختصار</span>
+                    </div>
+
+                    <div className="quick-add-row pos-quick-add-row">
+                      {quickAddProducts.map((product) =>
+                        renderCompactProductCard(product, "quick-add")
+                      )}
+                    </div>
                   </div>
                 ) : null}
               </SectionCard>
 
-              <SectionCard
-                title="المنتجات"
-                className="transaction-card"
-              >
+              <SectionCard className="transaction-card pos-product-panel">
+                <div className="pos-product-panel__header">
+                  <div className="pos-product-panel__title-group">
+                    <h2 className="pos-product-panel__title">المنتجات</h2>
+                    <span className="pos-product-panel__summary">{productResultsLabel}</span>
+                  </div>
+
+                  <span className="product-pill product-pill--accent pos-product-panel__pill">
+                    {normalizedQuery ? "نتائج البحث" : "جميع المنتجات"}
+                  </span>
+                </div>
                 {productsLoading ? (
                   <div
                     className="product-grid product-grid--compact pos-product-grid pos-product-grid--loading"
@@ -1407,7 +1429,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                   </div>
                 )}
 
-                <div className="transaction-card__footer">
+                <div className="transaction-card__footer pos-product-panel__footer">
                   <div className="transaction-action-cluster">
                     {productsHasMore ? (
                       <button
@@ -1420,11 +1442,8 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                       </button>
                     ) : null}
 
-                    <span className="product-pill product-pill--accent">
-                      {formatCompactNumber(filteredProducts.length)} منتجًا
-                      {productsTotalCount !== null
-                        ? ` من ${formatCompactNumber(productsTotalCount)}`
-                        : ""}
+                    <span className="product-pill product-pill--accent pos-product-panel__results-pill">
+                      {productResultsLabel}
                     </span>
                   </div>
                 </div>
@@ -1479,75 +1498,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
             </button>
           </div>
 
-          <SectionCard
-            title={
-              panelState === "success"
-                ? "تمت العملية بنجاح"
-                : panelState === "cart"
-                  ? "السلة الحالية"
-                  : "إتمام البيع"
-            }
-            description={
-              panelState === "success"
-                ? "أصبح بإمكانك طباعة الإيصال أو بدء بيع جديد."
-                : panelState === "checkout"
-                  ? `${activePaymentLabel} • ${checkoutStatusLabel}`
-                  : undefined
-            }
-            actions={
-              panelState === "cart" ? (
-                <div className="cart-panel__actions">
-                  <button
-                    type="button"
-                    className="secondary-button cart-panel__header-button"
-                    onClick={() =>
-                      setIsCartSheetExpanded((currentValue) => !currentValue)
-                    }
-                  >
-                    <GripHorizontal size={16} />
-                    {isCartSheetExpanded ? "إخفاء" : "إظهار"}
-                  </button>
-                  <button
-                    type="button"
-                    className="secondary-button cart-panel__header-button"
-                    onClick={handleHoldCart}
-                    disabled={!canHoldCart}
-                  >
-                    تعليق
-                  </button>
-                  <button
-                    type="button"
-                    className="secondary-button cart-panel__header-button"
-                    onClick={() => setIsHeldCartsOpen((currentValue) => !currentValue)}
-                  >
-                    السلال المعلقة
-                    <span className="product-pill product-pill--accent">
-                      {formatCompactNumber(heldCarts.length)}
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    className="ghost-button btn btn--ghost cart-panel__header-button cart-panel__clear-button"
-                    onClick={() => setIsClearCartDialogOpen(true)}
-                    disabled={items.length === 0}
-                  >
-                    تفريغ السلة
-                  </button>
-                </div>
-              ) : panelState === "checkout" ? (
-                <button
-                  type="button"
-                  className="ghost-button btn btn--ghost cart-panel__header-button"
-                  onClick={goBackToCart}
-                  disabled={isSubmitting}
-                >
-                  <ArrowRight size={16} />
-                  عودة
-                </button>
-              ) : null
-            }
-            className="transaction-card transaction-card--checkout"
-          >
+          <SectionCard className="transaction-card transaction-card--checkout pos-cart-surface">
             {panelState === "success" && lastCompletedSale ? (
               <div className="cart-success-overlay pos-success-screen">
                 <div className="cart-success-overlay__icon">
@@ -1622,6 +1573,59 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
               </div>
             ) : panelState === "cart" ? (
               <>
+                <div className="pos-cart-card__header">
+                  <div className="pos-cart-card__title-group">
+                    <div className="pos-cart-card__title-row">
+                      <h2 className="pos-cart-card__title">السلة</h2>
+                      <span className="pos-cart-card__count">
+                        {formatCompactNumber(items.length)}
+                      </span>
+                    </div>
+                    <p className="pos-cart-card__summary">{cartOverviewLabel}</p>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="icon-button pos-cart-card__clear"
+                    onClick={() => setIsClearCartDialogOpen(true)}
+                    disabled={items.length === 0}
+                    aria-label="تفريغ السلة"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+
+                <div className="cart-panel__actions pos-cart-card__toolbar">
+                  <button
+                    type="button"
+                    className="secondary-button cart-panel__header-button pos-cart-card__toggle"
+                    onClick={() =>
+                      setIsCartSheetExpanded((currentValue) => !currentValue)
+                    }
+                  >
+                    <GripHorizontal size={16} />
+                    {isCartSheetExpanded ? "إخفاء" : "إظهار"}
+                  </button>
+                  <button
+                    type="button"
+                    className="secondary-button cart-panel__header-button"
+                    onClick={handleHoldCart}
+                    disabled={!canHoldCart}
+                  >
+                    تعليق
+                  </button>
+                  <button
+                    type="button"
+                    className="secondary-button cart-panel__header-button"
+                    onClick={() => setIsHeldCartsOpen((currentValue) => !currentValue)}
+                  >
+                    السلال المعلقة
+                    <span className="product-pill product-pill--accent">
+                      {formatCompactNumber(heldCarts.length)}
+                    </span>
+                  </button>
+                </div>
+
                 {isHeldCartsOpen ? (
                   <div className="held-carts-panel">
                     {heldCarts.length === 0 ? (
@@ -1674,113 +1678,121 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                     <p className="empty-state__description">لا توجد بنود مضافة.</p>
                   </div>
                 ) : (
-                  <div className="cart-line-list">
-                    {items.map((item) => {
-                      const maxQuantity = item.track_stock
-                        ? Math.max(item.stock_quantity, 1)
-                        : null;
-                      const lineSubtotal = roundAmount(item.sale_price * item.quantity);
-                      const lineDiscountAmount = roundAmount(
-                        lineSubtotal * (item.discount_percentage / 100)
-                      );
-                      const lineTotal = roundAmount(lineSubtotal - lineDiscountAmount);
-                      const canIncreaseQuantity =
-                        maxQuantity === null || item.quantity < maxQuantity;
+                  <div className="pos-cart-card__body">
+                    <div className="pos-cart-card__table-head" aria-hidden="true">
+                      <span>المنتج</span>
+                      <span>الكمية</span>
+                      <span>الإجمالي</span>
+                    </div>
 
-                      return (
-                        <article key={item.product_id} className="cart-line-card">
-                          <div className="cart-line-card__header">
-                            <div className="cart-line-card__copy">
-                              <strong>{item.name}</strong>
-                              <p>{formatCurrency(item.sale_price)} للوحدة</p>
-                            </div>
+                    <div className="cart-line-list">
+                      {items.map((item) => {
+                        const maxQuantity = item.track_stock
+                          ? Math.max(item.stock_quantity, 1)
+                          : null;
+                        const lineSubtotal = roundAmount(item.sale_price * item.quantity);
+                        const lineDiscountAmount = roundAmount(
+                          lineSubtotal * (item.discount_percentage / 100)
+                        );
+                        const lineTotal = roundAmount(lineSubtotal - lineDiscountAmount);
+                        const canIncreaseQuantity =
+                          maxQuantity === null || item.quantity < maxQuantity;
 
-                            <div className="cart-line-card__header-side">
-                              <strong className="cart-line-card__line-total">
-                                {formatCurrency(lineTotal)}
-                              </strong>
-                              <button
-                                type="button"
-                                className="icon-button cart-line-card__remove"
-                                onClick={() => {
-                                  clearSubmissionFeedback();
-                                  removeItem(item.product_id);
-                                }}
-                                aria-label={`حذف ${item.name}`}
-                              >
-                                <Trash2 size={16} />
-                              </button>
-                            </div>
-                          </div>
+                        return (
+                          <article key={item.product_id} className="cart-line-card">
+                            <div className="cart-line-card__header">
+                              <div className="cart-line-card__copy">
+                                <strong>{item.name}</strong>
+                                <p>{formatCurrency(item.sale_price)} للوحدة</p>
+                              </div>
 
-                          <div className="cart-line-card__controls">
-                            <div
-                              className="cart-line-card__quantity"
-                              aria-label={`تعديل كمية ${item.name}`}
-                            >
-                              <button
-                                type="button"
-                                className="icon-button cart-line-card__quantity-button"
-                                onClick={() => {
-                                  clearSubmissionFeedback();
-
-                                  if (item.quantity <= 1) {
+                              <div className="cart-line-card__header-side">
+                                <strong className="cart-line-card__line-total">
+                                  {formatCurrency(lineTotal)}
+                                </strong>
+                                <button
+                                  type="button"
+                                  className="icon-button cart-line-card__remove"
+                                  onClick={() => {
+                                    clearSubmissionFeedback();
                                     removeItem(item.product_id);
-                                    return;
-                                  }
-
-                                  setQuantity(item.product_id, item.quantity - 1);
-                                }}
-                                aria-label={`تقليل كمية ${item.name}`}
-                              >
-                                <Minus size={16} />
-                              </button>
-                              <span className="cart-line-card__quantity-value">
-                                <bdi dir="ltr">{formatCompactNumber(item.quantity)}</bdi>
-                              </span>
-                              <button
-                                type="button"
-                                className="icon-button cart-line-card__quantity-button"
-                                onClick={() => {
-                                  clearSubmissionFeedback();
-                                  setQuantity(item.product_id, item.quantity + 1);
-                                }}
-                                disabled={!canIncreaseQuantity}
-                                aria-label={`زيادة كمية ${item.name}`}
-                              >
-                                <Plus size={16} />
-                              </button>
+                                  }}
+                                  aria-label={`حذف ${item.name}`}
+                                >
+                                  <Trash2 size={16} />
+                                </button>
+                              </div>
                             </div>
 
-                            <label className="cart-line-card__discount">
-                              <span>خصم %</span>
-                              <input
-                                type="number"
-                                min={0}
-                                max={effectiveMaxDiscount}
-                                value={item.discount_percentage}
-                                onChange={(event) => {
-                                  clearSubmissionFeedback();
-                                  const raw = Number(event.target.value);
-                                  const clampedValue = Number.isNaN(raw)
-                                    ? 0
-                                    : Math.min(raw, effectiveMaxDiscount);
-                                  setDiscountPercentage(item.product_id, clampedValue);
-                                }}
-                              />
-                            </label>
-                          </div>
+                            <div className="cart-line-card__controls">
+                              <div
+                                className="cart-line-card__quantity"
+                                aria-label={`تعديل كمية ${item.name}`}
+                              >
+                                <button
+                                  type="button"
+                                  className="icon-button cart-line-card__quantity-button"
+                                  onClick={() => {
+                                    clearSubmissionFeedback();
 
-                          {lineDiscountAmount > 0 ? (
-                            <div className="cart-line-card__meta">
-                              <span className="product-pill product-pill--warning">
-                                خصم {formatCurrency(lineDiscountAmount)}
-                              </span>
+                                    if (item.quantity <= 1) {
+                                      removeItem(item.product_id);
+                                      return;
+                                    }
+
+                                    setQuantity(item.product_id, item.quantity - 1);
+                                  }}
+                                  aria-label={`تقليل كمية ${item.name}`}
+                                >
+                                  <Minus size={16} />
+                                </button>
+                                <span className="cart-line-card__quantity-value">
+                                  <bdi dir="ltr">{formatCompactNumber(item.quantity)}</bdi>
+                                </span>
+                                <button
+                                  type="button"
+                                  className="icon-button cart-line-card__quantity-button"
+                                  onClick={() => {
+                                    clearSubmissionFeedback();
+                                    setQuantity(item.product_id, item.quantity + 1);
+                                  }}
+                                  disabled={!canIncreaseQuantity}
+                                  aria-label={`زيادة كمية ${item.name}`}
+                                >
+                                  <Plus size={16} />
+                                </button>
+                              </div>
+
+                              <label className="cart-line-card__discount">
+                                <span>خصم %</span>
+                                <input
+                                  type="number"
+                                  min={0}
+                                  max={effectiveMaxDiscount}
+                                  value={item.discount_percentage}
+                                  onChange={(event) => {
+                                    clearSubmissionFeedback();
+                                    const raw = Number(event.target.value);
+                                    const clampedValue = Number.isNaN(raw)
+                                      ? 0
+                                      : Math.min(raw, effectiveMaxDiscount);
+                                    setDiscountPercentage(item.product_id, clampedValue);
+                                  }}
+                                />
+                              </label>
                             </div>
-                          ) : null}
-                        </article>
-                      );
-                    })}
+
+                            {lineDiscountAmount > 0 ? (
+                              <div className="cart-line-card__meta">
+                                <span className="product-pill product-pill--warning">
+                                  خصم {formatCurrency(lineDiscountAmount)}
+                                </span>
+                              </div>
+                            ) : null}
+                          </article>
+                        );
+                      })}
+                    </div>
                   </div>
                 )}
 
@@ -1829,6 +1841,39 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
               </>
             ) : (
               <>
+                <div className="pos-cart-card__header pos-cart-card__header--checkout">
+                  <div className="pos-cart-card__title-group">
+                    <div className="pos-cart-card__title-row">
+                      <h2 className="pos-cart-card__title">إتمام البيع</h2>
+                    </div>
+
+                    <div className="pos-checkout-header">
+                      <span className="product-pill product-pill--accent">
+                        {activePaymentLabel}
+                      </span>
+                      <span
+                        className={
+                          remainingToSettle > 0
+                            ? "product-pill product-pill--warning"
+                            : "product-pill product-pill--success"
+                        }
+                      >
+                        {checkoutStatusLabel}
+                      </span>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="ghost-button btn btn--ghost cart-panel__header-button"
+                    onClick={goBackToCart}
+                    disabled={isSubmitting}
+                  >
+                    <ArrowRight size={16} />
+                    عودة
+                  </button>
+                </div>
+
                 <div
                   className={
                     panelState === "processing"
@@ -2048,196 +2093,198 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                     أضف طريقة دفع أخرى
                   </button>
 
-                  {isCustomerExpanded ? (
-                    <div className="stack-field customer-search-field">
-                      <span className="field-label">العميل</span>
-                      <input
-                        className="field-input"
-                        type="text"
-                        value={customerSearchInput}
-                        onChange={(event) => {
-                          clearSubmissionFeedback();
-                          setCustomerSearchInput(event.target.value);
-                        }}
-                        placeholder="بحث العميل"
-                        disabled={panelState === "processing"}
-                      />
+                  <div className="pos-checkout-optional">
+                    {isCustomerExpanded ? (
+                      <div className="stack-field customer-search-field">
+                        <span className="field-label">العميل</span>
+                        <input
+                          className="field-input"
+                          type="text"
+                          value={customerSearchInput}
+                          onChange={(event) => {
+                            clearSubmissionFeedback();
+                            setCustomerSearchInput(event.target.value);
+                          }}
+                          placeholder="بحث العميل"
+                          disabled={panelState === "processing"}
+                        />
 
-                      {shouldShowCustomerResults ? (
-                        <div className="customer-search-results">
-                          {customersLoading ? (
-                            <div className="customer-search-results__empty">
-                              جارٍ البحث عن العملاء...
-                            </div>
-                          ) : customerResults.length === 0 ? (
-                            <div className="customer-search-results__empty">
-                              لا توجد نتائج مطابقة.
-                            </div>
-                          ) : (
-                            customerResults.map((customer) => (
-                              <button
-                                key={customer.id}
-                                type="button"
-                                className="customer-search-option"
-                                onClick={() =>
-                                  selectCustomer(customer as CustomerSearchResult)
-                                }
-                              >
-                                <strong>{customer.name}</strong>
-                                <span>
-                                  {customer.phone || "بدون هاتف"} • الرصيد الحالي{" "}
-                                  {formatCurrency(customer.current_balance)}
-                                </span>
-                              </button>
-                            ))
-                          )}
-                        </div>
-                      ) : null}
-
-                      {selectedCustomerId && selectedCustomerName ? (
-                        <div className="selected-customer-card">
-                          <div>
-                            <strong>{selectedCustomerName}</strong>
-                            <span>
-                              الرصيد الحالي:{" "}
-                              {selectedCustomerBalance !== null
-                                ? formatCurrency(selectedCustomerBalance)
-                                : "جارٍ التحميل..."}
-                              {selectedCustomerPhone ? ` • ${selectedCustomerPhone}` : ""}
-                            </span>
+                        {shouldShowCustomerResults ? (
+                          <div className="customer-search-results">
+                            {customersLoading ? (
+                              <div className="customer-search-results__empty">
+                                جارٍ البحث عن العملاء...
+                              </div>
+                            ) : customerResults.length === 0 ? (
+                              <div className="customer-search-results__empty">
+                                لا توجد نتائج مطابقة.
+                              </div>
+                            ) : (
+                              customerResults.map((customer) => (
+                                <button
+                                  key={customer.id}
+                                  type="button"
+                                  className="customer-search-option"
+                                  onClick={() =>
+                                    selectCustomer(customer as CustomerSearchResult)
+                                  }
+                                >
+                                  <strong>{customer.name}</strong>
+                                  <span>
+                                    {customer.phone || "بدون هاتف"} • الرصيد الحالي{" "}
+                                    {formatCurrency(customer.current_balance)}
+                                  </span>
+                                </button>
+                              ))
+                            )}
                           </div>
+                        ) : null}
 
-                          <button
-                            type="button"
-                            className="secondary-button"
-                            onClick={clearCustomerSelection}
-                            disabled={panelState === "processing"}
-                          >
-                            إزالة
-                          </button>
-                        </div>
-                      ) : null}
-                    </div>
-                  ) : (
-                    <button
-                      type="button"
-                      className="pos-optional-field-toggle"
-                      onClick={() => setIsCustomerExpanded(true)}
-                      disabled={panelState === "processing"}
-                    >
-                      ▸ إضافة عميل (اختياري)
-                    </button>
-                  )}
+                        {selectedCustomerId && selectedCustomerName ? (
+                          <div className="selected-customer-card">
+                            <div>
+                              <strong>{selectedCustomerName}</strong>
+                              <span>
+                                الرصيد الحالي:{" "}
+                                {selectedCustomerBalance !== null
+                                  ? formatCurrency(selectedCustomerBalance)
+                                  : "جارٍ التحميل..."}
+                                {selectedCustomerPhone ? ` • ${selectedCustomerPhone}` : ""}
+                              </span>
+                            </div>
 
-                  {isDiscountExpanded ? (
-                    <label className="stack-field">
-                      <span className="field-label">خصم الفاتورة</span>
-                      <input
-                        className="field-input"
-                        type="number"
-                        min={0}
-                        max={effectiveMaxDiscount}
-                        value={invoiceDiscountPercentage}
-                        onChange={(event) => {
-                          clearSubmissionFeedback();
-                          const rawValue = Number(event.target.value);
-                          setInvoiceDiscountPercentage(
-                            Number.isNaN(rawValue)
-                              ? 0
-                              : Math.min(Math.max(rawValue, 0), effectiveMaxDiscount)
-                          );
-                        }}
-                        disabled={panelState === "processing"}
-                      />
-                    </label>
-                  ) : (
-                    <button
-                      type="button"
-                      className="pos-optional-field-toggle"
-                      onClick={() => setIsDiscountExpanded(true)}
-                      disabled={panelState === "processing"}
-                    >
-                      ▸ إضافة خصم (اختياري)
-                    </button>
-                  )}
-
-                  {isTerminalCodeExpanded ? (
-                    <div className="stack-field terminal-code-field">
-                      <span className="field-label">رمز الجهاز</span>
-
-                      {terminalCodeLocked ? (
-                        <div className="terminal-code-field__locked">
-                          <strong>{posTerminalCode}</strong>
-                        </div>
-                      ) : (
-                        <div className="terminal-code-field__edit">
-                          <input
-                            className="field-input"
-                            type="text"
-                            maxLength={30}
-                            value={posTerminalCode}
-                            onChange={(event) => {
-                              clearSubmissionFeedback();
-                              setPosTerminalCode(event.target.value);
-                            }}
-                            placeholder="POS-01"
-                            disabled={panelState === "processing"}
-                          />
-                          <button
-                            type="button"
-                            className="secondary-button"
-                            onClick={() => {
-                              if (posTerminalCode.trim()) {
-                                lockTerminalCode();
-                              }
-                            }}
-                            disabled={
-                              !posTerminalCode.trim() || panelState === "processing"
-                            }
-                          >
-                            تثبيت
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <button
-                      type="button"
-                      className="pos-optional-field-toggle"
-                      onClick={() => setIsTerminalCodeExpanded(true)}
-                      disabled={panelState === "processing"}
-                    >
-                      ▸ رمز الجهاز (اختياري)
-                    </button>
-                  )}
-
-                  <div className="stack-field pos-notes-field">
-                    {!isNotesExpanded ? (
+                            <button
+                              type="button"
+                              className="secondary-button"
+                              onClick={clearCustomerSelection}
+                              disabled={panelState === "processing"}
+                            >
+                              إزالة
+                            </button>
+                          </div>
+                        ) : null}
+                      </div>
+                    ) : (
                       <button
                         type="button"
                         className="pos-optional-field-toggle"
-                        onClick={() => setIsNotesExpanded(true)}
+                        onClick={() => setIsCustomerExpanded(true)}
                         disabled={panelState === "processing"}
                       >
-                        ▸ إضافة ملاحظة (اختياري)
+                        ▸ إضافة عميل (اختياري)
                       </button>
-                    ) : (
-                      <>
-                        <span className="field-label">ملاحظات</span>
-                        <textarea
-                          className="field-input pos-notes-field__textarea"
-                          rows={3}
-                          maxLength={500}
-                          value={notes}
+                    )}
+
+                    {isDiscountExpanded ? (
+                      <label className="stack-field">
+                        <span className="field-label">خصم الفاتورة</span>
+                        <input
+                          className="field-input"
+                          type="number"
+                          min={0}
+                          max={effectiveMaxDiscount}
+                          value={invoiceDiscountPercentage}
                           onChange={(event) => {
                             clearSubmissionFeedback();
-                            setNotes(event.target.value);
+                            const rawValue = Number(event.target.value);
+                            setInvoiceDiscountPercentage(
+                              Number.isNaN(rawValue)
+                                ? 0
+                                : Math.min(Math.max(rawValue, 0), effectiveMaxDiscount)
+                            );
                           }}
-                          placeholder="ملاحظة على الفاتورة"
                           disabled={panelState === "processing"}
                         />
-                      </>
+                      </label>
+                    ) : (
+                      <button
+                        type="button"
+                        className="pos-optional-field-toggle"
+                        onClick={() => setIsDiscountExpanded(true)}
+                        disabled={panelState === "processing"}
+                      >
+                        ▸ إضافة خصم (اختياري)
+                      </button>
                     )}
+
+                    {isTerminalCodeExpanded ? (
+                      <div className="stack-field terminal-code-field">
+                        <span className="field-label">رمز الجهاز</span>
+
+                        {terminalCodeLocked ? (
+                          <div className="terminal-code-field__locked">
+                            <strong>{posTerminalCode}</strong>
+                          </div>
+                        ) : (
+                          <div className="terminal-code-field__edit">
+                            <input
+                              className="field-input"
+                              type="text"
+                              maxLength={30}
+                              value={posTerminalCode}
+                              onChange={(event) => {
+                                clearSubmissionFeedback();
+                                setPosTerminalCode(event.target.value);
+                              }}
+                              placeholder="POS-01"
+                              disabled={panelState === "processing"}
+                            />
+                            <button
+                              type="button"
+                              className="secondary-button"
+                              onClick={() => {
+                                if (posTerminalCode.trim()) {
+                                  lockTerminalCode();
+                                }
+                              }}
+                              disabled={
+                                !posTerminalCode.trim() || panelState === "processing"
+                              }
+                            >
+                              تثبيت
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        className="pos-optional-field-toggle"
+                        onClick={() => setIsTerminalCodeExpanded(true)}
+                        disabled={panelState === "processing"}
+                      >
+                        ▸ رمز الجهاز (اختياري)
+                      </button>
+                    )}
+
+                    <div className="stack-field pos-notes-field">
+                      {!isNotesExpanded ? (
+                        <button
+                          type="button"
+                          className="pos-optional-field-toggle"
+                          onClick={() => setIsNotesExpanded(true)}
+                          disabled={panelState === "processing"}
+                        >
+                          ▸ إضافة ملاحظة (اختياري)
+                        </button>
+                      ) : (
+                        <>
+                          <span className="field-label">ملاحظات</span>
+                          <textarea
+                            className="field-input pos-notes-field__textarea"
+                            rows={3}
+                            maxLength={500}
+                            value={notes}
+                            onChange={(event) => {
+                              clearSubmissionFeedback();
+                              setNotes(event.target.value);
+                            }}
+                            placeholder="ملاحظة على الفاتورة"
+                            disabled={panelState === "processing"}
+                          />
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
 
