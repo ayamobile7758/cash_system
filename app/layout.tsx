@@ -52,7 +52,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     "dev";
 
   return (
-    <html lang="ar" dir="rtl" data-build-id={buildId}>
+    <html lang="ar" dir="rtl" data-build-id={buildId} suppressHydrationWarning>
       <body className={`${tajawal.variable} ${jetBrainsMono.variable} aya-shell`}>
         {children}
         <ServiceWorkerRegistration buildId={buildId} />
