@@ -2,16 +2,14 @@ import React from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { LoginForm } from "@/components/auth/login-form";
 
-const mockReplace = vi.fn();
-const mockRefresh = vi.fn();
-const mockSignInWithPassword = vi.fn();
-const mockSingle = vi.fn();
+const { mockRedirectAfterLogin, mockSignInWithPassword, mockSingle } = vi.hoisted(() => ({
+  mockRedirectAfterLogin: vi.fn(),
+  mockSignInWithPassword: vi.fn(),
+  mockSingle: vi.fn()
+}));
 
-vi.mock("next/navigation", () => ({
-  useRouter: () => ({
-    replace: mockReplace,
-    refresh: mockRefresh
-  })
+vi.mock("@/lib/auth/redirect-after-login", () => ({
+  redirectAfterLogin: mockRedirectAfterLogin
 }));
 
 vi.mock("@/lib/supabase/client", () => ({
@@ -22,7 +20,7 @@ vi.mock("@/lib/supabase/client", () => ({
     from: () => ({
       select: () => ({
         eq: () => ({
-          single: mockSingle
+          maybeSingle: mockSingle
         })
       })
     })
@@ -42,8 +40,8 @@ describe("LoginForm", () => {
       configurable: true,
       value: true
     });
-    mockReplace.mockReset();
-    mockRefresh.mockReset();
+    window.localStorage.clear();
+    mockRedirectAfterLogin.mockReset();
     mockSignInWithPassword.mockReset();
     mockSingle.mockReset();
   });
@@ -70,8 +68,7 @@ describe("LoginForm", () => {
         email: "admin@aya.local",
         password: "password123"
       });
-      expect(mockReplace).toHaveBeenCalledWith("/reports");
-      expect(mockRefresh).toHaveBeenCalled();
+      expect(mockRedirectAfterLogin).toHaveBeenCalledWith("/reports");
     });
   }, 15000);
 
@@ -93,7 +90,7 @@ describe("LoginForm", () => {
     expect(await screen.findByText("تعذر تسجيل الدخول")).toBeInTheDocument();
     expect(screen.getByText("تعذر إكمال تسجيل الدخول. حاول مجددًا.")).toBeInTheDocument();
     expect(screen.queryByText("Bad credentials")).not.toBeInTheDocument();
-    expect(mockReplace).not.toHaveBeenCalled();
+    expect(mockRedirectAfterLogin).not.toHaveBeenCalled();
   }, 15000);
 
   it("redirects pos staff to /pos and falls back to /pos when profile is unavailable", async () => {
@@ -114,8 +111,7 @@ describe("LoginForm", () => {
     fireEvent.click(screen.getByRole("button", { name: /تسجيل الدخول/i }));
 
     await waitFor(() => {
-      expect(mockReplace).toHaveBeenCalledWith("/pos");
-      expect(mockRefresh).toHaveBeenCalled();
+      expect(mockRedirectAfterLogin).toHaveBeenCalledWith("/pos");
     });
   }, 15000);
 
@@ -138,10 +134,10 @@ describe("LoginForm", () => {
     const submitButton = screen.getByRole("button", { name: /تسجيل الدخول/i });
     expect(submitButton).not.toBeDisabled();
 
-    fireEvent.change(screen.getByRole("textbox"), {
+    fireEvent.change(screen.getByLabelText("البريد الإلكتروني"), {
       target: { value: "admin@aya.local" }
     });
-    fireEvent.change(document.querySelector('input[type="password"]') as HTMLInputElement, {
+    fireEvent.change(screen.getByLabelText("كلمة المرور"), {
       target: { value: "password123" }
     });
     fireEvent.click(submitButton);
@@ -151,7 +147,30 @@ describe("LoginForm", () => {
         email: "admin@aya.local",
         password: "password123"
       });
-      expect(mockReplace).toHaveBeenCalledWith("/reports");
+      expect(mockRedirectAfterLogin).toHaveBeenCalledWith("/reports");
+    });
+  }, 15000);
+
+  it("remembers the last successful email when the checkbox stays enabled", async () => {
+    mockSignInWithPassword.mockResolvedValue({
+      data: { user: { id: "admin-1" }, session: {} },
+      error: null
+    });
+    mockSingle.mockResolvedValue({ data: { role: "admin" } });
+
+    render(<LoginForm />);
+
+    fireEvent.change(screen.getByLabelText("البريد الإلكتروني"), {
+      target: { value: "admin@aya.local" }
+    });
+    fireEvent.change(screen.getByLabelText("كلمة المرور"), {
+      target: { value: "password123" }
+    });
+    fireEvent.click(screen.getByRole("button", { name: /تسجيل الدخول/i }));
+
+    await waitFor(() => {
+      expect(window.localStorage.getItem("aya.login.email")).toBe("admin@aya.local");
+      expect(mockRedirectAfterLogin).toHaveBeenCalledWith("/reports");
     });
   }, 15000);
 });
