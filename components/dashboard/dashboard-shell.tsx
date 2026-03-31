@@ -58,6 +58,11 @@ const PRIMARY_BOTTOM_NAV_HREFS = [
   "/inventory"
 ] as const;
 
+const BOTTOM_BAR_LABELS: Partial<Record<(typeof PRIMARY_BOTTOM_NAV_HREFS)[number], string>> = {
+  "/pos": "البيع",
+  "/inventory": "الجرد"
+};
+
 const ICONS = {
   home: Home,
   pos: ShoppingCart,
@@ -303,10 +308,6 @@ export function DashboardShell({
                 key={groupKey}
                 className={`dashboard-nav-group dashboard-nav-group--${groupKey}`}
               >
-                <div className="dashboard-nav-group__header">
-                  <p className="dashboard-nav-group__title">{GROUP_LABELS[groupKey]}</p>
-                </div>
-
                 <div className="dashboard-nav-group__items">
                   {groupedNavigation[groupKey].map((item) => {
                     const isActive = isPathActive(pathname, item.href);
@@ -322,25 +323,19 @@ export function DashboardShell({
                             : "dashboard-nav__item"
                         }
                         aria-current={isActive ? "page" : undefined}
-                        title={item.description}
                         onClick={closeMenu}
                       >
                         <span className="dashboard-nav__icon">
                           <Icon size={18} />
                         </span>
 
-                        <span className="dashboard-nav__content">
-                          <strong>
-                            {item.label}
-                            {item.href === "/notifications" && unreadNotifications > 0 ? (
-                              <span className="dashboard-nav__badge">
-                                {unreadNotifications}
-                              </span>
-                            ) : null}
-                          </strong>
-                          <span className="dashboard-nav__description">
-                            {item.description}
-                          </span>
+                        <span className="dashboard-nav__label">
+                          {item.label}
+                          {item.href === "/notifications" && unreadNotifications > 0 ? (
+                            <span className="dashboard-nav__badge">
+                              {unreadNotifications}
+                            </span>
+                          ) : null}
                         </span>
                       </Link>
                     );
@@ -353,7 +348,18 @@ export function DashboardShell({
 
         <div className="dashboard-sidebar__footer">
           {isAuthenticated ? (
-            <LogoutButton />
+            <>
+              <div className="dashboard-sidebar__account" title={accountLabel}>
+                <span className="dashboard-sidebar__account-avatar" aria-hidden="true">
+                  {accountInitials}
+                </span>
+                <span className="dashboard-sidebar__account-copy">
+                  <strong>{roleLabel}</strong>
+                  <small>{accountLabel}</small>
+                </span>
+              </div>
+              <LogoutButton />
+            </>
           ) : (
             <Link href="/" className="secondary-button" onClick={closeMenu}>
               تسجيل الدخول
@@ -370,6 +376,7 @@ export function DashboardShell({
           {bottomBarItems.map((item) => {
             const Icon = getIcon(item.icon);
             const isActive = isPathActive(pathname, item.href);
+            const compactLabel = BOTTOM_BAR_LABELS[item.href as keyof typeof BOTTOM_BAR_LABELS] ?? item.label;
 
             return (
               <Link
@@ -387,7 +394,7 @@ export function DashboardShell({
                 <span className="dashboard-bottom-bar__icon">
                   <Icon size={18} />
                 </span>
-                <span className="dashboard-bottom-bar__label">{item.label}</span>
+                <span className="dashboard-bottom-bar__label">{compactLabel}</span>
               </Link>
             );
           })}
@@ -429,15 +436,7 @@ export function DashboardShell({
             <div className="dashboard-header-title">
               <div className="dashboard-header-title__row">
                 <h1>{pageContext.title}</h1>
-                {pageContext.groupLabel !== "لوحة العمل" ? (
-                  <span className="status-pill status-pill--neutral dashboard-header-badge">
-                    {pageContext.groupLabel}
-                  </span>
-                ) : null}
               </div>
-              {pageContext.description ? (
-                <p className="dashboard-header-description">{pageContext.description}</p>
-              ) : null}
             </div>
           </div>
 

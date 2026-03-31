@@ -310,7 +310,6 @@ export function PortabilityWorkspace({
   return (
     <section className="workspace-stack configuration-page">
       <PageHeader
-        eyebrow="النقل والنسخ"
         title="مركز النقل والاستيراد والاستعادة التجريبية"
         meta={
           <div className="configuration-page__meta-grid">

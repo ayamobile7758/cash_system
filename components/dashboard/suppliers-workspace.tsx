@@ -347,20 +347,40 @@ export function SuppliersWorkspace({
   }
 
   return (
-    <section className="operational-page">
+    <section className="operational-page suppliers-page">
       <PageHeader
-        eyebrow="الموردون"
-        title="الموردون والمشتريات"
+        title="الموردون"
         meta={
           <>
-            <span className="status-pill status-pill--brand">الموردون: {formatCompactNumber(suppliers.length)}</span>
-            <span className="status-pill">أوامر الشراء: {formatCompactNumber(purchaseOrders.length)}</span>
-            <span className="status-pill">التسديدات: {formatCompactNumber(supplierPayments.length)}</span>
+            <span className="status-pill badge badge--neutral">
+              الموردون {formatCompactNumber(suppliers.length)}
+            </span>
+            <span className="status-pill badge badge--neutral">
+              الشراء {formatCompactNumber(purchaseOrders.length)}
+            </span>
+            <span className="status-pill badge badge--neutral">
+              التسديدات {formatCompactNumber(supplierPayments.length)}
+            </span>
           </>
+        }
+        actions={
+          <button
+            type="button"
+            className="primary-button"
+            onClick={() => {
+              setActiveSection("directory");
+              setIsCreateMode(true);
+              setSupplierDraft(emptySupplierDraft);
+              setSupplierResult(null);
+            }}
+          >
+            <Plus size={16} />
+            مورد جديد
+          </button>
         }
       />
 
-      <section className="operational-page__meta-grid" aria-label="ملخص الموردين">
+      <section className="operational-page__meta-grid suppliers-page__summary" aria-label="ملخص الموردين">
         <article className="operational-page__meta-card">
           <span className="operational-page__meta-label">الدليل النشط</span>
           <strong className="operational-page__meta-value">{formatCompactNumber(suppliers.filter((supplier) => supplier.is_active).length)}</strong>
@@ -375,18 +395,10 @@ export function SuppliersWorkspace({
         </article>
       </section>
 
-      {isPending ? (
-        <StatusBanner
-          variant="info"
-          title="جاري تنفيذ الإجراء"
-          message="انتظر حتى يكتمل تحديث الموردين أو المشتريات الحالية قبل بدء إجراء جديد."
-        />
-      ) : null}
-
       {actionErrorMessage ? (
         <StatusBanner
           variant="danger"
-          title="تعذر إكمال الإجراء"
+          title="تعذر تنفيذ الإجراء"
           message={actionErrorMessage}
           actionLabel={retryAction ? "إعادة المحاولة" : undefined}
           onAction={retryAction ? retryLastAction : undefined}
@@ -394,7 +406,7 @@ export function SuppliersWorkspace({
         />
       ) : null}
 
-      <div className="operational-section-nav" aria-label="أقسام الموردين والمشتريات">
+      <div className="operational-section-nav suppliers-page__sections" aria-label="أقسام الموردين والمشتريات">
         <button
           type="button"
           className={activeSection === "directory" ? "chip-button is-selected" : "chip-button"}
@@ -426,7 +438,7 @@ export function SuppliersWorkspace({
       </div>
 
       {activeSection === "directory" ? <div className="detail-grid">
-        <section className="workspace-panel">
+        <section className="workspace-panel suppliers-page__directory">
           <div className="workspace-toolbar">
             <label className="workspace-search">
               <Search size={18} />
@@ -476,7 +488,7 @@ export function SuppliersWorkspace({
             </button>
           </div>
 
-          <div className="stack-list">
+          <div className="stack-list suppliers-page__directory-list">
             {filteredSuppliers.length > 0 ? (
               filteredSuppliers.map((supplier) => (
                 <button
@@ -484,8 +496,8 @@ export function SuppliersWorkspace({
                   type="button"
                   className={
                     supplier.id === selectedSupplierId && !isCreateMode
-                      ? "list-card list-card--interactive is-selected"
-                      : "list-card list-card--interactive"
+                      ? "list-card list-card--interactive is-selected supplier-directory-card"
+                      : "list-card list-card--interactive supplier-directory-card"
                   }
                   onClick={() => {
                     setSelectedSupplierId(supplier.id);
@@ -497,27 +509,46 @@ export function SuppliersWorkspace({
                 >
                   <div className="list-card__header">
                     <strong>{supplier.name}</strong>
-                    <span>{formatCurrency(supplier.current_balance)}</span>
+                    <span
+                      className={
+                        supplier.current_balance > 0
+                          ? "status-pill badge badge--warning"
+                          : "status-pill badge badge--neutral"
+                      }
+                    >
+                      {formatCurrency(supplier.current_balance)}
+                    </span>
                   </div>
-                  <p>{supplier.phone ?? "بدون هاتف"}</p>
-                  <p className="workspace-footnote">
-                    {supplier.is_active ? "نشط" : "غير نشط"} | آخر تحديث {formatDate(supplier.updated_at)}
-                  </p>
+                  <div className="supplier-directory-card__meta">
+                    <span>{supplier.phone ?? "بدون هاتف"}</span>
+                    <span>{supplier.is_active ? "نشط" : "غير نشط"}</span>
+                    <span>{formatDate(supplier.updated_at)}</span>
+                  </div>
                 </button>
               ))
             ) : (
-              <div className="empty-panel">
-                <p>لا يوجد موردون يطابقون هذا الفلتر. جرّب توسيع البحث أو إنشاء مورد جديد.</p>
+              <div className="empty-panel suppliers-page__empty">
+                <Search size={20} />
+                <h3>لا توجد نتائج مطابقة</h3>
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={() => {
+                    setSupplierSearch("");
+                    setSupplierFilter("all");
+                  }}
+                >
+                  مسح التصفية
+                </button>
               </div>
             )}
           </div>
         </section>
 
-        <section className="workspace-panel">
+        <section className="workspace-panel suppliers-page__detail">
           <div className="section-heading">
             <div>
-              <p className="eyebrow">{isCreateMode ? "إضافة مورد" : "تفاصيل المورد"}</p>
-              <h2>{isCreateMode ? "إضافة مورد جديد" : selectedSupplier?.name ?? "اختر موردًا"}</h2>
+              <h2>{isCreateMode ? "إضافة مورد" : selectedSupplier?.name ?? "اختر موردًا"}</h2>
             </div>
           </div>
 
@@ -615,7 +646,7 @@ export function SuppliersWorkspace({
       </div> : null}
 
       {activeSection === "purchase" ? <div className="detail-grid">
-        <section className="workspace-panel">
+        <section className="workspace-panel suppliers-page__purchase">
           <div className="section-heading">
             <div>
               <p className="eyebrow">أمر شراء</p>
@@ -821,7 +852,7 @@ export function SuppliersWorkspace({
       </div> : null}
 
       {activeSection === "history" ? <div className="detail-grid">
-        <section className="workspace-panel">
+        <section className="workspace-panel suppliers-page__history">
           <div className="section-heading">
             <div>
               <p className="eyebrow">آخر المشتريات</p>
@@ -857,14 +888,15 @@ export function SuppliersWorkspace({
                 </article>
               ))
             ) : (
-              <div className="empty-panel">
-                <p>لا توجد أوامر شراء حتى الآن. أنشئ أول أمر شراء ليظهر هنا.</p>
+              <div className="empty-panel suppliers-page__empty">
+                <ShoppingCart size={20} />
+                <h3>لا توجد أوامر شراء</h3>
               </div>
             )}
           </div>
         </section>
 
-        <section className="workspace-panel">
+        <section className="workspace-panel suppliers-page__history">
           <div className="section-heading">
             <div>
               <p className="eyebrow">آخر التسديدات</p>
@@ -889,8 +921,9 @@ export function SuppliersWorkspace({
                 </article>
               ))
             ) : (
-              <div className="empty-panel">
-                <p>لا توجد تسديدات موردين حتى الآن. ستظهر آخر عمليات السداد هنا بعد تسجيلها.</p>
+              <div className="empty-panel suppliers-page__empty">
+                <Wallet size={20} />
+                <h3>لا توجد تسديدات موردين</h3>
               </div>
             )}
           </div>
@@ -899,7 +932,7 @@ export function SuppliersWorkspace({
 
       {activeSection === "payment" ? (
         <div className="detail-grid">
-          <section className="workspace-panel">
+          <section className="workspace-panel suppliers-page__payment">
             <div className="section-heading">
               <div>
                 <p className="eyebrow">تسديد المورد</p>
@@ -925,8 +958,9 @@ export function SuppliersWorkspace({
                   {projectedSupplierBalance !== null ? <span>بعد التسديد: {formatCurrency(projectedSupplierBalance)}</span> : null}
                 </div>
               ) : (
-                <div className="empty-panel">
-                  <p>لا يوجد موردون عليهم رصيد مستحق حاليًا. ستظهر هنا الحسابات التي تحتاج إلى تسديد.</p>
+                <div className="empty-panel suppliers-page__empty">
+                  <Wallet size={20} />
+                  <h3>لا يوجد رصيد مستحق حاليًا</h3>
                 </div>
               )}
 

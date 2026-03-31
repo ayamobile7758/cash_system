@@ -1,7 +1,7 @@
 "use client";
 
-import { useDeferredValue, useEffect, useMemo, useRef, useState, useTransition } from "react";
-import { PackageSearch, PencilLine, Plus, RefreshCcw, Save, ShieldCheck, Trash2 } from "lucide-react";
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import { PackageSearch, PencilLine, Plus, RefreshCcw, Save, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/ui/page-header";
 import { SectionCard } from "@/components/ui/section-card";
@@ -110,7 +110,6 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string>("all");
-  const [isTyping, startTransition] = useTransition();
   const [isSaving, setIsSaving] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [productForm, setProductForm] = useState<ProductFormState>(
@@ -349,21 +348,26 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
   }
 
   return (
-    <section className="operational-page">
+    <section className="operational-page catalog-page">
       <PageHeader
-        eyebrow="فهرس المنتجات"
-        title="المنتجات الجاهزة للبيع"
+        title="المنتجات"
         meta={
           <>
-            <span className="status-pill badge badge--brand">الدور: {role === "admin" ? "إداري" : "نقطة بيع"}</span>
-            <span className="status-pill badge badge--neutral">التصنيفات: {formatCompactNumber(categories.length - 1)}</span>
-            <span className="status-pill badge badge--neutral">السريعة: {formatCompactNumber(quickAddCount)}</span>
+            <span className="status-pill badge badge--neutral">
+              {formatCompactNumber(filteredProducts.length)} منتج
+            </span>
+            <span className="status-pill badge badge--neutral">
+              منخفض: {formatCompactNumber(lowStockCount)}
+            </span>
+            <span className="status-pill badge badge--neutral">
+              {role === "admin" ? "عرض إداري" : "عرض البيع"}
+            </span>
           </>
         }
         actions={
           <div className="transaction-action-cluster">
             {isAdmin ? (
-              <button type="button" className="secondary-button" onClick={clearFormState}>
+              <button type="button" className="primary-button" onClick={clearFormState}>
                 <Plus size={16} />
                 منتج جديد
               </button>
@@ -376,25 +380,9 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
         }
       />
 
-      <section className="operational-page__meta-grid" aria-label="ملخص الكتالوج">
-        <article className="operational-page__meta-card stat-card">
-          <span className="operational-page__meta-label">المنتجات الظاهرة</span>
-          <strong className="operational-page__meta-value">{formatCompactNumber(filteredProducts.length)}</strong>
-        </article>
-        <article className="operational-page__meta-card stat-card">
-          <span className="operational-page__meta-label">مخزون منخفض</span>
-          <strong className="operational-page__meta-value">{formatCompactNumber(lowStockCount)}</strong>
-        </article>
-        <article className="operational-page__meta-card stat-card">
-          <span className="operational-page__meta-label">حالة العرض</span>
-          <strong className="operational-page__meta-value">{role === "admin" ? "كتالوج إداري" : "عرض مخصص للبيع"}</strong>
-        </article>
-      </section>
-
       {isAdmin ? (
         <SectionCard
-          eyebrow="إدارة المنتجات"
-          title={selectedProduct ? `تعديل المنتج: ${selectedProduct.name}` : "إضافة منتج جديد"}
+          title={selectedProduct ? `تعديل: ${selectedProduct.name}` : "منتج جديد"}
           tone="accent"
           className="operational-card product-admin-card"
         >
@@ -546,8 +534,9 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
 
             <div className="product-admin-form__actions">
               <div className="product-admin-form__status">
-                <span className="status-pill badge badge--neutral">{selectedProduct ? "وضع التعديل" : "وضع الإنشاء"}</span>
-                <span className="workspace-footnote">احفظ التغييرات لتحديث الكتالوج فورًا.</span>
+                <span className="status-pill badge badge--neutral">
+                  {selectedProduct ? "وضع التعديل" : "وضع الإنشاء"}
+                </span>
               </div>
 
               <div className="transaction-action-cluster">
@@ -573,12 +562,27 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
 
       <section className="operational-layout operational-layout--wide">
         <SectionCard
-          eyebrow="البحث والتصنيف"
-          title="ابدأ من المنتج أو التصنيف"
+          title="بحث وتصفية"
           tone="accent"
-          className="operational-sidebar operational-sidebar--sticky"
+          className="operational-sidebar operational-sidebar--sticky catalog-page__filters"
+          actions={
+            searchInput.trim() || activeCategory !== "all" ? (
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={() => {
+                  setSearchInput("");
+                  setSearchQuery("");
+                  setActiveCategory("all");
+                  searchInputRef.current?.focus();
+                }}
+              >
+                مسح التصفية
+              </button>
+            ) : null
+          }
         >
-          <label className="workspace-search">
+          <label className="workspace-search catalog-page__search">
             <PackageSearch size={18} />
             <input
               ref={searchInputRef}
@@ -588,15 +592,12 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
               placeholder="ابحث باسم المنتج أو SKU أو الوصف"
               value={searchInput}
               onChange={(event) => {
-                const nextValue = event.target.value;
-                startTransition(() => {
-                  setSearchInput(nextValue);
-                });
+                setSearchInput(event.target.value);
               }}
             />
           </label>
 
-          <div className="chip-row" aria-label="تصنيفات المنتجات">
+          <div className="chip-row catalog-page__filters-row" aria-label="تصنيفات المنتجات">
             {categories.map((category) => (
               <button
                 key={category}
@@ -610,36 +611,31 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
             ))}
           </div>
 
-          <p className="workspace-footnote">
-            {isTyping
-              ? "تحديث نتائج البحث..."
-              : "اضغط / للبحث السريع و Esc لمسح البحث. يتم فلترة النتائج محلياً لتبقى الاستجابة سريعة."}
-          </p>
-
           {quickAddProducts.length > 0 ? (
-            <div className="space-y-3">
-              <div className="flex items-center justify-between gap-3">
-                <p className="workspace-footnote">الإضافات السريعة</p>
-                <span className="status-pill badge badge--neutral">{formatCompactNumber(quickAddCount)} عنصر</span>
+            <div className="catalog-quick-add">
+              <div className="catalog-quick-add__header">
+                <strong>الإضافة السريعة</strong>
+                <span className="status-pill badge badge--neutral">
+                  {formatCompactNumber(quickAddCount)} عنصر
+                </span>
               </div>
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="catalog-quick-add__grid">
                 {quickAddProducts.map((product) => (
-                  <article
-                    key={product.id}
-                    className="flex min-h-24 flex-col justify-between rounded-xl border border-border bg-background p-3 shadow-sm transition-colors hover:border-primary hover:bg-accent/30"
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0">
-                        <h3 className="truncate text-sm font-semibold text-foreground">{product.name}</h3>
-                        <p className="mt-1 truncate text-xs text-muted-foreground">{product.sku || "بدون SKU"}</p>
-                      </div>
-                      <span className="status-pill badge badge--brand shrink-0">سريع</span>
+                  <article key={product.id} className="catalog-quick-add__card">
+                    <div className="catalog-quick-add__copy">
+                      <h3>{product.name}</h3>
+                      <p>{product.sku ? <bdi dir="ltr">{product.sku}</bdi> : "بدون SKU"}</p>
                     </div>
-                    <div className="mt-3 flex items-end justify-between gap-2">
-                      <p className="text-sm font-semibold text-primary">{formatCurrency(product.sale_price)}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {product.track_stock ? formatCompactNumber(product.stock_quantity) : "خدمة"}
-                      </p>
+                    <div className="catalog-quick-add__meta">
+                      <strong>{formatCurrency(product.sale_price)}</strong>
+                      <span className="product-pill product-pill--accent">سريع</span>
+                    </div>
+                    <div className="catalog-quick-add__footer">
+                      <span className="workspace-footnote">
+                        {product.track_stock
+                          ? `${formatCompactNumber(product.stock_quantity)} متاح`
+                          : "خدمة"}
+                      </span>
                     </div>
                   </article>
                 ))}
@@ -673,22 +669,46 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
           ) : errorMessage ? (
             <StatusBanner
               variant="danger"
-              title="تعذر جلب المنتجات"
+              title="تعذر تحميل المنتجات"
               message={errorMessage}
               actionLabel="إعادة المحاولة"
               onAction={refresh}
             />
           ) : filteredProducts.length === 0 ? (
-            <SectionCard
-              eyebrow="لا توجد نتائج"
-              title="لم نصل إلى منتجات مطابقة"
-              tone="subtle"
-            >
-              <p className="workspace-footnote">
+            <SectionCard title="المنتجات" className="catalog-page__results">
+              <div className="empty-panel transaction-empty-panel">
+                <PackageSearch size={20} />
+              <h3 className="catalog-page__empty-title">
                 {searchInput.trim()
                   ? `لا توجد نتائج تطابق "${searchInput.trim()}". جرّب SKU أو وصفاً أقصر.`
                   : "ابدأ بالبحث أو بدّل التصنيف للعثور على المنتجات الأسرع استخداماً."}
-              </p>
+              </h3>
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={() => {
+                  if (searchInput.trim() || activeCategory !== "all") {
+                    setSearchInput("");
+                    setSearchQuery("");
+                    setActiveCategory("all");
+                    return;
+                  }
+
+                  if (isAdmin) {
+                    clearFormState();
+                    return;
+                  }
+
+                  refresh();
+                }}
+              >
+                {searchInput.trim() || activeCategory !== "all"
+                  ? "مسح التصفية"
+                  : isAdmin
+                    ? "منتج جديد"
+                    : "إعادة المحاولة"}
+              </button>
+              </div>
               {hasMore ? (
                 <div className="transaction-action-cluster">
                   <button type="button" className="secondary-button" onClick={loadMore} disabled={isLoadingMore}>
@@ -699,17 +719,23 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
             </SectionCard>
           ) : (
             <SectionCard
-              eyebrow="الكتالوج"
-              title="بطاقات المنتجات"
+              title="المنتجات"
+              className="catalog-page__results"
+              actions={
+                <span className="product-pill product-pill--accent">
+                  {formatCompactNumber(filteredProducts.length)}
+                  {totalCount !== null ? ` من ${formatCompactNumber(totalCount)}` : ""}
+                </span>
+              }
             >
-              <div className="product-grid">
+              <div className="product-grid catalog-page__grid">
                 {filteredProducts.map((product) => (
                   <article
                     key={product.id}
                     className={
                       isAdmin
-                        ? "product-card product-card--interactive product-admin-card"
-                        : "product-card min-h-28 p-4 transition-shadow hover:shadow-md"
+                        ? "product-card product-card--interactive product-admin-card catalog-product-card"
+                        : "product-card catalog-product-card"
                     }
                     role={isAdmin ? "button" : undefined}
                     tabIndex={isAdmin ? 0 : undefined}
@@ -732,7 +758,7 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
                         : undefined
                     }
                   >
-                    <div className="product-card__meta">
+                    <div className="product-card__meta catalog-product-card__badges">
                       <span className="product-pill">{getCategoryLabel(product.category)}</span>
                       {product.is_quick_add ? <span className="product-pill product-pill--accent">سريع</span> : null}
                       <span
@@ -742,28 +768,34 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
                       </span>
                     </div>
 
-                    <div className="product-card__copy">
+                    <div className="catalog-product-card__body">
                       <h2>{product.name}</h2>
-                      <p>{product.description || "بدون وصف إضافي لهذا المنتج."}</p>
+                      <p>
+                        {product.sku ? (
+                          <>
+                            SKU <bdi dir="ltr">{product.sku}</bdi>
+                          </>
+                        ) : product.description ? (
+                          product.description
+                        ) : (
+                          "بدون SKU"
+                        )}
+                      </p>
                     </div>
 
-                    <dl className="product-card__stats">
-                      <div>
-                        <dt>السعر</dt>
-                        <dd>{formatCurrency(product.sale_price)}</dd>
-                      </div>
-                      <div>
-                        <dt>المخزون</dt>
-                        <dd>{product.track_stock ? formatCompactNumber(product.stock_quantity) : "خدمة"}</dd>
-                      </div>
-                      <div>
-                        <dt>رمز المنتج</dt>
-                        <dd>{product.sku || "غير محدد"}</dd>
-                      </div>
-                    </dl>
+                    <div className="catalog-product-card__footer">
+                      <strong className="catalog-product-card__price">
+                        {formatCurrency(product.sale_price)}
+                      </strong>
+                      <span className="catalog-product-card__stock-meta">
+                        {product.track_stock
+                          ? `${formatCompactNumber(product.stock_quantity)} في المخزون`
+                          : "خدمة"}
+                      </span>
+                    </div>
 
                     {isAdmin ? (
-                      <div className="product-admin-card__actions">
+                      <div className="product-admin-card__actions catalog-product-card__actions">
                         <button
                           type="button"
                           className="secondary-button"
@@ -791,33 +823,19 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
                   </article>
                 ))}
               </div>
-              <div className="transaction-action-cluster">
+              <div className="transaction-action-cluster catalog-page__results-footer">
                 {hasMore ? (
                   <button type="button" className="secondary-button" onClick={loadMore} disabled={isLoadingMore}>
-                    {isLoadingMore ? "جارٍ تحميل المزيد..." : "تحميل المزيد من المنتجات"}
+                    {isLoadingMore ? "جارٍ تحميل المزيد..." : "تحميل المزيد"}
                   </button>
                 ) : null}
                 <span className="workspace-footnote">
                   {formatCompactNumber(products.length)}
-                  {totalCount !== null ? ` من ${formatCompactNumber(totalCount)}` : ""} منتج محمّل حتى الآن.
+                  {totalCount !== null ? ` من ${formatCompactNumber(totalCount)}` : ""} منتج محمل
                 </span>
               </div>
             </SectionCard>
           )}
-
-          <SectionCard
-            eyebrow="ملاحظات العرض"
-            title="استخدام تشغيلي أوضح"
-            tone="subtle"
-          >
-            <div className="operational-inline-summary">
-              <span className="status-pill badge badge--neutral">
-                <ShieldCheck size={16} />
-                العرض مناسب للبيع اليومي
-              </span>
-              <span className="status-pill badge badge--neutral">البحث يشمل الاسم وSKU</span>
-            </div>
-          </SectionCard>
         </div>
       </section>
     </section>

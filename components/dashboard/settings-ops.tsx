@@ -80,6 +80,19 @@ function getApiErrorMessage<T>(envelope: StandardEnvelope<T>) {
   return envelope.error?.message ?? "تعذر إتمام العملية.";
 }
 
+function getCountTypeLabel(countType: string) {
+  switch (countType) {
+    case "daily":
+      return "يومي";
+    case "weekly":
+      return "أسبوعي";
+    case "monthly":
+      return "شهري";
+    default:
+      return countType;
+  }
+}
+
 export function SettingsOps({
   accounts,
   snapshots,
@@ -280,31 +293,30 @@ export function SettingsOps({
   }
 
   return (
-    <section className="workspace-stack configuration-page">
+    <section className="workspace-stack configuration-page settings-page">
       <PageHeader
-        eyebrow="الإعدادات"
-        title="الإعدادات التشغيلية والإغلاق اليومي"
+        title="الإعدادات"
         meta={
-          <div className="configuration-page__meta-grid" aria-label="ملخص شاشة الإعدادات">
-            <article className="configuration-page__meta-card">
-              <span className="configuration-page__meta-label">الحِزم النشطة</span>
-              <strong className="configuration-page__meta-value">{formatCompactNumber(activeAssignments.length)}</strong>
-            </article>
-            <article className="configuration-page__meta-card">
-              <span className="configuration-page__meta-label">اللقطات المحفوظة</span>
-              <strong className="configuration-page__meta-value">{formatCompactNumber(snapshots.length)}</strong>
-            </article>
-            <article className="configuration-page__meta-card">
-              <span className="configuration-page__meta-label">الجرد المفتوح</span>
-              <strong className="configuration-page__meta-value">
-                {formatCompactNumber(inventoryCounts.filter((count) => count.status !== "completed").length)}
-              </strong>
-            </article>
-          </div>
+          <>
+            <span className="status-pill badge badge--neutral">
+              الصلاحيات {formatCompactNumber(activeAssignments.length)}
+            </span>
+            <span className="status-pill badge badge--neutral">
+              اللقطات {formatCompactNumber(snapshots.length)}
+            </span>
+            <span className="status-pill badge badge--neutral">
+              الجرد المفتوح {formatCompactNumber(inventoryCounts.filter((count) => count.status !== "completed").length)}
+            </span>
+          </>
+        }
+        actions={
+          <button type="button" className="primary-button" onClick={() => setActiveSection("snapshot")}>
+            اللقطة اليومية
+          </button>
         }
       />
 
-      <div className="configuration-section-nav" aria-label="أقسام شاشة الإعدادات">
+      <div className="configuration-section-nav settings-page__sections" aria-label="أقسام شاشة الإعدادات">
         <button
           type="button"
           className={activeSection === "permissions" ? "chip-button is-selected" : "chip-button"}
@@ -349,18 +361,10 @@ export function SettingsOps({
         </button>
       </div>
 
-      {isPending ? (
-        <StatusBanner
-          variant="info"
-          title="جارٍ تنفيذ الإجراء"
-          message="انتظر حتى يكتمل التحديث الحالي قبل بدء إجراء جديد."
-        />
-      ) : null}
-
       {actionErrorMessage ? (
         <StatusBanner
           variant="danger"
-          title="تعذر إكمال الإجراء"
+          title="تعذر تنفيذ الإجراء"
           message={actionErrorMessage}
           actionLabel={retryAction ? "إعادة المحاولة" : undefined}
           onAction={retryAction ? retryLastAction : undefined}
@@ -377,11 +381,10 @@ export function SettingsOps({
       ) : null}
 
       {activeSection === "snapshot" ? (
-        <div className="configuration-shell configuration-shell--split">
-          <section className="workspace-panel">
+        <div className="configuration-shell configuration-shell--split settings-page__split">
+          <section className="workspace-panel settings-page__panel">
             <div className="section-heading">
               <div>
-                <p className="eyebrow">اللقطة اليومية</p>
                 <h2>حفظ اللقطة اليومية</h2>
               </div>
             </div>
@@ -419,24 +422,37 @@ export function SettingsOps({
             ) : null}
           </section>
 
-          <section className="workspace-panel">
-            <p className="eyebrow">آخر اللقطات</p>
-            <h2>اللقطات المحفوظة</h2>
-            <div className="stack-list">
+          <section className="workspace-panel settings-page__panel">
+            <div className="section-heading">
+              <div>
+                <h2>آخر اللقطات</h2>
+              </div>
+            </div>
+            <div className="stack-list settings-page__list">
               {snapshots.length > 0 ? (
                 snapshots.map((snapshot) => (
-                  <article key={snapshot.id} className="list-card">
+                  <article key={snapshot.id} className="list-card settings-page__snapshot-card">
                     <div className="list-card__header">
                       <strong>{formatDate(snapshot.snapshot_date)}</strong>
-                      <span>{formatCompactNumber(snapshot.invoice_count)} فاتورة</span>
+                      <span className="status-pill badge badge--neutral">
+                        {formatCompactNumber(snapshot.invoice_count)} فاتورة
+                      </span>
                     </div>
                     <p>صافي المبيعات: {formatCurrency(snapshot.net_sales)}</p>
                     <p className="workspace-footnote">آخر إنشاء: {formatDateTime(snapshot.created_at)}</p>
                   </article>
                 ))
               ) : (
-                <div className="empty-panel">
-                  <p>لا توجد لقطات حتى الآن. أنشئ لقطة يومية من الزر أعلاه بعد نهاية اليوم.</p>
+                <div className="empty-panel settings-page__empty">
+                  <RefreshCcw size={20} />
+                  <h3>لا توجد لقطات محفوظة</h3>
+                  <button
+                    type="button"
+                    className="secondary-button"
+                    onClick={() => setConfirmAction("snapshot")}
+                  >
+                    حفظ اللقطة اليومية
+                  </button>
                 </div>
               )}
             </div>
@@ -445,11 +461,10 @@ export function SettingsOps({
       ) : null}
 
       {activeSection === "integrity" ? (
-        <div className="configuration-shell">
-          <section className="workspace-panel">
+        <div className="configuration-shell settings-page__single">
+          <section className="workspace-panel settings-page__panel">
             <div className="section-heading">
               <div>
-                <p className="eyebrow">سلامة الأرصدة</p>
                 <h2>فحص سلامة الأرصدة</h2>
               </div>
             </div>
@@ -494,10 +509,13 @@ export function SettingsOps({
       ) : null}
 
       {activeSection === "reconciliation" ? (
-        <div className="configuration-shell configuration-shell--split">
-          <section className="workspace-panel">
-            <p className="eyebrow">التسوية</p>
-            <h2>تسوية الحسابات</h2>
+        <div className="configuration-shell configuration-shell--split settings-page__split">
+          <section className="workspace-panel settings-page__panel">
+            <div className="section-heading">
+              <div>
+                <h2>تسوية الحسابات</h2>
+              </div>
+            </div>
 
             <div className="stack-form">
               <label className="stack-field">
@@ -558,14 +576,18 @@ export function SettingsOps({
       ) : null}
 
       {activeSection === "inventory" ? (
-        <div className="configuration-shell configuration-shell--split">
-          <section className="workspace-panel">
-            <p className="eyebrow">إكمال الجرد</p>
-            <h2>عمليات الجرد المفتوحة</h2>
+        <div className="configuration-shell configuration-shell--split settings-page__split">
+          <section className="workspace-panel settings-page__panel">
+            <div className="section-heading">
+              <div>
+                <h2>إكمال الجرد</h2>
+              </div>
+            </div>
 
             {inventoryCounts.length === 0 ? (
-              <div className="empty-panel">
-                <p>لا توجد عمليات جرد مفتوحة حاليًا.</p>
+              <div className="empty-panel settings-page__empty">
+                <RefreshCcw size={20} />
+                <h3>لا توجد عمليات جرد مفتوحة</h3>
               </div>
             ) : (
               <>
@@ -574,7 +596,7 @@ export function SettingsOps({
                   <select className="field-input" value={selectedCountId} onChange={(event) => setSelectedCountId(event.target.value)}>
                     {inventoryCounts.map((count) => (
                       <option key={count.id} value={count.id}>
-                        {count.count_type} - {formatDate(count.count_date)}
+                        {getCountTypeLabel(count.count_type)} - {formatDate(count.count_date)}
                       </option>
                     ))}
                   </select>
@@ -663,16 +685,16 @@ export function SettingsOps({
       ) : null}
 
       {activeSection === "policies" ? (
-        <div className="configuration-summary-grid">
+        <div className="configuration-summary-grid settings-page__policies">
           <SectionCard
-            eyebrow="الطباعة"
-            title="قرار الطباعة في MVP"
+            title="الطباعة"
             className="configuration-card"
-          />
+          >
+            <p className="workspace-footnote">الطباعة المؤقتة خارج نطاق MVP الحالي.</p>
+          </SectionCard>
 
           <SectionCard
-            eyebrow="الوصول من الأجهزة"
-            title="قرار المستخدم/الجهاز"
+            title="الوصول من الأجهزة"
             className="configuration-card configuration-card--danger"
           >
             <p className="warning-inline">
@@ -682,10 +704,15 @@ export function SettingsOps({
           </SectionCard>
 
           <SectionCard
-            eyebrow="التشغيل اليومي"
             title="الأدوات اليومية"
             className="configuration-card"
-          />
+          >
+            <div className="operational-inline-summary">
+              <span className="status-pill badge badge--neutral">اللقطة اليومية</span>
+              <span className="status-pill badge badge--neutral">سلامة الأرصدة</span>
+              <span className="status-pill badge badge--neutral">إكمال الجرد</span>
+            </div>
+          </SectionCard>
         </div>
       ) : null}
 

@@ -237,13 +237,41 @@ export function ExpensesWorkspace({
   }
 
   return (
-    <section className="operational-page">
+    <section className="operational-page expenses-page">
       <PageHeader
-        eyebrow="المصروفات"
-        title="المصروفات ومركز الفئات"
+        title="المصروفات"
+        meta={
+          <>
+            <span className="status-pill badge badge--warning">
+              الشهر {formatCurrency(summary.total_expenses)}
+            </span>
+            <span className="status-pill badge badge--neutral">
+              قيود {formatCompactNumber(summary.expense_count)}
+            </span>
+            <span className="status-pill badge badge--neutral">
+              فئات {formatCompactNumber(summary.active_category_count)}
+            </span>
+          </>
+        }
+        actions={
+          <div className="transaction-action-cluster">
+            {role === "admin" ? (
+              <button
+                type="button"
+                className={visibleSection === "categories" ? "secondary-button" : "ghost-button btn btn--ghost"}
+                onClick={() => setActiveSection("categories")}
+              >
+                إدارة الفئات
+              </button>
+            ) : null}
+            <button type="button" className="primary-button" onClick={() => setActiveSection("create")}>
+              تسجيل المصروف
+            </button>
+          </div>
+        }
       />
 
-      <div className="operational-page__meta-grid">
+      <div className="operational-page__meta-grid expenses-page__summary">
         <article className="operational-page__meta-card stat-card">
           <span className="operational-page__meta-label">إجمالي الشهر</span>
           <strong className="operational-page__meta-value">{formatCurrency(summary.total_expenses)}</strong>
@@ -258,7 +286,7 @@ export function ExpensesWorkspace({
         </article>
       </div>
 
-      <div className="operational-section-nav" aria-label="أقسام شاشة المصروفات">
+      <div className="operational-section-nav expenses-page__sections" aria-label="أقسام شاشة المصروفات">
         <button
           type="button"
           className={visibleSection === "create" ? "chip-button is-selected" : "chip-button"}
@@ -284,18 +312,10 @@ export function ExpensesWorkspace({
         ) : null}
       </div>
 
-      {isPending ? (
-        <StatusBanner
-          variant="info"
-          title="جاري تنفيذ الإجراء"
-          message="انتظر حتى يكتمل تحديث المصروفات أو الفئات الحالية قبل بدء إجراء جديد."
-        />
-      ) : null}
-
       {actionErrorMessage ? (
         <StatusBanner
           variant="danger"
-          title="تعذر إكمال الإجراء"
+          title="تعذر تنفيذ الإجراء"
           message={actionErrorMessage}
           actionLabel={retryAction ? "إعادة المحاولة" : undefined}
           onAction={retryAction ? retryLastAction : undefined}
@@ -303,12 +323,11 @@ export function ExpensesWorkspace({
         />
       ) : null}
 
-      {visibleSection === "create" ? <div className="operational-layout operational-layout--split">
-        <section className="workspace-panel">
+      {visibleSection === "create" ? <div className="operational-layout operational-layout--split expenses-page__create">
+        <section className="workspace-panel expenses-page__form-panel">
           <div className="section-heading">
             <div>
-              <p className="eyebrow">مصروف جديد</p>
-              <h2>تسجيل مصروف جديد</h2>
+              <h2>تسجيل مصروف</h2>
             </div>
             <Wallet size={18} />
           </div>
@@ -370,42 +389,50 @@ export function ExpensesWorkspace({
 
           {createResult ? (
             <div className="result-card">
-              <h3>تم حفظ آخر مصروف</h3>
+              <h3>تم حفظ المصروف</h3>
               <p>رقم المصروف: {createResult.expense_number}</p>
-              <p>تم تسجيل العملية في السجل المالي بنجاح.</p>
             </div>
           ) : null}
         </section>
 
-        <section className="workspace-panel operational-sidebar operational-sidebar--sticky">
+        <section className="workspace-panel operational-sidebar operational-sidebar--sticky expenses-page__recent-panel">
           <div className="section-heading">
             <div>
-              <p className="eyebrow">آخر المصروفات</p>
-              <h2>آخر المصروفات المسجلة</h2>
+              <h2>آخر القيود</h2>
             </div>
             <BellRing size={18} />
           </div>
 
-          <div className="stack-list">
+          <div className="stack-list expenses-page__list">
             {recentExpenses.length > 0 ? (
               recentExpenses.map((expense) => (
-                <article key={expense.id} className="list-card">
+                <article key={expense.id} className="list-card expense-entry-card">
                   <div className="list-card__header">
-                    <strong>{expense.expense_number}</strong>
-                    <span>{formatCurrency(expense.amount)}</span>
+                    <strong><bdi dir="ltr">{expense.expense_number}</bdi></strong>
+                    <span className="status-pill badge badge--warning">{formatCurrency(expense.amount)}</span>
                   </div>
-                  <p>{expense.description}</p>
-                  <p className="workspace-footnote">
-                    {expense.category_name} — {expense.account_name}
-                  </p>
-                  <p className="workspace-footnote">
-                    {expense.created_by_name ?? "غير معروف"} — {formatDateTime(expense.created_at)}
-                  </p>
+                  <p className="expense-entry-card__title">{expense.description}</p>
+                  <div className="expense-entry-card__chips">
+                    <span className="product-pill product-pill--accent">{expense.category_name}</span>
+                    <span className="product-pill">{expense.account_name}</span>
+                  </div>
+                  <div className="expense-entry-card__meta">
+                    <span>{expense.created_by_name ?? "غير معروف"}</span>
+                    <span>{formatDateTime(expense.created_at)}</span>
+                  </div>
                 </article>
               ))
             ) : (
-              <div className="empty-panel">
-                <p>لا توجد مصروفات مسجلة حتى الآن. سجّل أول مصروف ليظهر هنا.</p>
+              <div className="empty-panel expenses-page__empty">
+                <Wallet size={20} />
+                <h3>لا توجد مصروفات مسجلة</h3>
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={() => setActiveSection("create")}
+                >
+                  تسجيل المصروف
+                </button>
               </div>
             )}
           </div>
@@ -413,36 +440,45 @@ export function ExpensesWorkspace({
       </div> : null}
 
       {visibleSection === "recent" ? (
-        <div className="operational-layout operational-layout--wide">
+        <div className="operational-layout operational-layout--wide expenses-page__recent">
           <section className="workspace-panel operational-content">
             <div className="section-heading">
               <div>
-                <p className="eyebrow">آخر المصروفات</p>
-                <h2>القيود المسجلة مؤخرًا</h2>
+                <h2>القيود المسجلة</h2>
               </div>
               <BellRing size={18} />
             </div>
 
-            <div className="stack-list">
+            <div className="stack-list expenses-page__list">
               {recentExpenses.length > 0 ? (
                 recentExpenses.map((expense) => (
-                  <article key={expense.id} className="list-card">
+                  <article key={expense.id} className="list-card expense-entry-card">
                     <div className="list-card__header">
-                      <strong>{expense.expense_number}</strong>
-                      <span>{formatCurrency(expense.amount)}</span>
+                      <strong><bdi dir="ltr">{expense.expense_number}</bdi></strong>
+                      <span className="status-pill badge badge--warning">{formatCurrency(expense.amount)}</span>
                     </div>
-                    <p>{expense.description}</p>
-                    <p className="workspace-footnote">
-                      {expense.category_name} — {expense.account_name}
-                    </p>
-                    <p className="workspace-footnote">
-                      {expense.created_by_name ?? "غير معروف"} — {formatDateTime(expense.created_at)}
-                    </p>
+                    <p className="expense-entry-card__title">{expense.description}</p>
+                    <div className="expense-entry-card__chips">
+                      <span className="product-pill product-pill--accent">{expense.category_name}</span>
+                      <span className="product-pill">{expense.account_name}</span>
+                    </div>
+                    <div className="expense-entry-card__meta">
+                      <span>{expense.created_by_name ?? "غير معروف"}</span>
+                      <span>{formatDateTime(expense.created_at)}</span>
+                    </div>
                   </article>
                 ))
               ) : (
-                <div className="empty-panel">
-                  <p>لا توجد مصروفات مسجلة حتى الآن. سجّل أول مصروف ليظهر هنا.</p>
+                <div className="empty-panel expenses-page__empty">
+                  <Wallet size={20} />
+                  <h3>لا توجد مصروفات مسجلة</h3>
+                  <button
+                    type="button"
+                    className="secondary-button"
+                    onClick={() => setActiveSection("create")}
+                  >
+                    تسجيل المصروف
+                  </button>
                 </div>
               )}
             </div>
@@ -451,11 +487,10 @@ export function ExpensesWorkspace({
       ) : null}
 
       {visibleSection === "categories" ? (
-        <section className="workspace-panel">
+        <section className="workspace-panel expenses-page__categories">
           <div className="section-heading">
             <div>
-              <p className="eyebrow">فئات المصروفات</p>
-              <h2>إدارة فئات المصروفات</h2>
+              <h2>إدارة الفئات</h2>
             </div>
             <Wallet size={18} />
           </div>

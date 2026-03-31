@@ -185,29 +185,49 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
   }
 
   return (
-    <section className="workspace-stack transaction-page">
+    <section className="workspace-stack transaction-page debts-page">
       <PageHeader
-        eyebrow="الديون"
-        title="الديون والتسديد"
+        title="الديون"
         meta={
-          <div className="transaction-page__meta" aria-label="ملخص شاشة الديون">
-            <article className="transaction-page__meta-card stat-card">
-              <span>العملاء الظاهرون</span>
-              <strong>{formatCompactNumber(filteredCustomers.length)}</strong>
-            </article>
-            <article className="transaction-page__meta-card stat-card">
-              <span>العميل الحالي</span>
-              <strong>{selectedCustomer?.name ?? "اختر عميلًا"}</strong>
-            </article>
-            <article className="transaction-page__meta-card transaction-page__meta-card--safe stat-card">
-              <span>الرصيد المفتوح</span>
-              <strong>{selectedCustomer ? formatCurrency(totalOutstanding) : "—"}</strong>
-            </article>
+          <>
+            <span className="status-pill badge badge--neutral">
+              {formatCompactNumber(filteredCustomers.length)} عميل
+            </span>
+            {selectedCustomer ? (
+              <span className="status-pill badge badge--warning">
+                مفتوح {formatCurrency(totalOutstanding)}
+              </span>
+            ) : null}
+          </>
+        }
+        actions={
+          <div className="transaction-action-cluster">
+            {role === "admin" ? (
+              <button
+                type="button"
+                className={
+                  activeSection === "manual" ? "secondary-button" : "ghost-button btn btn--ghost"
+                }
+                onClick={() => setActiveSection("manual")}
+              >
+                دين يدوي
+              </button>
+            ) : null}
+            <button
+              type="button"
+              className="primary-button"
+              onClick={() => setActiveSection("payment")}
+            >
+              التسديد
+            </button>
           </div>
         }
       />
 
-      <div className="chip-row transaction-chip-row" aria-label="أقسام شاشة الديون">
+      <div
+        className="chip-row transaction-chip-row debts-page__sections"
+        aria-label="أقسام شاشة الديون"
+      >
         <button
           type="button"
           className={activeSection === "ledger" ? "chip-button is-selected" : "chip-button"}
@@ -233,18 +253,10 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
         </button>
       </div>
 
-      {isPending ? (
-        <StatusBanner
-          variant="info"
-          title="جارٍ تنفيذ الإجراء"
-          message="انتظر حتى يكتمل تحديث سجل الديون الحالي قبل بدء إجراء جديد."
-        />
-      ) : null}
-
       {actionErrorMessage ? (
         <StatusBanner
           variant="danger"
-          title="تعذر إكمال الإجراء"
+          title="تعذر تنفيذ الإجراء"
           message={actionErrorMessage}
           actionLabel={retryAction ? "إعادة المحاولة" : undefined}
           onAction={retryAction ? retryLastAction : undefined}
@@ -254,9 +266,13 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
 
       <div className="transaction-layout transaction-layout--detail">
         <SectionCard
-          eyebrow="سجل العملاء"
-          title="العملاء والرصيد المفتوح"
-          className="transaction-card"
+          title="العملاء"
+          className="transaction-card debts-page__customers"
+          actions={
+            <span className="product-pill product-pill--accent">
+              {formatCompactNumber(filteredCustomers.length)} نتيجة
+            </span>
+          }
         >
           <div className="workspace-toolbar transaction-toolbar">
             <label className="workspace-search transaction-toolbar__search">
@@ -271,38 +287,68 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
             </label>
           </div>
 
-          <div className="stack-list transaction-list-shell">
-            {filteredCustomers.map((customer) => {
-              const isSelected = customer.id === selectedCustomerId;
+          {filteredCustomers.length === 0 ? (
+            <div className="empty-panel transaction-empty-panel">
+              <Search size={20} />
+              <h3>لا توجد نتائج مطابقة</h3>
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={() => setSearchTerm("")}
+              >
+                مسح البحث
+              </button>
+            </div>
+          ) : (
+            <div className="stack-list transaction-list-shell debt-customer-list">
+              {filteredCustomers.map((customer) => {
+                const isSelected = customer.id === selectedCustomerId;
 
-              return (
-                <button
-                  key={customer.id}
-                  type="button"
-                  className={isSelected ? "list-card list-card--interactive is-selected" : "list-card list-card--interactive"}
-                  onClick={() => setSelectedCustomerId(customer.id)}
-                >
-                  <div className="list-card__header">
-                    <strong>{customer.name}</strong>
-                    <span>{formatCurrency(customer.current_balance)}</span>
-                  </div>
-                  <p>{customer.phone ?? "بدون هاتف"}</p>
-                  {role === "admin" && customer.credit_limit !== undefined ? (
-                    <p className="workspace-footnote">الحد الائتماني: {formatCurrency(customer.credit_limit ?? 0)}</p>
-                  ) : customer.due_date_days ? (
-                    <p className="workspace-footnote">الاستحقاق الافتراضي: {customer.due_date_days} يوم</p>
-                  ) : null}
-                </button>
-              );
-            })}
-          </div>
+                return (
+                  <button
+                    key={customer.id}
+                    type="button"
+                    className={
+                      isSelected
+                        ? "list-card list-card--interactive is-selected debt-customer-card"
+                        : "list-card list-card--interactive debt-customer-card"
+                    }
+                    onClick={() => setSelectedCustomerId(customer.id)}
+                  >
+                    <div className="list-card__header">
+                      <strong>{customer.name}</strong>
+                      <span className="status-pill badge badge--warning debt-customer-card__balance">
+                        {formatCurrency(customer.current_balance)}
+                      </span>
+                    </div>
+                    <div className="debt-customer-card__meta">
+                      <span>{customer.phone ?? "بدون هاتف"}</span>
+                      {role === "admin" && customer.credit_limit !== undefined ? (
+                        <span>
+                          حد {formatCurrency(customer.credit_limit ?? 0)}
+                        </span>
+                      ) : customer.due_date_days ? (
+                        <span>{customer.due_date_days} يوم</span>
+                      ) : null}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </SectionCard>
 
         <div className="transaction-stack">
           <SectionCard
-            eyebrow="ملف العميل"
             title={selectedCustomer?.name ?? "اختر عميلًا"}
             className="transaction-card"
+            actions={
+              selectedCustomer ? (
+                <span className="status-pill badge badge--neutral">
+                  {formatCompactNumber(customerEntries.length)} قيود
+                </span>
+              ) : null
+            }
           >
             {selectedCustomer ? (
               <>
@@ -329,21 +375,38 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                 </div>
 
                 {activeSection === "ledger" ? (
-                  <div className="stack-list">
+                  <div className="stack-list debt-entry-list">
                     {customerEntries.length > 0 ? (
                       customerEntries.map((entry) => (
-                        <article key={entry.id} className="list-card">
+                        <article key={entry.id} className="list-card debt-entry-card">
                           <div className="list-card__header">
                             <strong>{entry.entry_type === "manual" ? "دين يدوي" : "فاتورة دين"}</strong>
-                            <span>{formatCurrency(entry.remaining_amount)}</span>
+                            <span className="status-pill badge badge--warning">
+                              {formatCurrency(entry.remaining_amount)}
+                            </span>
                           </div>
-                          <p>الاستحقاق: {formatDate(entry.due_date)}</p>
-                          <p className="workspace-footnote">{entry.description ?? "بدون وصف إضافي"}</p>
+                          <div className="debt-entry-card__meta">
+                            <span>الاستحقاق: {formatDate(entry.due_date)}</span>
+                            <span>الأصل: {formatCurrency(entry.amount)}</span>
+                          </div>
+                          <p className="workspace-footnote">
+                            {entry.description ?? "بدون وصف إضافي"}
+                          </p>
                         </article>
                       ))
                     ) : (
                       <div className="empty-panel transaction-empty-panel">
-                        <p>لا توجد قيود مفتوحة لهذا العميل.</p>
+                        <Wallet size={20} />
+                        <h3>لا توجد قيود مفتوحة</h3>
+                        {role === "admin" ? (
+                          <button
+                            type="button"
+                            className="secondary-button"
+                            onClick={() => setActiveSection("manual")}
+                          >
+                            دين يدوي
+                          </button>
+                        ) : null}
                       </div>
                     )}
                   </div>
@@ -352,7 +415,7 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                 {activeSection === "manual" && role === "admin" ? (
                   <div className="transaction-stack">
                     <div className="info-strip">
-                      <span>تسجيل الدين اليدوي مخصص للحالات خارج مسار البيع.</span>
+                      <span>سجل دينًا مباشرًا لهذا العميل عند الحاجة.</span>
                     </div>
 
                     <div className="stack-form">
@@ -382,7 +445,7 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                       </label>
 
                       <div className="info-strip">
-                        <span>يحمي النظام تسجيل الدين اليدوي من التكرار تلقائيًا.</span>
+                        <span>يُحفظ القيد مرة واحدة فقط لكل محاولة.</span>
                       </div>
 
                       <button
@@ -398,8 +461,8 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
 
                     {manualResult ? (
                       <div className="result-card">
-                        <h3>تم حفظ الدين اليدوي</h3>
-                        <p>أصبح القيد جاهزًا ضمن سجل الديون المفتوحة للعميل الحالي.</p>
+                        <h3>تم حفظ الدين</h3>
+                        <p>أضيف القيد إلى سجل العميل الحالي.</p>
                       </div>
                     ) : null}
                   </div>
@@ -446,7 +509,7 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                         </label>
                       ) : (
                         <div className="info-strip">
-                          <span>لا توجد قيود مفتوحة حاليًا لهذا العميل، لذلك لن يظهر اختيار قيد محدد.</span>
+                          <span>لا توجد قيود مفتوحة لهذا العميل حاليًا.</span>
                         </div>
                       )}
 
@@ -463,7 +526,7 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                       </label>
 
                       <div className="info-strip">
-                        <span>عند ترك اختيار القيد فارغًا، يوزع النظام المبلغ على أقدم دين متاح.</span>
+                        <span>بدون اختيار قيد، يوزع النظام السداد على الأقدم تلقائيًا.</span>
                       </div>
 
                       <button
@@ -488,17 +551,23 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                       <div className="result-card">
                         <h3>{paymentResult.receipt_number}</h3>
                         <p>الرصيد المتبقي: {formatCurrency(paymentResult.remaining_balance)}</p>
-                        <p>التوزيعات: {paymentResult.allocations.map((entry) => formatCurrency(entry.allocated_amount)).join(" / ")}</p>
+                        <p>
+                          التوزيعات:{" "}
+                          {paymentResult.allocations
+                            .map((entry) => formatCurrency(entry.allocated_amount))
+                            .join(" / ")}
+                        </p>
                       </div>
                     ) : null}
                   </div>
                 ) : null}
               </>
-                ) : (
-                  <div className="empty-panel transaction-empty-panel">
-                    <p>لا توجد تفاصيل متاحة.</p>
-                  </div>
-                )}
+            ) : (
+              <div className="empty-panel transaction-empty-panel">
+                <Wallet size={20} />
+                <h3>اختر عميلًا لعرض الرصيد</h3>
+              </div>
+            )}
           </SectionCard>
         </div>
       </div>

@@ -65,6 +65,19 @@ function getApiErrorMessage<T>(envelope: StandardEnvelope<T>) {
   return envelope.error?.message ?? "تعذر إتمام العملية.";
 }
 
+function getCountTypeLabel(countType: string) {
+  switch (countType) {
+    case "daily":
+      return "يومي";
+    case "weekly":
+      return "أسبوعي";
+    case "monthly":
+      return "شهري";
+    default:
+      return countType;
+  }
+}
+
 export function InventoryWorkspace({
   products,
   accounts,
@@ -278,24 +291,46 @@ export function InventoryWorkspace({
   }
 
   return (
-    <section className="operational-page">
+    <section className="operational-page inventory-page">
       <PageHeader
-        eyebrow="الجرد"
-        title="الجرد والتسوية المحسنة"
+        title="الجرد"
+        meta={
+          <>
+            <span className="status-pill badge badge--neutral">
+              مفتوح {formatCompactNumber(inProgressCounts.length)}
+            </span>
+            <span className="status-pill badge badge--neutral">
+              مكتمل {formatCompactNumber(recentCompletedCounts.length)}
+            </span>
+            {canReconcile ? (
+              <span className="status-pill badge badge--neutral">
+                تسويات {formatCompactNumber(recentReconciliations.length)}
+              </span>
+            ) : null}
+          </>
+        }
+        actions={
+          <div className="transaction-action-cluster">
+            {canReconcile ? (
+              <button
+                type="button"
+                className={activeSection === "reconcile" ? "secondary-button" : "ghost-button btn btn--ghost"}
+                onClick={() => setActiveSection("reconcile")}
+              >
+                التسوية
+              </button>
+            ) : null}
+            <button type="button" className="primary-button" onClick={() => setActiveSection("create")}>
+              بدء الجرد
+            </button>
+          </div>
+        }
       />
-
-      {isPending ? (
-        <StatusBanner
-          variant="info"
-          title="جارٍ تنفيذ الإجراء"
-          message="انتظر حتى يكتمل تحديث الجرد أو التسوية الحالية قبل تنفيذ خطوة أخرى."
-        />
-      ) : null}
 
       {actionErrorMessage ? (
         <StatusBanner
           variant="danger"
-          title="تعذر إكمال الإجراء"
+          title="تعذر تنفيذ الإجراء"
           message={actionErrorMessage}
           actionLabel={retryAction ? "إعادة المحاولة" : undefined}
           onAction={retryAction ? retryLastAction : undefined}
@@ -303,7 +338,7 @@ export function InventoryWorkspace({
         />
       ) : null}
 
-      <div className="operational-section-nav" aria-label="أقسام شاشة الجرد">
+      <div className="operational-section-nav inventory-page__sections" aria-label="أقسام شاشة الجرد">
         <button
           type="button"
           className={activeSection === "create" ? "chip-button is-selected" : "chip-button"}
@@ -336,28 +371,12 @@ export function InventoryWorkspace({
         </button>
       </div>
 
-      <div className="operational-page__meta-grid">
-        <article className="operational-page__meta-card">
-          <span className="operational-page__meta-label">عمليات مفتوحة</span>
-          <strong className="operational-page__meta-value">{formatCompactNumber(inProgressCounts.length)}</strong>
-        </article>
-        <article className="operational-page__meta-card">
-          <span className="operational-page__meta-label">نتائج مكتملة</span>
-          <strong className="operational-page__meta-value">{formatCompactNumber(recentCompletedCounts.length)}</strong>
-        </article>
-        <article className="operational-page__meta-card">
-          <span className="operational-page__meta-label">التسويات الأخيرة</span>
-          <strong className="operational-page__meta-value">{formatCompactNumber(recentReconciliations.length)}</strong>
-        </article>
-      </div>
-
       {activeSection === "create" ? (
-        <div className="operational-layout operational-layout--wide">
-          <section className="workspace-panel">
+        <div className="operational-layout operational-layout--wide inventory-page__create">
+          <section className="workspace-panel inventory-page__create-panel">
             <div className="section-heading">
               <div>
-                <p className="eyebrow">بدء الجرد</p>
-                <h2>بدء عملية جرد جديدة</h2>
+                <h2>جلسة جرد جديدة</h2>
               </div>
               <Boxes size={18} />
             </div>
@@ -404,18 +423,32 @@ export function InventoryWorkspace({
                   </label>
 
                   <div className="selection-panel">
-                    {filteredProducts.map((product) => (
-                      <label key={product.id} className="selection-chip">
-                        <input
-                          type="checkbox"
-                          checked={selectedProductIds.includes(product.id)}
-                          onChange={() => toggleProductSelection(product.id)}
-                        />
-                        <span>
-                          {product.name} ({formatCompactNumber(product.stock_quantity)})
-                        </span>
-                      </label>
-                    ))}
+                    {filteredProducts.length > 0 ? (
+                      filteredProducts.map((product) => (
+                        <label key={product.id} className="selection-chip">
+                          <input
+                            type="checkbox"
+                            checked={selectedProductIds.includes(product.id)}
+                            onChange={() => toggleProductSelection(product.id)}
+                          />
+                          <span>
+                            {product.name} ({formatCompactNumber(product.stock_quantity)})
+                          </span>
+                        </label>
+                      ))
+                    ) : (
+                      <div className="empty-panel inventory-page__selection-empty">
+                        <Boxes size={20} />
+                        <h3>لا توجد منتجات مطابقة</h3>
+                        <button
+                          type="button"
+                          className="secondary-button"
+                          onClick={() => setProductSearchTerm("")}
+                        >
+                          مسح البحث
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </>
               ) : null}
@@ -433,7 +466,7 @@ export function InventoryWorkspace({
             {createResult ? (
               <div className="result-card">
                 <h3>تم بدء الجرد</h3>
-                <p>النوع: {createResult.count_type}</p>
+                <p>النوع: {getCountTypeLabel(createResult.count_type)}</p>
                 <p>عدد البنود: {formatCompactNumber(createResult.item_count)}</p>
               </div>
             ) : null}
@@ -442,45 +475,107 @@ export function InventoryWorkspace({
       ) : null}
 
       {activeSection === "active" ? (
-        <div className="operational-layout operational-layout--split">
-          <section className="workspace-panel operational-sidebar operational-sidebar--sticky">
+        <div className="operational-layout operational-layout--split inventory-page__active">
+          <section className="workspace-panel operational-sidebar operational-sidebar--sticky inventory-page__sidebar">
             <div className="section-heading">
               <div>
-                <p className="eyebrow">الجرد المفتوح</p>
-                <h2>عمليات الجرد المفتوحة</h2>
+                <h2>الجلسات المفتوحة</h2>
               </div>
               <ClipboardCheck size={18} />
             </div>
 
             {inProgressCounts.length === 0 ? (
-              <div className="empty-panel">
-                  <p>لا توجد عمليات جرد مفتوحة حاليًا. ابدأ جردًا جديدًا من قسم &quot;بدء الجرد&quot;.</p>
+              <div className="empty-panel inventory-page__empty">
+                <ClipboardCheck size={20} />
+                <h3>لا توجد جلسات مفتوحة</h3>
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={() => setActiveSection("create")}
+                >
+                  بدء الجرد
+                </button>
               </div>
             ) : (
-              <>
-                <label className="stack-field">
-                  <span>اختر عملية جرد</span>
-                  <select value={selectedCountId} onChange={(event) => setSelectedCountId(event.target.value)}>
-                    {inProgressCounts.map((count) => (
-                      <option key={count.id} value={count.id}>
-                        {count.count_type} - {formatDate(count.count_date)} ({formatCompactNumber(count.items.length)} بند)
-                      </option>
-                    ))}
-                  </select>
-                </label>
+              <div className="stack-list inventory-count-list">
+                {inProgressCounts.map((count) => (
+                  <button
+                    key={count.id}
+                    type="button"
+                    className={
+                      count.id === selectedCountId
+                        ? "list-card list-card--interactive is-selected inventory-count-card"
+                        : "list-card list-card--interactive inventory-count-card"
+                    }
+                    onClick={() => setSelectedCountId(count.id)}
+                  >
+                    <div className="list-card__header">
+                      <strong>{getCountTypeLabel(count.count_type)}</strong>
+                      <span className="status-pill badge badge--neutral">
+                        {formatCompactNumber(count.items.length)} بند
+                      </span>
+                    </div>
+                    <div className="inventory-count-card__meta">
+                      <span>{formatDate(count.count_date)}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </section>
 
-                <div className="stack-list">
-                  {selectedCount?.items.map((item, index) => {
+          <section className="workspace-panel inventory-page__detail">
+            <div className="section-heading">
+              <div>
+                <h2>
+                  {selectedCount ? getCountTypeLabel(selectedCount.count_type) : "اختر جلسة جرد"}
+                </h2>
+              </div>
+              <Boxes size={18} />
+            </div>
+
+            {selectedCount ? (
+              <>
+                <div className="info-strip inventory-page__summary">
+                  <span>التاريخ: {formatDate(selectedCount.count_date)}</span>
+                  <span>البنود: {formatCompactNumber(selectedCount.items.length)}</span>
+                </div>
+
+                <button
+                  type="button"
+                  className="primary-button inventory-page__primary-action"
+                  disabled={isPending || !selectedCount}
+                  onClick={() => setConfirmAction({ type: "complete-count" })}
+                >
+                  {isPending ? <Loader2 className="spin" size={16} /> : "إكمال الجرد"}
+                </button>
+
+                <div className="stack-list inventory-line-list">
+                  {selectedCount.items.map((item, index) => {
                     const draft = selectedCountDraft[index];
+                    const actualQuantity = draft?.actual_quantity ?? item.actual_quantity;
+                    const difference = actualQuantity - item.system_quantity;
 
                     return (
-                      <article key={item.id} className="list-card">
+                      <article key={item.id} className="list-card inventory-line-card">
                         <div className="list-card__header">
                           <strong>{item.product_name}</strong>
-                          <span>
-                            النظام: {formatCompactNumber(item.system_quantity)} | الفروقات الحالية:{" "}
-                            {formatCompactNumber(item.difference)}
+                          <span
+                            className={
+                              difference === 0
+                                ? "status-pill badge badge--neutral"
+                                : "status-pill badge badge--warning"
+                            }
+                          >
+                            {difference === 0
+                              ? "مطابق"
+                              : `فرق ${difference > 0 ? "+" : ""}${formatCompactNumber(difference)}`}
                           </span>
+                        </div>
+
+                        <div className="inventory-line-card__meta">
+                          <span>النظام: {formatCompactNumber(item.system_quantity)}</span>
+                          <span>الفعلي: {formatCompactNumber(actualQuantity)}</span>
                         </div>
 
                         <div className="inline-form-grid">
@@ -490,7 +585,7 @@ export function InventoryWorkspace({
                               type="number"
                               min={0}
                               step={1}
-                              value={draft?.actual_quantity ?? item.actual_quantity}
+                              value={actualQuantity}
                               onChange={(event) => {
                                 const nextValue = Number(event.target.value);
                                 setInventoryDrafts((current) => ({
@@ -526,16 +621,12 @@ export function InventoryWorkspace({
                     );
                   })}
                 </div>
-
-                <button
-                  type="button"
-                  className="primary-button"
-                  disabled={isPending || !selectedCount}
-                  onClick={() => setConfirmAction({ type: "complete-count" })}
-                >
-                  {isPending ? <Loader2 className="spin" size={16} /> : "إكمال الجرد"}
-                </button>
               </>
+            ) : (
+              <div className="empty-panel inventory-page__empty">
+                <Boxes size={20} />
+                <h3>اختر جلسة جرد لعرض البنود</h3>
+              </div>
             )}
 
             {inventoryResult ? (
@@ -550,10 +641,14 @@ export function InventoryWorkspace({
       ) : null}
 
       {activeSection === "reconcile" ? (
-        <div className="operational-layout operational-layout--wide">
+        <div className="operational-layout operational-layout--wide inventory-page__reconcile">
           <section className="workspace-panel">
-            <p className="eyebrow">التسوية</p>
-            <h2>تسوية الحسابات</h2>
+            <div className="section-heading">
+              <div>
+                <h2>تسوية الحسابات</h2>
+              </div>
+              <Scale size={18} />
+            </div>
 
             <div className="stack-form">
               <label className="stack-field">
@@ -608,7 +703,7 @@ export function InventoryWorkspace({
 
             {reconciliationResult ? (
               <div className="result-card">
-                <h3>تمت التسوية</h3>
+                <h3>تم حفظ التسوية</h3>
                 <p>المتوقع: {formatCurrency(reconciliationResult.expected)}</p>
                 <p>الفعلي: {formatCurrency(reconciliationResult.actual)}</p>
                 <p>الفرق: {formatCurrency(reconciliationResult.difference)}</p>
@@ -619,46 +714,71 @@ export function InventoryWorkspace({
       ) : null}
 
       {activeSection === "history" ? (
-        <div className="operational-layout operational-layout--split">
+        <div className="operational-layout operational-layout--split inventory-page__history">
           <section className="workspace-panel">
-            <p className="eyebrow">الجرد المكتمل</p>
-            <h2>آخر النتائج</h2>
-            <div className="stack-list">
+            <div className="section-heading">
+              <div>
+                <h2>آخر الجردات</h2>
+              </div>
+              <ClipboardCheck size={18} />
+            </div>
+            <div className="stack-list inventory-history-list">
               {recentCompletedCounts.length > 0 ? (
                 recentCompletedCounts.map((count) => (
-                  <article key={count.id} className="list-card">
+                  <article key={count.id} className="list-card inventory-history-card">
                     <div className="list-card__header">
-                      <strong>{formatDate(count.count_date)}</strong>
-                      <span>{count.count_type}</span>
+                      <strong>{getCountTypeLabel(count.count_type)}</strong>
+                      <span className="status-pill badge badge--neutral">
+                        {formatCompactNumber(count.items.length)} بند
+                      </span>
                     </div>
-                    <p className="workspace-footnote">عدد البنود: {formatCompactNumber(count.items.length)}</p>
+                    <div className="inventory-history-card__meta">
+                      <span>{formatDate(count.count_date)}</span>
+                    </div>
                   </article>
                 ))
               ) : (
-                <div className="empty-panel">
-                  <p>لا توجد نتائج مكتملة بعد. أكمل أول عملية جرد لتظهر هنا.</p>
+                <div className="empty-panel inventory-page__empty">
+                  <ClipboardCheck size={20} />
+                  <h3>لا توجد نتائج مكتملة</h3>
+                  <button
+                    type="button"
+                    className="secondary-button"
+                    onClick={() => setActiveSection("create")}
+                  >
+                    بدء الجرد
+                  </button>
                 </div>
               )}
             </div>
           </section>
 
           <section className="workspace-panel">
-            <p className="eyebrow">آخر التسويات</p>
-            <h2>سجل التسوية</h2>
-            <div className="stack-list">
+            <div className="section-heading">
+              <div>
+                <h2>آخر التسويات</h2>
+              </div>
+              <Scale size={18} />
+            </div>
+            <div className="stack-list inventory-history-list">
               {recentReconciliations.length > 0 ? (
                 recentReconciliations.map((entry) => (
-                  <article key={entry.id} className="list-card">
+                  <article key={entry.id} className="list-card inventory-history-card">
                     <div className="list-card__header">
                       <strong>{entry.account_name}</strong>
-                      <span>{formatCurrency(entry.difference)}</span>
+                      <span className="status-pill badge badge--warning">
+                        {formatCurrency(entry.difference)}
+                      </span>
                     </div>
-                    <p className="workspace-footnote">بتاريخ {formatDate(entry.reconciliation_date)}</p>
+                    <div className="inventory-history-card__meta">
+                      <span>{formatDate(entry.reconciliation_date)}</span>
+                    </div>
                   </article>
                 ))
               ) : (
-                <div className="empty-panel">
-                  <p>لا توجد تسويات مسجلة حتى الآن.</p>
+                <div className="empty-panel inventory-page__empty">
+                  <Scale size={20} />
+                  <h3>لا توجد تسويات مسجلة</h3>
                 </div>
               )}
             </div>

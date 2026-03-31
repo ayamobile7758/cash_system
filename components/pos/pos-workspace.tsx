@@ -19,6 +19,7 @@ import {
   ImageIcon,
   List,
   Loader2,
+  Minus,
   Plus,
   Printer,
   RefreshCcw,
@@ -269,7 +270,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   const [isNotesExpanded, setIsNotesExpanded] = useState(false);
   const [isPrimarySplitSelectorOpen, setIsPrimarySplitSelectorOpen] = useState(false);
   const [isClearCartDialogOpen, setIsClearCartDialogOpen] = useState(false);
-  const [productView, setProductView] = useState<ProductViewMode>("text");
+  const [productView, setProductView] = useState<ProductViewMode>("thumbnail");
   const [isCompactViewport, setIsCompactViewport] = useState(false);
   const [isCartSheetExpanded, setIsCartSheetExpanded] = useState(false);
   const [, startTransition] = useTransition();
@@ -428,11 +429,13 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   function renderCompactProductCard(product: PosProduct, variant: "quick-add" | "grid") {
     const stockState = getProductStockState(product);
     const isThumbnailView = productView === "thumbnail";
+    const isOutOfStock = product.track_stock && product.stock_quantity <= 0;
     const productCardClassName = [
       "pos-product-card",
       "pos-product-card--compact",
       isThumbnailView ? "pos-product-card--compact-thumbnail" : "",
-      variant === "quick-add" ? "pos-product-card--quick-add" : ""
+      variant === "quick-add" ? "pos-product-card--quick-add" : "",
+      isOutOfStock ? "pos-product-card--disabled" : ""
     ]
       .filter(Boolean)
       .join(" ");
@@ -443,11 +446,17 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
         type="button"
         className={productCardClassName}
         onClick={() => {
-          clearSubmissionFeedback();
-          addProduct(product);
+          handleAddProduct(product);
         }}
-        disabled={product.track_stock && product.stock_quantity <= 0}
+        disabled={isOutOfStock}
+        title={product.name}
       >
+        {isOutOfStock ? (
+          <span className="pos-product-card__badge pos-product-card__badge--out">
+            نفد
+          </span>
+        ) : null}
+
         <span
           className={
             isThumbnailView
@@ -461,18 +470,36 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
 
         <span className="pos-product-card__info">
           <span className="pos-product-card__name">{product.name}</span>
-          <span className="pos-product-card__sku">{product.sku ?? "بدون SKU"}</span>
+          {isThumbnailView ? (
+            stockState.tone === "low" ? (
+              <span
+                className={`pos-product-card__stock pos-product-card__stock--${stockState.tone}`}
+              >
+                {stockState.label}
+              </span>
+            ) : null
+          ) : (
+            <span className="pos-product-card__sku">
+              {product.sku ? <bdi dir="ltr">{product.sku}</bdi> : "بدون SKU"}
+            </span>
+          )}
         </span>
 
-        <span className="pos-product-card__pricing">
-          <span className="pos-product-card__price">
-            {formatCurrency(product.sale_price)}
-          </span>
-          <span
-            className={`pos-product-card__stock pos-product-card__stock--${stockState.tone}`}
-          >
-            {stockState.label}
-          </span>
+        <span
+          className={
+            isThumbnailView
+              ? "pos-product-card__pricing pos-product-card__pricing--thumbnail"
+              : "pos-product-card__pricing"
+          }
+        >
+          <span className="pos-product-card__price">{formatCurrency(product.sale_price)}</span>
+          {!isThumbnailView ? (
+            <span
+              className={`pos-product-card__stock pos-product-card__stock--${stockState.tone}`}
+            >
+              {stockState.label}
+            </span>
+          ) : null}
         </span>
       </button>
     );
@@ -1157,10 +1184,6 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
       : changeToReturn !== null
         ? `الباقي ${formatCurrency(changeToReturn)}`
         : "جاهز للإتمام";
-  const discoveryHintLabel =
-    quickAddProducts.length > 0
-      ? `اختصارات سريعة: ${formatCompactNumber(quickAddProducts.length)}`
-      : "لا توجد منتجات سريعة الآن";
 
   return (
     <section className="workspace-stack transaction-page">
@@ -1233,9 +1256,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
               <SectionCard
                 tone="accent"
                 className="transaction-card transaction-card--filters"
-                eyebrow="الاكتشاف السريع"
-                title="ابحث وأضف مباشرة"
-                description="ابحث بالاسم أو SKU، ثم اضغط على المنتج لإضافته إلى السلة."
+                title="ابحث وأضف"
                 actions={
                   <div className="transaction-action-cluster">
                     <button
@@ -1278,7 +1299,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                 }
               >
                 <div className="transaction-toolbar pos-products-header">
-                  <label className="workspace-search transaction-toolbar__search">
+                  <label className="workspace-search transaction-toolbar__search pos-search-shell">
                     <Search size={18} />
                     <input
                       ref={searchRef}
@@ -1293,23 +1314,35 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                         });
                       }}
                     />
+                    {searchInput.trim().length > 0 ? (
+                      <button
+                        type="button"
+                        className="icon-button pos-search-clear"
+                        onClick={() => {
+                          setSearchInput("");
+                          setSearchQuery("");
+                          searchRef.current?.focus();
+                        }}
+                        aria-label="مسح البحث"
+                      >
+                        <X size={16} />
+                      </button>
+                    ) : null}
                   </label>
-
-                  <div className="transaction-action-cluster">
-                    <span className="product-pill product-pill--accent">
-                      {discoveryHintLabel}
-                    </span>
-                    <span className="product-pill">{cartOverviewLabel}</span>
-                  </div>
                 </div>
 
-                <div className="chip-row transaction-chip-row" aria-label="فئات المنتجات">
+                <div
+                  className="chip-row transaction-chip-row pos-category-row"
+                  aria-label="فئات المنتجات"
+                >
                   {categories.map((category) => (
                     <button
                       key={category}
                       type="button"
                       className={
-                        category === activeCategory ? "chip chip--active" : "chip"
+                        category === activeCategory
+                          ? "chip chip--active pos-category-chip is-active"
+                          : "chip pos-category-chip"
                       }
                       aria-pressed={category === activeCategory}
                       onClick={() => setActiveCategory(category)}
@@ -1330,11 +1363,6 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
 
               <SectionCard
                 title="المنتجات"
-                description={
-                  filteredProducts.length > 0
-                    ? `اضغط أي بطاقة لإضافتها. تظهر المطابقات الحالية: ${formatCompactNumber(filteredProducts.length)}`
-                    : "لا توجد نتائج مطابقة ضمن الفئة أو البحث الحالي."
-                }
                 className="transaction-card"
               >
                 {productsLoading ? (
@@ -1447,7 +1475,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
             >
               {panelState === "processing" || isSubmitting
                 ? "جارٍ التنفيذ..."
-                : "تأكيد البيع"}
+                : "إتمام البيع"}
             </button>
           </div>
 
@@ -1462,9 +1490,9 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
             description={
               panelState === "success"
                 ? "أصبح بإمكانك طباعة الإيصال أو بدء بيع جديد."
-                : panelState === "cart"
-                  ? cartOverviewLabel
-                  : `${activePaymentLabel} • ${checkoutStatusLabel}`
+                : panelState === "checkout"
+                  ? `${activePaymentLabel} • ${checkoutStatusLabel}`
+                  : undefined
             }
             actions={
               panelState === "cart" ? (
@@ -1647,66 +1675,112 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                   </div>
                 ) : (
                   <div className="cart-line-list">
-                    {items.map((item) => (
-                      <article key={item.product_id} className="cart-line-card">
-                        <div className="cart-line-card__header">
-                          <div>
-                            <strong>{item.name}</strong>
-                            <p>{formatCurrency(item.sale_price)} للوحدة</p>
+                    {items.map((item) => {
+                      const maxQuantity = item.track_stock
+                        ? Math.max(item.stock_quantity, 1)
+                        : null;
+                      const lineSubtotal = roundAmount(item.sale_price * item.quantity);
+                      const lineDiscountAmount = roundAmount(
+                        lineSubtotal * (item.discount_percentage / 100)
+                      );
+                      const lineTotal = roundAmount(lineSubtotal - lineDiscountAmount);
+                      const canIncreaseQuantity =
+                        maxQuantity === null || item.quantity < maxQuantity;
+
+                      return (
+                        <article key={item.product_id} className="cart-line-card">
+                          <div className="cart-line-card__header">
+                            <div className="cart-line-card__copy">
+                              <strong>{item.name}</strong>
+                              <p>{formatCurrency(item.sale_price)} للوحدة</p>
+                            </div>
+
+                            <div className="cart-line-card__header-side">
+                              <strong className="cart-line-card__line-total">
+                                {formatCurrency(lineTotal)}
+                              </strong>
+                              <button
+                                type="button"
+                                className="icon-button cart-line-card__remove"
+                                onClick={() => {
+                                  clearSubmissionFeedback();
+                                  removeItem(item.product_id);
+                                }}
+                                aria-label={`حذف ${item.name}`}
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
                           </div>
 
-                          <button
-                            type="button"
-                            className="icon-button"
-                            onClick={() => {
-                              clearSubmissionFeedback();
-                              removeItem(item.product_id);
-                            }}
-                            aria-label={`حذف ${item.name}`}
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
+                          <div className="cart-line-card__controls">
+                            <div
+                              className="cart-line-card__quantity"
+                              aria-label={`تعديل كمية ${item.name}`}
+                            >
+                              <button
+                                type="button"
+                                className="icon-button cart-line-card__quantity-button"
+                                onClick={() => {
+                                  clearSubmissionFeedback();
 
-                        <div className="cart-line-card__controls">
-                          <label className="stack-field">
-                            <span>الكمية</span>
-                            <input
-                              type="number"
-                              min={1}
-                              max={
-                                item.track_stock
-                                  ? Math.max(item.stock_quantity, 1)
-                                  : undefined
-                              }
-                              value={item.quantity}
-                              onChange={(event) => {
-                                clearSubmissionFeedback();
-                                setQuantity(item.product_id, Number(event.target.value));
-                              }}
-                            />
-                          </label>
+                                  if (item.quantity <= 1) {
+                                    removeItem(item.product_id);
+                                    return;
+                                  }
 
-                          <label className="stack-field">
-                            <span>خصم %</span>
-                            <input
-                              type="number"
-                              min={0}
-                              max={effectiveMaxDiscount}
-                              value={item.discount_percentage}
-                              onChange={(event) => {
-                                clearSubmissionFeedback();
-                                const raw = Number(event.target.value);
-                                const clampedValue = Number.isNaN(raw)
-                                  ? 0
-                                  : Math.min(raw, effectiveMaxDiscount);
-                                setDiscountPercentage(item.product_id, clampedValue);
-                              }}
-                            />
-                          </label>
-                        </div>
-                      </article>
-                    ))}
+                                  setQuantity(item.product_id, item.quantity - 1);
+                                }}
+                                aria-label={`تقليل كمية ${item.name}`}
+                              >
+                                <Minus size={16} />
+                              </button>
+                              <span className="cart-line-card__quantity-value">
+                                <bdi dir="ltr">{formatCompactNumber(item.quantity)}</bdi>
+                              </span>
+                              <button
+                                type="button"
+                                className="icon-button cart-line-card__quantity-button"
+                                onClick={() => {
+                                  clearSubmissionFeedback();
+                                  setQuantity(item.product_id, item.quantity + 1);
+                                }}
+                                disabled={!canIncreaseQuantity}
+                                aria-label={`زيادة كمية ${item.name}`}
+                              >
+                                <Plus size={16} />
+                              </button>
+                            </div>
+
+                            <label className="cart-line-card__discount">
+                              <span>خصم %</span>
+                              <input
+                                type="number"
+                                min={0}
+                                max={effectiveMaxDiscount}
+                                value={item.discount_percentage}
+                                onChange={(event) => {
+                                  clearSubmissionFeedback();
+                                  const raw = Number(event.target.value);
+                                  const clampedValue = Number.isNaN(raw)
+                                    ? 0
+                                    : Math.min(raw, effectiveMaxDiscount);
+                                  setDiscountPercentage(item.product_id, clampedValue);
+                                }}
+                              />
+                            </label>
+                          </div>
+
+                          {lineDiscountAmount > 0 ? (
+                            <div className="cart-line-card__meta">
+                              <span className="product-pill product-pill--warning">
+                                خصم {formatCurrency(lineDiscountAmount)}
+                              </span>
+                            </div>
+                          ) : null}
+                        </article>
+                      );
+                    })}
                   </div>
                 )}
 
@@ -1721,18 +1795,18 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                   <div className="cart-panel__cta-row">
                     <button
                       type="button"
-                      className="primary-button btn btn--primary transaction-checkout-button"
+                      className="secondary-button btn btn--secondary transaction-checkout-button transaction-checkout-button--secondary"
                       disabled={items.length === 0}
                       onClick={openCheckout}
                     >
-                      ادفع {formatCurrency(netTotal)}
+                      مراجعة الدفع
                     </button>
                     <button
                       type="button"
                       className={
                         canCreateDebt
-                          ? "primary-button btn btn--warning transaction-checkout-button"
-                          : "primary-button btn btn--primary transaction-checkout-button"
+                          ? "primary-button btn btn--warning transaction-checkout-button transaction-checkout-button--primary"
+                          : "primary-button btn btn--primary transaction-checkout-button transaction-checkout-button--primary"
                       }
                       disabled={isSubmitting || !canConfirmSale || isOffline}
                       onClick={() => {
@@ -1747,7 +1821,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                           جارٍ التنفيذ...
                         </>
                       ) : (
-                        "تأكيد البيع"
+                        "إتمام البيع"
                       )}
                     </button>
                   </div>
@@ -2252,9 +2326,9 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                         جارٍ التنفيذ...
                       </>
                     ) : canCreateDebt ? (
-                      "تأكيد البيع وتسجيل الدين"
+                      "إتمام البيع وتسجيل الدين"
                     ) : (
-                      "تأكيد البيع"
+                      "إتمام البيع"
                     )}
                   </button>
                 </div>

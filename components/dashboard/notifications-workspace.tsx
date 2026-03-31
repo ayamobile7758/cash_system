@@ -251,47 +251,32 @@ export function NotificationsWorkspace({
   const alertKeys = alertsSummary
     ? (["low_stock", "overdue_debts", "reconciliation_drift", "maintenance_ready", "unread_notifications"] as const)
     : [];
+  const visibleAlertKeys = alertsSummary ? alertKeys.filter((key) => alertsSummary[key] > 0) : [];
 
   return (
-    <section className="operational-page">
+    <section className="operational-page notifications-page">
       <PageHeader
-        eyebrow="الإشعارات"
-        title="مركز التنبيهات والمتابعة"
+        title="الإشعارات"
         meta={
           <>
-            <span className="status-pill status-pill--brand">الدور: {getRoleLabel(role)}</span>
-            <span className="status-pill">غير المقروء: {formatCompactNumber(unreadCount)}</span>
-            <span className="status-pill">الإجمالي: {formatCompactNumber(totalCount)}</span>
+            <span className="status-pill badge badge--neutral">الدور: {getRoleLabel(role)}</span>
+            <span className="status-pill badge badge--neutral">غير المقروء: {formatCompactNumber(unreadCount)}</span>
+            <span className="status-pill badge badge--neutral">الإجمالي: {formatCompactNumber(totalCount)}</span>
           </>
         }
         actions={
-          <>
+          <div className="transaction-action-cluster">
             <Link href="/notifications" className="secondary-button">
               إعادة ضبط المركز
             </Link>
             <button type="button" className="primary-button" disabled={isPending || unreadCount === 0} onClick={() => void handleMarkAll()}>
               {isPending ? <Loader2 className="spin" size={16} /> : "تعليم الكل كمقروء"}
             </button>
-          </>
+          </div>
         }
       />
 
-      <section className="operational-page__meta-grid" aria-label="ملخص مركز الإشعارات">
-        <article className="operational-page__meta-card">
-          <span className="operational-page__meta-label">نطاق الحساب</span>
-          <strong className="operational-page__meta-value">{getRoleLabel(role)}</strong>
-        </article>
-        <article className="operational-page__meta-card">
-          <span className="operational-page__meta-label">الإشعارات الظاهرة</span>
-          <strong className="operational-page__meta-value">{formatCompactNumber(totalCount)}</strong>
-        </article>
-        <article className="operational-page__meta-card">
-          <span className="operational-page__meta-label">الرسائل غير المقروءة</span>
-          <strong className="operational-page__meta-value">{formatCompactNumber(unreadCount)}</strong>
-        </article>
-      </section>
-
-      <div className="operational-section-nav" aria-label="أقسام مركز الإشعارات">
+      <div className="operational-section-nav notifications-page__sections" aria-label="أقسام مركز الإشعارات">
         <button
           type="button"
           className={activeSection === "inbox" ? "chip-button is-selected" : "chip-button"}
@@ -317,18 +302,10 @@ export function NotificationsWorkspace({
         </button>
       </div>
 
-      {isPending ? (
-        <StatusBanner
-          variant="info"
-          title="جارٍ تنفيذ الإجراء"
-          message="انتظر حتى يكتمل تحديث مركز الإشعارات الحالي قبل بدء إجراء جديد."
-        />
-      ) : null}
-
       {actionErrorMessage ? (
         <StatusBanner
           variant="danger"
-          title="تعذر إكمال الإجراء"
+          title="تعذر تنفيذ الإجراء"
           message={actionErrorMessage}
           actionLabel={retryAction ? "إعادة المحاولة" : undefined}
           onAction={retryAction ? retryLastAction : undefined}
@@ -337,35 +314,34 @@ export function NotificationsWorkspace({
       ) : null}
 
       {activeSection === "alerts" && alertsSummary ? (
-        <section className="operational-page__meta-grid" aria-label="ملخصات التنبيهات">
-          {alertKeys.map((key) => (
-            <SectionCard
-              key={key}
-              eyebrow="تنبيه مجمع"
-              title={getAlertLabel(key)}
-              tone="accent"
-            >
-              <div className="operational-page__meta-card">
-                <span className="operational-page__meta-label">العدد الحالي</span>
-                <strong className="operational-page__meta-value">{formatCompactNumber(alertsSummary[key])}</strong>
-                <div className="action-row">
-                  <Link href={getAlertHref(key)} className="secondary-button">
-                    فتح المسار
-                  </Link>
-                </div>
-              </div>
-            </SectionCard>
-          ))}
+        <section className="notifications-page__alerts" aria-label="ملخصات التنبيهات">
+          {visibleAlertKeys.length > 0 ? (
+            visibleAlertKeys.map((key) => (
+              <Link key={key} href={getAlertHref(key)} className="notifications-alert-chip">
+                <span className="notifications-alert-chip__label">{getAlertLabel(key)}</span>
+                <strong className="notifications-alert-chip__count">
+                  {formatCompactNumber(alertsSummary[key])}
+                </strong>
+              </Link>
+            ))
+          ) : (
+            <div className="empty-panel notifications-page__empty">
+              <BellRing size={20} />
+              <h3>لا توجد تنبيهات مجمعة</h3>
+              <Link href="/notifications" className="secondary-button">
+                فتح الصندوق
+              </Link>
+            </div>
+          )}
         </section>
       ) : null}
 
       {activeSection === "search" ? (
-        <section className="operational-layout operational-layout--wide">
+        <section className="operational-layout operational-layout--wide notifications-page__search">
           <SectionCard
-            eyebrow="بحث تشغيلي"
-            title="نتائج البحث الحالية"
+            title="البحث"
             tone="accent"
-            className="operational-sidebar operational-sidebar--sticky"
+            className="operational-sidebar operational-sidebar--sticky notifications-page__sidebar"
           >
             <form className="workspace-stack" method="GET">
               <input type="hidden" name="status" value={filters.status} />
@@ -414,8 +390,7 @@ export function NotificationsWorkspace({
             ) : searchBaseline.filters.q ? (
               <>
                 <SectionCard
-                  eyebrow="ملخص النتائج"
-                  title="نتائج البحث الحالية"
+                  title="نتائج البحث"
                   tone="subtle"
                 >
                   <div className="operational-inline-summary">
@@ -432,7 +407,6 @@ export function NotificationsWorkspace({
                     {searchBaseline.groups.map((group) => (
                       <SectionCard
                         key={group.entity}
-                        eyebrow="نتائج حسب الكيان"
                         title={group.title}
                       >
                         <div className="operational-list">
@@ -460,30 +434,33 @@ export function NotificationsWorkspace({
                     ))}
                   </div>
                 ) : (
-                  <SectionCard
-                    eyebrow="لا توجد نتائج"
-                    title="لم نعثر على سجلات مطابقة"
-                    tone="subtle"
-                  />
+                  <div className="empty-panel notifications-page__empty">
+                    <Search size={20} />
+                    <h3>لا توجد نتائج مطابقة</h3>
+                    <Link href="/notifications" className="secondary-button">
+                      إعادة ضبط البحث
+                    </Link>
+                  </div>
                 )}
               </>
             ) : (
-              <SectionCard
-                eyebrow="البحث"
-                title="لا يوجد استعلام نشط الآن"
-                tone="subtle"
-              />
+              <div className="empty-panel notifications-page__empty">
+                <Search size={20} />
+                <h3>ابدأ استعلامًا جديدًا</h3>
+                <Link href="/notifications" className="secondary-button">
+                  إعادة ضبط البحث
+                </Link>
+              </div>
             )}
           </div>
         </section>
       ) : null}
 
       {activeSection === "inbox" ? (
-        <section className="operational-layout operational-layout--split">
+        <section className="operational-layout operational-layout--split notifications-page__inbox">
           <SectionCard
-            eyebrow="إعدادات الصندوق"
             title="فلاتر المتابعة"
-            className="operational-sidebar operational-sidebar--sticky"
+            className="operational-sidebar operational-sidebar--sticky notifications-page__sidebar"
           >
             <form className="workspace-stack" method="GET">
               <input type="hidden" name="q" value={searchBaseline.filters.q} />
@@ -524,9 +501,13 @@ export function NotificationsWorkspace({
 
           <div className="operational-content">
             <SectionCard
-              eyebrow="صندوق الإشعارات"
-              title="الإشعارات الحالية"
+              title="صندوق الإشعارات"
               tone="accent"
+              actions={
+                <span className="status-pill badge badge--neutral">
+                  {formatCompactNumber(notifications.length)} إشعار
+                </span>
+              }
             >
               <div className="operational-list">
                 {notifications.length > 0 ? (
@@ -534,13 +515,14 @@ export function NotificationsWorkspace({
                     const referenceHref = getReferenceHref(notification);
 
                     return (
-                      <article key={notification.id} className="operational-list-card">
-                        <div className="operational-list-card__header">
+                      <article key={notification.id} className="operational-list-card notification-feed-card">
+                        <div className="operational-list-card__header notification-feed-card__header">
                           <div>
                             <h3 className="operational-list-card__title">{notification.title}</h3>
                             <p className="operational-list-card__description">{notification.body}</p>
                           </div>
                           <div className="operational-list-card__meta">
+                            {!notification.is_read ? <span className="notification-feed-card__dot" aria-hidden="true" /> : null}
                             <span className={notification.is_read ? "status-pill" : "status-pill status-pill--brand"}>
                               {getNotificationStatusLabel(notification)}
                             </span>
@@ -548,14 +530,14 @@ export function NotificationsWorkspace({
                           </div>
                         </div>
 
-                        <div className="operational-inline-summary">
+                        <div className="operational-inline-summary notification-feed-card__summary">
                           <span className="status-pill">{formatDateTime(notification.created_at)}</span>
                           {role === "admin" ? (
                             <span className="status-pill">المستخدم: {notification.user_name ?? "غير معروف"}</span>
                           ) : null}
                         </div>
 
-                        <div className="action-row">
+                        <div className="action-row notification-feed-card__actions">
                           {!notification.is_read ? (
                             <button
                               type="button"
@@ -565,9 +547,7 @@ export function NotificationsWorkspace({
                             >
                               تعليم كمقروء
                             </button>
-                          ) : null}
-
-                          {role === "admin" && notification.contact_phone && notification.whatsapp_template_key ? (
+                          ) : role === "admin" && notification.contact_phone && notification.whatsapp_template_key ? (
                             <button
                               type="button"
                               className="secondary-button"
@@ -588,11 +568,13 @@ export function NotificationsWorkspace({
                     );
                   })
                 ) : (
-                  <SectionCard
-                    eyebrow="صندوق فارغ"
-                    title="لا توجد إشعارات مطابقة الآن"
-                    tone="subtle"
-                  />
+                  <div className="empty-panel notifications-page__empty">
+                    <BellRing size={20} />
+                    <h3>لا توجد إشعارات مطابقة</h3>
+                    <Link href="/notifications" className="secondary-button">
+                      إعادة ضبط الفلاتر
+                    </Link>
+                  </div>
                 )}
               </div>
             </SectionCard>

@@ -220,7 +220,6 @@ export function OperationsWorkspace({
   return (
     <section className="operational-page">
       <PageHeader
-        eyebrow="العمليات"
         title="الشحن والتحويلات"
       />
 

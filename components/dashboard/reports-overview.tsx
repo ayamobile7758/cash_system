@@ -70,48 +70,35 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
   const { advancedReport } = reportBaseline;
 
   return (
-    <section className="workspace-stack analytical-page">
+    <section className="workspace-stack analytical-page reports-page">
       <PageHeader
-        eyebrow="التقارير التحليلية"
-        title="التقارير المتقدمة والتحليلات المقارنة"
+        title="التقارير"
         meta={
-          <div className="analytical-page__meta-grid">
-            <div className="analytical-page__meta-card">
-              <span className="analytical-page__meta-label">الفترة الحالية</span>
-              <strong className="analytical-page__meta-value">{filters.fromDate}</strong>
-              <span className="analytical-page__meta-hint">حتى {filters.toDate}</span>
-            </div>
-            <div className="analytical-page__meta-card">
-              <span className="analytical-page__meta-label">المبيعات الحالية</span>
-              <strong className="analytical-page__meta-value">
-                {formatCurrency(advancedReport.currentPeriod.sales_total)}
-              </strong>
-              <span className="analytical-page__meta-hint">
-                {formatCompactNumber(reportBaseline.salesHistory.total_count)} فاتورة بعد الفلاتر
-              </span>
-            </div>
-            <div className="analytical-page__meta-card">
-              <span className="analytical-page__meta-label">فرق الربح</span>
-              <strong className="analytical-page__meta-value">{formatCurrency(advancedReport.delta.net_profit)}</strong>
-              <span className="analytical-page__meta-hint">مقارنة بالفترة المرجعية المحددة</span>
-            </div>
-          </div>
+          <>
+            <span className="status-pill badge badge--neutral">
+              {filters.fromDate} - {filters.toDate}
+            </span>
+            <span className="status-pill badge badge--neutral">
+              {formatCompactNumber(reportBaseline.salesHistory.total_count)} فاتورة
+            </span>
+            <span className="status-pill badge badge--neutral">
+              فرق الربح {formatCurrency(advancedReport.delta.net_profit)}
+            </span>
+          </>
         }
         actions={
           <div className="action-row">
             <a href={exportHref} className="primary-button">
-              تصدير Excel المتقدم
+              تصدير Excel
             </a>
-            <Link href="/settings" className="secondary-button">
-              فتح الإعدادات
+            <Link href="/reports" className="secondary-button">
+              إعادة ضبط
             </Link>
           </div>
         }
       />
 
-      <p className="workspace-lead">ابدأ بالفلاتر، راجع المؤشرات الأساسية</p>
-
-      <nav className="analytical-section-nav" aria-label="التنقل داخل أقسام التقارير">
+      <nav className="analytical-section-nav reports-page__sections" aria-label="التنقل داخل أقسام التقارير">
         {REPORT_SECTIONS.map((section) => (
           <a key={section.href} href={section.href} className="chip">
             {section.label}
@@ -121,17 +108,29 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
 
       <SectionCard
         id="reports-filters"
-        eyebrow="الفلاتر"
         title="نطاق التقرير"
         tone="accent"
-        className="analytical-card analytical-card--filters"
+        className="analytical-card analytical-card--filters reports-page__filters"
+        actions={
+          <Link href="/reports" className="secondary-button">
+            إعادة ضبط
+          </Link>
+        }
       >
-        <p className="analytical-inline-note">
-          الحالي: {filters.fromDate} → {filters.toDate}
+        <div className="operational-inline-summary reports-page__scope">
+          <span className="status-pill badge badge--neutral">
+            الحالي: {filters.fromDate} → {filters.toDate}
+          </span>
           {filters.compareFromDate && filters.compareToDate
-            ? ` | المقارنة: ${filters.compareFromDate} → ${filters.compareToDate}`
-            : " | لا توجد فترة مقارنة محددة"}
-        </p>
+            ? (
+              <span className="status-pill badge badge--neutral">
+                المقارنة: {filters.compareFromDate} → {filters.compareToDate}
+              </span>
+            )
+            : (
+              <span className="status-pill badge badge--neutral">بدون فترة مقارنة</span>
+            )}
+        </div>
 
         <form className="filters-grid" method="GET">
           <label className="stack-field">
@@ -222,11 +221,10 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
 
       <section id="reports-compare" className="workspace-stack">
         <SectionCard
-          eyebrow="المقارنة"
-          title="ملخص الفترة الحالية مقابل فترة المقارنة"
+          title="ملخص المقارنة"
           className="analytical-card"
         >
-          <div className="analytical-kpi-grid">
+          <div className="analytical-kpi-grid reports-page__compare-grid">
             <article className="analytical-kpi-card">
               <span className="analytical-kpi-label">الفترة الحالية</span>
               <strong className="analytical-kpi-value">{formatCurrency(advancedReport.currentPeriod.sales_total)}</strong>
@@ -257,8 +255,7 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
         </SectionCard>
 
         <SectionCard
-          eyebrow="الاتجاهات"
-          title="اتجاه المبيعات وصافي الربح"
+          title="اتجاه الأداء"
           className="analytical-card"
         >
           <p className="analytical-card__section-label">تفكيك البعد الحالي</p>
@@ -266,8 +263,7 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
         </SectionCard>
 
         <SectionCard
-          eyebrow="جدول المقارنة"
-          title="تفصيل القيم بعد التجميع"
+          title="تفصيل المقارنة"
           className="analytical-card"
         >
           <div className="table-wrap">
@@ -305,20 +301,19 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
 
       <section id="reports-baseline" className="workspace-stack">
         <SectionCard
-          eyebrow="لوحة المؤشرات"
-          title="مؤشرات سريعة من المتابعة اليومية"
+          title="مؤشرات سريعة"
           className="analytical-card"
         >
-          <div className="analytical-kpi-grid">
+          <div className="analytical-kpi-grid reports-page__baseline-grid">
             <article className="analytical-kpi-card">
-              <span className="analytical-kpi-label">ملخص المبيعات</span>
+              <span className="analytical-kpi-label">المبيعات</span>
               <strong className="analytical-kpi-value">{formatCurrency(reportBaseline.salesSummary.total_sales)}</strong>
               <span className="analytical-kpi-hint">
                 {formatCompactNumber(reportBaseline.salesSummary.invoice_count)} فاتورة نشطة
               </span>
             </article>
             <article className="analytical-kpi-card">
-              <span className="analytical-kpi-label">الديون الحالية</span>
+              <span className="analytical-kpi-label">الديون</span>
               <strong className="analytical-kpi-value">
                 {formatCurrency(reportBaseline.debtReport.total_outstanding)}
               </strong>
@@ -333,13 +328,6 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
               </strong>
               <span className="analytical-kpi-hint">منتجات عند حد التنبيه أو أقل</span>
             </article>
-            <article className="analytical-kpi-card">
-              <span className="analytical-kpi-label">الفواتير الملغاة</span>
-              <strong className="analytical-kpi-value">
-                {formatCompactNumber(reportBaseline.salesSummary.cancelled_count)}
-              </strong>
-              <span className="analytical-kpi-hint">ضمن نفس الفترة الحالية</span>
-            </article>
             <article className="analytical-kpi-card analytical-kpi-card--accent">
               <span className="analytical-kpi-label">ربح اللقطات</span>
               <strong className="analytical-kpi-value">
@@ -347,13 +335,6 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
               </strong>
               <span className="analytical-kpi-hint">
                 من {formatCompactNumber(reportBaseline.profitReport.snapshot_count)} لقطة يومية
-              </span>
-            </article>
-            <article className="analytical-kpi-card">
-              <span className="analytical-kpi-label">ربح الشحن</span>
-              <strong className="analytical-kpi-value">{formatCurrency(reportBaseline.profitReport.topup_profit)}</strong>
-              <span className="analytical-kpi-hint">
-                إجمالي الشحن: {formatCurrency(reportBaseline.profitReport.topup_amount)}
               </span>
             </article>
             <article className="analytical-kpi-card">
@@ -366,12 +347,12 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
               </span>
             </article>
             <article className="analytical-kpi-card">
-              <span className="analytical-kpi-label">المصروفات والمرتجعات</span>
+              <span className="analytical-kpi-label">الشحن والمرتجعات</span>
               <strong className="analytical-kpi-value">
-                {formatCurrency(reportBaseline.profitReport.expense_total)}
+                {formatCurrency(reportBaseline.profitReport.topup_profit)}
               </strong>
               <span className="analytical-kpi-hint">
-                المرتجعات: {formatCurrency(reportBaseline.profitReport.return_total)}
+                مرتجعات: {formatCurrency(reportBaseline.profitReport.return_total)}
               </span>
             </article>
           </div>
@@ -380,8 +361,7 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
 
       <section id="reports-sales" className="analytical-shell analytical-shell--split">
         <SectionCard
-          eyebrow="سجل المبيعات"
-          title="الفواتير المطابقة للفلاتر"
+          title="الفواتير"
           className="analytical-card"
         >
           <div className="action-row action-row--end">
@@ -429,8 +409,7 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
         </SectionCard>
 
         <SectionCard
-          eyebrow="اللقطات اليومية"
-          title="آخر اللقطات اليومية"
+          title="آخر اللقطات"
           tone="subtle"
           className="analytical-card"
         >
@@ -472,7 +451,7 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
           </div>
         </SectionCard>
 
-        <SectionCard eyebrow="عملاء الديون" title="الديون الحالية" tone="subtle" className="analytical-card">
+        <SectionCard title="الديون الحالية" tone="subtle" className="analytical-card">
           <div className="stack-list">
             {reportBaseline.debtReport.customers.map((customer) => (
               <article key={customer.id} className="list-card">
@@ -490,7 +469,7 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
           </div>
         </SectionCard>
 
-        <SectionCard eyebrow="متابعة المخزون" title="المخزون المنخفض" tone="subtle" className="analytical-card">
+        <SectionCard title="المخزون المنخفض" tone="subtle" className="analytical-card">
           <div className="stack-list">
             {reportBaseline.inventoryReport.products.map((product) => (
               <article key={product.id} className="list-card">
@@ -508,8 +487,7 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
 
       <SectionCard
         id="reports-returns"
-        eyebrow="تحليل المرتجعات"
-        title="الأسباب والعمليات المرتبطة بالمرتجعات"
+        title="المرتجعات"
         className="analytical-card"
       >
         <div className="analytical-shell analytical-shell--split">
@@ -569,8 +547,7 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
       </SectionCard>
 
       <SectionCard
-        eyebrow="حركات الحسابات"
-        title="الحركة التفصيلية حسب الحسابات"
+        title="حركة الحسابات"
         className="analytical-card"
       >
         <div className="analytical-shell analytical-shell--split">
@@ -637,8 +614,7 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
 
       <SectionCard
         id="reports-maintenance"
-        eyebrow="أداء الصيانة"
-        title="ملخص الصيانة والإيراد المسلّم"
+        title="الصيانة"
         className="analytical-card"
       >
         <div className="analytical-kpi-grid">

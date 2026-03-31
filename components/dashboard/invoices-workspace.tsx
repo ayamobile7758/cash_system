@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Search, ChevronLeft, FileText } from "lucide-react";
+import { ArrowUpDown, FileText, Plus, Search } from "lucide-react";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { SectionCard } from "@/components/ui/section-card";
@@ -25,50 +25,95 @@ function getInvoiceStatusLabel(status: string) {
   return INVOICE_STATUS_LABELS[status] ?? status;
 }
 
+type InvoiceSortMode = "newest" | "highest" | "due";
+
 export function InvoicesWorkspace({ role, invoices }: InvoicesWorkspaceProps) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [sortMode, setSortMode] = useState<InvoiceSortMode>("newest");
 
-  const filteredInvoices = useMemo(() => {
+  const visibleInvoices = useMemo(() => {
     const normalized = searchTerm.trim().toLowerCase();
-    if (!normalized) {
-      return invoices;
-    }
+    const filtered = !normalized
+      ? invoices
+      : invoices.filter((invoice) => {
+          const haystack =
+            `${invoice.invoice_number} ${invoice.customer_name ?? ""} ${invoice.pos_terminal_code ?? ""}`.toLowerCase();
+          return haystack.includes(normalized);
+        });
 
-    return invoices.filter((invoice) => {
-      const haystack = `${invoice.invoice_number} ${invoice.customer_name ?? ""} ${invoice.pos_terminal_code ?? ""}`.toLowerCase();
-      return haystack.includes(normalized);
+    return [...filtered].sort((left, right) => {
+      if (sortMode === "highest") {
+        return right.total_amount - left.total_amount;
+      }
+
+      if (sortMode === "due") {
+        if (right.debt_amount !== left.debt_amount) {
+          return right.debt_amount - left.debt_amount;
+        }
+      }
+
+      return (
+        new Date(right.invoice_date).getTime() - new Date(left.invoice_date).getTime()
+      );
     });
-  }, [invoices, searchTerm]);
+  }, [invoices, searchTerm, sortMode]);
 
   return (
-    <section className="workspace-stack transaction-page">
+    <section className="workspace-stack transaction-page invoice-page">
       <PageHeader
-        eyebrow="الفواتير"
-        title="الفواتير والإيصالات والمرتجعات"
+        title="الفواتير"
         meta={
-          <div className="transaction-page__meta" aria-label="ملخص شاشة الفواتير">
-            <article className="transaction-page__meta-card stat-card">
-              <span>الفواتير المعروضة</span>
-              <strong>{formatCompactNumber(filteredInvoices.length)}</strong>
-            </article>
-            <article className="transaction-page__meta-card stat-card">
-              <span>نطاق العرض</span>
-              <strong>{role === "admin" ? "كامل" : "محدود بالمستخدم"}</strong>
-            </article>
-            <article className="transaction-page__meta-card transaction-page__meta-card--safe stat-card">
-              <ChevronLeft size={18} />
-              <strong>الفواتير الحديثة</strong>
-            </article>
-          </div>
+          <>
+            <span className="status-pill badge badge--neutral">
+              {formatCompactNumber(visibleInvoices.length)} فاتورة
+            </span>
+            <span className="status-pill badge badge--neutral">
+              {role === "admin" ? "عرض إداري" : "عرض نقطة البيع"}
+            </span>
+          </>
+        }
+        actions={
+          <Link href="/pos" className="primary-button">
+            <Plus size={16} />
+            فاتورة جديدة
+          </Link>
         }
       />
 
       <SectionCard
-        eyebrow="سجل الفواتير"
-        title="قائمة الفواتير"
-        className="transaction-card"
+        title="السجل"
+        className="transaction-card invoice-page__card"
+        actions={
+          <div className="invoice-page__sort">
+            <span className="product-pill">
+              <ArrowUpDown size={14} />
+              ترتيب
+            </span>
+            <button
+              type="button"
+              className={sortMode === "newest" ? "chip-button is-selected" : "chip-button"}
+              onClick={() => setSortMode("newest")}
+            >
+              الأحدث
+            </button>
+            <button
+              type="button"
+              className={sortMode === "highest" ? "chip-button is-selected" : "chip-button"}
+              onClick={() => setSortMode("highest")}
+            >
+              الأعلى قيمة
+            </button>
+            <button
+              type="button"
+              className={sortMode === "due" ? "chip-button is-selected" : "chip-button"}
+              onClick={() => setSortMode("due")}
+            >
+              الأعلى دينًا
+            </button>
+          </div>
+        }
       >
-        <div className="workspace-toolbar transaction-toolbar">
+        <div className="workspace-toolbar transaction-toolbar invoice-page__toolbar">
           <label className="workspace-search transaction-toolbar__search">
             <Search size={18} />
             <input
@@ -81,37 +126,66 @@ export function InvoicesWorkspace({ role, invoices }: InvoicesWorkspaceProps) {
           </label>
         </div>
 
-        {filteredInvoices.length === 0 ? (
-          <div className="empty-panel transaction-empty-panel">
-            <FileText size={18} />
-            <h3>لا توجد فواتير مطابقة</h3>
-            <p>لا توجد فواتير متاحة حاليًا.</p>
+        {visibleInvoices.length === 0 ? (
+          <div className="empty-panel transaction-empty-panel invoice-page__empty">
+            <FileText size={20} />
+            <h3>{searchTerm.trim() ? "لا توجد فواتير مطابقة" : "لا توجد فواتير متاحة"}</h3>
+            {searchTerm.trim() ? (
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={() => setSearchTerm("")}
+              >
+                مسح البحث
+              </button>
+            ) : (
+              <Link href="/pos" className="secondary-button">
+                فاتورة جديدة
+              </Link>
+            )}
           </div>
         ) : (
-          <div className="stack-list transaction-list-shell">
-            {filteredInvoices.map((invoice) => (
+          <div className="invoice-page__list">
+            {visibleInvoices.map((invoice) => (
               <Link
                 key={invoice.id}
                 href={`/invoices/${invoice.id}`}
-                className="list-card list-card--interactive"
+                className="invoice-page__row"
                 aria-label={`فتح الفاتورة ${invoice.invoice_number}`}
               >
-                <div className="list-card__header">
-                  <strong>{invoice.invoice_number}</strong>
-                  <span className={`status-badge status-badge--${invoice.status} badge badge--info`}>
+                <div className="invoice-page__main">
+                  <div className="invoice-page__identity">
+                    <strong className="invoice-page__number">
+                      <bdi dir="ltr">{invoice.invoice_number}</bdi>
+                    </strong>
+                    <div className="invoice-page__meta">
+                      <span>{formatDate(invoice.invoice_date)}</span>
+                      <span>{invoice.customer_name ?? "بيع مباشر"}</span>
+                      <span>{invoice.pos_terminal_code ?? "بدون جهاز"}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="invoice-page__financial">
+                  <strong className="invoice-page__amount">
+                    {formatCurrency(invoice.total_amount)}
+                  </strong>
+                  {invoice.debt_amount > 0 ? (
+                    <span className="status-pill badge badge--warning">
+                      متبقي {formatCurrency(invoice.debt_amount)}
+                    </span>
+                  ) : invoice.invoice_discount_amount > 0 ? (
+                    <span className="status-pill badge badge--neutral">
+                      خصم {formatCurrency(invoice.invoice_discount_amount)}
+                    </span>
+                  ) : null}
+                </div>
+
+                <div className="invoice-page__status">
+                  <span className={`status-badge status-badge--${invoice.status}`}>
                     {getInvoiceStatusLabel(invoice.status)}
                   </span>
                 </div>
-                <p>التاريخ: {formatDate(invoice.invoice_date)}</p>
-                <p>الإجمالي: {formatCurrency(invoice.total_amount)}</p>
-                <p className="workspace-footnote">
-                  الجهاز: {invoice.pos_terminal_code ?? "غير محدد"} | العميل: {invoice.customer_name ?? "بيع مباشر"}
-                </p>
-                {invoice.invoice_discount_amount > 0 ? (
-                  <p className="workspace-footnote">
-                    خصم فاتورة: {formatCurrency(invoice.invoice_discount_amount)} ({invoice.invoice_discount_percentage}%)
-                  </p>
-                ) : null}
               </Link>
             ))}
           </div>

@@ -56,7 +56,6 @@ export function SearchWorkspace({ baseline }: SearchWorkspaceProps) {
   return (
     <section className="workspace-stack operational-page">
       <PageHeader
-        eyebrow="البحث الشامل"
         title="نتائج البحث"
         meta={
           <div className="transaction-page__meta" aria-label="ملخص البحث">

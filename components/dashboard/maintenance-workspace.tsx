@@ -228,7 +228,6 @@ export function MaintenanceWorkspace({
   return (
     <section className="operational-page">
       <PageHeader
-        eyebrow="الصيانة"
         title="الصيانة الأساسية"
       />
 

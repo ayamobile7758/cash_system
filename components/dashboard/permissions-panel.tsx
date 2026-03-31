@@ -176,7 +176,6 @@ export function PermissionsPanel({
   return (
     <section className="workspace-stack configuration-shell">
       <PageHeader
-        eyebrow="الصلاحيات"
         title="مركز الحِزم والصلاحيات الدقيقة"
         meta={
           <div className="configuration-summary-grid">

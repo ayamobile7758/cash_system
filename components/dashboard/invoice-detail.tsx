@@ -410,7 +410,6 @@ export function InvoiceDetail({ role, invoice, accounts }: InvoiceDetailProps) {
   return (
     <section className="workspace-stack transaction-page">
       <PageHeader
-        eyebrow="الفواتير"
         title={invoice.invoice_number}
         meta={
           <div className="transaction-page__meta" aria-label="ملخص الفاتورة">
