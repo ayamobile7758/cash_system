@@ -1,0 +1,19 @@
+أعدت بناء واجهة POS في [pos-workspace.tsx](c:/Users/Qaysk/OneDrive/Desktop/Aya%20Mobile/components/pos/pos-workspace.tsx) مع الإبقاء على منطق البيع الحالي، وأغلقت مشاكل التخطيط القديمة في [globals.css](c:/Users/Qaysk/OneDrive/Desktop/Aya%20Mobile/app/globals.css): `100dvh`، منع التمرير الكلي، سلة ثابتة `380px` على الديسكتوب و`320px` على التابلت، تبويبات فقط على الموبايل، وتمرير داخلي للمنتجات والسلة والـ checkout مع بقاء الإجماليات وزر التأكيد و`Status Bar` مرئية دائماً. كذلك أصلحت سلوك البحث بـ `Enter` ليضيف أول نتيجة مباشرة، وأبقيت الاختصارات الحالية كما هي (`F1` / `F2` / `d` / `Ctrl+Enter` / `Ctrl+Q`) مع tooltips تعرض المفاتيح فقط، وأظهرت حالة المخزون دائماً مع overlay واضح عند النفاد ومنع الإضافة وقتها.
+
+أصلحت bug السلة المحفوظة في [pos-cart.ts](c:/Users/Qaysk/OneDrive/Desktop/Aya%20Mobile/stores/pos-cart.ts) بحيث يعيد `restoreHeldCart()` أيضاً `selectedAccountId` و`splitPayments` و`amountReceived`. أضفت تغطية اختبارية في [pos-cart.test.ts](c:/Users/Qaysk/OneDrive/Desktop/Aya%20Mobile/tests/unit/pos-cart.test.ts) و[pos-workspace.test.tsx](c:/Users/Qaysk/OneDrive/Desktop/Aya%20Mobile/tests/unit/pos-workspace.test.tsx) لهذا الإصلاح ولسلوك `Enter` في البحث، بينما اختبار الـ store الحالي ما زال يؤكد أن `completeSale()` يبدّل `currentIdempotencyKey` بعد البيع الناجح، وشاشة النجاح ما زالت تعرض رقم الفاتورة والطباعة من [pos-workspace.tsx](c:/Users/Qaysk/OneDrive/Desktop/Aya%20Mobile/components/pos/pos-workspace.tsx).
+
+التحقق الذي أنهيته:
+- `npm run typecheck`
+- `npm run lint`
+- `npx vitest run tests/unit/pos-cart.test.ts tests/unit/pos-workspace.test.tsx`
+- فحص متصفحي فعلي:
+- `1280x800`: لا page scroll، المنتجات تتمرر داخلياً، السلة ثابتة `380px`
+- `768x1024`: تخطيط ثنائي فعلي، السلة `320px`، بلا تبويبات
+- `390x844`: تبويبات موبايل فقط، بلا قطع سفلي
+- سلة بـ `11` منتجاً: القائمة تتمرر داخلياً والإجمالي ثابت
+- checkout: الحقول تتمرر داخلياً والملخص ثابت
+
+**📋 تقرير النصوص المقترح تعديلها**
+فارغ. لا توجد نصوص أقترح تعديلها في هذه الجولة، ولم أستبدل أي نص عربي قائم بنص بديل.
+
+ملاحظة قصيرة: بقي ملفا سجل غير متتبعين `.codex-next3100.err.log` و`.codex-next3100.out.log` من تشغيل dev server المحلي أثناء التحقق؛ ليسا جزءاً من التعديل الوظيفي.
