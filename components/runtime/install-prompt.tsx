@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { Download } from "lucide-react";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -71,29 +72,15 @@ export function InstallPrompt() {
   }
 
   return (
-    <section className="baseline-card install-card" aria-labelledby="install-card-title">
-      <div className="install-card__body">
-        <h2 id="install-card-title">
-          تثبيت النظام على جهازك
-        </h2>
-        <p className="install-copy">
-          النظام يعمل كتطبيق ويب على جميع الأجهزة، مع توفر التثبيت الاختياري.
-        </p>
-      </div>
-
-      <div className="install-card__actions">
-        <button
-          type="button"
-          className="ghost-button"
-          onClick={handleInstallClick}
-          disabled={installState !== "ready"}
-        >
-          تثبيت Aya Mobile
-        </button>
-        <p className="install-status text-small" data-install-state={installState}>
-          {statusLabel}
-        </p>
-      </div>
-    </section>
+    <button
+      type="button"
+      className="floating-install-btn"
+      onClick={handleInstallClick}
+      title="تثبيت النظام"
+      aria-label="تثبيت النظام"
+      data-state={installState}
+    >
+      <Download size={24} />
+    </button>
   );
 }

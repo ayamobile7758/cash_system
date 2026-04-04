@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { Eye, EyeOff, KeyRound, Loader2, Mail, Store } from "lucide-react";
+import { Eye, EyeOff, KeyRound, Loader2, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { redirectAfterLogin } from "@/lib/auth/redirect-after-login";
 import { StatusBanner } from "@/components/ui/status-banner";
@@ -125,19 +125,8 @@ export function LoginForm() {
   }
 
   return (
-    <div className="auth-card" aria-busy={isPending}>
-      <header className="auth-header">
-        <div className="auth-logo">
-          <Store size={28} />
-        </div>
-
-        <div className="auth-header__copy">
-          <h1>تسجيل الدخول</h1>
-          <p>ادخل بالحساب للوصول مباشرة إلى مساحة العمل المناسبة.</p>
-        </div>
-      </header>
-
-      <form className="stack-form auth-form" autoComplete="on" onSubmit={handleSubmit}>
+    <>
+      <form action="#" method="POST" onSubmit={handleSubmit}>
         {isOffline ? (
           <StatusBanner
             variant="offline"
@@ -155,14 +144,16 @@ export function LoginForm() {
           />
         ) : null}
 
-        <label className="stack-field auth-field">
-          <span>البريد الإلكتروني</span>
-
-          <span className="auth-field__control">
-            <Mail className="auth-field__icon" size={18} aria-hidden="true" />
+        <div className="input-group">
+          <label htmlFor="email">البريد الإلكتروني</label>
+          <div className="input-wrapper">
+            <Mail className="icon" size={20} aria-hidden="true" />
             <input
               type="email"
+              id="email"
               name="email"
+              className="input-field"
+              placeholder="أدخل البريد الإلكتروني"
               autoComplete="username"
               inputMode="email"
               autoCapitalize="none"
@@ -176,17 +167,19 @@ export function LoginForm() {
               required
               dir="ltr"
             />
-          </span>
-        </label>
+          </div>
+        </div>
 
-        <label className="stack-field auth-field">
-          <span>كلمة المرور</span>
-
-          <span className="auth-field__control">
-            <KeyRound className="auth-field__icon" size={18} aria-hidden="true" />
+        <div className="input-group">
+          <label htmlFor="password">كلمة المرور</label>
+          <div className="input-wrapper password-input">
+            <KeyRound className="icon" size={20} aria-hidden="true" />
             <input
               type={isPasswordVisible ? "text" : "password"}
+              id="password"
               name="password"
+              className="input-field"
+              placeholder="••••••••"
               autoComplete="current-password"
               value={password}
               onChange={(event) => {
@@ -196,10 +189,9 @@ export function LoginForm() {
               required
               dir="ltr"
             />
-
             <button
               type="button"
-              className="auth-field__toggle"
+              className="password-toggle"
               onClick={() => setIsPasswordVisible((currentValue) => !currentValue)}
               aria-label={isPasswordVisible ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}
               aria-pressed={isPasswordVisible}
@@ -207,37 +199,26 @@ export function LoginForm() {
             >
               {isPasswordVisible ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
-          </span>
-        </label>
-
-        <label className="auth-persist">
-          <input
-            type="checkbox"
-            checked={rememberEmail}
-            onChange={(event) => setRememberEmail(event.target.checked)}
-          />
-          <span>تذكّر البريد على هذا الجهاز</span>
-        </label>
-
-        <div className="auth-form__actions">
-          <button type="submit" className="primary-button auth-submit" disabled={isPending}>
-            تسجيل الدخول
-          </button>
-
-          <div className="auth-submit-state" aria-live="polite" aria-atomic="true">
-            {isPending ? (
-              <div className="auth-submit-state__loading" role="status">
-                <span className="auth-submit-state__spinner">
-                  <Loader2 className="spin" size={20} />
-                </span>
-                <span>جارٍ تجهيز الدخول...</span>
-              </div>
-            ) : (
-              <span className="auth-submit-state__idle" aria-hidden="true" />
-            )}
           </div>
         </div>
+
+        <div className="form-options">
+          <label className="remember-me">
+            <input
+              type="checkbox"
+              checked={rememberEmail}
+              onChange={(event) => setRememberEmail(event.target.checked)}
+            />
+            <span>تذكّر البريد على هذا الجهاز</span>
+          </label>
+          <a href="#" className="forgot-password">نسيت كلمة المرور؟</a>
+        </div>
+
+        <button type="submit" className="btn-submit" disabled={isPending}>
+          {isPending ? <Loader2 className="spin" aria-hidden="true" size={20} /> : undefined}
+          <span>تسجيل الدخول</span>
+        </button>
       </form>
-    </div>
+    </>
   );
 }

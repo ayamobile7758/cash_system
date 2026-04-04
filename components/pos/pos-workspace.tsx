@@ -13,17 +13,13 @@ import {
   AlertTriangle,
   ArrowRight,
   Banknote,
-  CheckCircle2,
   Clock3,
   CreditCard,
   GripHorizontal,
-  ImageIcon,
-  List,
   Loader2,
   Minus,
   Plus,
   Printer,
-  RefreshCcw,
   Search,
   ShieldCheck,
   Trash2,
@@ -33,10 +29,17 @@ import { toast } from "sonner";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBanner } from "@/components/ui/status-banner";
+import { PosCartRail } from "@/components/pos/view/pos-cart-rail";
+import { PosCheckoutPanel } from "@/components/pos/view/pos-checkout-panel";
+import { PosProductGrid } from "@/components/pos/view/pos-product-grid";
+import { PosSuccessState } from "@/components/pos/view/pos-success-state";
+import { PosSurfaceShell } from "@/components/pos/view/pos-surface-shell";
+import { PosToolbar } from "@/components/pos/view/pos-toolbar";
 import { useCustomerSearch } from "@/hooks/use-customer-search";
 import { usePosAccounts } from "@/hooks/use-pos-accounts";
 import { useProducts } from "@/hooks/use-products";
 import { getSafeArabicErrorMessage } from "@/lib/error-messages";
+import { PosMobileCartSheet } from "@/components/pos/view/pos-mobile-cart-sheet";
 import type {
   PosAccount,
   PosProduct,
@@ -292,6 +295,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   const setNotes = usePosCartStore((state) => state.setNotes);
   const setPosTerminalCode = usePosCartStore((state) => state.setPosTerminalCode);
   const lockTerminalCode = usePosCartStore((state) => state.lockTerminalCode);
+  const unlockTerminalCode = usePosCartStore((state) => state.unlockTerminalCode);
   const holdCurrentCart = usePosCartStore((state) => state.holdCurrentCart);
   const restoreHeldCart = usePosCartStore((state) => state.restoreHeldCart);
   const discardHeldCart = usePosCartStore((state) => state.discardHeldCart);
@@ -324,6 +328,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   const [isTerminalCodeExpanded, setIsTerminalCodeExpanded] = useState(false);
   const [isNotesExpanded, setIsNotesExpanded] = useState(false);
   const [isPrimarySplitSelectorOpen, setIsPrimarySplitSelectorOpen] = useState(false);
+  const [isCheckoutOptionsOpen, setIsCheckoutOptionsOpen] = useState(false);
   const [isClearCartDialogOpen, setIsClearCartDialogOpen] = useState(false);
   const [productView, setProductView] = useState<ProductViewMode>("thumbnail");
   const [isCompactViewport, setIsCompactViewport] = useState(false);
@@ -364,14 +369,14 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
 
   const isOffline = productsOffline || accountsOffline;
   const categories = ["all", ...PRODUCT_CATEGORY_VALUES];
-  const quickAddProducts = useMemo(
-    () => products.filter((product) => product.is_quick_add).slice(0, 8),
-    [products]
-  );
-  const filteredProducts = useMemo(
-    () => filterProductsByQuery(products, deferredQuery),
-    [deferredQuery, products]
-  );
+  const filteredProducts = useMemo(() => {
+    const sorted = [...products].sort((a, b) => {
+      if (a.is_quick_add && !b.is_quick_add) return -1;
+      if (!a.is_quick_add && b.is_quick_add) return 1;
+      return 0;
+    });
+    return filterProductsByQuery(sorted, deferredQuery);
+  }, [deferredQuery, products]);
 
   const subtotal = calculateCartSubtotal(items);
   const totalDiscount = calculateCartDiscount(items);
@@ -458,75 +463,6 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     (account) =>
       account.id === selectedAccountId || !usedAdditionalAccountIds.includes(account.id)
   );
-
-  function renderCompactProductCard(product: PosProduct, variant: "quick-add" | "grid") {
-    const stockState = getProductStockState(product);
-    const isOutOfStock = product.track_stock && product.stock_quantity <= 0;
-    const isThumbnailView = productView === "thumbnail";
-    const categoryTone = getProductCategoryTone(product.category);
-    const productCardClassName = [
-      "pos-product-card",
-      "pos-product-card--compact",
-      isThumbnailView ? "pos-product-card--compact-thumbnail" : "",
-      variant === "quick-add" ? "pos-product-card--quick-add" : "",
-      isOutOfStock ? "pos-product-card--disabled" : ""
-    ]
-      .filter(Boolean)
-      .join(" ");
-
-    return (
-      <button
-        key={product.id}
-        type="button"
-        className={productCardClassName}
-        onClick={() => {
-          handleAddProduct(product);
-        }}
-        disabled={isOutOfStock}
-        title={variant === "quick-add" ? `${product.name} • ${quickAddProducts.findIndex((entry) => entry.id === product.id) + 1}` : product.name}
-      >
-        <span
-          className={
-            isThumbnailView
-              ? `pos-product-card__thumb pos-product-card__thumb--thumbnail pos-product-card__thumb--${categoryTone}`
-              : `pos-product-card__thumb pos-product-card__thumb--${categoryTone}`
-          }
-          aria-hidden="true"
-        >
-          <ImageIcon size={isThumbnailView ? 24 : 18} />
-        </span>
-
-        <span className="pos-product-card__info">
-          <span className="pos-product-card__name">{product.name}</span>
-          {!isThumbnailView ? (
-            <span className="pos-product-card__sku">
-              {product.sku ? <bdi dir="ltr">{product.sku}</bdi> : "بدون SKU"}
-            </span>
-          ) : null}
-        </span>
-
-        <span
-          className={
-            isThumbnailView
-              ? "pos-product-card__pricing pos-product-card__pricing--thumbnail"
-              : "pos-product-card__pricing"
-          }
-        >
-          <span className="pos-product-card__price">{formatCurrency(product.sale_price)}</span>
-          <span className={`pos-product-card__stock pos-product-card__stock--${stockState.tone}`}>
-            {stockState.tone === "low" ? <AlertTriangle size={12} /> : null}
-            {stockState.label}
-          </span>
-        </span>
-
-        {isOutOfStock ? (
-          <span className="pos-product-card__overlay">
-            <span className="pos-product-card__badge pos-product-card__badge--out">نفد</span>
-          </span>
-        ) : null}
-      </button>
-    );
-  }
 
   useEffect(() => {
     setCartHydrated(usePosCartStore.persist.hasHydrated());
@@ -675,9 +611,14 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   useEffect(() => {
     const storedView = window.localStorage.getItem("aya-pos-product-view");
     const storedMobileTab = window.localStorage.getItem("aya-pos-mobile-tab");
+    const isMobileViewport =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(max-width: 767px)").matches;
 
     if (storedView === "text" || storedView === "thumbnail") {
       setProductView(storedView);
+    } else if (isMobileViewport) {
+      setProductView("text");
     }
 
     if (storedMobileTab === "products" || storedMobileTab === "cart") {
@@ -757,14 +698,15 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
         return;
       }
 
-      const quickAddIndex = Number(event.key);
+      const gridAddIndex = Number(event.key);
       if (
-        Number.isInteger(quickAddIndex) &&
-        quickAddIndex >= 1 &&
-        quickAddIndex <= quickAddProducts.length
+        Number.isInteger(gridAddIndex) &&
+        gridAddIndex >= 1 &&
+        gridAddIndex <= 9 &&
+        gridAddIndex <= filteredProducts.length
       ) {
         event.preventDefault();
-        handleAddProduct(quickAddProducts[quickAddIndex - 1]);
+        handleAddProduct(filteredProducts[gridAddIndex - 1]);
         return;
       }
 
@@ -807,7 +749,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     isSubmitting,
     items,
     panelState,
-    quickAddProducts,
+    filteredProducts,
     searchInput
   ]);
 
@@ -891,6 +833,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     setIsTerminalCodeExpanded(false);
     setIsNotesExpanded(false);
     setIsPrimarySplitSelectorOpen(false);
+    setIsCheckoutOptionsOpen(false);
   }
 
   function handleTopbarNewSale() {
@@ -1205,6 +1148,355 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
       ? `${formatCompactNumber(filteredProducts.length)} من ${formatCompactNumber(productsTotalCount)}`
       : `${formatCompactNumber(filteredProducts.length)} منتجًا`;
 
+  const customerSummaryLabel = selectedCustomerName
+    ? `العميل: ${selectedCustomerName}`
+    : "العميل: ضيف جديد";
+  const checkoutOptionsToggleLabel = isCheckoutOptionsOpen
+    ? "إخفاء الخيارات"
+    : "خيارات إضافية";
+
+  function handleCartLineRemove(item: (typeof items)[number]) {
+    clearSubmissionFeedback();
+    removeItem(item.product_id);
+  }
+
+  function handleCartLineDecrease(item: (typeof items)[number]) {
+    clearSubmissionFeedback();
+
+    if (item.quantity <= 1) {
+      removeItem(item.product_id);
+      return;
+    }
+
+    setQuantity(item.product_id, item.quantity - 1);
+  }
+
+  function handleCartLineIncrease(item: (typeof items)[number]) {
+    clearSubmissionFeedback();
+    setQuantity(item.product_id, item.quantity + 1);
+  }
+
+  function handleCartLineDiscountChange(item: (typeof items)[number], rawValue: number) {
+    clearSubmissionFeedback();
+    const clampedValue = Number.isNaN(rawValue) ? 0 : Math.min(rawValue, effectiveMaxDiscount);
+    setDiscountPercentage(item.product_id, clampedValue);
+  }
+
+  const headerSlot = (
+    <>
+      {/* Mobile-only header, since Desktop already has the Dashboard Navbar */}
+      <header className="pos-mobile-header">
+        <div className="pos-mobile-header__account">
+          <span className="pos-mobile-header__account-name">
+            {selectedAccount ? selectedAccount.name : "جاهز للبيع"}
+          </span>
+        </div>
+
+        <div className="pos-mobile-header__actions">
+          <button
+            type="button"
+            className="primary-button pos-mobile-header__action"
+            onClick={handleTopbarNewSale}
+          >
+            <Plus size={14} />
+            بيع جديد
+          </button>
+          <button
+            type="button"
+            className="secondary-button pos-mobile-header__action"
+            onClick={() => setIsHeldCartsOpen((currentValue) => !currentValue)}
+          >
+            معلقة
+            <span className="product-pill product-pill--warning pos-mobile-header__count">
+              {formatCompactNumber(heldCarts.length)}
+            </span>
+          </button>
+        </div>
+      </header>
+
+      {isMobileViewport ? (
+        <nav className="pos-mobile-tabs" aria-label="تبويبات نقطة البيع">
+          <button
+            type="button"
+            className={
+              activeMobileTab === "products"
+                ? "pos-mobile-tabs__button is-active"
+                : "pos-mobile-tabs__button"
+            }
+            onClick={() => setActiveMobileTab("products")}
+            aria-pressed={activeMobileTab === "products"}
+          >
+            <span>المنتجات</span>
+          </button>
+          <button
+            type="button"
+            className={
+              activeMobileTab === "cart"
+                ? "pos-mobile-tabs__button pos-cart-sheet__summary is-active"
+                : "pos-mobile-tabs__button pos-cart-sheet__summary"
+            }
+            onClick={() => setActiveMobileTab("cart")}
+            aria-pressed={activeMobileTab === "cart"}
+          >
+            <span>السلة</span>
+            <strong>
+              {formatCompactNumber(items.length)} • {formatCurrency(netTotal)}
+            </strong>
+          </button>
+        </nav>
+      ) : null}
+    </>
+  );
+
+  const footerSlot = (
+    <footer className="pos-status-bar" data-compact={isCompactViewport ? "true" : "false"}>
+      <span className="pos-status-bar__item">
+        <GripHorizontal size={14} />
+        <strong>{posTerminalCode}</strong>
+      </span>
+      <span className="pos-status-bar__item">
+        <Search size={14} />
+        <span>{searchInput.trim() ? "وضع البحث" : "بحث بالباركود"}</span>
+      </span>
+      <span className="pos-status-bar__item">
+        <Clock3 size={14} />
+        <bdi dir="ltr">{formatStatusTime(now)}</bdi>
+      </span>
+      {lastCompletedSale ? (
+        <button
+          type="button"
+          className="pos-status-bar__print-btn"
+          onClick={() => {
+            window.open(
+              `/invoices/${lastCompletedSale.invoice_id}?print=1`,
+              "_blank",
+              "noopener,noreferrer"
+            );
+          }}
+        >
+          <Printer size={14} />
+          طباعة آخر إيصال
+        </button>
+      ) : null}
+    </footer>
+  );
+
+  const productsSurface = (
+    <div className="transaction-stack pos-products-stack">
+      <PosToolbar
+        activeCategory={activeCategory}
+        categories={categories}
+        getCategoryLabel={getCategoryLabel}
+        heldCartsCount={heldCarts.length}
+        onCategoryChange={setActiveCategory}
+        onClearSearch={() => {
+          setSearchInput("");
+          setSearchQuery("");
+          searchRef.current?.focus();
+        }}
+        onNewSale={handleTopbarNewSale}
+        onProductViewChange={setProductView}
+        onRefreshProducts={refreshProducts}
+        onSearchInputChange={(nextValue) => {
+          startTransition(() => {
+            setSearchInput(nextValue);
+          });
+        }}
+        onSearchSubmit={handleSearchSubmit}
+        onToggleHeldCarts={() => setIsHeldCartsOpen((currentValue) => !currentValue)}
+        productView={productView}
+        searchInput={searchInput}
+        searchRef={searchRef}
+      />
+
+      <PosProductGrid
+        onClearSearch={() => setSearchInput("")}
+        onLoadMore={loadMoreProducts}
+        productResultsLabel={productResultsLabel}
+        productView={productView}
+        products={filteredProducts}
+        productsHasMore={productsHasMore}
+        productsLoading={productsLoading}
+        productsLoadingMore={productsLoadingMore}
+        searchInput={searchInput}
+        showEmptySearchState={filteredProducts.length === 0 && normalizedQuery.length > 0}
+      />
+    </div>
+  );
+
+  const cartSurface = (
+    <SectionCard className="transaction-card transaction-card--checkout pos-cart-surface">
+      {panelState === "success" && lastCompletedSale ? (
+        <PosSuccessState
+          completedSaleFeeTotal={completedSaleFeeTotal}
+          lastCompletedSale={lastCompletedSale}
+          onNewSale={handleStartNewSale}
+          onPrint={() => {
+            window.open(
+              `/invoices/${lastCompletedSale.invoice_id}?print=1`,
+              "_blank",
+              "noopener,noreferrer"
+            );
+          }}
+        />
+      ) : panelState !== "success" ? (
+        <PosCartRail
+          canHoldCart={canHoldCart}
+          cartHydrated={cartHydrated}
+          cartOverviewLabel={cartOverviewLabel}
+          customerSummaryLabel={customerSummaryLabel}
+          effectiveMaxDiscount={effectiveMaxDiscount}
+          getHeldCartAge={getHeldCartAge}
+          heldCarts={heldCarts}
+          isHeldCartsOpen={isHeldCartsOpen}
+          items={items}
+          onClearCartRequest={() => setIsClearCartDialogOpen(true)}
+          onDecreaseItem={handleCartLineDecrease}
+          onDiscardHeldCart={handleDiscardHeldCart}
+          onDiscountChange={handleCartLineDiscountChange}
+          onHoldCart={handleHoldCart}
+          onIncreaseItem={handleCartLineIncrease}
+          onRemoveItem={handleCartLineRemove}
+          onRestoreHeldCart={handleRestoreHeldCart}
+          onToggleHeldCarts={() => setIsHeldCartsOpen((currentValue) => !currentValue)}
+          checkoutPanel={
+            <PosCheckoutPanel
+              accounts={accounts}
+              amountReceived={amountReceived}
+              availablePrimarySplitAccounts={availablePrimarySplitAccounts}
+              canCompleteSale={canCompleteSale}
+              canCreateDebt={canCreateDebt}
+              canHoldCart={canHoldCart}
+              changeToReturn={changeToReturn}
+              checkoutOptionsToggleLabel={checkoutOptionsToggleLabel}
+              customerResults={customerResults}
+              customerSearchInput={customerSearchInput}
+              customersLoading={customersLoading}
+              effectiveMaxDiscount={effectiveMaxDiscount}
+              getAccountChipLabel={getAccountChipLabel}
+              getAccountIcon={getAccountIcon}
+              getAvailableAccountsForSplitRow={getAvailableAccountsForSplitRow}
+              heldCartsCount={heldCarts.length}
+              itemCount={items.length}
+              invoiceDiscountAmount={invoiceDiscountAmount}
+              invoiceDiscountPercentage={invoiceDiscountPercentage}
+              isCheckoutOptionsOpen={isCheckoutOptionsOpen}
+              isCustomerExpanded={isCustomerExpanded}
+              isDiscountExpanded={isDiscountExpanded}
+              isNotesExpanded={isNotesExpanded}
+              isOffline={isOffline}
+              isPrimarySplitSelectorOpen={isPrimarySplitSelectorOpen}
+              isProcessing={panelState === "processing"}
+              isSplitMode={isSplitMode}
+              isSubmitting={isSubmitting}
+              isTerminalCodeExpanded={isTerminalCodeExpanded}
+              netTotal={netTotal}
+              notes={notes}
+              onAddSplitPayment={handleAddSplitPayment}
+              onAmountReceivedChange={(value) => {
+                clearSubmissionFeedback();
+                const parsedValue = parseAmount(value);
+                setAmountReceived(value === "" ? null : parsedValue);
+              }}
+              onClearCartRequest={() => setIsClearCartDialogOpen(true)}
+              onClearCustomerSelection={clearCustomerSelection}
+              onConfirmSale={() => {
+                startSubmission(() => {
+                  void submitSale();
+                });
+              }}
+              onCustomerSearchInputChange={(value) => {
+                clearSubmissionFeedback();
+                setCustomerSearchInput(value);
+              }}
+              onHeldCartsToggle={() => setIsHeldCartsOpen((currentValue) => !currentValue)}
+              onHoldCart={handleHoldCart}
+              onInvoiceDiscountChange={(value) => {
+                clearSubmissionFeedback();
+                const rawValue = Number(value);
+                setInvoiceDiscountPercentage(
+                  Number.isNaN(rawValue)
+                    ? 0
+                    : Math.min(Math.max(rawValue, 0), effectiveMaxDiscount)
+                );
+              }}
+              onNotesChange={(value) => {
+                clearSubmissionFeedback();
+                setNotes(value);
+              }}
+              onOpenCustomer={() => setIsCustomerExpanded(true)}
+              onOpenDiscount={() => setIsDiscountExpanded(true)}
+              onOpenNotes={() => setIsNotesExpanded(true)}
+              onOpenTerminalCode={() => setIsTerminalCodeExpanded(true)}
+              onPaymentAccountSelect={(accountId) => {
+                clearSubmissionFeedback();
+                setSelectedAccountId(accountId);
+
+                if (!amountReceived || amountReceived === 0) {
+                  setAmountReceived(netTotal);
+                  startSubmission(() => void submitSale());
+                }
+              }}
+              onPosTerminalCodeChange={(value) => {
+                clearSubmissionFeedback();
+                setPosTerminalCode(value.toUpperCase());
+              }}
+              onPrimarySplitAccountSelect={selectPrimarySplitAccount}
+              onPrimarySplitAmountChange={(value) => {
+                clearSubmissionFeedback();
+                const parsedValue = parseAmount(value);
+                setPrimarySplitAmount(value === "" ? null : parsedValue);
+              }}
+              onPrimarySplitSelectorToggle={() =>
+                setIsPrimarySplitSelectorOpen((currentValue) => !currentValue)
+              }
+              onRemoveSplitPayment={(index) => {
+                clearSubmissionFeedback();
+                removeSplitPayment(index);
+              }}
+              onSelectCustomer={(customer) => selectCustomer(customer as CustomerSearchResult)}
+              onSplitPaymentAccountChange={(index, accountId) => {
+                clearSubmissionFeedback();
+                updateSplitPaymentAccount(index, accountId);
+              }}
+              onSplitPaymentAmountChange={(index, value) => {
+                clearSubmissionFeedback();
+                updateSplitPaymentAmount(index, parseAmount(value) ?? 0);
+              }}
+              onTerminalCodeLockToggle={() => {
+                if (terminalCodeLocked) {
+                  unlockTerminalCode();
+                  return;
+                }
+
+                lockTerminalCode();
+              }}
+              onToggleCheckoutOptions={() =>
+                setIsCheckoutOptionsOpen((currentValue) => !currentValue)
+              }
+              paymentRowCount={paymentRows.length}
+              posTerminalCode={posTerminalCode}
+              primarySplitAmount={primarySplitAmount}
+              remainingToSettle={remainingToSettle}
+              selectedAccount={selectedAccount}
+              selectedAccountId={selectedAccountId}
+              selectedCustomerBalance={selectedCustomerBalance}
+              selectedCustomerId={selectedCustomerId}
+              selectedCustomerName={selectedCustomerName}
+              selectedCustomerPhone={selectedCustomerPhone}
+              shouldBlockForDebt={shouldBlockForDebt}
+              shouldShowCustomerResults={shouldShowCustomerResults}
+              splitPayments={splitPayments}
+              subtotal={subtotal}
+              terminalCodeLocked={terminalCodeLocked}
+              totalDiscount={totalDiscount}
+            />
+          }
+        />
+      ) : null}
+    </SectionCard>
+  );
+
   return (
     <section className="pos-workspace">
       {isOffline ? (
@@ -1243,1047 +1535,24 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
         />
       ) : null}
 
-      <div className="pos-workspace__frame">
-        <header className="pos-topbar">
-          <div className="pos-topbar__identity">
-            <div className="pos-topbar__title-block">
-              <h1 className="pos-topbar__label">نقطة البيع</h1>
-              <span className="pos-topbar__account">
-                {selectedAccount ? selectedAccount.name : "جاهز للبيع"}
-              </span>
-            </div>
-          </div>
+      <PosSurfaceShell
+        activeMobileTab={activeMobileTab}
+        cart={cartSurface}
+        footer={footerSlot}
+        header={headerSlot}
+        isMobileViewport={isMobileViewport}
+        products={productsSurface}
+      />
 
-          <div className="pos-topbar__actions">
-            <button
-              type="button"
-              className="primary-button pos-topbar__primary-action"
-              onClick={handleTopbarNewSale}
-            >
-              <Plus size={16} />
-              بيع جديد
-            </button>
-            <button
-              type="button"
-              className="secondary-button pos-topbar__held-button"
-              onClick={() => setIsHeldCartsOpen((currentValue) => !currentValue)}
-            >
-              <span>السلال المعلقة</span>
-              <span className="product-pill product-pill--accent">
-                {formatCompactNumber(heldCarts.length)}
-              </span>
-            </button>
-          </div>
-        </header>
+      {isMobileViewport && activeMobileTab === "products" && items.length > 0 && panelState !== "success" ? (
+        <PosMobileCartSheet
+          itemCount={totalItemCount}
+          netTotal={netTotal}
+          onOpenCart={() => setActiveMobileTab("cart")}
+        />
+      ) : null}
 
-        {isMobileViewport ? (
-          <nav className="pos-mobile-tabs" aria-label="تبويبات نقطة البيع">
-            <button
-              type="button"
-              className={
-                activeMobileTab === "products"
-                  ? "pos-mobile-tabs__button is-active"
-                  : "pos-mobile-tabs__button"
-              }
-              onClick={() => setActiveMobileTab("products")}
-              aria-pressed={activeMobileTab === "products"}
-            >
-              <span>المنتجات</span>
-            </button>
-            <button
-              type="button"
-              className={
-                activeMobileTab === "cart"
-                  ? "pos-mobile-tabs__button pos-cart-sheet__summary is-active"
-                  : "pos-mobile-tabs__button pos-cart-sheet__summary"
-              }
-              onClick={() => setActiveMobileTab("cart")}
-              aria-pressed={activeMobileTab === "cart"}
-            >
-              <span>السلة</span>
-              <strong>
-                {formatCompactNumber(items.length)} • {formatCurrency(netTotal)}
-              </strong>
-            </button>
-          </nav>
-        ) : null}
-
-        <div className="pos-layout">
-          <div
-            className={
-              isMobileViewport && activeMobileTab !== "products"
-                ? "pos-products is-hidden"
-                : "pos-products"
-            }
-          >
-            <div className="pos-products__content">
-            <div className="transaction-stack pos-products-stack">
-              <SectionCard
-                tone="accent"
-                className="transaction-card transaction-card--filters pos-discovery-card"
-              >
-                <div className="pos-discovery-card__header">
-                  <label className="workspace-search transaction-toolbar__search pos-search-shell">
-                    <Search size={18} />
-                    <input
-                      ref={searchRef}
-                      type="search"
-                      autoFocus
-                      placeholder="ابحث بالاسم أو رمز المنتج..."
-                      title="F1"
-                      value={searchInput}
-                      onChange={(event) => {
-                        const nextValue = event.target.value;
-                        startTransition(() => {
-                          setSearchInput(nextValue);
-                        });
-                      }}
-                      onKeyDown={(event) => {
-                        if (event.key === "Enter") {
-                          event.preventDefault();
-                          handleSearchSubmit();
-                        }
-                      }}
-                    />
-                    {searchInput.trim().length > 0 ? (
-                      <button
-                        type="button"
-                        className="icon-button pos-search-clear"
-                        onClick={() => {
-                          setSearchInput("");
-                          setSearchQuery("");
-                          searchRef.current?.focus();
-                        }}
-                        aria-label="مسح البحث"
-                      >
-                        <X size={16} />
-                      </button>
-                    ) : null}
-                  </label>
-
-                  <div className="pos-discovery-card__actions">
-                    <button
-                      type="button"
-                      className="secondary-button pos-discovery-card__refresh"
-                      onClick={refreshProducts}
-                    >
-                      <RefreshCcw size={16} />
-                      تحديث
-                    </button>
-                    <div className="pos-view-toggle" aria-label="طريقة عرض المنتجات">
-                      <button
-                        type="button"
-                        className={
-                          productView === "text"
-                            ? "icon-button pos-view-toggle__button is-active"
-                            : "icon-button pos-view-toggle__button"
-                        }
-                        onClick={() => setProductView("text")}
-                        aria-label="عرض مدمج"
-                        title="عرض مدمج"
-                      >
-                        <List size={16} />
-                      </button>
-                      <button
-                        type="button"
-                        className={
-                          productView === "thumbnail"
-                            ? "icon-button pos-view-toggle__button is-active"
-                            : "icon-button pos-view-toggle__button"
-                        }
-                        onClick={() => setProductView("thumbnail")}
-                        aria-label="عرض بالصور"
-                        title="عرض بالصور"
-                      >
-                        <ImageIcon size={16} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <div
-                  className="chip-row transaction-chip-row pos-category-row pos-discovery-card__filters"
-                  aria-label="فئات المنتجات"
-                >
-                  {categories.map((category) => (
-                    <button
-                      key={category}
-                      type="button"
-                      className={
-                        category === activeCategory
-                          ? "chip chip--active pos-category-chip is-active"
-                          : "chip pos-category-chip"
-                      }
-                      aria-pressed={category === activeCategory}
-                      onClick={() => setActiveCategory(category)}
-                    >
-                      {category === "all" ? "الكل" : getCategoryLabel(category)}
-                    </button>
-                  ))}
-                </div>
-
-                {quickAddProducts.length > 0 ? (
-                  <div className="pos-quick-add-panel">
-                    <div className="pos-quick-add-panel__header">
-                      <strong>إضافة سريعة</strong>
-                      <span>{formatCompactNumber(quickAddProducts.length)} اختصار</span>
-                    </div>
-
-                    <div className="quick-add-row pos-quick-add-row">
-                      {quickAddProducts.map((product) =>
-                        renderCompactProductCard(product, "quick-add")
-                      )}
-                    </div>
-                  </div>
-                ) : null}
-              </SectionCard>
-
-              <SectionCard className="transaction-card pos-product-panel">
-                <div className="pos-product-panel__header">
-                  <div className="pos-product-panel__title-group">
-                    <h2 className="pos-product-panel__title">المنتجات</h2>
-                    <span className="pos-product-panel__summary">{productResultsLabel}</span>
-                  </div>
-
-                  <span className="product-pill product-pill--accent pos-product-panel__pill">
-                    {normalizedQuery ? "نتائج البحث" : "جميع المنتجات"}
-                  </span>
-                </div>
-                {productsLoading ? (
-                  <div
-                    className="product-grid product-grid--compact pos-product-grid pos-product-grid--loading"
-                    aria-label="جارٍ تحميل منتجات نقطة البيع"
-                  >
-                    {Array.from({ length: 8 }).map((_, index) => (
-                      <article
-                        key={`pos-product-skeleton-${index}`}
-                        className="product-card product-card--skeleton pos-product-card-skeleton"
-                      >
-                        <div className="skeleton-line skeleton-line--sm" />
-                        <div className="skeleton-line skeleton-line--lg" />
-                        <div className="skeleton-line" />
-                        <div className="skeleton-line" />
-                      </article>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="pos-product-grid product-grid product-grid--compact transaction-product-grid">
-                    {filteredProducts.length === 0 && normalizedQuery ? (
-                      <div className="empty-state pos-search-empty">
-                        <Search className="empty-state__icon" size={32} />
-                        <h3 className="empty-state__title">لا توجد نتائج</h3>
-                        <p className="empty-state__description">
-                          لم يُعثر على منتج يطابق &quot;{searchInput}&quot;
-                        </p>
-                        <button
-                          type="button"
-                          className="secondary-button"
-                          onClick={() => setSearchInput("")}
-                        >
-                          مسح البحث
-                        </button>
-                      </div>
-                    ) : (
-                      filteredProducts.map((product) =>
-                        renderCompactProductCard(product, "grid")
-                      )
-                    )}
-                  </div>
-                )}
-
-                <div className="transaction-card__footer pos-product-panel__footer">
-                  <div className="transaction-action-cluster">
-                    {productsHasMore ? (
-                      <button
-                        type="button"
-                        className="secondary-button"
-                        onClick={loadMoreProducts}
-                        disabled={productsLoadingMore}
-                      >
-                        {productsLoadingMore ? "جارٍ تحميل المزيد..." : "تحميل المزيد"}
-                      </button>
-                    ) : null}
-
-                    <span className="product-pill product-pill--accent pos-product-panel__results-pill">
-                      {productResultsLabel}
-                    </span>
-                  </div>
-                </div>
-              </SectionCard>
-            </div>
-          </div>
-        </div>
-
-        <aside
-          className={
-            isMobileViewport && activeMobileTab === "products"
-              ? "pos-cart-sheet is-hidden"
-              : "pos-cart-sheet"
-          }
-        >
-          <SectionCard className="transaction-card transaction-card--checkout pos-cart-surface">
-            {panelState === "success" && lastCompletedSale ? (
-              <div className="cart-success-overlay pos-success-screen">
-                <div className="cart-success-overlay__icon">
-                  <CheckCircle2 size={64} />
-                </div>
-                <h3 className="cart-success-overlay__title">تم إتمام البيع بنجاح</h3>
-                <strong className="pos-success-screen__total">
-                  {formatCurrency(lastCompletedSale.net_total ?? lastCompletedSale.total)}
-                </strong>
-                <span className="pos-success-screen__invoice">
-                  فاتورة #{lastCompletedSale.invoice_number}
-                </span>
-
-                <dl className="cart-success-overlay__details pos-success-screen__details">
-                  {(lastCompletedSale.payments ?? []).map((payment) => (
-                    <div key={`${payment.account_id}-${payment.amount}`}>
-                      <dt>{payment.account_name}</dt>
-                      <dd>{formatCurrency(payment.amount)}</dd>
-                    </div>
-                  ))}
-
-                  {completedSaleFeeTotal > 0 ? (
-                    <div>
-                      <dt>رسوم الدفع</dt>
-                      <dd>{formatCurrency(completedSaleFeeTotal)}</dd>
-                    </div>
-                  ) : null}
-
-                  {lastCompletedSale.change !== null && lastCompletedSale.change > 0 ? (
-                    <div>
-                      <dt>الباقي للعميل</dt>
-                      <dd>{formatCurrency(lastCompletedSale.change)}</dd>
-                    </div>
-                  ) : null}
-                  {lastCompletedSale.debt_amount && lastCompletedSale.debt_amount > 0 ? (
-                    <div className="pos-success-screen__detail pos-success-screen__detail--warning">
-                      <dt>دين مسجل</dt>
-                      <dd>{formatCurrency(lastCompletedSale.debt_amount)}</dd>
-                    </div>
-                  ) : null}
-                </dl>
-
-                {lastCompletedSale.customer_name ? (
-                  <div className="info-strip">
-                    <span>العميل: {lastCompletedSale.customer_name}</span>
-                  </div>
-                ) : null}
-
-                <div className="cart-success-overlay__actions actions-row">
-                  <button
-                    type="button"
-                    className="primary-button btn btn--primary"
-                    onClick={() => {
-                      window.open(
-                        `/invoices/${lastCompletedSale.invoice_id}?print=1`,
-                        "_blank",
-                        "noopener,noreferrer"
-                      );
-                    }}
-                  >
-                    <Printer size={16} />
-                    طباعة إيصال
-                  </button>
-                  <button
-                    type="button"
-                    className="secondary-button btn btn--secondary"
-                    onClick={handleStartNewSale}
-                  >
-                    بيع جديد
-                  </button>
-                </div>
-              </div>
-            ) : panelState !== "success" ? (
-              <>
-                <div className="pos-cart-card__header">
-                  <div className="pos-cart-card__title-group">
-                    <div className="pos-cart-card__title-row">
-                      <h2 className="pos-cart-card__title">السلة</h2>
-                      <span className="pos-cart-card__count">
-                        {formatCompactNumber(items.length)}
-                      </span>
-                    </div>
-                    <p className="pos-cart-card__summary">{cartOverviewLabel}</p>
-                  </div>
-
-                  <button
-                    type="button"
-                    className="icon-button pos-cart-card__clear"
-                    onClick={() => setIsClearCartDialogOpen(true)}
-                    disabled={items.length === 0}
-                    aria-label="تفريغ السلة"
-                    title="Ctrl+Q"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-
-                <div className="cart-panel__actions pos-cart-card__toolbar">
-                  <button
-                    type="button"
-                    className="secondary-button cart-panel__header-button"
-                    onClick={handleHoldCart}
-                    disabled={!canHoldCart}
-                  >
-                    تعليق
-                  </button>
-                  <button
-                    type="button"
-                    className="secondary-button cart-panel__header-button"
-                    onClick={() => setIsHeldCartsOpen((currentValue) => !currentValue)}
-                  >
-                    السلال المعلقة
-                    <span className="product-pill product-pill--accent">
-                      {formatCompactNumber(heldCarts.length)}
-                    </span>
-                  </button>
-                </div>
-
-                {isHeldCartsOpen ? (
-                  <div className="held-carts-panel">
-                    {heldCarts.length === 0 ? (
-                      <div className="held-carts-empty">لا توجد سلال معلقة حاليًا.</div>
-                    ) : (
-                      <div className="held-carts-list">
-                        {heldCarts.map((heldCart) => (
-                          <article key={heldCart.id} className="held-cart-card">
-                            <div className="held-cart-card__copy">
-                              <strong>{heldCart.label}</strong>
-                              <span>
-                                {formatCompactNumber(heldCart.items.length)} بند •{" "}
-                                {getHeldCartAge(heldCart.heldAt)}
-                              </span>
-                            </div>
-
-                            <div className="held-cart-card__actions">
-                              <button
-                                type="button"
-                                className="secondary-button"
-                                onClick={() => handleRestoreHeldCart(heldCart.id)}
-                              >
-                                استعادة
-                              </button>
-                              <button
-                                type="button"
-                                className="icon-button"
-                                onClick={() => handleDiscardHeldCart(heldCart.id)}
-                                aria-label={`حذف السلة المعلقة ${heldCart.label}`}
-                              >
-                                <Trash2 size={16} />
-                              </button>
-                            </div>
-                          </article>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ) : null}
-
-                {!cartHydrated ? (
-                  <div className="stack-list" aria-label="جارٍ استعادة السلة">
-                    <div className="skeleton-card" />
-                    <div className="skeleton-card" />
-                  </div>
-                ) : items.length === 0 ? (
-                  <div className="empty-state transaction-empty-panel">
-                    <GripHorizontal className="empty-state__icon" />
-                    <h3 className="empty-state__title">السلة فارغة</h3>
-                    <p className="empty-state__description">لا توجد بنود مضافة.</p>
-                  </div>
-                ) : (
-                  <div className="pos-cart-card__body">
-                    <div className="pos-cart-card__table-head" aria-hidden="true">
-                      <span>المنتج</span>
-                      <span>الكمية</span>
-                      <span>الإجمالي</span>
-                    </div>
-
-                    <div className="cart-line-list">
-                      {items.map((item) => {
-                        const maxQuantity = item.track_stock
-                          ? Math.max(item.stock_quantity, 1)
-                          : null;
-                        const lineSubtotal = roundAmount(item.sale_price * item.quantity);
-                        const lineDiscountAmount = roundAmount(
-                          lineSubtotal * (item.discount_percentage / 100)
-                        );
-                        const lineTotal = roundAmount(lineSubtotal - lineDiscountAmount);
-                        const canIncreaseQuantity =
-                          maxQuantity === null || item.quantity < maxQuantity;
-
-                        return (
-                          <article key={item.product_id} className="cart-line-card">
-                            <div className="cart-line-card__header">
-                              <div className="cart-line-card__copy">
-                                <strong>{item.name}</strong>
-                                <p>{formatCurrency(item.sale_price)} للوحدة</p>
-                              </div>
-
-                              <div className="cart-line-card__header-side">
-                                <strong className="cart-line-card__line-total">
-                                  {formatCurrency(lineTotal)}
-                                </strong>
-                                <button
-                                  type="button"
-                                  className="icon-button cart-line-card__remove"
-                                  onClick={() => {
-                                    clearSubmissionFeedback();
-                                    removeItem(item.product_id);
-                                  }}
-                                  aria-label={`حذف ${item.name}`}
-                                >
-                                  <Trash2 size={16} />
-                                </button>
-                              </div>
-                            </div>
-
-                            <div className="cart-line-card__controls">
-                              <div
-                                className="cart-line-card__quantity"
-                                aria-label={`تعديل كمية ${item.name}`}
-                              >
-                                <button
-                                  type="button"
-                                  className="icon-button cart-line-card__quantity-button"
-                                  onClick={() => {
-                                    clearSubmissionFeedback();
-
-                                    if (item.quantity <= 1) {
-                                      removeItem(item.product_id);
-                                      return;
-                                    }
-
-                                    setQuantity(item.product_id, item.quantity - 1);
-                                  }}
-                                  aria-label={`تقليل كمية ${item.name}`}
-                                >
-                                  <Minus size={16} />
-                                </button>
-                                <span className="cart-line-card__quantity-value">
-                                  <bdi dir="ltr">{formatCompactNumber(item.quantity)}</bdi>
-                                </span>
-                                <button
-                                  type="button"
-                                  className="icon-button cart-line-card__quantity-button"
-                                  onClick={() => {
-                                    clearSubmissionFeedback();
-                                    setQuantity(item.product_id, item.quantity + 1);
-                                  }}
-                                  disabled={!canIncreaseQuantity}
-                                  aria-label={`زيادة كمية ${item.name}`}
-                                >
-                                  <Plus size={16} />
-                                </button>
-                              </div>
-
-                              <label className="cart-line-card__discount">
-                                <span>خصم %</span>
-                                <input
-                                  type="number"
-                                  min={0}
-                                  max={effectiveMaxDiscount}
-                                  value={item.discount_percentage}
-                                  onChange={(event) => {
-                                    clearSubmissionFeedback();
-                                    const raw = Number(event.target.value);
-                                    const clampedValue = Number.isNaN(raw)
-                                      ? 0
-                                      : Math.min(raw, effectiveMaxDiscount);
-                                    setDiscountPercentage(item.product_id, clampedValue);
-                                  }}
-                                />
-                              </label>
-                            </div>
-
-                            {lineDiscountAmount > 0 ? (
-                              <div className="cart-line-card__meta">
-                                <span className="product-pill product-pill--warning">
-                                  خصم {formatCurrency(lineDiscountAmount)}
-                                </span>
-                              </div>
-                            ) : null}
-                          </article>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                <div className="pos-unified-checkout">
-                  <div className="pos-cart-summary">
-                    <dl>
-                      <div>
-                        <dt>المجموع الخُقاني</dt>
-                        <dd>{formatCurrency(subtotal)}</dd>
-                      </div>
-                      {totalDiscount > 0 ? (
-                        <div>
-                          <dt>الخصم</dt>
-                          <dd>- {formatCurrency(totalDiscount)}</dd>
-                        </div>
-                      ) : null}
-                      {invoiceDiscountAmount > 0 ? (
-                        <div>
-                          <dt>خصم الفاتورة</dt>
-                          <dd>- {formatCurrency(invoiceDiscountAmount)}</dd>
-                        </div>
-                      ) : null}
-                      <div className="cart-summary__total pos-amount-due">
-                        <dt>المبلغ المستحق</dt>
-                        <dd>{formatCurrency(netTotal)}</dd>
-                      </div>
-                    </dl>
-                  </div>
-
-                  {!isSplitMode ? (
-                    <div className="stack-field">
-                      <span className="field-label">طرق الدفع</span>
-                      <div className="chip-row pos-payment-chip-row">
-                        {accounts.map((account) => {
-                          const Icon = getAccountIcon(account.type);
-                          const isSelected = account.id === selectedAccountId;
-                          return (
-                            <button
-                              key={account.id}
-                              type="button"
-                              className={
-                                isSelected
-                                  ? "chip chip--active pos-payment-chip is-selected"
-                                  : "chip pos-payment-chip"
-                              }
-                              onClick={() => {
-                                clearSubmissionFeedback();
-                                setSelectedAccountId(account.id);
-                              }}
-                              disabled={panelState === "processing"}
-                            >
-                              <Icon size={16} />
-                              {getAccountChipLabel(account)}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  ) : null}
-
-                  {!isSplitMode && selectedAccount?.type === "cash" ? (
-                    <label className="stack-field">
-                      <span className="field-label">المبلغ المستلم</span>
-                      <input
-                        className="field-input"
-                        type="number"
-                        min={0}
-                        step="0.001"
-                        value={amountReceived ?? ""}
-                        onChange={(event) => {
-                          clearSubmissionFeedback();
-                          const rawValue = event.target.value;
-                          const parsedValue = parseAmount(rawValue);
-                          setAmountReceived(rawValue === "" ? null : parsedValue);
-                        }}
-                        placeholder="0.000"
-                        disabled={panelState === "processing"}
-                      />
-                    </label>
-                  ) : null}
-
-                  {isSplitMode ? (
-                    <div className="pos-split-payments">
-                      <div className="pos-split-payment-row pos-split-payment-row--primary">
-                        {selectedAccount
-                          ? (() => {
-                              const SelectedAccountIcon = getAccountIcon(selectedAccount.type);
-                              return (
-                                <button
-                                  type="button"
-                                  className="chip chip--active pos-payment-chip is-selected"
-                                  onClick={() =>
-                                    setIsPrimarySplitSelectorOpen(
-                                      (currentValue) => !currentValue
-                                    )
-                                  }
-                                  disabled={panelState === "processing"}
-                                >
-                                  <SelectedAccountIcon size={16} />
-                                  {getAccountChipLabel(selectedAccount)}
-                                </button>
-                              );
-                            })()
-                          : null}
-                        <label className="stack-field">
-                          <span className="field-label">المبلغ</span>
-                          <input
-                            className="field-input"
-                            type="number"
-                            min={0}
-                            step="0.001"
-                            value={primarySplitAmount ?? ""}
-                            onChange={(event) => {
-                              clearSubmissionFeedback();
-                              const parsedValue = parseAmount(event.target.value);
-                              setPrimarySplitAmount(
-                                event.target.value === "" ? null : parsedValue
-                              );
-                            }}
-                            disabled={panelState === "processing"}
-                          />
-                        </label>
-                      </div>
-
-                      {isPrimarySplitSelectorOpen ? (
-                        <div className="chip-row pos-split-primary-selector">
-                          {availablePrimarySplitAccounts.map((account) => {
-                            const Icon = getAccountIcon(account.type);
-                            const isSelected = account.id === selectedAccountId;
-                            return (
-                              <button
-                                key={`primary-selector-${account.id}`}
-                                type="button"
-                                className={
-                                  isSelected
-                                    ? "chip chip--active pos-payment-chip is-selected"
-                                    : "chip pos-payment-chip"
-                                }
-                                onClick={() => selectPrimarySplitAccount(account.id)}
-                                disabled={panelState === "processing"}
-                              >
-                                <Icon size={16} />
-                                {getAccountChipLabel(account)}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      ) : null}
-
-                      {splitPayments.map((payment, index) => (
-                        <div
-                          key={`${payment.accountId}-${index}`}
-                          className="pos-split-payment-row"
-                        >
-                          <div className="chip-row pos-payment-chip-row">
-                            {getAvailableAccountsForSplitRow(payment.accountId).map(
-                              (account) => {
-                                const Icon = getAccountIcon(account.type);
-                                const isSelected = account.id === payment.accountId;
-                                return (
-                                  <button
-                                    key={`${index}-${account.id}`}
-                                    type="button"
-                                    className={
-                                      isSelected
-                                        ? "chip chip--active pos-payment-chip is-selected"
-                                        : "chip pos-payment-chip"
-                                    }
-                                    onClick={() => {
-                                      clearSubmissionFeedback();
-                                      updateSplitPaymentAccount(index, account.id);
-                                    }}
-                                    disabled={panelState === "processing"}
-                                  >
-                                    <Icon size={16} />
-                                    {getAccountChipLabel(account)}
-                                  </button>
-                                );
-                              }
-                            )}
-                          </div>
-
-                          <div className="actions-row">
-                            <label className="stack-field">
-                              <span className="field-label">المبلغ</span>
-                              <input
-                                className="field-input"
-                                type="number"
-                                min={0}
-                                step="0.001"
-                                value={payment.amount}
-                                onChange={(event) => {
-                                  clearSubmissionFeedback();
-                                  updateSplitPaymentAmount(
-                                    index,
-                                    parseAmount(event.target.value) ?? 0
-                                  );
-                                }}
-                                disabled={panelState === "processing"}
-                              />
-                            </label>
-
-                            <button
-                              type="button"
-                              className="icon-button btn btn--ghost"
-                              onClick={() => {
-                                clearSubmissionFeedback();
-                                removeSplitPayment(index);
-                              }}
-                              disabled={panelState === "processing"}
-                              aria-label="حذف طريقة الدفع"
-                            >
-                              <X size={16} />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : null}
-
-                  <div
-                    className={
-                      remainingToSettle > 0
-                        ? "pos-remaining-balance pos-remaining-balance--danger"
-                        : "pos-remaining-balance pos-remaining-balance--success"
-                    }
-                  >
-                    {remainingToSettle > 0 ? (
-                      <strong>المتبقي للسداد: {formatCurrency(remainingToSettle)}</strong>
-                    ) : changeToReturn !== null ? (
-                      <strong>الباقي للعميل: {formatCurrency(changeToReturn)}</strong>
-                    ) : (
-                      <strong>تم تسديد المبلغ</strong>
-                    )}
-                  </div>
-
-                  {isCustomerExpanded ? (
-                    <div className="stack-field customer-search-field">
-                      <span className="field-label">العميل</span>
-                      <input
-                        className="field-input"
-                        type="text"
-                        value={customerSearchInput}
-                        onChange={(event) => {
-                          clearSubmissionFeedback();
-                          setCustomerSearchInput(event.target.value);
-                        }}
-                        placeholder="بحث العميل"
-                        disabled={panelState === "processing"}
-                      />
-
-                      {shouldShowCustomerResults ? (
-                        <div className="customer-search-results">
-                          {customersLoading ? (
-                            <div className="customer-search-results__empty">
-                              جارٍ البحث عن العملاء...
-                            </div>
-                          ) : customerResults.length === 0 ? (
-                            <div className="customer-search-results__empty">
-                              لا توجد نتائج مطابقة.
-                            </div>
-                          ) : (
-                            customerResults.map((customer) => (
-                              <button
-                                key={customer.id}
-                                type="button"
-                                className="customer-search-option"
-                                onClick={() =>
-                                  selectCustomer(customer as CustomerSearchResult)
-                                }
-                              >
-                                <strong>{customer.name}</strong>
-                                <span>
-                                  {customer.phone || "بدون هاتف"} • الرصيد الحالي{" "}
-                                  {formatCurrency(customer.current_balance)}
-                                </span>
-                              </button>
-                            ))
-                          )}
-                        </div>
-                      ) : null}
-
-                      {selectedCustomerId && selectedCustomerName ? (
-                        <div className="selected-customer-card">
-                          <div>
-                            <strong>{selectedCustomerName}</strong>
-                            <span>
-                              الرصيد الحالي:{" "}
-                              {selectedCustomerBalance !== null
-                                ? formatCurrency(selectedCustomerBalance)
-                                : "جارٍ التحميل..."}
-                              {selectedCustomerPhone ? ` • ${selectedCustomerPhone}` : ""}
-                            </span>
-                          </div>
-
-                          <button
-                            type="button"
-                            className="secondary-button"
-                            onClick={clearCustomerSelection}
-                            disabled={panelState === "processing"}
-                          >
-                            إزالة
-                          </button>
-                        </div>
-                      ) : null}
-                    </div>
-                  ) : null}
-
-                  {isDiscountExpanded ? (
-                    <label className="stack-field">
-                      <span className="field-label">خصم الفاتورة</span>
-                      <input
-                        className="field-input"
-                        type="number"
-                        min={0}
-                        max={effectiveMaxDiscount}
-                        value={invoiceDiscountPercentage}
-                        onChange={(event) => {
-                          clearSubmissionFeedback();
-                          const rawValue = Number(event.target.value);
-                          setInvoiceDiscountPercentage(
-                            Number.isNaN(rawValue)
-                              ? 0
-                              : Math.min(Math.max(rawValue, 0), effectiveMaxDiscount)
-                          );
-                        }}
-                        disabled={panelState === "processing"}
-                      />
-                    </label>
-                  ) : null}
-
-                  {isNotesExpanded ? (
-                    <div className="stack-field pos-notes-field">
-                      <span className="field-label">ملاحظات</span>
-                      <textarea
-                        className="field-input pos-notes-field__textarea"
-                        rows={3}
-                        maxLength={500}
-                        value={notes}
-                        onChange={(event) => {
-                          clearSubmissionFeedback();
-                          setNotes(event.target.value);
-                        }}
-                        placeholder="ملاحظة على الفاتورة"
-                        disabled={panelState === "processing"}
-                      />
-                    </div>
-                  ) : null}
-
-                  {shouldBlockForDebt ? (
-                    <p className="field-error pos-debt-block-message">
-                      يجب اختيار عميل أو إكمال المبلغ
-                    </p>
-                  ) : null}
-
-                  {canCreateDebt ? (
-                    <div className="debt-preview-panel">
-                      <strong>⚠ سيتم تسجيل دين</strong>
-                      <span>المبلغ المتبقي: {formatCurrency(remainingToSettle)}</span>
-                      {selectedCustomerName ? (
-                        <span>على حساب: {selectedCustomerName}</span>
-                      ) : null}
-                    </div>
-                  ) : null}
-
-                  <div className="pos-cart-actions-row">
-                    <button
-                      type="button"
-                      className="chip pos-action-chip"
-                      onClick={handleAddSplitPayment}
-                      disabled={
-                        panelState === "processing" ||
-                        splitPayments.length >= 2 ||
-                        accounts.length <= paymentRows.length
-                      }
-                    >
-                      <Plus size={14} />
-                      تمدة
-                    </button>
-                    <button
-                      type="button"
-                      className={
-                        isDiscountExpanded
-                          ? "chip chip--active pos-action-chip"
-                          : "chip pos-action-chip"
-                      }
-                      onClick={() => setIsDiscountExpanded(true)}
-                      disabled={panelState === "processing" || isDiscountExpanded}
-                    >
-                      <Plus size={14} />
-                      خصم
-                    </button>
-                    <button
-                      type="button"
-                      className={
-                        isCustomerExpanded
-                          ? "chip chip--active pos-action-chip"
-                          : "chip pos-action-chip"
-                      }
-                      onClick={() => setIsCustomerExpanded(true)}
-                      disabled={panelState === "processing" || isCustomerExpanded}
-                    >
-                      <Plus size={14} />
-                      عميل
-                    </button>
-                  </div>
-
-                  <button
-                    type="button"
-                    className={
-                      canCreateDebt
-                        ? "primary-button btn btn--warning transaction-checkout-button"
-                        : "primary-button btn btn--primary transaction-checkout-button"
-                    }
-                    disabled={
-                      panelState === "processing" ||
-                      isSubmitting ||
-                      !canCompleteSale ||
-                      isOffline
-                    }
-                    onClick={() => {
-                      startSubmission(() => {
-                        void submitSale();
-                      });
-                    }}
-                    title="Ctrl+Enter"
-                  >
-                    {panelState === "processing" || isSubmitting ? (
-                      <>
-                        <Loader2 className="spin" size={16} />
-                        جارٍ التنفيذ...
-                      </>
-                    ) : canCreateDebt ? (
-                      `إتمام البيع وتسجيل الدين • ${formatCurrency(netTotal)}`
-                    ) : (
-                      `تاكيد البيع • ${formatCurrency(netTotal)}`
-                    )}
-                  </button>
-                </div>
-              </>
-            ) : null}
-          </SectionCard>
-        </aside>
-      </div>
-
-        <footer className="pos-status-bar" data-compact={isCompactViewport ? "true" : "false"}>
-          <span className="pos-status-bar__item">
-            <GripHorizontal size={14} />
-            <strong>{posTerminalCode}</strong>
-          </span>
-          <span className="pos-status-bar__item">
-            <Search size={14} />
-            <span>{searchInput.trim() ? "وضع البحث" : "بحث بالباركود"}</span>
-          </span>
-          <span className="pos-status-bar__item">
-            <Clock3 size={14} />
-            <bdi dir="ltr">{formatStatusTime(now)}</bdi>
-          </span>
-          {lastCompletedSale ? (
-            <button
-              type="button"
-              className="pos-status-bar__print-btn"
-              onClick={() => {
-                window.open(
-                  `/invoices/${lastCompletedSale.invoice_id}?print=1`,
-                  "_blank",
-                  "noopener,noreferrer"
-                );
-              }}
-            >
-              <Printer size={14} />
-              طباعة آخر إيصال
-            </button>
-          ) : null}
-        </footer>
-      </div>
-
+      
       <ConfirmationDialog
         open={isClearCartDialogOpen}
         title="تفريغ السلة الحالية"

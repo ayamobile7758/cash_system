@@ -1,12 +1,12 @@
 {
-  "checked_at": "2026-03-13T20:04:04.527Z",
+  "checked_at": "2026-04-02T10:09:29.789Z",
   "runtime_policy": {
     "node": ">=20 <25",
     "npm": ">=10",
-    "next": "14.2.5",
+    "next": "^15.5.14",
     "react": "18.2.0",
     "react_dom": "18.2.0",
-    "xlsx": "^0.18.5",
+    "xlsx": null,
     "typescript": "5.6.3"
   },
   "compatibility": {

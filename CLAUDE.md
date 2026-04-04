@@ -90,6 +90,7 @@ npx playwright test
 
 ## CSS and Layout Rules
 - Light theme only - zero dark mode CSS
+  **EXCEPTION (2026-04-04):** The login page shell (`.baseline-shell--auth`) is permitted to use a dark atmospheric background and glassmorphism card styling. This exception is scoped exclusively to CSS classes that begin with `.baseline-shell--auth`, `.auth-card`, `.auth-lamp`, and `.login-fab`. No dark-mode media queries, no `color-scheme: dark`, no changes outside the login shell scope.
 - RTL native - every layout decision must be RTL-correct
 - Do not add `position: sticky` inside containers with `overflow: hidden`
 - Do not use `min(...)` for widths that need a responsive range - use `clamp(...)`
@@ -106,3 +107,8 @@ docs(scope): description
 - No force push to main
 - No `--no-verify`
 - Every wave must end with a commit and `git push origin main`
+
+
+## Multi-Agent Orchestration (bootstrap)
+<!-- Loads the multi-agent planner/executor system. System lives in .claude/rules/ and ai-system/. See HOW_TO_RUN.md for the cycle. -->
+@.claude/rules/system-core.md

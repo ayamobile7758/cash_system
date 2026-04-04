@@ -160,4 +160,13 @@ describe("PosWorkspace", () => {
     expect(searchInput).toHaveValue("");
     expect(globalThis.fetch).not.toHaveBeenCalled();
   }, 30000);
+
+  it("renders stabilized Arabic labels without mojibake in the active POS surface", () => {
+    render(<PosWorkspace maxDiscountPercentage={null} />);
+
+    expect(screen.getByText("المنتجات")).toBeVisible();
+    expect(screen.getByText("العميل: ضيف جديد")).toBeVisible();
+    expect(screen.getByRole("button", { name: "خيارات إضافية" })).toBeVisible();
+    expect(screen.queryByText(/Ø|Ã|Ù/)).not.toBeInTheDocument();
+  });
 });

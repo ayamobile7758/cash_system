@@ -245,129 +245,17 @@ export function DashboardShell({
     setIsSearchOpen(false);
   }
 
-  const showMobileBackdrop = isMenuOpen && isMobileViewport;
-
   return (
     <div
       className={[
         "dashboard-shell",
-        "dashboard-shell--sidebar",
         "dashboard-layout",
         isPosPage ? "dashboard-shell--pos dashboard-layout--pos" : "",
-        isMenuOpen ? "dashboard-layout--menu-open" : "",
         isOffline ? "dashboard-shell--offline" : ""
       ]
         .filter(Boolean)
         .join(" ")}
     >
-      {showMobileBackdrop ? (
-        <div
-          className="dashboard-mobile-backdrop is-open"
-          onClick={closeMenu}
-          aria-hidden="true"
-        />
-      ) : null}
-
-      <aside
-        className={[
-          "dashboard-sidebar",
-          "dashboard-layout__sidebar",
-          isMenuOpen ? "is-open" : "",
-          isPosPage ? "dashboard-sidebar--compact dashboard-sidebar--pos" : ""
-        ]
-          .filter(Boolean)
-          .join(" ")}
-        aria-label="التنقل داخل مساحات التشغيل"
-      >
-        <div className="dashboard-sidebar__brand">
-          <Link href={homeHref} className="dashboard-brandmark" onClick={closeMenu}>
-            <span className="dashboard-brandmark__logo">Aya</span>
-            <span className="dashboard-brandmark__copy">
-              <strong>Aya Mobile</strong>
-              <small>{roleLabel}</small>
-            </span>
-          </Link>
-
-          <button
-            type="button"
-            className="icon-button dashboard-menu-close dashboard-sidebar__close"
-            onClick={closeMenu}
-            aria-label="إغلاق القائمة"
-          >
-            <X size={18} />
-          </button>
-        </div>
-
-        <nav
-          className="dashboard-sidebar__nav dashboard-layout__sidebar-nav"
-          aria-label="التنقل داخل مساحات التشغيل"
-        >
-          {(Object.keys(groupedNavigation) as DashboardNavGroup[]).map((groupKey) =>
-            groupedNavigation[groupKey].length > 0 ? (
-              <section
-                key={groupKey}
-                className={`dashboard-nav-group dashboard-nav-group--${groupKey}`}
-              >
-                <div className="dashboard-nav-group__items">
-                  {groupedNavigation[groupKey].map((item) => {
-                    const isActive = isPathActive(pathname, item.href);
-                    const Icon = getIcon(item.icon);
-
-                    return (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        className={
-                          isActive
-                            ? "dashboard-nav__item is-active"
-                            : "dashboard-nav__item"
-                        }
-                        aria-current={isActive ? "page" : undefined}
-                        onClick={closeMenu}
-                      >
-                        <span className="dashboard-nav__icon">
-                          <Icon size={18} />
-                        </span>
-
-                        <span className="dashboard-nav__label">
-                          {item.label}
-                          {item.href === "/notifications" && unreadNotifications > 0 ? (
-                            <span className="dashboard-nav__badge">
-                              {unreadNotifications}
-                            </span>
-                          ) : null}
-                        </span>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </section>
-            ) : null
-          )}
-        </nav>
-
-        <div className="dashboard-sidebar__footer">
-          {isAuthenticated ? (
-            <>
-              <div className="dashboard-sidebar__account" title={accountLabel}>
-                <span className="dashboard-sidebar__account-avatar" aria-hidden="true">
-                  {accountInitials}
-                </span>
-                <span className="dashboard-sidebar__account-copy">
-                  <strong>{roleLabel}</strong>
-                  <small>{accountLabel}</small>
-                </span>
-              </div>
-              <LogoutButton />
-            </>
-          ) : (
-            <Link href="/" className="secondary-button" onClick={closeMenu}>
-              تسجيل الدخول
-            </Link>
-          )}
-        </div>
-      </aside>
-
       {isMobileViewport ? (
         <nav
           className="dashboard-bottom-bar dashboard-layout__bottom-bar"
@@ -376,7 +264,8 @@ export function DashboardShell({
           {bottomBarItems.map((item) => {
             const Icon = getIcon(item.icon);
             const isActive = isPathActive(pathname, item.href);
-            const compactLabel = BOTTOM_BAR_LABELS[item.href as keyof typeof BOTTOM_BAR_LABELS] ?? item.label;
+            const compactLabel =
+              BOTTOM_BAR_LABELS[item.href as keyof typeof BOTTOM_BAR_LABELS] ?? item.label;
 
             return (
               <Link
@@ -414,7 +303,7 @@ export function DashboardShell({
         </nav>
       ) : null}
 
-      <div className="dashboard-content dashboard-layout__content">
+      <div className="dashboard-content">
         {isOffline ? (
           <div className="dashboard-offline-bar">
             <StatusBanner variant="offline" message="لا يوجد اتصال بالإنترنت" />
@@ -423,49 +312,165 @@ export function DashboardShell({
 
         <header className="dashboard-topbar">
           <div className="dashboard-topbar__start dashboard-topbar__context">
-            <button
-              type="button"
-              className="icon-button dashboard-menu-toggle"
-              onClick={openMenu}
-              aria-label="فتح القائمة"
-              aria-expanded={isMenuOpen}
-            >
-              <Menu size={18} />
-            </button>
+            <div className="dashboard-nav-trigger" aria-label="فتح القائمة">
+              <button
+                type="button"
+                className="icon-button dashboard-menu-toggle"
+                onClick={openMenu}
+                aria-label="فتح القائمة"
+                aria-expanded={isMenuOpen}
+                aria-haspopup="dialog"
+              >
+                <Menu size={18} />
+              </button>
 
-            <div className="dashboard-header-title">
-              <div className="dashboard-header-title__row">
-                <h1>{pageContext.title}</h1>
-              </div>
+              {isMenuOpen ? (
+                <>
+                  <div
+                    className="dashboard-nav-backdrop"
+                    onClick={closeMenu}
+                    aria-hidden="true"
+                  />
+                  <div
+                    className={[
+                      "dashboard-nav-popover",
+                      isMobileViewport
+                        ? "dashboard-nav-popover--sheet"
+                        : "dashboard-nav-popover--dropdown"
+                    ].join(" ")}
+                    role="dialog"
+                    aria-label="التنقل داخل مساحات التشغيل"
+                    aria-modal="true"
+                  >
+                    <div className="dashboard-nav-popover__header">
+                      <Link href={homeHref} className="dashboard-brandmark" onClick={closeMenu}>
+                        <span className="dashboard-brandmark__logo">Aya</span>
+                        <span className="dashboard-brandmark__copy">
+                          <strong>Aya Mobile</strong>
+                          <small>{roleLabel}</small>
+                        </span>
+                      </Link>
+
+                      <button
+                        type="button"
+                        className="icon-button dashboard-menu-close"
+                        onClick={closeMenu}
+                        aria-label="إغلاق القائمة"
+                      >
+                        <X size={18} />
+                      </button>
+                    </div>
+
+                    <nav
+                      className="dashboard-nav-popover__nav"
+                      aria-label="التنقل داخل مساحات التشغيل"
+                    >
+                      {(Object.keys(groupedNavigation) as DashboardNavGroup[]).map((groupKey) =>
+                        groupedNavigation[groupKey].length > 0 ? (
+                          <section
+                            key={groupKey}
+                            className={`dashboard-nav-group dashboard-nav-group--${groupKey}`}
+                          >
+                            <div className="dashboard-nav-group__items">
+                              {groupedNavigation[groupKey].map((item) => {
+                                const isActive = isPathActive(pathname, item.href);
+                                const Icon = getIcon(item.icon);
+
+                                return (
+                                  <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    className={
+                                      isActive
+                                        ? "dashboard-nav__item is-active"
+                                        : "dashboard-nav__item"
+                                    }
+                                    aria-current={isActive ? "page" : undefined}
+                                    onClick={closeMenu}
+                                  >
+                                    <span className="dashboard-nav__icon">
+                                      <Icon size={18} />
+                                    </span>
+                                    <span className="dashboard-nav__label">
+                                      {item.label}
+                                      {item.href === "/notifications" &&
+                                      unreadNotifications > 0 ? (
+                                        <span className="dashboard-nav__badge">
+                                          {unreadNotifications}
+                                        </span>
+                                      ) : null}
+                                    </span>
+                                  </Link>
+                                );
+                              })}
+                            </div>
+                          </section>
+                        ) : null
+                      )}
+                    </nav>
+
+                    <div className="dashboard-nav-popover__footer">
+                      {isAuthenticated ? (
+                        <>
+                          <div className="dashboard-sidebar__account" title={accountLabel}>
+                            <span className="dashboard-sidebar__account-avatar" aria-hidden="true">
+                              {accountInitials}
+                            </span>
+                            <span className="dashboard-sidebar__account-copy">
+                              <strong>{roleLabel}</strong>
+                              <small>{accountLabel}</small>
+                            </span>
+                          </div>
+                          <LogoutButton />
+                        </>
+                      ) : (
+                        <Link href="/" className="secondary-button" onClick={closeMenu}>
+                          تسجيل الدخول
+                        </Link>
+                      )}
+                    </div>
+                  </div>
+                </>
+              ) : null}
             </div>
+
+            {!isPosPage ? (
+              <div className="dashboard-header-title">
+                <div className="dashboard-header-title__row">
+                  <h1>{pageContext.title}</h1>
+                </div>
+              </div>
+            ) : null}
           </div>
 
           <div className="dashboard-topbar__end dashboard-topbar__actions">
-            {isSearchOpen ? (
-              <form
-                className="dashboard-quick-search-minimal"
-                onSubmit={handleSearchSubmit}
-              >
-                <Search size={16} className="search-icon" />
-                <input
-                  type="search"
-                  placeholder="بحث..."
-                  value={searchQuery}
-                  onChange={(event) => setSearchQuery(event.target.value)}
-                  autoFocus
-                  onBlur={() => !searchQuery && setIsSearchOpen(false)}
-                />
-              </form>
-            ) : (
-              <button
-                type="button"
-                className="icon-button ghost-button search-toggle"
-                onClick={() => setIsSearchOpen(true)}
-                aria-label="بحث"
-              >
-                <Search size={18} />
-              </button>
-            )}
+            {!isPosPage ? (
+              isSearchOpen ? (
+                <form
+                  className="dashboard-quick-search-minimal"
+                  onSubmit={handleSearchSubmit}
+                >
+                  <Search size={16} className="search-icon" />
+                  <input
+                    type="search"
+                    placeholder="بحث..."
+                    value={searchQuery}
+                    onChange={(event) => setSearchQuery(event.target.value)}
+                    autoFocus
+                    onBlur={() => !searchQuery && setIsSearchOpen(false)}
+                  />
+                </form>
+              ) : (
+                <button
+                  type="button"
+                  className="icon-button ghost-button search-toggle"
+                  onClick={() => setIsSearchOpen(true)}
+                  aria-label="بحث"
+                >
+                  <Search size={18} />
+                </button>
+              )
+            ) : null}
 
             {hasNotificationsPage ? (
               <Link
