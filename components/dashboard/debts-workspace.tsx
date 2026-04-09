@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition, type KeyboardEvent } from "react";
 import { Loader2, ReceiptText, Search, Wallet } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -32,7 +32,7 @@ type DebtsWorkspaceProps = {
   accounts: AccountOption[];
 };
 
-type DebtSection = "ledger" | "manual" | "payment";
+type DebtSection = "payment" | "history";
 type DebtsRetryAction = "manual-debt" | "debt-payment";
 
 function createUuid() {
@@ -53,10 +53,15 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
   const [paymentKey, setPaymentKey] = useState("");
   const [manualResult, setManualResult] = useState<ManualDebtResponse | null>(null);
   const [paymentResult, setPaymentResult] = useState<DebtPaymentResponse | null>(null);
-  const [activeSection, setActiveSection] = useState<DebtSection>("ledger");
+  const [activeSection, setActiveSection] = useState<DebtSection>("history");
   const [actionErrorMessage, setActionErrorMessage] = useState<string | null>(null);
   const [retryAction, setRetryAction] = useState<DebtsRetryAction | null>(null);
   const [isPending, startTransition] = useTransition();
+  const tabRefs = useRef<Record<DebtSection, HTMLButtonElement | null>>({
+    payment: null,
+    history: null
+  });
+  const manualAmountInputRef = useRef<HTMLInputElement | null>(null);
 
   const filteredCustomers = useMemo(() => {
     const normalized = searchTerm.trim().toLowerCase();
@@ -184,6 +189,56 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
     }
   }
 
+  function handleTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, currentTab: DebtSection) {
+    const tabs: DebtSection[] = ["payment", "history"];
+    const currentIndex = tabs.findIndex((tab) => tab === currentTab);
+    if (currentIndex === -1) {
+      return;
+    }
+
+    const focusTab = (index: number) => {
+      const nextTab = tabs[index];
+      tabRefs.current[nextTab]?.focus();
+    };
+
+    switch (event.key) {
+      case "ArrowRight":
+      case "ArrowDown":
+        event.preventDefault();
+        focusTab((currentIndex + 1) % tabs.length);
+        break;
+      case "ArrowLeft":
+      case "ArrowUp":
+        event.preventDefault();
+        focusTab((currentIndex - 1 + tabs.length) % tabs.length);
+        break;
+      case "Home":
+        event.preventDefault();
+        focusTab(0);
+        break;
+      case "End":
+        event.preventDefault();
+        focusTab(tabs.length - 1);
+        break;
+      case "Enter":
+      case " ":
+        event.preventDefault();
+        setActiveSection(currentTab);
+        break;
+      default:
+        break;
+    }
+  }
+
+  function openManualDebtPanel() {
+    setActiveSection("payment");
+    if (typeof window !== "undefined") {
+      window.requestAnimationFrame(() => {
+        manualAmountInputRef.current?.focus();
+      });
+    }
+  }
+
   return (
     <section className="workspace-stack transaction-page debts-page">
       <PageHeader
@@ -203,54 +258,53 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
         actions={
           <div className="transaction-action-cluster">
             {role === "admin" ? (
-              <button
-                type="button"
-                className={
-                  activeSection === "manual" ? "secondary-button" : "ghost-button btn btn--ghost"
-                }
-                onClick={() => setActiveSection("manual")}
-              >
+              <button type="button" className="ghost-button btn btn--ghost" onClick={openManualDebtPanel}>
                 دين يدوي
               </button>
             ) : null}
-            <button
-              type="button"
-              className="primary-button"
-              onClick={() => setActiveSection("payment")}
-            >
+            <button type="button" className="primary-button" onClick={() => setActiveSection("payment")}>
               التسديد
             </button>
           </div>
         }
       />
 
-      <div
-        className="chip-row transaction-chip-row debts-page__sections"
-        aria-label="أقسام شاشة الديون"
-      >
-        <button
-          type="button"
-          className={activeSection === "ledger" ? "chip-button is-selected" : "chip-button"}
-          onClick={() => setActiveSection("ledger")}
-        >
-          العملاء والقيود
-        </button>
-        {role === "admin" ? (
+      <div className="operational-section-nav debts-page__sections" aria-label="أقسام شاشة الديون">
+        <div className="debts-page__tabs" aria-label="تبويبات شاشة الديون">
           <button
+            ref={(node) => {
+              tabRefs.current.payment = node;
+            }}
             type="button"
-            className={activeSection === "manual" ? "chip-button is-selected" : "chip-button"}
-            onClick={() => setActiveSection("manual")}
+            id="debts-tab-payment"
+            aria-pressed={activeSection === "payment"}
+            aria-controls="debts-panel-payment"
+            className={`debts-page__tab ${activeSection === "payment" ? "is-active" : ""}`}
+            onClick={() => setActiveSection("payment")}
+            onKeyDown={(event) => handleTabKeyDown(event, "payment")}
           >
+            التسديد
+          </button>
+          <button
+            ref={(node) => {
+              tabRefs.current.history = node;
+            }}
+            type="button"
+            id="debts-tab-history"
+            aria-pressed={activeSection === "history"}
+            aria-controls="debts-panel-history"
+            className={`debts-page__tab ${activeSection === "history" ? "is-active" : ""}`}
+            onClick={() => setActiveSection("history")}
+            onKeyDown={(event) => handleTabKeyDown(event, "history")}
+          >
+            العملاء والقيود
+          </button>
+        </div>
+        {role === "admin" ? (
+          <button type="button" className="chip-button debts-page__quick-action" onClick={openManualDebtPanel}>
             دين يدوي
           </button>
         ) : null}
-        <button
-          type="button"
-          className={activeSection === "payment" ? "chip-button is-selected" : "chip-button"}
-          onClick={() => setActiveSection("payment")}
-        >
-          التسديد
-        </button>
       </div>
 
       {actionErrorMessage ? (
@@ -291,11 +345,7 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
             <div className="empty-panel transaction-empty-panel">
               <Search size={20} />
               <h3>لا توجد نتائج مطابقة</h3>
-              <button
-                type="button"
-                className="secondary-button"
-                onClick={() => setSearchTerm("")}
-              >
+              <button type="button" className="secondary-button" onClick={() => setSearchTerm("")}>
                 مسح البحث
               </button>
             </div>
@@ -324,9 +374,7 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                     <div className="debt-customer-card__meta">
                       <span>{customer.phone ?? "بدون هاتف"}</span>
                       {role === "admin" && customer.credit_limit !== undefined ? (
-                        <span>
-                          حد {formatCurrency(customer.credit_limit ?? 0)}
-                        </span>
+                        <span>حد {formatCurrency(customer.credit_limit ?? 0)}</span>
                       ) : customer.due_date_days ? (
                         <span>{customer.due_date_days} يوم</span>
                       ) : null}
@@ -374,8 +422,178 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                   ) : null}
                 </div>
 
-                {activeSection === "ledger" ? (
-                  <div className="stack-list debt-entry-list">
+                <section
+                  id="debts-panel-payment"
+                  aria-labelledby="debts-tab-payment"
+                  className="debts-page__tab-panel"
+                  hidden={activeSection !== "payment"}
+                >
+                  <div
+                    className={
+                      role === "admin"
+                        ? "debts-page__payment-grid"
+                        : "debts-page__payment-grid debts-page__payment-grid--single"
+                    }
+                  >
+                    <div className="debts-page__payment-card">
+                      <div className="info-strip">
+                        <span>سدد المبلغ على كامل الرصيد أو اربطه بقيد محدد عند الحاجة.</span>
+                      </div>
+
+                      <div className="stack-form">
+                        <label className="stack-field">
+                          <span>المبلغ</span>
+                          <input
+                            className="field-input"
+                            type="number"
+                            min={0.001}
+                            step="0.001"
+                            value={paymentAmount}
+                            onChange={(event) => setPaymentAmount(event.target.value)}
+                            placeholder="0.000"
+                          />
+                        </label>
+
+                        <label className="stack-field">
+                          <span>حساب الدفع</span>
+                          <select className="field-input" value={paymentAccountId} onChange={(event) => setPaymentAccountId(event.target.value)}>
+                            {accounts.map((account) => (
+                              <option key={account.id} value={account.id}>
+                                {account.name}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+
+                        {customerEntries.length > 0 ? (
+                          <label className="stack-field">
+                            <span>قيد محدد (اختياري)</span>
+                            <select className="field-input" value={paymentEntryId} onChange={(event) => setPaymentEntryId(event.target.value)}>
+                              <option value="">اتركه فارغًا لتفعيل FIFO</option>
+                              {customerEntries.map((entry) => (
+                                <option key={entry.id} value={entry.id}>
+                                  {entry.entry_type} - {formatDate(entry.due_date)} - {formatCurrency(entry.remaining_amount)}
+                                </option>
+                              ))}
+                            </select>
+                          </label>
+                        ) : (
+                          <div className="info-strip">
+                            <span>لا توجد قيود مفتوحة لهذا العميل حاليًا.</span>
+                          </div>
+                        )}
+
+                        <label className="stack-field">
+                          <span>ملاحظات</span>
+                          <textarea
+                            className="field-input"
+                            rows={3}
+                            maxLength={255}
+                            value={paymentNotes}
+                            onChange={(event) => setPaymentNotes(event.target.value)}
+                            placeholder="ملاحظات اختيارية"
+                          />
+                        </label>
+
+                        <div className="info-strip">
+                          <span>بدون اختيار قيد، يوزع النظام السداد على الأقدم تلقائيًا.</span>
+                        </div>
+
+                        <button
+                          type="button"
+                          className="primary-button"
+                          disabled={
+                            isPending ||
+                            !selectedCustomerId ||
+                            !paymentAmount ||
+                            !paymentAccountId ||
+                            !paymentKey ||
+                            customerEntries.length === 0
+                          }
+                          onClick={submitDebtPayment}
+                        >
+                          {isPending ? <Loader2 className="spin" size={16} /> : <ReceiptText size={16} />}
+                          تأكيد التسديد
+                        </button>
+                      </div>
+
+                      {paymentResult ? (
+                        <div className="result-card">
+                          <h3>{paymentResult.receipt_number}</h3>
+                          <p>الرصيد المتبقي: {formatCurrency(paymentResult.remaining_balance)}</p>
+                          <p>
+                            التوزيعات: {paymentResult.allocations.map((entry) => formatCurrency(entry.allocated_amount)).join(" / ")}
+                          </p>
+                        </div>
+                      ) : null}
+                    </div>
+
+                    {role === "admin" ? (
+                      <div className="debts-page__payment-card">
+                        <div className="info-strip">
+                          <span>سجل دينًا مباشرًا لهذا العميل عند الحاجة دون انتظار فاتورة.</span>
+                        </div>
+
+                        <div className="stack-form">
+                          <label className="stack-field">
+                            <span>المبلغ</span>
+                            <input
+                              ref={manualAmountInputRef}
+                              className="field-input"
+                              type="number"
+                              min={0.001}
+                              step="0.001"
+                              value={manualAmount}
+                              onChange={(event) => setManualAmount(event.target.value)}
+                              placeholder="0.000"
+                            />
+                          </label>
+
+                          <label className="stack-field">
+                            <span>الوصف</span>
+                            <textarea
+                              className="field-input"
+                              rows={3}
+                              maxLength={255}
+                              value={manualDescription}
+                              onChange={(event) => setManualDescription(event.target.value)}
+                              placeholder="سبب الدين اليدوي"
+                            />
+                          </label>
+
+                          <div className="info-strip">
+                            <span>يُحفظ القيد مرة واحدة فقط لكل محاولة.</span>
+                          </div>
+
+                          <button
+                            type="button"
+                            className="primary-button"
+                            disabled={isPending || !selectedCustomerId || !manualAmount || !manualKey}
+                            onClick={submitManualDebt}
+                          >
+                            {isPending ? <Loader2 className="spin" size={16} /> : <Wallet size={16} />}
+                            حفظ الدين اليدوي
+                          </button>
+                        </div>
+
+                        {manualResult ? (
+                          <div className="result-card">
+                            <h3>تم حفظ الدين</h3>
+                            <p>أضيف القيد إلى سجل العميل الحالي.</p>
+                          </div>
+                        ) : null}
+                      </div>
+                    ) : null}
+                  </div>
+                </section>
+
+                <section
+                  id="debts-panel-history"
+                  aria-labelledby="debts-tab-history"
+                  className="debts-page__tab-panel"
+                  hidden={activeSection !== "history"}
+                >
+                  <div className="debts-page__history-stack">
                     {customerEntries.length > 0 ? (
                       customerEntries.map((entry) => (
                         <article key={entry.id} className="list-card debt-entry-card">
@@ -398,169 +616,17 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                       <div className="empty-panel transaction-empty-panel">
                         <Wallet size={20} />
                         <h3>لا توجد قيود مفتوحة</h3>
-                        {role === "admin" ? (
-                          <button
-                            type="button"
-                            className="secondary-button"
-                            onClick={() => setActiveSection("manual")}
-                          >
-                            دين يدوي
-                          </button>
-                        ) : null}
+                        <button
+                          type="button"
+                          className="secondary-button"
+                          onClick={role === "admin" ? openManualDebtPanel : () => setActiveSection("payment")}
+                        >
+                          {role === "admin" ? "دين يدوي" : "فتح التسديد"}
+                        </button>
                       </div>
                     )}
                   </div>
-                ) : null}
-
-                {activeSection === "manual" && role === "admin" ? (
-                  <div className="transaction-stack">
-                    <div className="info-strip">
-                      <span>سجل دينًا مباشرًا لهذا العميل عند الحاجة.</span>
-                    </div>
-
-                    <div className="stack-form">
-                      <label className="stack-field">
-                        <span>المبلغ</span>
-                        <input
-                          className="field-input"
-                          type="number"
-                          min={0.001}
-                          step="0.001"
-                          value={manualAmount}
-                          onChange={(event) => setManualAmount(event.target.value)}
-                          placeholder="0.000"
-                        />
-                      </label>
-
-                      <label className="stack-field">
-                        <span>الوصف</span>
-                        <textarea
-                          className="field-input"
-                          rows={3}
-                          maxLength={255}
-                          value={manualDescription}
-                          onChange={(event) => setManualDescription(event.target.value)}
-                          placeholder="سبب الدين اليدوي"
-                        />
-                      </label>
-
-                      <div className="info-strip">
-                        <span>يُحفظ القيد مرة واحدة فقط لكل محاولة.</span>
-                      </div>
-
-                      <button
-                        type="button"
-                        className="primary-button"
-                        disabled={isPending || !selectedCustomerId || !manualAmount || !manualKey}
-                        onClick={submitManualDebt}
-                      >
-                        {isPending ? <Loader2 className="spin" size={16} /> : <Wallet size={16} />}
-                        حفظ الدين اليدوي
-                      </button>
-                    </div>
-
-                    {manualResult ? (
-                      <div className="result-card">
-                        <h3>تم حفظ الدين</h3>
-                        <p>أضيف القيد إلى سجل العميل الحالي.</p>
-                      </div>
-                    ) : null}
-                  </div>
-                ) : null}
-
-                {activeSection === "payment" ? (
-                  <div className="transaction-stack">
-                    <div className="stack-form">
-                      <label className="stack-field">
-                        <span>المبلغ</span>
-                        <input
-                          className="field-input"
-                          type="number"
-                          min={0.001}
-                          step="0.001"
-                          value={paymentAmount}
-                          onChange={(event) => setPaymentAmount(event.target.value)}
-                          placeholder="0.000"
-                        />
-                      </label>
-
-                      <label className="stack-field">
-                        <span>حساب الدفع</span>
-                        <select className="field-input" value={paymentAccountId} onChange={(event) => setPaymentAccountId(event.target.value)}>
-                          {accounts.map((account) => (
-                            <option key={account.id} value={account.id}>
-                              {account.name}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-
-                      {customerEntries.length > 0 ? (
-                        <label className="stack-field">
-                          <span>قيد محدد (اختياري)</span>
-                          <select className="field-input" value={paymentEntryId} onChange={(event) => setPaymentEntryId(event.target.value)}>
-                            <option value="">اتركه فارغًا لتفعيل FIFO</option>
-                            {customerEntries.map((entry) => (
-                              <option key={entry.id} value={entry.id}>
-                                {entry.entry_type} - {formatDate(entry.due_date)} - {formatCurrency(entry.remaining_amount)}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                      ) : (
-                        <div className="info-strip">
-                          <span>لا توجد قيود مفتوحة لهذا العميل حاليًا.</span>
-                        </div>
-                      )}
-
-                      <label className="stack-field">
-                        <span>ملاحظات</span>
-                        <textarea
-                          className="field-input"
-                          rows={3}
-                          maxLength={255}
-                          value={paymentNotes}
-                          onChange={(event) => setPaymentNotes(event.target.value)}
-                          placeholder="ملاحظات اختيارية"
-                        />
-                      </label>
-
-                      <div className="info-strip">
-                        <span>بدون اختيار قيد، يوزع النظام السداد على الأقدم تلقائيًا.</span>
-                      </div>
-
-                      <button
-                        type="button"
-                        className="primary-button"
-                        disabled={
-                          isPending ||
-                          !selectedCustomerId ||
-                          !paymentAmount ||
-                          !paymentAccountId ||
-                          !paymentKey ||
-                          customerEntries.length === 0
-                        }
-                        onClick={submitDebtPayment}
-                      >
-                        {isPending ? <Loader2 className="spin" size={16} /> : <ReceiptText size={16} />}
-                        تأكيد التسديد
-                      </button>
-                    </div>
-
-                    {paymentResult ? (
-                      <div className="result-card">
-                        <h3>{paymentResult.receipt_number}</h3>
-                        <p>الرصيد المتبقي: {formatCurrency(paymentResult.remaining_balance)}</p>
-                        <p>
-                          التوزيعات:{" "}
-                          {paymentResult.allocations
-                            .map((entry) => formatCurrency(entry.allocated_amount))
-                            .join(" / ")}
-                        </p>
-                      </div>
-                    ) : null}
-                  </div>
-                ) : null}
+                </section>
               </>
             ) : (
               <div className="empty-panel transaction-empty-panel">

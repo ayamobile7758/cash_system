@@ -198,14 +198,14 @@ function getAccountIcon(type: string) {
 
 function getValidationToneClasses(tone: "success" | "warning" | "error") {
   if (tone === "success") {
-    return "border-emerald-500/20 bg-emerald-500/10 text-emerald-700";
+    return "validation-tone--success";
   }
 
   if (tone === "warning") {
-    return "border-amber-500/20 bg-amber-500/10 text-amber-700";
+    return "validation-tone--warning";
   }
 
-  return "border-destructive/20 bg-destructive/10 text-destructive";
+  return "validation-tone--error";
 }
 
 function getAccountChipLabel(account: PosAccount) {
@@ -448,6 +448,9 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   const totalItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   const outOfStockItems = items.filter(
     (item) => item.track_stock && item.quantity > item.stock_quantity
+  );
+  const remainingBalanceToneClass = getValidationToneClasses(
+    remainingToSettle > 0 ? (canCreateDebt ? "warning" : "error") : "success"
   );
   const hasInvalidDiscount = invoiceDiscountPercentage > effectiveMaxDiscount;
   const canCompleteSale =
@@ -694,7 +697,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
 
       if (event.key === "F2" && items.length > 0) {
         event.preventDefault();
-        if (isMobileViewport) setActiveMobileTab("cart");
+        openCheckout();
         return;
       }
 
@@ -731,7 +734,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
       if (event.key.toLowerCase() === "d") {
         event.preventDefault();
         setIsDiscountExpanded(true);
-        if (isMobileViewport) setActiveMobileTab("cart");
+        openCheckout();
       }
     }
 
@@ -821,7 +824,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
 
   function resetCheckoutState() {
     setPanelState("cart");
-    setActiveMobileTab("products");
+    goBackToCart();
     setSubmissionErrorMessage(null);
     setCustomerSearchInput("");
     setSelectedCustomerBalance(null);
@@ -851,11 +854,15 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   }
 
   function openCheckout() {
-    if (isMobileViewport && items.length > 0) setActiveMobileTab("cart");
+    if (isMobileViewport) {
+      setActiveMobileTab("cart");
+    }
   }
 
   function goBackToCart() {
-    if (isMobileViewport) setActiveMobileTab("products");
+    if (isMobileViewport) {
+      setActiveMobileTab("products");
+    }
   }
 
   function selectCustomer(customer: CustomerSearchResult) {
@@ -1223,7 +1230,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                 ? "pos-mobile-tabs__button is-active"
                 : "pos-mobile-tabs__button"
             }
-            onClick={() => setActiveMobileTab("products")}
+            onClick={goBackToCart}
             aria-pressed={activeMobileTab === "products"}
           >
             <span>المنتجات</span>
@@ -1235,7 +1242,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
                 ? "pos-mobile-tabs__button pos-cart-sheet__summary is-active"
                 : "pos-mobile-tabs__button pos-cart-sheet__summary"
             }
-            onClick={() => setActiveMobileTab("cart")}
+            onClick={openCheckout}
             aria-pressed={activeMobileTab === "cart"}
           >
             <span>السلة</span>
@@ -1431,11 +1438,6 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
               onPaymentAccountSelect={(accountId) => {
                 clearSubmissionFeedback();
                 setSelectedAccountId(accountId);
-
-                if (!amountReceived || amountReceived === 0) {
-                  setAmountReceived(netTotal);
-                  startSubmission(() => void submitSale());
-                }
               }}
               onPosTerminalCodeChange={(value) => {
                 clearSubmissionFeedback();
@@ -1478,6 +1480,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
               posTerminalCode={posTerminalCode}
               primarySplitAmount={primarySplitAmount}
               remainingToSettle={remainingToSettle}
+              remainingBalanceToneClass={remainingBalanceToneClass}
               selectedAccount={selectedAccount}
               selectedAccountId={selectedAccountId}
               selectedCustomerBalance={selectedCustomerBalance}
@@ -1548,7 +1551,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
         <PosMobileCartSheet
           itemCount={totalItemCount}
           netTotal={netTotal}
-          onOpenCart={() => setActiveMobileTab("cart")}
+          onOpenCart={openCheckout}
         />
       ) : null}
 

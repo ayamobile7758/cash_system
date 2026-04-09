@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState, useTransition } from "react";
-import { Loader2, Plus, Save, Search, ShoppingCart, Wallet } from "lucide-react";
+import { useEffect, useMemo, useRef, useState, useTransition, type KeyboardEvent } from "react";
+import { ChevronDown, Loader2, Plus, Save, Search, ShoppingCart, Wallet } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/ui/page-header";
@@ -62,6 +62,15 @@ type SuppliersWorkspaceProps = {
 type SupplierBalanceFilter = "all" | "with_balance" | "zero_balance";
 type SuppliersRetryAction = "supplier" | "purchase" | "payment";
 type SuppliersSection = "directory" | "purchase" | "payment" | "history";
+type SuppliersHistoryAccordion = "purchase-orders" | "supplier-payments";
+type SuppliersAccordionState = Record<SuppliersHistoryAccordion, boolean>;
+
+const SUPPLIERS_TABS = [
+  { key: "directory", label: "الدليل والتفاصيل" },
+  { key: "purchase", label: "أوامر الشراء" },
+  { key: "payment", label: "التسديدات" },
+  { key: "history", label: "السجل الأخير" }
+] as const satisfies ReadonlyArray<{ key: SuppliersSection; label: string }>;
 
 const emptySupplierDraft: SupplierDraft = {
   name: "",
@@ -109,11 +118,20 @@ export function SuppliersWorkspace({
   const [actionErrorMessage, setActionErrorMessage] = useState<string | null>(null);
   const [retryAction, setRetryAction] = useState<SuppliersRetryAction | null>(null);
   const [activeSection, setActiveSection] = useState<SuppliersSection>("directory");
+  const [expandedAccordions, setExpandedAccordions] = useState<SuppliersAccordionState>({
+    "purchase-orders": true,
+    "supplier-payments": false
+  });
   const [isPending, startTransition] = useTransition();
+  const tabRefs = useRef<Record<SuppliersSection, HTMLButtonElement | null>>({
+    directory: null,
+    purchase: null,
+    payment: null,
+    history: null
+  });
 
   const filteredSuppliers = useMemo(() => {
     const normalized = supplierSearch.trim().toLowerCase();
-
     return suppliers.filter((supplier) => {
       if (supplierFilter === "with_balance" && supplier.current_balance <= 0) {
         return false;
@@ -142,7 +160,6 @@ export function SuppliersWorkspace({
   const filteredProducts = useMemo(() => {
     const normalized = productSearch.trim().toLowerCase();
     const existingIds = new Set(purchaseItems.map((item) => item.product_id));
-
     return products.filter((product) => {
       if (existingIds.has(product.id)) {
         return false;
@@ -161,6 +178,9 @@ export function SuppliersWorkspace({
     [purchaseItems]
   );
 
+  const projectedSupplierBalance =
+    paymentSupplier && paymentAmount ? paymentSupplier.current_balance - Number(paymentAmount) : null;
+
   useEffect(() => {
     if (!purchaseKey) {
       setPurchaseKey(createUuid());
@@ -172,11 +192,7 @@ export function SuppliersWorkspace({
   }, [paymentKey, purchaseKey]);
 
   useEffect(() => {
-    if (isCreateMode) {
-      return;
-    }
-
-    if (!selectedSupplier) {
+    if (isCreateMode || !selectedSupplier) {
       return;
     }
 
@@ -200,9 +216,6 @@ export function SuppliersWorkspace({
     }
   }, [purchaseSupplierId, suppliers]);
 
-  const projectedSupplierBalance =
-    paymentSupplier && paymentAmount ? paymentSupplier.current_balance - Number(paymentAmount) : null;
-
   function clearActionFeedback() {
     setActionErrorMessage(null);
     setRetryAction(null);
@@ -212,6 +225,13 @@ export function SuppliersWorkspace({
     setActionErrorMessage(message);
     setRetryAction(action);
     toast.error(message);
+  }
+
+  function startCreateSupplier() {
+    setIsCreateMode(true);
+    setSupplierDraft(emptySupplierDraft);
+    setSupplierResult(null);
+    setActiveSection("directory");
   }
 
   function addProductToDraft(product: PurchaseProductOption) {
@@ -346,6 +366,55 @@ export function SuppliersWorkspace({
     }
   }
 
+  function handleTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, currentSection: SuppliersSection) {
+    const currentIndex = SUPPLIERS_TABS.findIndex((tab) => tab.key === currentSection);
+    if (currentIndex === -1) {
+      return;
+    }
+
+    const focusTab = (index: number) => {
+      const nextTab = SUPPLIERS_TABS[index]?.key;
+      if (nextTab) {
+        tabRefs.current[nextTab]?.focus();
+      }
+    };
+
+    switch (event.key) {
+      case "ArrowRight":
+      case "ArrowDown":
+        event.preventDefault();
+        focusTab((currentIndex + 1) % SUPPLIERS_TABS.length);
+        break;
+      case "ArrowLeft":
+      case "ArrowUp":
+        event.preventDefault();
+        focusTab((currentIndex - 1 + SUPPLIERS_TABS.length) % SUPPLIERS_TABS.length);
+        break;
+      case "Home":
+        event.preventDefault();
+        focusTab(0);
+        break;
+      case "End":
+        event.preventDefault();
+        focusTab(SUPPLIERS_TABS.length - 1);
+        break;
+      case "Enter":
+      case " ":
+        event.preventDefault();
+        setActiveSection(currentSection);
+        break;
+      default:
+        break;
+    }
+  }
+
+  function toggleAccordion(accordion: SuppliersHistoryAccordion) {
+    setExpandedAccordions((current) => ({
+      ...current,
+      [accordion]: !current[accordion]
+    }));
+  }
+
   return (
     <section className="operational-page suppliers-page">
       <PageHeader
@@ -364,16 +433,7 @@ export function SuppliersWorkspace({
           </>
         }
         actions={
-          <button
-            type="button"
-            className="primary-button"
-            onClick={() => {
-              setActiveSection("directory");
-              setIsCreateMode(true);
-              setSupplierDraft(emptySupplierDraft);
-              setSupplierResult(null);
-            }}
-          >
+          <button type="button" className="primary-button" onClick={startCreateSupplier}>
             <Plus size={16} />
             مورد جديد
           </button>
@@ -383,7 +443,9 @@ export function SuppliersWorkspace({
       <section className="operational-page__meta-grid suppliers-page__summary" aria-label="ملخص الموردين">
         <article className="operational-page__meta-card">
           <span className="operational-page__meta-label">الدليل النشط</span>
-          <strong className="operational-page__meta-value">{formatCompactNumber(suppliers.filter((supplier) => supplier.is_active).length)}</strong>
+          <strong className="operational-page__meta-value">
+            {formatCompactNumber(suppliers.filter((supplier) => supplier.is_active).length)}
+          </strong>
         </article>
         <article className="operational-page__meta-card">
           <span className="operational-page__meta-label">موردون برصيد مستحق</span>
@@ -406,370 +468,376 @@ export function SuppliersWorkspace({
         />
       ) : null}
 
-      <div className="operational-section-nav suppliers-page__sections" aria-label="أقسام الموردين والمشتريات">
-        <button
-          type="button"
-          className={activeSection === "directory" ? "chip-button is-selected" : "chip-button"}
-          onClick={() => setActiveSection("directory")}
-        >
-          الدليل والتفاصيل
-        </button>
-        <button
-          type="button"
-          className={activeSection === "purchase" ? "chip-button is-selected" : "chip-button"}
-          onClick={() => setActiveSection("purchase")}
-        >
-          أوامر الشراء
-        </button>
-        <button
-          type="button"
-          className={activeSection === "payment" ? "chip-button is-selected" : "chip-button"}
-          onClick={() => setActiveSection("payment")}
-        >
-          التسديدات
-        </button>
-        <button
-          type="button"
-          className={activeSection === "history" ? "chip-button is-selected" : "chip-button"}
-          onClick={() => setActiveSection("history")}
-        >
-          السجل الأخير
-        </button>
+      <div className="operational-section-nav suppliers-page__sections suppliers-page__tabs" role="tablist" aria-label="أقسام الموردين والمشتريات">
+        {SUPPLIERS_TABS.map((tab) => (
+          <button
+            key={tab.key}
+            ref={(node) => {
+              tabRefs.current[tab.key] = node;
+            }}
+            type="button"
+            role="tab"
+            id={`suppliers-tab-${tab.key}`}
+            aria-selected={activeSection === tab.key}
+            aria-controls={`suppliers-panel-${tab.key}`}
+            className={`suppliers-page__tab ${activeSection === tab.key ? "is-active chip-button is-selected" : "chip-button"}`}
+            onClick={() => setActiveSection(tab.key)}
+            onKeyDown={(event) => handleTabKeyDown(event, tab.key)}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
-      {activeSection === "directory" ? <div className="detail-grid">
-        <section className="workspace-panel suppliers-page__directory">
-          <div className="workspace-toolbar">
-            <label className="workspace-search">
-              <Search size={18} />
-              <input
-                type="search"
-                placeholder="ابحث باسم المورد أو الهاتف"
-                value={supplierSearch}
-                onChange={(event) => setSupplierSearch(event.target.value)}
-              />
-            </label>
-
-            <button
-              type="button"
-              className="secondary-button"
-              onClick={() => {
-                setIsCreateMode(true);
-                setSupplierDraft(emptySupplierDraft);
-                setSupplierResult(null);
-              }}
-            >
-              <Plus size={16} />
-              مورد جديد
-            </button>
-          </div>
-
-          <div className="chip-row">
-            <button
-              type="button"
-              className={supplierFilter === "all" ? "chip-button is-selected" : "chip-button"}
-              onClick={() => setSupplierFilter("all")}
-            >
-              الكل
-            </button>
-            <button
-              type="button"
-              className={supplierFilter === "with_balance" ? "chip-button is-selected" : "chip-button"}
-              onClick={() => setSupplierFilter("with_balance")}
-            >
-              عليه رصيد
-            </button>
-            <button
-              type="button"
-              className={supplierFilter === "zero_balance" ? "chip-button is-selected" : "chip-button"}
-              onClick={() => setSupplierFilter("zero_balance")}
-            >
-              بدون رصيد
-            </button>
-          </div>
-
-          <div className="stack-list suppliers-page__directory-list">
-            {filteredSuppliers.length > 0 ? (
-              filteredSuppliers.map((supplier) => (
-                <button
-                  key={supplier.id}
-                  type="button"
-                  className={
-                    supplier.id === selectedSupplierId && !isCreateMode
-                      ? "list-card list-card--interactive is-selected supplier-directory-card"
-                      : "list-card list-card--interactive supplier-directory-card"
-                  }
-                  onClick={() => {
-                    setSelectedSupplierId(supplier.id);
-                    setPaymentSupplierId(supplier.id);
-                    setPurchaseSupplierId(supplier.id);
-                    setIsCreateMode(false);
-                    setSupplierResult(null);
-                  }}
-                >
-                  <div className="list-card__header">
-                    <strong>{supplier.name}</strong>
-                    <span
-                      className={
-                        supplier.current_balance > 0
-                          ? "status-pill badge badge--warning"
-                          : "status-pill badge badge--neutral"
-                      }
-                    >
-                      {formatCurrency(supplier.current_balance)}
-                    </span>
-                  </div>
-                  <div className="supplier-directory-card__meta">
-                    <span>{supplier.phone ?? "بدون هاتف"}</span>
-                    <span>{supplier.is_active ? "نشط" : "غير نشط"}</span>
-                    <span>{formatDate(supplier.updated_at)}</span>
-                  </div>
-                </button>
-              ))
-            ) : (
-              <div className="empty-panel suppliers-page__empty">
-                <Search size={20} />
-                <h3>لا توجد نتائج مطابقة</h3>
-                <button
-                  type="button"
-                  className="secondary-button"
-                  onClick={() => {
-                    setSupplierSearch("");
-                    setSupplierFilter("all");
-                  }}
-                >
-                  مسح التصفية
-                </button>
+      <section
+        id="suppliers-panel-directory"
+        className="suppliers-page__tab-panel"
+        role="tabpanel"
+        aria-labelledby="suppliers-tab-directory"
+        hidden={activeSection !== "directory"}
+      >
+        <div className="suppliers-page__split">
+          <section className="workspace-panel suppliers-page__directory suppliers-page__split-primary">
+            <div className="section-heading">
+              <div>
+                <p className="eyebrow">الدليل</p>
+                <h2>الدليل والتفاصيل</h2>
               </div>
-            )}
-          </div>
-        </section>
-
-        <section className="workspace-panel suppliers-page__detail">
-          <div className="section-heading">
-            <div>
-              <h2>{isCreateMode ? "إضافة مورد" : selectedSupplier?.name ?? "اختر موردًا"}</h2>
             </div>
-          </div>
-
-          {!isCreateMode && selectedSupplier ? (
-            <div className="info-strip">
-              <span>الرصيد الحالي: {formatCurrency(selectedSupplier.current_balance)}</span>
-              <span>الهاتف: {selectedSupplier.phone ?? "غير متوفر"}</span>
-              <span>{selectedSupplier.is_active ? "نشط" : "غير نشط"}</span>
-            </div>
-          ) : null}
-
-          <div className="stack-form">
-            <label className="stack-field">
-              <span>اسم المورد</span>
-              <input
-                type="text"
-                maxLength={100}
-                value={supplierDraft.name}
-                onChange={(event) => setSupplierDraft((current) => ({ ...current, name: event.target.value }))}
-                placeholder="اسم المورد"
-              />
-            </label>
-
-            <label className="stack-field">
-              <span>الهاتف</span>
-              <input
-                type="text"
-                maxLength={20}
-                value={supplierDraft.phone}
-                onChange={(event) => setSupplierDraft((current) => ({ ...current, phone: event.target.value }))}
-                placeholder="079..."
-              />
-            </label>
-
-            <label className="stack-field">
-              <span>العنوان</span>
-              <textarea
-                rows={3}
-                maxLength={1000}
-                value={supplierDraft.address}
-                onChange={(event) => setSupplierDraft((current) => ({ ...current, address: event.target.value }))}
-                placeholder="عنوان المورد"
-              />
-            </label>
-
-            <label className="stack-checkbox">
-              <input
-                type="checkbox"
-                checked={supplierDraft.is_active}
-                onChange={(event) => setSupplierDraft((current) => ({ ...current, is_active: event.target.checked }))}
-              />
-              <span>المورد نشط</span>
-            </label>
 
             <div className="workspace-toolbar">
+              <label className="workspace-search">
+                <Search size={18} />
+                <input
+                  type="search"
+                  placeholder="ابحث باسم المورد أو الهاتف"
+                  value={supplierSearch}
+                  onChange={(event) => setSupplierSearch(event.target.value)}
+                />
+              </label>
+
+              <button type="button" className="secondary-button" onClick={startCreateSupplier}>
+                <Plus size={16} />
+                مورد جديد
+              </button>
+            </div>
+
+            <div className="chip-row">
               <button
                 type="button"
-                className="primary-button"
-                disabled={isPending || !supplierDraft.name.trim()}
-                onClick={() => {
-                  startTransition(() => {
-                    void handleSupplierSubmit();
-                  });
-                }}
+                className={supplierFilter === "all" ? "chip-button is-selected" : "chip-button"}
+                onClick={() => setSupplierFilter("all")}
               >
-                {isPending ? <Loader2 className="spin" size={16} /> : <Save size={16} />}
-                {isCreateMode ? "حفظ المورد" : "حفظ التعديلات"}
+                الكل
               </button>
-
-              {!isCreateMode ? (
-                <button
-                  type="button"
-                  className="secondary-button"
-                  onClick={() => {
-                    setIsCreateMode(true);
-                    setSupplierDraft(emptySupplierDraft);
-                    setSupplierResult(null);
-                  }}
-                >
-                  <Plus size={16} />
-                  نسخة جديدة
-                </button>
-              ) : null}
-            </div>
-          </div>
-
-          {supplierResult ? (
-            <div className="result-card">
-              <h3>تم حفظ المورد</h3>
-              <p>{supplierResult.name}</p>
-              <p>الرصيد الحالي: {formatCurrency(supplierResult.current_balance)}</p>
-            </div>
-          ) : null}
-        </section>
-      </div> : null}
-
-      {activeSection === "purchase" ? <div className="detail-grid">
-        <section className="workspace-panel suppliers-page__purchase">
-          <div className="section-heading">
-            <div>
-              <p className="eyebrow">أمر شراء</p>
-              <h2>أمر شراء جديد</h2>
-            </div>
-          </div>
-
-          <div className="stack-form">
-            <label className="stack-field">
-              <span>المورد</span>
-              <select value={purchaseSupplierId} onChange={(event) => setPurchaseSupplierId(event.target.value)}>
-                <option value="">بدون مورد</option>
-                {suppliers.map((supplier) => (
-                  <option key={supplier.id} value={supplier.id}>
-                    {supplier.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label className="workspace-search">
-              <Search size={18} />
-              <input
-                type="search"
-                placeholder="ابحث عن منتج لإضافته"
-                value={productSearch}
-                onChange={(event) => setProductSearch(event.target.value)}
-              />
-            </label>
-
-            <div className="stack-list">
-              {filteredProducts.slice(0, 6).map((product) => (
-                <button
-                  key={product.id}
-                  type="button"
-                  className="list-card list-card--interactive"
-                  onClick={() => addProductToDraft(product)}
-                >
-                  <div className="list-card__header">
-                    <strong>{product.name}</strong>
-                    <span>{formatCompactNumber(product.stock_quantity)} متاح</span>
-                  </div>
-                  <p>آخر تكلفة: {formatCurrency(product.cost_price)}</p>
-                  <p className="workspace-footnote">المتوسط: {formatCurrency(product.avg_cost_price)}</p>
-                </button>
-              ))}
+              <button
+                type="button"
+                className={supplierFilter === "with_balance" ? "chip-button is-selected" : "chip-button"}
+                onClick={() => setSupplierFilter("with_balance")}
+              >
+                عليه رصيد
+              </button>
+              <button
+                type="button"
+                className={supplierFilter === "zero_balance" ? "chip-button is-selected" : "chip-button"}
+                onClick={() => setSupplierFilter("zero_balance")}
+              >
+                بدون رصيد
+              </button>
             </div>
 
-            <div className="stack-list">
-              {purchaseItems.length > 0 ? (
-                purchaseItems.map((item) => (
-                  <article key={item.product_id} className="list-card">
+            <div className="stack-list suppliers-page__directory-list">
+              {filteredSuppliers.length > 0 ? (
+                filteredSuppliers.map((supplier) => (
+                  <button
+                    key={supplier.id}
+                    type="button"
+                    className={
+                      supplier.id === selectedSupplierId && !isCreateMode
+                        ? "list-card list-card--interactive is-selected supplier-directory-card"
+                        : "list-card list-card--interactive supplier-directory-card"
+                    }
+                    onClick={() => {
+                      setSelectedSupplierId(supplier.id);
+                      setPaymentSupplierId(supplier.id);
+                      setPurchaseSupplierId(supplier.id);
+                      setIsCreateMode(false);
+                      setSupplierResult(null);
+                      setActiveSection("directory");
+                    }}
+                  >
                     <div className="list-card__header">
-                      <strong>{item.product_name}</strong>
-                      <button
-                        type="button"
-                        className="secondary-button"
-                        onClick={() =>
-                          setPurchaseItems((current) =>
-                            current.filter((currentItem) => currentItem.product_id !== item.product_id)
-                          )
+                      <strong>{supplier.name}</strong>
+                      <span
+                        className={
+                          supplier.current_balance > 0
+                            ? "status-pill badge badge--warning"
+                            : "status-pill badge badge--neutral"
                         }
                       >
-                        حذف
-                      </button>
+                        {formatCurrency(supplier.current_balance)}
+                      </span>
                     </div>
-
-                    <div className="detail-grid">
-                      <label className="stack-field">
-                        <span>الكمية</span>
-                        <input
-                          type="number"
-                          min={1}
-                          step={1}
-                          value={item.quantity}
-                          onChange={(event) =>
-                            setPurchaseItems((current) =>
-                              current.map((currentItem) =>
-                                currentItem.product_id === item.product_id
-                                  ? {
-                                      ...currentItem,
-                                      quantity: Math.max(1, Number(event.target.value) || 1)
-                                    }
-                                  : currentItem
-                              )
-                            )
-                          }
-                        />
-                      </label>
-
-                      <label className="stack-field">
-                        <span>تكلفة الوحدة</span>
-                        <input
-                          type="number"
-                          min={0}
-                          step={0.001}
-                          value={item.unit_cost}
-                          onChange={(event) =>
-                            setPurchaseItems((current) =>
-                              current.map((currentItem) =>
-                                currentItem.product_id === item.product_id
-                                  ? {
-                                      ...currentItem,
-                                      unit_cost: Math.max(0, Number(event.target.value) || 0)
-                                    }
-                                  : currentItem
-                              )
-                            )
-                          }
-                        />
-                      </label>
+                    <div className="supplier-directory-card__meta">
+                      <span>{supplier.phone ?? "بدون هاتف"}</span>
+                      <span>{supplier.is_active ? "نشط" : "غير نشط"}</span>
+                      <span>{formatDate(supplier.updated_at)}</span>
                     </div>
-
-                    <p className="workspace-footnote">
-                      إجمالي السطر: {formatCurrency(item.quantity * item.unit_cost)}
-                    </p>
-                  </article>
+                  </button>
                 ))
               ) : (
-                <div className="empty-panel">
-                  <p>أضف منتجات إلى أمر الشراء أولًا.</p>
+                <div className="empty-panel suppliers-page__empty">
+                  <Search size={20} />
+                  <h3>لا توجد نتائج مطابقة</h3>
+                  <button
+                    type="button"
+                    className="secondary-button"
+                    onClick={() => {
+                      setSupplierSearch("");
+                      setSupplierFilter("all");
+                    }}
+                  >
+                    مسح التصفية
+                  </button>
                 </div>
               )}
+            </div>
+          </section>
+
+          <section className="workspace-panel suppliers-page__detail suppliers-page__split-secondary">
+            <div className="section-heading">
+              <div>
+                <p className="eyebrow">التفاصيل</p>
+                <h2>{isCreateMode ? "إضافة مورد" : selectedSupplier?.name ?? "اختر موردًا"}</h2>
+              </div>
+            </div>
+
+            {!isCreateMode && selectedSupplier ? (
+              <div className="info-strip">
+                <span>الرصيد الحالي: {formatCurrency(selectedSupplier.current_balance)}</span>
+                <span>الهاتف: {selectedSupplier.phone ?? "غير متوفر"}</span>
+                <span>{selectedSupplier.is_active ? "نشط" : "غير نشط"}</span>
+              </div>
+            ) : null}
+
+            <div className="stack-form">
+              <label className="stack-field">
+                <span>اسم المورد</span>
+                <input
+                  type="text"
+                  maxLength={100}
+                  value={supplierDraft.name}
+                  onChange={(event) => setSupplierDraft((current) => ({ ...current, name: event.target.value }))}
+                  placeholder="اسم المورد"
+                />
+              </label>
+
+              <label className="stack-field">
+                <span>الهاتف</span>
+                <input
+                  type="text"
+                  maxLength={20}
+                  value={supplierDraft.phone}
+                  onChange={(event) => setSupplierDraft((current) => ({ ...current, phone: event.target.value }))}
+                  placeholder="079..."
+                />
+              </label>
+
+              <label className="stack-field">
+                <span>العنوان</span>
+                <textarea
+                  rows={3}
+                  maxLength={1000}
+                  value={supplierDraft.address}
+                  onChange={(event) => setSupplierDraft((current) => ({ ...current, address: event.target.value }))}
+                  placeholder="عنوان المورد"
+                />
+              </label>
+
+              <label className="stack-checkbox">
+                <input
+                  type="checkbox"
+                  checked={supplierDraft.is_active}
+                  onChange={(event) => setSupplierDraft((current) => ({ ...current, is_active: event.target.checked }))}
+                />
+                <span>المورد نشط</span>
+              </label>
+
+              <div className="workspace-toolbar">
+                <button
+                  type="button"
+                  className="primary-button"
+                  disabled={isPending || !supplierDraft.name.trim()}
+                  onClick={() => {
+                    startTransition(() => {
+                      void handleSupplierSubmit();
+                    });
+                  }}
+                >
+                  {isPending ? <Loader2 className="spin" size={16} /> : <Save size={16} />}
+                  {isCreateMode ? "حفظ المورد" : "حفظ التعديلات"}
+                </button>
+
+                {!isCreateMode ? (
+                  <button type="button" className="secondary-button" onClick={startCreateSupplier}>
+                    <Plus size={16} />
+                    نسخة جديدة
+                  </button>
+                ) : null}
+              </div>
+            </div>
+
+            {supplierResult ? (
+              <div className="result-card">
+                <h3>تم حفظ المورد</h3>
+                <p>{supplierResult.name}</p>
+                <p>الرصيد الحالي: {formatCurrency(supplierResult.current_balance)}</p>
+              </div>
+            ) : null}
+          </section>
+        </div>
+      </section>
+
+      <section
+        id="suppliers-panel-purchase"
+        className="suppliers-page__tab-panel"
+        role="tabpanel"
+        aria-labelledby="suppliers-tab-purchase"
+        hidden={activeSection !== "purchase"}
+      >
+        <div className="suppliers-page__split">
+          <section className="workspace-panel suppliers-page__purchase suppliers-page__split-primary">
+            <div className="section-heading">
+              <div>
+                <p className="eyebrow">أمر شراء</p>
+                <h2>أمر شراء جديد</h2>
+              </div>
+            </div>
+
+            <div className="stack-form">
+              <label className="stack-field">
+                <span>المورد</span>
+                <select value={purchaseSupplierId} onChange={(event) => setPurchaseSupplierId(event.target.value)}>
+                  <option value="">بدون مورد</option>
+                  {suppliers.map((supplier) => (
+                    <option key={supplier.id} value={supplier.id}>
+                      {supplier.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="workspace-search">
+                <Search size={18} />
+                <input
+                  type="search"
+                  placeholder="ابحث عن منتج لإضافته"
+                  value={productSearch}
+                  onChange={(event) => setProductSearch(event.target.value)}
+                />
+              </label>
+
+              <div className="stack-list">
+                {filteredProducts.slice(0, 6).map((product) => (
+                  <button
+                    key={product.id}
+                    type="button"
+                    className="list-card list-card--interactive"
+                    onClick={() => addProductToDraft(product)}
+                  >
+                    <div className="list-card__header">
+                      <strong>{product.name}</strong>
+                      <span>{formatCompactNumber(product.stock_quantity)} متاح</span>
+                    </div>
+                    <p>آخر تكلفة: {formatCurrency(product.cost_price)}</p>
+                    <p className="workspace-footnote">المتوسط: {formatCurrency(product.avg_cost_price)}</p>
+                  </button>
+                ))}
+              </div>
+
+              <div className="stack-list">
+                {purchaseItems.length > 0 ? (
+                  purchaseItems.map((item) => (
+                    <article key={item.product_id} className="list-card">
+                      <div className="list-card__header">
+                        <strong>{item.product_name}</strong>
+                        <button
+                          type="button"
+                          className="secondary-button"
+                          onClick={() =>
+                            setPurchaseItems((current) =>
+                              current.filter((currentItem) => currentItem.product_id !== item.product_id)
+                            )
+                          }
+                        >
+                          حذف
+                        </button>
+                      </div>
+
+                      <div className="detail-grid">
+                        <label className="stack-field">
+                          <span>الكمية</span>
+                          <input
+                            type="number"
+                            min={1}
+                            step={1}
+                            value={item.quantity}
+                            onChange={(event) =>
+                              setPurchaseItems((current) =>
+                                current.map((currentItem) =>
+                                  currentItem.product_id === item.product_id
+                                    ? {
+                                        ...currentItem,
+                                        quantity: Math.max(1, Number(event.target.value) || 1)
+                                      }
+                                    : currentItem
+                                )
+                              )
+                            }
+                          />
+                        </label>
+
+                        <label className="stack-field">
+                          <span>تكلفة الوحدة</span>
+                          <input
+                            type="number"
+                            min={0}
+                            step={0.001}
+                            value={item.unit_cost}
+                            onChange={(event) =>
+                              setPurchaseItems((current) =>
+                                current.map((currentItem) =>
+                                  currentItem.product_id === item.product_id
+                                    ? {
+                                        ...currentItem,
+                                        unit_cost: Math.max(0, Number(event.target.value) || 0)
+                                      }
+                                    : currentItem
+                                )
+                              )
+                            }
+                          />
+                        </label>
+                      </div>
+
+                      <p className="workspace-footnote">إجمالي السطر: {formatCurrency(item.quantity * item.unit_cost)}</p>
+                    </article>
+                  ))
+                ) : (
+                  <div className="empty-panel">
+                    <p>أضف منتجات إلى أمر الشراء أولًا.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+
+          <aside className="workspace-panel suppliers-page__purchase-summary suppliers-page__split-secondary">
+            <div className="section-heading">
+              <div>
+                <p className="eyebrow">ملخص الطلب</p>
+                <h2>مراجعة الشراء</h2>
+              </div>
             </div>
 
             <div className="chip-row">
@@ -838,100 +906,26 @@ export function SuppliersWorkspace({
               {isPending ? <Loader2 className="spin" size={16} /> : <ShoppingCart size={16} />}
               تأكيد الشراء
             </button>
-          </div>
 
-          {purchaseResult ? (
-            <div className="result-card">
-              <h3>تم إنشاء أمر الشراء</h3>
-              <p>رقم أمر الشراء: {purchaseResult.purchase_number}</p>
-              <p>الإجمالي: {formatCurrency(purchaseResult.total)}</p>
-            </div>
-          ) : null}
-        </section>
-
-      </div> : null}
-
-      {activeSection === "history" ? <div className="detail-grid">
-        <section className="workspace-panel suppliers-page__history">
-          <div className="section-heading">
-            <div>
-              <p className="eyebrow">آخر المشتريات</p>
-              <h2>آخر أوامر الشراء</h2>
-            </div>
-          </div>
-
-          <div className="stack-list">
-            {purchaseOrders.length > 0 ? (
-              purchaseOrders.map((purchase) => (
-                <article key={purchase.id} className="list-card">
-                  <div className="list-card__header">
-                    <strong>{purchase.purchase_number}</strong>
-                    <span>{purchase.is_paid ? "نقدي" : "على الحساب"}</span>
-                  </div>
-                  <p>المورد: {purchase.supplier_name ?? "بدون مورد"}</p>
-                  <p>الحساب: {purchase.account_name ?? "—"}</p>
-                  <p>الإجمالي: {formatCurrency(purchase.total_amount)}</p>
-                  <p className="workspace-footnote">التاريخ: {formatDate(purchase.purchase_date)}</p>
-                  <div className="stack-list">
-                    {purchase.items.map((item) => (
-                      <div key={item.id} className="list-card">
-                        <div className="list-card__header">
-                          <strong>{item.product_name}</strong>
-                          <span>{formatCurrency(item.total_cost)}</span>
-                        </div>
-                        <p>
-                          {formatCompactNumber(item.quantity)} × {formatCurrency(item.unit_cost)}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </article>
-              ))
-            ) : (
-              <div className="empty-panel suppliers-page__empty">
-                <ShoppingCart size={20} />
-                <h3>لا توجد أوامر شراء</h3>
+            {purchaseResult ? (
+              <div className="result-card">
+                <h3>تم إنشاء أمر الشراء</h3>
+                <p>رقم أمر الشراء: {purchaseResult.purchase_number}</p>
+                <p>الإجمالي: {formatCurrency(purchaseResult.total)}</p>
               </div>
-            )}
-          </div>
-        </section>
+            ) : null}
+          </aside>
+        </div>
+      </section>
 
-        <section className="workspace-panel suppliers-page__history">
-          <div className="section-heading">
-            <div>
-              <p className="eyebrow">آخر التسديدات</p>
-              <h2>آخر تسديدات الموردين</h2>
-            </div>
-          </div>
-
-          <div className="stack-list">
-            {supplierPayments.length > 0 ? (
-              supplierPayments.map((payment) => (
-                <article key={payment.id} className="list-card">
-                  <div className="list-card__header">
-                    <strong>{payment.payment_number}</strong>
-                    <span>{formatCurrency(payment.amount)}</span>
-                  </div>
-                  <p>المورد: {payment.supplier_name}</p>
-                  <p>الحساب: {payment.account_name}</p>
-                  <p className="workspace-footnote">
-                    {formatDate(payment.payment_date)}
-                    {payment.notes ? ` | ${payment.notes}` : ""}
-                  </p>
-                </article>
-              ))
-            ) : (
-              <div className="empty-panel suppliers-page__empty">
-                <Wallet size={20} />
-                <h3>لا توجد تسديدات موردين</h3>
-              </div>
-            )}
-          </div>
-        </section>
-      </div> : null}
-
-      {activeSection === "payment" ? (
-        <div className="detail-grid">
+      <section
+        id="suppliers-panel-payment"
+        className="suppliers-page__tab-panel"
+        role="tabpanel"
+        aria-labelledby="suppliers-tab-payment"
+        hidden={activeSection !== "payment"}
+      >
+        <div className="suppliers-page__payment-shell">
           <section className="workspace-panel suppliers-page__payment">
             <div className="section-heading">
               <div>
@@ -939,6 +933,22 @@ export function SuppliersWorkspace({
                 <h2>تسديد مورد</h2>
               </div>
             </div>
+
+            {paymentSupplier ? (
+              <div className="info-strip suppliers-page__payment-balance">
+                <span>الرصيد المستحق: {formatCurrency(paymentSupplier.current_balance)}</span>
+                {projectedSupplierBalance !== null ? (
+                  <span>بعد التسديد: {formatCurrency(projectedSupplierBalance)}</span>
+                ) : (
+                  <span>أدخل مبلغًا لعرض الرصيد المتوقع.</span>
+                )}
+              </div>
+            ) : (
+              <div className="empty-panel suppliers-page__empty">
+                <Wallet size={20} />
+                <h3>لا يوجد رصيد مستحق حاليًا</h3>
+              </div>
+            )}
 
             <div className="stack-form">
               <label className="stack-field">
@@ -951,18 +961,6 @@ export function SuppliersWorkspace({
                   ))}
                 </select>
               </label>
-
-              {paymentSupplier ? (
-                <div className="info-strip">
-                  <span>الرصيد المستحق: {formatCurrency(paymentSupplier.current_balance)}</span>
-                  {projectedSupplierBalance !== null ? <span>بعد التسديد: {formatCurrency(projectedSupplierBalance)}</span> : null}
-                </div>
-              ) : (
-                <div className="empty-panel suppliers-page__empty">
-                  <Wallet size={20} />
-                  <h3>لا يوجد رصيد مستحق حاليًا</h3>
-                </div>
-              )}
 
               <label className="stack-field">
                 <span>مبلغ التسديد</span>
@@ -1026,7 +1024,126 @@ export function SuppliersWorkspace({
             ) : null}
           </section>
         </div>
-      ) : null}
+      </section>
+
+      <section
+        id="suppliers-panel-history"
+        className="suppliers-page__tab-panel"
+        role="tabpanel"
+        aria-labelledby="suppliers-tab-history"
+        hidden={activeSection !== "history"}
+      >
+        <div className="suppliers-page__history-stack">
+          <section className="suppliers-page__accordion">
+            <button
+              type="button"
+              className={`suppliers-page__accordion-header ${expandedAccordions["purchase-orders"] ? "is-expanded" : ""}`}
+              aria-expanded={expandedAccordions["purchase-orders"]}
+              aria-controls="suppliers-history-purchase-orders"
+              onClick={() => toggleAccordion("purchase-orders")}
+            >
+              <span>أوامر الشراء</span>
+              <ChevronDown
+                size={18}
+                aria-hidden="true"
+                className={expandedAccordions["purchase-orders"] ? "suppliers-page__accordion-icon is-rotated" : "suppliers-page__accordion-icon"}
+              />
+            </button>
+
+            <div
+              id="suppliers-history-purchase-orders"
+              className="suppliers-page__accordion-content"
+              hidden={!expandedAccordions["purchase-orders"]}
+            >
+              <div className="workspace-panel suppliers-page__history">
+                <div className="stack-list">
+                  {purchaseOrders.length > 0 ? (
+                    purchaseOrders.map((purchase) => (
+                      <article key={purchase.id} className="list-card">
+                        <div className="list-card__header">
+                          <strong>{purchase.purchase_number}</strong>
+                          <span>{purchase.is_paid ? "نقدي" : "على الحساب"}</span>
+                        </div>
+                        <p>المورد: {purchase.supplier_name ?? "بدون مورد"}</p>
+                        <p>الحساب: {purchase.account_name ?? "—"}</p>
+                        <p>الإجمالي: {formatCurrency(purchase.total_amount)}</p>
+                        <p className="workspace-footnote">التاريخ: {formatDate(purchase.purchase_date)}</p>
+                        <div className="stack-list">
+                          {purchase.items.map((item) => (
+                            <div key={item.id} className="list-card">
+                              <div className="list-card__header">
+                                <strong>{item.product_name}</strong>
+                                <span>{formatCurrency(item.total_cost)}</span>
+                              </div>
+                              <p>
+                                {formatCompactNumber(item.quantity)} × {formatCurrency(item.unit_cost)}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </article>
+                    ))
+                  ) : (
+                    <div className="empty-panel suppliers-page__empty">
+                      <ShoppingCart size={20} />
+                      <h3>لا توجد أوامر شراء</h3>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="suppliers-page__accordion">
+            <button
+              type="button"
+              className={`suppliers-page__accordion-header ${expandedAccordions["supplier-payments"] ? "is-expanded" : ""}`}
+              aria-expanded={expandedAccordions["supplier-payments"]}
+              aria-controls="suppliers-history-payments"
+              onClick={() => toggleAccordion("supplier-payments")}
+            >
+              <span>التسديدات</span>
+              <ChevronDown
+                size={18}
+                aria-hidden="true"
+                className={expandedAccordions["supplier-payments"] ? "suppliers-page__accordion-icon is-rotated" : "suppliers-page__accordion-icon"}
+              />
+            </button>
+
+            <div
+              id="suppliers-history-payments"
+              className="suppliers-page__accordion-content"
+              hidden={!expandedAccordions["supplier-payments"]}
+            >
+              <div className="workspace-panel suppliers-page__history">
+                <div className="stack-list">
+                  {supplierPayments.length > 0 ? (
+                    supplierPayments.map((payment) => (
+                      <article key={payment.id} className="list-card">
+                        <div className="list-card__header">
+                          <strong>{payment.payment_number}</strong>
+                          <span>{formatCurrency(payment.amount)}</span>
+                        </div>
+                        <p>المورد: {payment.supplier_name}</p>
+                        <p>الحساب: {payment.account_name}</p>
+                        <p className="workspace-footnote">
+                          {formatDate(payment.payment_date)}
+                          {payment.notes ? ` | ${payment.notes}` : ""}
+                        </p>
+                      </article>
+                    ))
+                  ) : (
+                    <div className="empty-panel suppliers-page__empty">
+                      <Wallet size={20} />
+                      <h3>لا توجد تسديدات موردين</h3>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
     </section>
   );
 }

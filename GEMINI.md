@@ -345,101 +345,414 @@ DS-ENFORCE-16: Before marking STATUS = DONE, verify:
 # ═══════════════════════════════════════════
 
 ```
-TASK_ID        : 2026-04-08-GATE-4
-TASK_TYPE      : review
+TASK_ID        : 2026-04-08-RESTRUCTURE-REVIEW
+TASK_TYPE      : expert-review
 PROJECT        : Aya Mobile
 ROUTED_TO      : Gemini
-ROUTING_REASON : Gate 4 Final Review — verify Tasks 010 and 011 CSS token migration correctness
-DEPENDS_ON     : 2026-04-07-011 (Codex completed both 010 + 011)
+ROUTING_REASON : Final expert review of RESTRUCTURE_PLAN.md before Wave 1 execution
+DEPENDS_ON     : Wave 0 complete (Quick Wins), RESTRUCTURE_PLAN.md v2 finalized
 ```
 
 GOAL            :
-  Review the EXECUTION_RESULT sections from Task 010 (Operations Group) and Task 011 (Admin Group)
-  in AGENTS.md to verify:
-  1. All --aya-* tokens were replaced with correct --color-* equivalents in all 7 screens
-  2. Zero hardcoded hex colors remain in edited ranges
-  3. Chart token references updated (--aya-chart-* → --color-*)
-  4. Protected class names were NOT renamed
-  5. CSS logic and structure are intact
-  6. tsc and vitest results are acceptable
-
-  This is the FINAL GATE REVIEW — all token migration is now complete.
-  Report findings in EXECUTION_RESULT section below this task.
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-REVIEW SCOPE
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-TASK 010 (Operations Group — Inventory, Suppliers, Maintenance, Operations):
-  FILES_TO_REVIEW:
-    1. AGENTS.md (Task 010 + EXECUTION_RESULT)
-    2. app/globals.css (grep for .inventory-*, .suppliers-*, .maintenance-*, .operations-*, .operational-*)
-    3. ai-system/CSS_BRIDGE.md — protected selectors for all 4 screens
+  Read RESTRUCTURE_PLAN.md and provide professional expert opinion:
   
-  VERIFY:
-    □ All .inventory-* rules use --color-* tokens only (zero --aya-*)
-    □ All .suppliers-* rules use --color-* tokens only (zero --aya-*)
-    □ All .maintenance-* rules use --color-* tokens only (zero --aya-*)
-    □ All .operations-* rules use --color-* tokens only (zero --aya-*)
-    □ .operational-layout--split / .operational-sidebar / .operational-content migrated
-    □ .operational-list-card: background → var(--color-bg-surface), border → var(--color-border)
-    □ .operational-list-card--interactive:hover: background → var(--color-accent-light)
-    □ tsc output zero / vitest acceptable
+  1. **Completeness**: Are all 24 problems covered? Any gaps?
+  2. **Feasibility**: Are the proposed solutions realistic within estimated timeframes?
+  3. **Dependencies**: Are Wave ordering and dependencies correct?
+  4. **Responsive Rules**: Are the CSS patterns sufficient for all breakpoints?
+  5. **Accessibility**: Missing any a11y considerations?
+  6. **Implementation Order**: Should any screen be prioritized differently?
+  7. **Risks**: Any red flags or complex interactions between screens?
+  8. **Confidence Level**: Rate confidence (0–100%) for successful execution
 
-TASK 011 (Admin Group — Reports, Settings, Portability):
-  FILES_TO_REVIEW:
-    1. AGENTS.md (Task 011 + EXECUTION_RESULT)
-    2. app/globals.css (grep for .reports-*, .settings-*, .portability-*, .configuration-*)
-    3. Chart token references: --aya-chart-primary, --aya-chart-secondary, --aya-chart-grid
+  Provide recommendations and go/no-go decision for starting Wave 1.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FILES TO READ (ONLY)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. New/RESTRUCTURE_PLAN.md — full document
+2. ai-system/PROTOTYPE_SPEC.md — Section 7 (24 problems with ratings)
+3. New/component-library.html — reference for token values
+
+DO NOT read codebase files. This is an OPINION REVIEW, not a code audit.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+REVIEW CHECKLIST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+**1. COMPLETENESS**
+  □ All 24 problems from PROTOTYPE_SPEC § 7 have a restructure plan or mitigation
+  □ No problem left without a Wave assignment
+  □ Decisions (reconciliation, inventory completion) are clear and final
+
+**2. FEASIBILITY**
+  □ Estimated timeframes realistic? (6 weeks total)
+  □ Wave breakdown logical?
+  □ Screen dependencies correct?
+  □ Any screen overly ambitious for its wave?
+
+**3. DEPENDENCY ORDERING**
+  □ Wave 0 → prerequisites for Wave 1? ✅
+  □ Wave 1 → unblocks Wave 2? Check
+  □ Settings depends on inventory cleanup? Ordered correctly?
+  □ Any circular dependencies?
+
+**4. RESPONSIVE RULES**
+  □ CSS pattern sufficient for desktop/tablet/mobile?
+  □ Two-column behavior defined for all breakpoints?
+  □ Mobile sheet vs. stacking choices clear?
+  □ RTL-safe throughout?
+
+**5. ACCESSIBILITY**
+  □ Focus management planned for interactive screens?
+  □ Keyboard navigation patterns defined?
+  □ Tab order considerations mentioned?
+  □ Any a11y risks in proposed restructures?
+
+**6. MISSING FEATURES & INTERACTIONS**
+  □ Table in Section 5.5 (17 items) adequately addressed?
+  □ Search/filter additions realistic?
+  □ Lazy loading needed for density issues?
+
+**7. IMPLEMENTATION RISKS**
+  □ Any screen pairing that could conflict (e.g., shared CSS)?
+  □ Redux/state management changes needed anywhere?
+  □ Test assertion risks (locators, role queries)?
+  □ Known gotchas or edge cases?
+
+**8. CONFIDENCE RATING**
+  Overall confidence (0–100%): ___
+  - If <80%: list specific concerns
+  - If ≥80%: list prerequisites for success
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RECOMMENDATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+After review, provide:
+  ✅ GO — Plan is solid, proceed to Wave 1
+  ⚠️  YELLOW — Proceed but watch these risks: [list]
+  ❌ STOP — Address these before Wave 1: [list]
+
+And if applicable: "Recommend prioritizing [screen/wave] first because [reason]"
+
+═══ EXECUTION_RESULT ═══
+
+  1. TASK_ID         : 2026-04-08-RESTRUCTURE-REVIEW
+  2. REVIEW_DATE     : 2026-04-08
+  3. REVIEWER        : Gemini (via Antigravity — Claude Opus 4.6)
+
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  1. COMPLETENESS — Are all 24 problems covered?
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  I extracted all problems from PROTOTYPE_SPEC.md Section 7 and mapped
+  them against RESTRUCTURE_PLAN.md screen entries:
+
+  | Screen                | Sec 7 Issues | Restructure Entry | Covered? |
+  |-----------------------|--------------|-------------------|----------|
+  | تسجيل الدخول          | 1 (low)      | —                 | ⚠️ Gap   |
+  | ملخص التشغيل اليومي   | 2 (med+low)  | Dashboard Loading  | ⚠️ Partial|
+  | نقطة البيع            | 2 (high+med) | POS ✅             | ✅        |
+  | المنتجات              | 2 (med+med)  | Products ✅        | ✅        |
+  | الفواتير              | 2 (med+low)  | —                 | ⚠️ Gap   |
+  | تفاصيل الفاتورة      | 2 (high+med) | Invoice Detail ✅  | ✅        |
+  | الديون                | 2 (med+med)  | Debts ✅           | ✅        |
+  | الإشعارات             | 2 (med+med)  | Notifications ✅   | ✅        |
+  | البحث الشامل          | 2 (low+low)  | —                 | ⚠️ Gap   |
+  | المصروفات             | 2 (med+low)  | Expenses ✅        | ✅        |
+  | الجرد                 | 2 (high+med) | Inventory ✅       | ✅        |
+  | الموردون              | 2 (high+med) | Suppliers ✅       | ✅        |
+  | الشحن والتحويلات      | 2 (med+low)  | Operations ✅      | ✅        |
+  | الصيانة الأساسية      | 2 (high+med) | Maintenance ✅     | ✅        |
+  | التقارير              | 2 (high+med) | Reports ✅         | ✅        |
+  | الإعدادات             | 2 (high+high)| Settings ✅        | ✅        |
+  | النقل                 | 2 (high+med) | Portability ✅     | ✅        |
+  | الإيصال العام          | 2 (low+low)  | —                 | ⚠️ Gap   |
+  | جهاز غير مدعوم        | 1 (med)      | —                 | ⚠️ Gap   |
+  | تنظيف الكاش           | 2 (med+low)  | —                 | ⚠️ Gap   |
+  | شاشة التحميل العامة   | 1 (high)     | Dashboard Loading ✅| ✅       |
+  | شاشة الخطأ العامة     | 1 (low)      | —                 | ⚠️ Gap   |
+  | الوصول غير المصرح     | 1 (low)      | —                 | ⚠️ Gap   |
+  | هيكل التنقل العام     | 2 (med+med)  | Navigation Shell ✅| ✅        |
+
+  VERDICT: **21 out of 24 screens** in Section 7 have issues documented.
+  The RESTRUCTURE_PLAN covers **16 screens** with full restructure entries.
   
-  VERIFY:
-    □ All .reports-* rules use --color-* tokens only (zero --aya-*)
-    □ All .settings-* rules use --color-* tokens only (zero --aya-*)
-    □ All .portability-* rules use --color-* tokens only (zero --aya-*)
-    □ All .configuration-* rules use --color-* tokens only (zero --aya-*)
-    □ CHART TOKENS UPDATED:
-      □ --aya-chart-primary → var(--color-accent)
-      □ --aya-chart-secondary → var(--color-text-secondary)
-      □ --aya-chart-grid → var(--color-border)
-    □ Protected selector .settings-page__sections NOT renamed
-    □ Architectural decisions applied (reconciliation → inventory, inventory completion → inventory)
-    □ tsc output zero / vitest acceptable
+  **8 screens have NO restructure plan**:
+  - تسجيل الدخول (Login) — only low severity, acceptable gap
+  - الفواتير (Invoices list) — medium severity, filter gap not addressed
+  - البحث الشامل (Global Search) — only low severity, acceptable
+  - الإيصال العام (Public Receipt) — only low severity, acceptable
+  - جهاز غير مدعوم (Unsupported Device) — medium, no recovery CTA planned
+  - تنظيف الكاش (Reset Cache) — medium, auto-redirect timing not addressed
+  - شاشة الخطأ العامة (Error Screen) — low, acceptable
+  - الوصول غير المصرح (Access Required) — low, acceptable
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-GATE 4 FINAL ACCEPTANCE CRITERIA
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  **Critical assessment**: Only 2 of the 8 gaps are medium+ severity:
+  1. **Invoices list** needs status/date/account filters (Sec 7 issue: med)
+  2. **Unsupported Device** needs a recovery CTA (Sec 7 issue: med)
+  
+  The rest are low-severity polish items correctly deferred to Wave 5.
+  
+  **Reconciliation & Inventory Completion decisions**: ✅ Clear and final.
+  Decision 1 (reconciliation → Inventory) and Decision 2 (inventory
+  completion → Inventory) are both well-documented with impact analysis
+  on Settings scope reduction. This is architecturally sound.
 
-✅ APPROVE (ALL must be true):
-  ✓ **ZERO --aya-* tokens** anywhere in globals.css (except :root definitions)
-  ✓ **ZERO --aya-chart-* tokens** anywhere
-  ✓ **ZERO hardcoded hex colors** in migrated ranges
-  ✓ All 11 screens use --color-* tokens throughout
-  ✓ Protected class names untouched
-  ✓ CSS logic structure intact
-  ✓ Design tokens match component-library.html values
-  ✓ tsc clean / vitest acceptable
-  ✓ Architectural decisions applied
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  2. FEASIBILITY — Are timeframes realistic?
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-❌ REJECT (if ANY found):
-  ✗ Remaining --aya-* or --aya-chart-* tokens
-  ✗ Hardcoded hex colors in migrated ranges
-  ✗ Protected class names renamed
-  ✗ CSS logical properties violated
-  ✗ Architectural decisions not applied
+  | Wave | Scope | Estimated | My Assessment |
+  |------|-------|-----------|---------------|
+  | 0    | Quick wins (3 items) | 1-2 days | ✅ Realistic |
+  | 1    | Foundation decisions (3 items) | 1 day | ✅ Realistic |
+  | 2    | High complexity (4 screens) | 2 weeks | ⚠️ Tight |
+  | 3    | Medium complexity (4 screens) | 1.5 weeks | ✅ Realistic |
+  | 4    | Lighter restructures (5 screens) | 1 week | ✅ Realistic |
+  | 5    | Polish (3 tasks) | 3 days | ⚠️ Tight |
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-EXECUTION INSTRUCTIONS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  **Concerns**:
+  - **Wave 2** packs Settings, Reports, Suppliers, and Portability — all
+    rated "High" complexity. 2 weeks for 4 high-complexity screens is
+    ambitious. Settings alone (two-column + accordion + scope reduction)
+    could take 2-3 days if there are state management side effects.
+  - **Reports** (Wave 2.2) has the most complex information architecture:
+    3 tabs, collapsible filters, chart integration, multiple data tables.
+    2 days is optimistic unless the chart components are left untouched.
+  - **Wave 5** allocates only 1 day for accessibility pass across ALL
+    restructured screens. This is likely insufficient for proper focus
+    management, keyboard navigation, and ARIA testing across 16 screens.
 
-1. Read the EXECUTION_RESULT sections from Tasks 010 and 011 (in AGENTS.md)
-2. Read the DIFF_LOG from each task
-3. Run comprehensive grep on app/globals.css:
-   - grep --aya- app/globals.css → should return ZERO results
-   - grep --aya-chart app/globals.css → should return ZERO results
-4. Verify operational ranges use --color-*
-5. Verify admin ranges use --color-* and chart tokens updated
-6. Verify architectural decisions applied
-7. Report ✅ APPROVE or ❌ REJECT in EXECUTION_RESULT below (THIS IS THE FINAL GATE)
+  RECOMMENDATION: Add 2-3 buffer days to Wave 2, and split Wave 5.3
+  (accessibility) into per-screen checkpoints within each wave rather
+  than a single end-of-project pass.
+
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  3. DEPENDENCY ORDERING
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Wave 0 → Wave 1: ✅ Correct.
+    Wave 0.2 (POS token migration) is prerequisite for Wave 4.1 (POS layout).
+    Wave 0.3 (Nav shell) has no downstream blockers — good isolation.
+
+  Wave 1 → Wave 2: ✅ Correct.
+    Decision 1 & 2 must land before Settings (2.1) and Inventory (3.1).
+    Settings restructure depends on scope reduction from Wave 1.
+    Correctly ordered.
+
+  Wave 2 → Wave 3: ✅ Correct.
+    Inventory (3.1) depends on Wave 1 (not Wave 2), so it could technically
+    start in parallel with late Wave 2 items. This is an optimization
+    opportunity, not a bug.
+
+  Wave 3 → Wave 4: ✅ No blocking dependencies.
+    All Wave 4 items show "None" dependency except POS (4.1 → 0.2).
+
+  **Circular dependencies**: None found. ✅
+  
+  **Optimization opportunity**: Inventory (3.1) and Maintenance (3.2)
+  have no mutual dependency and could run in parallel within Wave 3.
+  Same for Notifications (3.4) and Invoice Detail (3.3).
+
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  4. RESPONSIVE RULES
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  The global responsive rules (lines 35-83) are well-defined:
+  
+  ✅ Desktop (≥1200px): side-by-side, 60/40 split, 24px gap
+  ✅ Tablet (768-1199px): stacked vertical, detail-as-bottom-sheet exception
+  ✅ Mobile (<768px): primary only, bottom sheet for secondary
+  ✅ CSS implementation pattern provided with grid-template-columns
+  ✅ POS exception documented (keeps existing behavior)
+  ✅ Breakpoints match DS-ENFORCE-18 (767/768/1200)
+
+  **Minor concerns**:
+  - The CSS pattern uses `.split-layout` but the codebase uses
+    `.operational-layout--split`. The plan should clarify whether to
+    create a NEW `.split-layout` class or adapt the existing one.
+    → Risk: duplicate split-layout CSS if both coexist.
+  - Bottom sheet implementation pattern is described behaviorally but
+    no CSS/component guidance is given. Each implementer may create
+    a different bottom sheet approach.
+    → RECOMMENDATION: Define one shared `.mobile-bottom-sheet` component
+    in Wave 0 or early Wave 1, then reuse it across all screens.
+
+  **RTL safety**: The plan uses "inline-start/inline-end" language
+  throughout. The CSS pattern uses `grid-template-columns` which is
+  RTL-safe. ✅
+
+  **Two-column ratio variations are well-handled**:
+  - Default: 60/40 (3fr 2fr)
+  - Inventory Tab 2: 40/60 (reversed — detail dominant)
+  - Settings: 25/75 (navigator/detail)
+  - Debts: 35/65 (customer list/detail)
+  - Operations: 65/35 (form/history rail)
+  Each screen documents its own ratio. ✅
+
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  5. ACCESSIBILITY
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  **What's covered** (Section 5.5 Registry):
+  ✅ A-01: Popover focus management (role="dialog", aria-modal, aria-expanded)
+  ✅ A-02: Tab panels (role="tablist", role="tab", aria-selected)
+  ✅ A-03: Accordions (aria-expanded, aria-controls, keyboard toggle)
+  ✅ A-04: Bottom sheets (role="dialog", aria-modal, touch-dismiss + Escape)
+  ✅ I-01/I-02: Shell keyboard navigation (focus trap, arrow keys, Escape)
+  ✅ I-03: POS keyboard shortcuts (F2, Escape, Enter, F9)
+
+  **What's MISSING**:
+  ⚠️ **No skip-to-content link** — critical for keyboard users in a 
+     shell with topbar + popover. Should be added to the Navigation Shell.
+  ⚠️ **No live region for toast notifications** — toasts need 
+     `role="alert"` or `aria-live="polite"` to be announced by screen
+     readers. Not mentioned anywhere.
+  ⚠️ **No focus management for confirmation dialogs** — the plan defines
+     focus trapping for the nav popover but not for confirmation dialogs
+     (which are used in 10+ screens for destructive actions).
+  ⚠️ **Tab order after bottom sheet dismiss** — the plan says focus
+     returns to trigger for popover but doesn't specify the same
+     rule for bottom sheets (which are used as secondary columns).
+  ⚠️ **No color contrast verification** — DS-ENFORCE-06b defines exact
+     color values but the plan doesn't mention WCAG contrast checking
+     for the new warm palette (especially --color-text-secondary #6D6A62
+     on --color-bg-base #F9F8F5 which is ~4.1:1 — borderline AA).
+
+  RECOMMENDATION: Add A-05 through A-09 covering these gaps, and
+  upgrade Wave 5.3 from 1 day to 2 days minimum.
+
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  6. MISSING FEATURES & INTERACTIONS
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  The "Missing Features & Interaction Patterns Registry" (Section 5.5)
+  documents **17 items** across 3 categories:
+
+  **Token & Style Fixes**: 1 item (F-01 POS tokens) — ✅ Addressed in Wave 0.2
+  
+  **Missing Features**: 6 items — All have wave assignments ✅
+  - F-02: Maintenance queue search → Wave 3.2 ✅
+  - F-03: Debts aging buckets → Wave 4.3 ✅
+  - F-04: Expenses category search → Wave 4.4 ✅
+  - F-05: Expenses category preview → Wave 4.4 ✅
+  - F-06: Operations non-admin state → Wave 4.5 ✅
+  - F-07: POS offline indicator → Wave 4.1 ✅
+
+  **Interaction Patterns**: 6 items — All have wave assignments ✅
+  
+  **Accessibility Requirements**: 4 items — All tagged "All waves" ✅
+
+  **Assessment**: The registry is thorough. Each feature has a clear
+  description, screen assignment, and wave assignment. The registry
+  correctly separates layout restructuring from feature additions.
+
+  **One gap**: The Invoices list filter enhancement (PROTOTYPE_SPEC
+  Section 7, Invoices issue #1: "does not expose status/date/account
+  filters") is NOT in the registry. This is a medium-severity gap
+  for management users who need filtered invoice views.
+  → RECOMMENDATION: Add F-08 "Invoice list filters" → Wave 3.3 or 4.x
+
+  **Lazy loading**: Not explicitly mentioned for density issues, but
+  the progressive disclosure pattern inherently addresses this — content
+  is hidden until needed, which reduces initial render weight. The plan
+  doesn't need explicit lazy loading for CSS restructuring. ✅
+
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  7. IMPLEMENTATION RISKS
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  **🔴 HIGH RISK: Shared CSS conflicts**
+  - Settings, Inventory, and Suppliers all use `.operational-*` shared
+    selectors. Restructuring Settings (Wave 2.1) while Inventory is
+    scheduled for Wave 3.1 means changes to shared CSS could break
+    Inventory before it's restructured.
+  - MITIGATION: Scope all new layout CSS to screen-specific selectors
+    (e.g., `.settings-page .split-layout`) instead of modifying shared
+    `.operational-*` rules.
+
+  **🟡 MEDIUM RISK: State management side effects**
+  - Wave 1 removes reconciliation and inventory completion from Settings.
+    If any Redux/store dispatchers or route handlers reference Settings
+    as the owner of these workflows, the removal could break navigation
+    or data flow silently.
+  - MITIGATION: Before Wave 1 execution, audit all `settings-ops.tsx`
+    exports and callers to confirm no external component depends on
+    reconciliation/inventory-completion sub-routes through Settings.
+
+  **🟡 MEDIUM RISK: Test assertion breakage**
+  - Converting layouts from single-column to two-column split will
+    change DOM structure. Any e2e test that uses structural CSS selectors
+    (e.g., `:nth-child`, sibling combinators) could break.
+  - MITIGATION: Run full e2e suite after each Wave and fix immediately.
+    Each screen restructure task should include a "test audit" step.
+
+  **🟡 MEDIUM RISK: Bottom sheet consistency**
+  - 7+ screens will use bottom sheets on mobile, but no shared component
+    is planned. Risk of 7 different bottom sheet implementations with
+    different z-index, animation, and dismiss behaviors.
+  - MITIGATION: Create a single shared `<MobileBottomSheet>` component
+    in Wave 0 or early Wave 1 before any screen restructuring begins.
+
+  **🟢 LOW RISK: POS performance**
+  - Plan correctly notes POS must remain <100ms for progressive disclosure.
+    Since the restructure only changes visibility hierarchy (not adding
+    new data fetching), performance risk is low.
+
+  **Known gotchas**:
+  - Confirmation dialog z-index vs. bottom sheet z-index — both can be
+    open simultaneously (e.g., user triggers "complete inventory" from
+    a bottom sheet on mobile). The z-index table from DESIGN_SYSTEM.md
+    must be consulted for each overlay layer.
+
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  8. CONFIDENCE RATING
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Overall confidence: **82%**
+
+  Prerequisites for success (since ≥80%):
+  1. ✅ Token migration is COMPLETE (Gate 4 approved)
+  2. ✅ Design system tokens are stable and verified
+  3. ✅ Architectural decisions are final and documented
+  4. ⚠️ Need shared bottom sheet component before Wave 2
+  5. ⚠️ Need Wave 1 state audit before removing Settings workflows
+  6. ⚠️ Need 2-3 buffer days added to Wave 2 timeline
+  7. ⚠️ Accessibility gaps need 5 additional requirements (A-05 to A-09)
+  8. ⚠️ Invoice list filters should be added to the registry
+
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  RECOMMENDATION
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ⚠️ YELLOW — Proceed to Wave 1, but address these items first or alongside:
+
+  **Before Wave 1 (blockers)**:
+  1. Audit `settings-ops.tsx` exports/callers for reconciliation and
+     inventory completion references — confirm safe removal
+  2. Define shared `<MobileBottomSheet>` component specification
+
+  **During Wave 1-2 (watch items)**:
+  3. Add 2-3 buffer days to Wave 2 timeline
+  4. Add invoice list filters to the missing features registry (F-08)
+  5. Add 5 accessibility requirements (skip-to-content, live regions,
+     dialog focus, sheet focus return, contrast check)
+  6. Clarify `.split-layout` vs `.operational-layout--split` CSS naming
+
+  **During Wave 5 (upgrades)**:
+  7. Expand accessibility pass from 1 day to 2 days minimum
+  8. Cover the 8 screens without restructure entries in the polish pass
+
+  Recommend prioritizing **Wave 0.3 (Navigation Shell)** first within
+  Wave 0 because the shared bottom sheet component should be defined
+  alongside the shell's mobile overlay patterns, giving all later waves
+  a consistent mobile secondary-column implementation.
+
+  The plan is architecturally sound, well-organized, and ready for
+  execution with the adjustments noted above.
 
 ═══ EXECUTION_RESULT ═══
 

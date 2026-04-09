@@ -656,16 +656,18 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
           ) : null}
 
           {isLoading ? (
-            <div className="product-grid" aria-label="جارٍ تحميل المنتجات">
-              {Array.from({ length: 6 }).map((_, index) => (
-                <article key={`product-skeleton-${index}`} className="product-card product-card--skeleton">
-                  <div className="skeleton-line skeleton-line--sm" />
-                  <div className="skeleton-line skeleton-line--lg" />
-                  <div className="skeleton-line" />
-                  <div className="skeleton-line" />
-                </article>
-              ))}
-            </div>
+            <SectionCard title="المنتجات" className="catalog-page__results">
+              <div className="product-grid" aria-label="جارٍ تحميل المنتجات">
+                {Array.from({ length: 6 }).map((_, index) => (
+                  <article key={`product-skeleton-${index}`} className="product-card product-card--skeleton">
+                    <div className="skeleton-line skeleton-line--sm" />
+                    <div className="skeleton-line skeleton-line--lg" />
+                    <div className="skeleton-line" />
+                    <div className="skeleton-line" />
+                  </article>
+                ))}
+              </div>
+            </SectionCard>
           ) : errorMessage ? (
             <StatusBanner
               variant="danger"

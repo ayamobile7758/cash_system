@@ -1,7 +1,7 @@
-﻿"use client";
+"use client";
 
-import { useMemo, useState, useTransition } from "react";
-import { AlertTriangle, Download, Loader2, ShieldCheck, Upload } from "lucide-react";
+import { useEffect, useMemo, useRef, useState, useTransition, type KeyboardEvent } from "react";
+import { AlertTriangle, ChevronDown, Download, Loader2, ShieldCheck, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
@@ -54,11 +54,18 @@ type RevokeResponse = {
 type RetryAction = "create-export" | "dry-run-import" | "commit-import" | "restore-drill" | "revoke-package" | null;
 type ConfirmAction =
   | { type: "commit-import"; jobId: string }
-  | { type: "restore-drill" }
   | { type: "revoke-package"; packageId: string }
   | null;
-
 type PortabilitySection = "export" | "import" | "restore" | "history";
+type PortabilityHistoryAccordion = "packages" | "operations";
+type PortabilityAccordionState = Record<PortabilityHistoryAccordion, boolean>;
+
+const PORTABILITY_TABS = [
+  { key: "export", label: "إنشاء الحزم" },
+  { key: "import", label: "فحص الاستيراد" },
+  { key: "restore", label: "الاستعادة التجريبية" },
+  { key: "history", label: "السجل الأخير" }
+] as const satisfies ReadonlyArray<{ key: PortabilitySection; label: string }>;
 
 function getApiMessage<T>(envelope: StandardEnvelope<T>) {
   return envelope.error?.message ?? "تعذرت العملية.";
@@ -89,6 +96,16 @@ function getStatusLabel(status: string) {
   }
 }
 
+function createAccordionState(
+  overrides: Partial<PortabilityAccordionState> = {}
+): PortabilityAccordionState {
+  return {
+    packages: true,
+    operations: true,
+    ...overrides
+  };
+}
+
 export function PortabilityWorkspace({
   packages,
   importJobs,
@@ -103,18 +120,38 @@ export function PortabilityWorkspace({
   const [toDate, setToDate] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [dryRunResult, setDryRunResult] = useState<ImportResponse | null>(null);
+  const [lastImport, setLastImport] = useState<ImportResponse | null>(null);
   const [selectedBackupId, setSelectedBackupId] = useState("");
+  const [restoreAcknowledged, setRestoreAcknowledged] = useState(false);
+  const [showRestoreConfirmation, setShowRestoreConfirmation] = useState(false);
   const [lastExport, setLastExport] = useState<ExportResponse | null>(null);
   const [lastRestore, setLastRestore] = useState<RestoreResponse | null>(null);
   const [actionErrorMessage, setActionErrorMessage] = useState<string | null>(null);
   const [retryAction, setRetryAction] = useState<RetryAction>(null);
   const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
   const [activeSection, setActiveSection] = useState<PortabilitySection>("export");
+  const [expandedAccordions, setExpandedAccordions] = useState<PortabilityAccordionState>(() => createAccordionState());
+  const tabRefs = useRef<Record<PortabilitySection, HTMLButtonElement | null>>({
+    export: null,
+    import: null,
+    restore: null,
+    history: null
+  });
 
   const backupPackages = useMemo(
     () => packages.filter((item) => item.scope === "backup" && item.status === "ready" && !item.is_expired),
     [packages]
   );
+
+  useEffect(() => {
+    setShowRestoreConfirmation(false);
+  }, [selectedBackupId]);
+
+  useEffect(() => {
+    if (!restoreAcknowledged) {
+      setShowRestoreConfirmation(false);
+    }
+  }, [restoreAcknowledged]);
 
   function clearActionFeedback() {
     setActionErrorMessage(null);
@@ -188,6 +225,7 @@ export function PortabilityWorkspace({
     }
 
     clearActionFeedback();
+    setLastImport(null);
     const sourceContent = await selectedFile.text();
     const lowerName = selectedFile.name.toLowerCase();
     const sourceFormat = lowerName.endsWith(".json") ? "json" : "csv";
@@ -239,6 +277,7 @@ export function PortabilityWorkspace({
         }
 
         setDryRunResult(envelope.data);
+        setLastImport(envelope.data);
         setConfirmAction(null);
         setRetryAction(null);
         toast.success("تم استيراد المنتجات المعتمدة بنجاح.");
@@ -273,7 +312,7 @@ export function PortabilityWorkspace({
         }
 
         setLastRestore(envelope.data);
-        setConfirmAction(null);
+        setShowRestoreConfirmation(false);
         setRetryAction(null);
         toast.success("تم تشغيل الاستعادة التجريبية.");
         router.refresh();
@@ -307,8 +346,69 @@ export function PortabilityWorkspace({
     }
   }
 
+  function handleTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, currentSection: PortabilitySection) {
+    const currentIndex = PORTABILITY_TABS.findIndex((tab) => tab.key === currentSection);
+    if (currentIndex === -1) {
+      return;
+    }
+
+    const focusSection = (index: number) => {
+      const nextSection = PORTABILITY_TABS[index]?.key;
+      if (nextSection) {
+        tabRefs.current[nextSection]?.focus();
+      }
+    };
+
+    switch (event.key) {
+      case "ArrowRight":
+      case "ArrowDown":
+        event.preventDefault();
+        focusSection((currentIndex + 1) % PORTABILITY_TABS.length);
+        break;
+      case "ArrowLeft":
+      case "ArrowUp":
+        event.preventDefault();
+        focusSection((currentIndex - 1 + PORTABILITY_TABS.length) % PORTABILITY_TABS.length);
+        break;
+      case "Home":
+        event.preventDefault();
+        focusSection(0);
+        break;
+      case "End":
+        event.preventDefault();
+        focusSection(PORTABILITY_TABS.length - 1);
+        break;
+      case "Enter":
+      case " ":
+        event.preventDefault();
+        setActiveSection(currentSection);
+        break;
+      default:
+        break;
+    }
+  }
+
+  function toggleAccordion(accordion: PortabilityHistoryAccordion) {
+    setExpandedAccordions((current) => ({ ...current, [accordion]: !current[accordion] }));
+  }
+
+  const importCanCommit = Boolean(
+    dryRunResult && dryRunResult.mode === "dry_run" && dryRunResult.rows_valid > 0 && dryRunResult.rows_invalid === 0
+  );
+  const importReviewMessage = dryRunResult
+    ? dryRunResult.mode === "commit"
+      ? "تم اعتماد الصفوف السليمة في هذه الجلسة."
+      : dryRunResult.rows_valid === 0
+        ? "لا يمكن المتابعة قبل توفر صفوف سليمة."
+        : "يجب معالجة الصفوف غير السليمة قبل إظهار زر الاعتماد."
+    : null;
+  const selectedBackup =
+    backupPackages.find((item) => item.id === selectedBackupId) ??
+    packages.find((item) => item.id === selectedBackupId) ??
+    null;
+
   return (
-    <section className="workspace-stack configuration-page">
+    <section className="workspace-stack configuration-page portability-page">
       <PageHeader
         title="مركز النقل والاستيراد والاستعادة التجريبية"
         meta={
@@ -331,35 +431,25 @@ export function PortabilityWorkspace({
         }
       />
 
-      <nav className="configuration-section-nav" aria-label="أقسام شاشة النقل والنسخ">
-        <button
-          type="button"
-          className={activeSection === "export" ? "chip-button is-selected" : "chip-button"}
-          onClick={() => setActiveSection("export")}
-        >
-          إنشاء الحزم
-        </button>
-        <button
-          type="button"
-          className={activeSection === "import" ? "chip-button is-selected" : "chip-button"}
-          onClick={() => setActiveSection("import")}
-        >
-          فحص الاستيراد
-        </button>
-        <button
-          type="button"
-          className={activeSection === "restore" ? "chip-button is-selected" : "chip-button"}
-          onClick={() => setActiveSection("restore")}
-        >
-          الاستعادة التجريبية
-        </button>
-        <button
-          type="button"
-          className={activeSection === "history" ? "chip-button is-selected" : "chip-button"}
-          onClick={() => setActiveSection("history")}
-        >
-          السجل الأخير
-        </button>
+      <nav className="configuration-section-nav portability-page__sections portability-page__tabs" role="tablist" aria-label="أقسام شاشة النقل والنسخ">
+        {PORTABILITY_TABS.map((tab) => (
+          <button
+            key={tab.key}
+            ref={(node) => {
+              tabRefs.current[tab.key] = node;
+            }}
+            type="button"
+            role="tab"
+            id={`portability-tab-${tab.key}`}
+            aria-selected={activeSection === tab.key}
+            aria-controls={`portability-panel-${tab.key}`}
+            className={`portability-page__tab ${activeSection === tab.key ? "is-active chip-button is-selected" : "chip-button"}`}
+            onClick={() => setActiveSection(tab.key)}
+            onKeyDown={(event) => handleTabKeyDown(event, tab.key)}
+          >
+            {tab.label}
+          </button>
+        ))}
       </nav>
 
       {isPending ? (
@@ -390,288 +480,437 @@ export function PortabilityWorkspace({
         <p className="configuration-inline-note">الاستعادة المباشرة غير متاحة من هذه الشاشة.</p>
       </SectionCard>
 
-      {activeSection === "export" ? (
-        <div className="configuration-shell configuration-shell--split">
-          <SectionCard
-            eyebrow="التصدير"
-            title="أنشئ الحزمة المناسبة للنطاق"
-            tone="accent"
-            className="configuration-card"
-          >
-            <div className="stack-form">
-              <label className="stack-field">
-                <span>النطاق</span>
-                <select value={scope} onChange={(event) => setScope(event.target.value as typeof scope)}>
-                  <option value="products">المنتجات</option>
-                  <option value="reports">التقارير</option>
-                  <option value="customers">العملاء</option>
-                  <option value="backup">نسخة احتياطية</option>
-                </select>
-              </label>
+      <section
+        id="portability-panel-export"
+        className="portability-page__tab-panel"
+        role="tabpanel"
+        aria-labelledby="portability-tab-export"
+        hidden={activeSection !== "export"}
+      >
+        <div className="portability-page__step-stack">
+          <div className="portability-page__step">
+            <SectionCard
+              eyebrow="التصدير"
+              title="أنشئ الحزمة المناسبة للنطاق"
+              tone="accent"
+              className="configuration-card"
+            >
+              <div className="stack-form">
+                <label className="stack-field">
+                  <span>النطاق</span>
+                  <select value={scope} onChange={(event) => setScope(event.target.value as typeof scope)}>
+                    <option value="products">المنتجات</option>
+                    <option value="reports">التقارير</option>
+                    <option value="customers">العملاء</option>
+                    <option value="backup">نسخة احتياطية</option>
+                  </select>
+                </label>
 
-              <label className="stack-field">
-                <span>النوع</span>
-                <select
-                  value={scope === "backup" ? "json" : packageType}
-                  onChange={(event) => setPackageType(event.target.value as typeof packageType)}
-                  disabled={scope === "backup"}
-                >
-                  <option value="json">JSON</option>
-                  <option value="csv">CSV</option>
-                </select>
-              </label>
+                <label className="stack-field">
+                  <span>النوع</span>
+                  <select
+                    value={scope === "backup" ? "json" : packageType}
+                    onChange={(event) => setPackageType(event.target.value as typeof packageType)}
+                    disabled={scope === "backup"}
+                  >
+                    <option value="json">JSON</option>
+                    <option value="csv">CSV</option>
+                  </select>
+                </label>
 
-              <label className="stack-field">
-                <span>
+                <label className="stack-checkbox portability-page__checkbox">
                   <input
                     type="checkbox"
                     checked={activeOnly}
                     onChange={(event) => setActiveOnly(event.target.checked)}
-                  />{" "}
-                  العناصر النشطة فقط
-                </span>
-              </label>
+                  />
+                  <span>العناصر النشطة فقط</span>
+                </label>
 
-              {scope === "reports" ? (
-                <>
-                  <label className="stack-field">
-                    <span>من تاريخ</span>
-                    <input type="date" value={fromDate} onChange={(event) => setFromDate(event.target.value)} />
-                  </label>
-                  <label className="stack-field">
-                    <span>إلى تاريخ</span>
-                    <input type="date" value={toDate} onChange={(event) => setToDate(event.target.value)} />
-                  </label>
-                </>
-              ) : null}
+                {scope === "reports" ? (
+                  <div className="portability-page__date-grid">
+                    <label className="stack-field">
+                      <span>من تاريخ</span>
+                      <input type="date" value={fromDate} onChange={(event) => setFromDate(event.target.value)} />
+                    </label>
+                    <label className="stack-field">
+                      <span>إلى تاريخ</span>
+                      <input type="date" value={toDate} onChange={(event) => setToDate(event.target.value)} />
+                    </label>
+                  </div>
+                ) : null}
 
-              <button type="button" className="primary-button" disabled={isPending} onClick={handleCreateExport}>
-                {isPending ? <Loader2 className="spin" size={16} /> : "إنشاء الحزمة"}
-              </button>
+                <div className="portability-page__step-actions">
+                  <button type="button" className="primary-button" disabled={isPending} onClick={handleCreateExport}>
+                    {isPending ? <Loader2 className="spin" size={16} /> : <Download size={16} />}
+                    إنشاء الحزمة
+                  </button>
+                </div>
+              </div>
+            </SectionCard>
+          </div>
+
+          {lastExport ? (
+            <div className="portability-page__step">
+              <SectionCard eyebrow="آخر نتيجة" title="آخر حزمة تم إنشاؤها" className="configuration-card">
+                <div className="result-card">
+                  <h3>الحزمة جاهزة</h3>
+                  <p>تنتهي الصلاحية: {formatDate(lastExport.expires_at)}</p>
+                  <div className="inline-actions">
+                    <a className="secondary-button" href={lastExport.download_url}>
+                      تنزيل آخر حزمة
+                    </a>
+                  </div>
+                </div>
+              </SectionCard>
             </div>
-          </SectionCard>
-
-          <SectionCard
-            eyebrow="آخر نتيجة"
-            title="آخر نتيجة الفحص"
-            className="configuration-card"
-          >
-            {lastExport ? (
-              <div className="result-card">
-                <h3>آخر حزمة</h3>
-                <p>الحزمة جاهزة للتنزيل من قائمة الحزم الأخيرة.</p>
-                <p>تنتهي الصلاحية: {formatDate(lastExport.expires_at)}</p>
-              </div>
-            ) : (
-              <div className="empty-panel">
-                <p>لا توجد حزمة محفوظة في هذه الجلسة.</p>
-              </div>
-            )}
-          </SectionCard>
+          ) : null}
         </div>
-      ) : null}
+      </section>
 
-      {activeSection === "import" ? (
-        <div className="configuration-shell configuration-shell--split">
-          <SectionCard
-            eyebrow="الاستيراد"
-            title="افحص الملف أولًا ثم اعتمد الصفوف السليمة"
-            tone="accent"
-            className="configuration-card"
-          >
-            <div className="stack-form">
-              <label className="stack-field">
-                <span>ملف JSON أو CSV</span>
-                <input
-                  type="file"
-                  accept=".json,.csv,text/csv,application/json"
-                  onChange={(event) => setSelectedFile(event.target.files?.[0] ?? null)}
-                />
-              </label>
+      <section
+        id="portability-panel-import"
+        className="portability-page__tab-panel"
+        role="tabpanel"
+        aria-labelledby="portability-tab-import"
+        hidden={activeSection !== "import"}
+      >
+        <div className="portability-page__step-stack">
+          <div className="portability-page__step">
+            <SectionCard
+              eyebrow="الاستيراد"
+              title="افحص الملف أولًا ثم اعتمد الصفوف السليمة"
+              tone="accent"
+              className="configuration-card"
+            >
+              <div className="stack-form">
+                <label className="stack-field">
+                  <span>ملف JSON أو CSV</span>
+                  <input
+                    type="file"
+                    accept=".json,.csv,text/csv,application/json"
+                    onChange={(event) => {
+                      setSelectedFile(event.target.files?.[0] ?? null);
+                      setDryRunResult(null);
+                      setLastImport(null);
+                    }}
+                  />
+                </label>
 
-              <button
-                type="button"
-                className="primary-button"
-                disabled={isPending || !selectedFile}
-                onClick={() => void handleDryRunImport()}
-              >
-                {isPending ? <Loader2 className="spin" size={16} /> : "تشغيل الفحص الأولي"}
-              </button>
+                <div className="portability-page__step-actions">
+                  <button
+                    type="button"
+                    className="primary-button"
+                    disabled={isPending || !selectedFile}
+                    onClick={() => void handleDryRunImport()}
+                  >
+                    {isPending ? <Loader2 className="spin" size={16} /> : <Upload size={16} />}
+                    تشغيل الفحص الأولي
+                  </button>
+                </div>
+              </div>
+            </SectionCard>
+          </div>
+
+          {dryRunResult ? (
+            <div className="portability-page__step">
+              <SectionCard eyebrow="مراجعة الفحص" title="نتيجة الفحص الأولي" className="configuration-card">
+                <div className="result-card portability-page__review">
+                  <h3>ملخص الصفوف</h3>
+                  <p>إجمالي الصفوف: {formatCompactNumber(dryRunResult.rows_total)}</p>
+                  <p>الصفوف السليمة: {formatCompactNumber(dryRunResult.rows_valid)}</p>
+                  <p>الصفوف غير السليمة: {formatCompactNumber(dryRunResult.rows_invalid)}</p>
+                  {dryRunResult.validation_errors && dryRunResult.validation_errors.length > 0 ? (
+                    <div className="portability-page__validation-errors">
+                      <h4>الأخطاء</h4>
+                      <div className="stack-list">
+                        {dryRunResult.validation_errors.slice(0, 6).map((error) => (
+                          <article key={`${error.row_number}-${error.field}-${error.message}`} className="list-card">
+                            <div className="list-card__header">
+                              <strong>الصف {formatCompactNumber(error.row_number)}</strong>
+                              <span>{error.field}</span>
+                            </div>
+                            <p>{error.message}</p>
+                          </article>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {importCanCommit ? (
+                    <div className="portability-page__step-actions">
+                      <button
+                        type="button"
+                        className="secondary-button"
+                        disabled={isPending}
+                        onClick={() => setConfirmAction({ type: "commit-import", jobId: dryRunResult.job_id })}
+                      >
+                        اعتماد الصفوف السليمة
+                      </button>
+                    </div>
+                  ) : (
+                    <p className="workspace-footnote">{importReviewMessage}</p>
+                  )}
+                </div>
+              </SectionCard>
             </div>
-          </SectionCard>
+          ) : null}
 
-          <SectionCard
-            eyebrow="النتيجة"
-            title="نتيجة الفحص"
-            className="configuration-card"
-          >
-            {dryRunResult ? (
-              <div className="result-card">
-                <h3>نتيجة الاستيراد</h3>
-                <p>إجمالي الصفوف: {formatCompactNumber(dryRunResult.rows_total)}</p>
-                <p>الصفوف السليمة: {formatCompactNumber(dryRunResult.rows_valid)}</p>
-                <p>الصفوف غير السليمة: {formatCompactNumber(dryRunResult.rows_invalid)}</p>
-                {dryRunResult.mode === "dry_run" && dryRunResult.rows_invalid === 0 ? (
+          {lastImport ? (
+            <div className="portability-page__step">
+              <SectionCard eyebrow="نتيجة الاستيراد" title="تم تنفيذ الاستيراد" className="configuration-card">
+                <div className="result-card">
+                  <h3>الاستيراد مكتمل</h3>
+                  <p>الصفوف المعتمدة: {formatCompactNumber(lastImport.rows_valid)}</p>
+                  <p>الصفوف المستوردة: {formatCompactNumber(lastImport.rows_committed ?? 0)}</p>
+                  <p>الحالة: {lastImport.mode === "commit" ? "تم الاعتماد" : "فحص أولي فقط"}</p>
+                </div>
+              </SectionCard>
+            </div>
+          ) : null}
+        </div>
+      </section>
+
+      <section
+        id="portability-panel-restore"
+        className="portability-page__tab-panel"
+        role="tabpanel"
+        aria-labelledby="portability-tab-restore"
+        hidden={activeSection !== "restore"}
+      >
+        <div className="portability-page__step-stack">
+          <div className="portability-page__step">
+            <SectionCard
+              eyebrow="الاستعادة التجريبية"
+              title="استعادة معزولة داخل بيئة الاختبار"
+              tone="subtle"
+              className="configuration-card configuration-card--danger"
+            >
+              <div className="stack-form">
+                <label className="stack-field">
+                  <span>حزمة النسخ الاحتياطي</span>
+                  <select value={selectedBackupId} onChange={(event) => setSelectedBackupId(event.target.value)}>
+                    <option value="">اختر حزمة نسخ احتياطي</option>
+                    {backupPackages.map((item) => (
+                      <option key={item.id} value={item.id}>
+                        {item.file_name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <div className="portability-page__warning">
+                  <AlertTriangle size={18} aria-hidden="true" />
+                  <div>
+                    <strong>تحذير</strong>
+                    <p>استعادة البيانات ستؤدي إلى استبدال البيانات الحالية داخل البيئة المعزولة للتجربة.</p>
+                  </div>
+                </div>
+
+                <label className="stack-checkbox portability-page__checkbox">
+                  <input
+                    type="checkbox"
+                    checked={restoreAcknowledged}
+                    onChange={(event) => setRestoreAcknowledged(event.target.checked)}
+                  />
+                  <span>أفهم التحذير وأريد مراجعة الاستعادة قبل التنفيذ.</span>
+                </label>
+
+                {selectedBackup ? (
+                  <div className="info-strip">
+                    <span>الحزمة: {selectedBackup.file_name}</span>
+                    <span>تنتهي الصلاحية: {formatDate(selectedBackup.expires_at)}</span>
+                  </div>
+                ) : null}
+
+                <div className="portability-page__step-actions">
                   <button
                     type="button"
                     className="secondary-button"
-                    disabled={isPending}
-                    onClick={() => setConfirmAction({ type: "commit-import", jobId: dryRunResult.job_id })}
+                    disabled={!selectedBackupId || !restoreAcknowledged}
+                    onClick={() => setShowRestoreConfirmation(true)}
                   >
-                    تنفيذ الاستيراد
+                    مراجعة الاستعادة
                   </button>
-                ) : null}
+                </div>
               </div>
-            ) : (
-              <div className="empty-panel">
-                <p>لا توجد نتائج استيراد معتمدة بعد.</p>
-              </div>
-            )}
-          </SectionCard>
-        </div>
-      ) : null}
-
-      {activeSection === "restore" ? (
-        <SectionCard
-          eyebrow="الاستعادة التجريبية"
-          title="استعادة معزولة داخل بيئة الاختبار"
-          tone="subtle"
-          className="configuration-card configuration-card--danger"
-        >
-          <div className="configuration-shell configuration-shell--split">
-            <div className="stack-form">
-              <label className="stack-field">
-                <span>حزمة النسخ الاحتياطي</span>
-                <select value={selectedBackupId} onChange={(event) => setSelectedBackupId(event.target.value)}>
-                  <option value="">حزمة النسخ الاحتياطي</option>
-                  {backupPackages.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      {item.file_name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <button
-                type="button"
-                className="primary-button"
-                disabled={isPending || !selectedBackupId}
-                onClick={() => setConfirmAction({ type: "restore-drill" })}
-              >
-                {isPending ? <Loader2 className="spin" size={16} /> : "تشغيل الاستعادة التجريبية"}
-              </button>
-            </div>
-
-            {lastRestore ? (
-              <div className="result-card">
-                <h3>آخر استعادة تجريبية</h3>
-                <p>الحالة: {getStatusLabel(lastRestore.status)}</p>
-                <p>الفروق: {formatCompactNumber(lastRestore.drift_count)}</p>
-                <p>زمن الاستعادة: {formatCompactNumber(lastRestore.rto_seconds)} ث</p>
-              </div>
-            ) : (
-              <div className="empty-panel">
-                <p>لا توجد استعادة تجريبية محفوظة بعد.</p>
-              </div>
-            )}
+            </SectionCard>
           </div>
-        </SectionCard>
-      ) : null}
 
-      {activeSection === "history" ? (
-        <div className="configuration-shell configuration-shell--split">
-          <SectionCard
-            eyebrow="الحزم الأخيرة"
-            title="سجل الحزم الجاهزة والملغاة"
-            className="configuration-card"
-          >
-            <div className="stack-list">
-              {packages.length === 0 ? (
-                <div className="empty-panel">
-                  <p>لا توجد حزم محفوظة بعد.</p>
+          {showRestoreConfirmation && selectedBackup ? (
+            <div className="portability-page__step">
+              <SectionCard eyebrow="تأكيد نهائي" title="راجع نطاق الاستعادة قبل التنفيذ" className="configuration-card">
+                <div className="result-card">
+                  <h3>جاهز لتشغيل الاستعادة التجريبية</h3>
+                  <p>الحزمة: {selectedBackup.file_name}</p>
+                  <p>النطاق: نسخة احتياطية معزولة داخل بيئة الاختبار</p>
+                  <div className="portability-page__step-actions">
+                    <button
+                      type="button"
+                      className="primary-button"
+                      disabled={isPending}
+                      onClick={handleRestoreDrill}
+                    >
+                      {isPending ? <Loader2 className="spin" size={16} /> : <ShieldCheck size={16} />}
+                      تشغيل الاستعادة
+                    </button>
+                  </div>
                 </div>
-              ) : (
-                packages.map((item) => (
-                  <article key={item.id} className="list-card">
-                    <div className="list-card__header">
-                      <strong>{item.file_name}</strong>
-                      <span>{getStatusLabel(item.is_expired ? "expired" : item.status)}</span>
-                    </div>
-                    <p className="workspace-footnote">
-                      {item.scope === "backup"
-                        ? "نسخة احتياطية"
-                        : item.scope === "customers"
-                          ? "العملاء"
-                          : item.scope === "reports"
-                            ? "التقارير"
-                            : "المنتجات"}{" "}
-                      / {item.package_type.toUpperCase()} / {formatCompactNumber(item.row_count)} سجل
-                    </p>
-                    <p className="workspace-footnote">ينتهي: {formatDate(item.expires_at)}</p>
-                    <div className="inline-actions">
-                      <a className="secondary-button" href={`/api/export/packages/${item.id}`}>
-                        تنزيل
-                      </a>
-                      {item.status === "ready" && !item.is_expired ? (
-                        <button
-                          type="button"
-                          className="ghost-button"
-                          disabled={isPending}
-                          onClick={() => setConfirmAction({ type: "revoke-package", packageId: item.id })}
-                        >
-                          إبطال
-                        </button>
-                      ) : null}
-                    </div>
-                  </article>
-                ))
-              )}
+              </SectionCard>
             </div>
-          </SectionCard>
+          ) : null}
 
-          <SectionCard
-            eyebrow="آخر العمليات"
-            title="فحوص الاستيراد وتجارب الاستعادة"
-            className="configuration-card"
-          >
-            <div className="stack-list">
-              {importJobs.length === 0 && restoreDrills.length === 0 ? (
-                <div className="empty-panel">
-                  <p>لم تُسجّل بعد أي عملية استيراد أو استعادة في هذه الجلسة.</p>
+          {lastRestore ? (
+            <div className="portability-page__step">
+              <SectionCard eyebrow="نتيجة التجربة" title="ملخص آخر استعادة تجريبية" className="configuration-card">
+                <div className="result-card">
+                  <h3>آخر استعادة تجريبية</h3>
+                  <p>الحالة: {getStatusLabel(lastRestore.status)}</p>
+                  <p>الفروق: {formatCompactNumber(lastRestore.drift_count)}</p>
+                  <p>زمن الاستعادة: {formatCompactNumber(lastRestore.rto_seconds)} ث</p>
                 </div>
-              ) : (
-                <>
-                  {importJobs.map((job) => (
-                    <article key={job.id} className="list-card">
-                      <div className="list-card__header">
-                        <strong>{job.file_name}</strong>
-                        <span>{getStatusLabel(job.status)}</span>
-                      </div>
-                      <p className="workspace-footnote">
-                        سليم: {formatCompactNumber(job.rows_valid)} / غير سليم: {formatCompactNumber(job.rows_invalid)} /
-                        مستورد: {formatCompactNumber(job.rows_committed)}
-                      </p>
-                    </article>
-                  ))}
-
-                  {restoreDrills.map((drill) => (
-                    <article key={drill.id} className="list-card">
-                      <div className="list-card__header">
-                        <strong>{drill.package_file_name ?? "نسخة احتياطية غير معروفة"}</strong>
-                        <span>{getStatusLabel(drill.status)}</span>
-                      </div>
-                      <p className="workspace-footnote">
-                        الفروق: {formatCompactNumber(drill.drift_count ?? 0)} / زمن الاستعادة:{" "}
-                        {formatCompactNumber(drill.rto_seconds ?? 0)} ث
-                      </p>
-                    </article>
-                  ))}
-                </>
-              )}
+              </SectionCard>
             </div>
-          </SectionCard>
+          ) : null}
         </div>
-      ) : null}
+      </section>
+
+      <section
+        id="portability-panel-history"
+        className="portability-page__tab-panel"
+        role="tabpanel"
+        aria-labelledby="portability-tab-history"
+        hidden={activeSection !== "history"}
+      >
+        <div className="portability-page__history-stack">
+          <section className="portability-page__accordion">
+            <button
+              type="button"
+              className={`portability-page__accordion-header ${expandedAccordions.packages ? "is-expanded" : ""}`}
+              aria-expanded={expandedAccordions.packages}
+              aria-controls="portability-history-packages"
+              onClick={() => toggleAccordion("packages")}
+            >
+              <span>سجل الحزم الجاهزة والملغاة</span>
+              <ChevronDown
+                size={18}
+                aria-hidden="true"
+                className={expandedAccordions.packages ? "portability-page__accordion-icon is-rotated" : "portability-page__accordion-icon"}
+              />
+            </button>
+            <div
+              id="portability-history-packages"
+              className="portability-page__accordion-content"
+              hidden={!expandedAccordions.packages}
+            >
+              <SectionCard eyebrow="الحزم الأخيرة" title="سجل الحزم الجاهزة والملغاة" className="configuration-card">
+                <div className="stack-list">
+                  {packages.length === 0 ? (
+                    <div className="empty-panel">
+                      <p>لا توجد حزم محفوظة بعد.</p>
+                    </div>
+                  ) : (
+                    packages.map((item) => (
+                      <article key={item.id} className="list-card">
+                        <div className="list-card__header">
+                          <strong>{item.file_name}</strong>
+                          <span>{getStatusLabel(item.is_expired ? "expired" : item.status)}</span>
+                        </div>
+                        <p className="workspace-footnote">
+                          {item.scope === "backup"
+                            ? "نسخة احتياطية"
+                            : item.scope === "customers"
+                              ? "العملاء"
+                              : item.scope === "reports"
+                                ? "التقارير"
+                                : "المنتجات"}{" "}
+                          / {item.package_type.toUpperCase()} / {formatCompactNumber(item.row_count)} سجل
+                        </p>
+                        <p className="workspace-footnote">ينتهي: {formatDate(item.expires_at)}</p>
+                        <div className="inline-actions">
+                          <a className="secondary-button" href={`/api/export/packages/${item.id}`}>
+                            تنزيل
+                          </a>
+                          {item.status === "ready" && !item.is_expired ? (
+                            <button
+                              type="button"
+                              className="ghost-button"
+                              disabled={isPending}
+                              onClick={() => setConfirmAction({ type: "revoke-package", packageId: item.id })}
+                            >
+                              إبطال
+                            </button>
+                          ) : null}
+                        </div>
+                      </article>
+                    ))
+                  )}
+                </div>
+              </SectionCard>
+            </div>
+          </section>
+
+          <section className="portability-page__accordion">
+            <button
+              type="button"
+              className={`portability-page__accordion-header ${expandedAccordions.operations ? "is-expanded" : ""}`}
+              aria-expanded={expandedAccordions.operations}
+              aria-controls="portability-history-operations"
+              onClick={() => toggleAccordion("operations")}
+            >
+              <span>فحوص الاستيراد وتجارب الاستعادة</span>
+              <ChevronDown
+                size={18}
+                aria-hidden="true"
+                className={expandedAccordions.operations ? "portability-page__accordion-icon is-rotated" : "portability-page__accordion-icon"}
+              />
+            </button>
+            <div
+              id="portability-history-operations"
+              className="portability-page__accordion-content"
+              hidden={!expandedAccordions.operations}
+            >
+              <SectionCard eyebrow="آخر العمليات" title="فحوص الاستيراد وتجارب الاستعادة" className="configuration-card">
+                <div className="stack-list">
+                  {importJobs.length === 0 && restoreDrills.length === 0 ? (
+                    <div className="empty-panel">
+                      <p>لم تُسجّل بعد أي عملية استيراد أو استعادة في هذه الجلسة.</p>
+                    </div>
+                  ) : (
+                    <>
+                      {importJobs.map((job) => (
+                        <article key={job.id} className="list-card">
+                          <div className="list-card__header">
+                            <strong>{job.file_name}</strong>
+                            <span>{getStatusLabel(job.status)}</span>
+                          </div>
+                          <p className="workspace-footnote">
+                            سليم: {formatCompactNumber(job.rows_valid)} / غير سليم: {formatCompactNumber(job.rows_invalid)} /
+                            مستورد: {formatCompactNumber(job.rows_committed)}
+                          </p>
+                        </article>
+                      ))}
+
+                      {restoreDrills.map((drill) => (
+                        <article key={drill.id} className="list-card">
+                          <div className="list-card__header">
+                            <strong>{drill.package_file_name ?? "نسخة احتياطية غير معروفة"}</strong>
+                            <span>{getStatusLabel(drill.status)}</span>
+                          </div>
+                          <p className="workspace-footnote">
+                            الفروق: {formatCompactNumber(drill.drift_count ?? 0)} / زمن الاستعادة:{" "}
+                            {formatCompactNumber(drill.rto_seconds ?? 0)} ث
+                          </p>
+                        </article>
+                      ))}
+                    </>
+                  )}
+                </div>
+              </SectionCard>
+            </div>
+          </section>
+        </div>
+      </section>
 
       <ConfirmationDialog
         open={confirmAction?.type === "revoke-package"}
@@ -696,15 +935,6 @@ export function PortabilityWorkspace({
             handleCommitImport(confirmAction.jobId);
           }
         }}
-        onCancel={() => setConfirmAction(null)}
-        isPending={isPending}
-      />
-
-      <ConfirmationDialog
-        open={confirmAction?.type === "restore-drill"}
-        title="تأكيد الاستعادة التجريبية"
-        confirmLabel="تشغيل الاستعادة"
-        onConfirm={handleRestoreDrill}
         onCancel={() => setConfirmAction(null)}
         isPending={isPending}
       />

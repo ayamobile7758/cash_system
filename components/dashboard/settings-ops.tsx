@@ -1,7 +1,7 @@
-﻿"use client";
+"use client";
 
-import { useEffect, useMemo, useState, useTransition } from "react";
-import { AlertTriangle, Loader2, RefreshCcw } from "lucide-react";
+import { useRef, useState, useTransition, type KeyboardEvent } from "react";
+import { AlertTriangle, ChevronDown, Loader2, RefreshCcw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { PermissionsPanel } from "@/components/dashboard/permissions-panel";
@@ -10,11 +10,9 @@ import { PageHeader } from "@/components/ui/page-header";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBanner } from "@/components/ui/status-banner";
 import type {
-  InventoryCountOption,
   PermissionAssignmentOption,
   PermissionBundleOption,
   PermissionUserOption,
-  SettingsAccount,
   SettingsSnapshot
 } from "@/lib/api/dashboard";
 import type { StandardEnvelope } from "@/lib/pos/types";
@@ -41,107 +39,94 @@ type BalanceCheckResponse = {
   }>;
 };
 
-type ReconciliationResponse = {
-  reconciliation_id: string;
-  expected: number;
-  actual: number;
-  difference: number;
-};
-
-type InventoryCompleteResponse = {
-  count_id: string;
-  adjusted_products: number;
-  total_difference: number;
-};
-
-type InventoryDraftState = Record<
-  string,
-  Array<{
-    inventory_count_item_id: string;
-    actual_quantity: number;
-    reason: string;
-  }>
->;
-
 type SettingsOpsProps = {
-  accounts: SettingsAccount[];
   snapshots: SettingsSnapshot[];
-  inventoryCounts: InventoryCountOption[];
   permissionBundles: PermissionBundleOption[];
   permissionUsers: PermissionUserOption[];
   activeAssignments: PermissionAssignmentOption[];
 };
 
-type SettingsSection = "permissions" | "snapshot" | "integrity" | "reconciliation" | "inventory" | "policies";
-type SettingsAction = "snapshot" | "balance-check" | "reconciliation" | "inventory-complete";
-type SettingsConfirmAction = "snapshot" | "reconciliation" | "inventory-complete" | null;
+type SettingsSection = "permissions" | "policies" | "snapshot" | "integrity";
+type SettingsAction = "snapshot" | "balance-check";
+type SettingsConfirmAction = "snapshot" | null;
+type MobileAccordionState = Record<SettingsSection, boolean>;
+
+type SettingsSectionMeta = {
+  key: SettingsSection;
+  label: string;
+  description: string;
+  group: "governance" | "oversight";
+};
+
+const SETTINGS_SECTIONS: SettingsSectionMeta[] = [
+  {
+    key: "permissions",
+    label: "الصلاحيات",
+    description: "إدارة الحِزم والإسناد الدقيق للمستخدمين دون تغيير آلية العمل الحالية.",
+    group: "governance"
+  },
+  {
+    key: "policies",
+    label: "السياسات",
+    description: "سياسات الطباعة والوصول من الأجهزة وملخّص الأدوات اليومية المتبقية في الإعدادات.",
+    group: "governance"
+  },
+  {
+    key: "snapshot",
+    label: "اللقطة اليومية",
+    description: "حفظ لقطة نهاية اليوم ومراجعة آخر اللقطات المحفوظة من نفس مساحة الإدارة.",
+    group: "oversight"
+  },
+  {
+    key: "integrity",
+    label: "سلامة الأرصدة",
+    description: "فحص سلامة الأرصدة ومراجعة الفروقات قبل أي تدخل يدوي على الحسابات.",
+    group: "oversight"
+  }
+];
+
+const SETTINGS_GROUPS = [
+  { key: "governance", label: "الوصول والحوكمة" },
+  { key: "oversight", label: "الإشراف على النظام" }
+] as const;
 
 function getApiErrorMessage<T>(envelope: StandardEnvelope<T>) {
   return envelope.error?.message ?? "تعذر إتمام العملية.";
 }
 
-function getCountTypeLabel(countType: string) {
-  switch (countType) {
-    case "daily":
-      return "يومي";
-    case "weekly":
-      return "أسبوعي";
-    case "monthly":
-      return "شهري";
-    default:
-      return countType;
-  }
+function createClosedAccordionState(): MobileAccordionState {
+  return {
+    permissions: false,
+    policies: false,
+    snapshot: false,
+    integrity: false
+  };
 }
 
-export function SettingsOps({
-  accounts,
-  snapshots,
-  inventoryCounts,
-  permissionBundles,
-  permissionUsers,
-  activeAssignments
-}: SettingsOpsProps) {
+function createAccordionState(section: SettingsSection): MobileAccordionState {
+  return {
+    ...createClosedAccordionState(),
+    [section]: true
+  };
+}
+
+export function SettingsOps({ snapshots, permissionBundles, permissionUsers, activeAssignments }: SettingsOpsProps) {
   const router = useRouter();
   const [snapshotNotes, setSnapshotNotes] = useState("");
-  const [selectedAccountId, setSelectedAccountId] = useState(accounts[0]?.id ?? "");
-  const [actualBalance, setActualBalance] = useState("");
-  const [reconcileNotes, setReconcileNotes] = useState("");
-  const [selectedCountId, setSelectedCountId] = useState(inventoryCounts[0]?.id ?? "");
   const [snapshotResult, setSnapshotResult] = useState<SnapshotResponse | null>(null);
   const [balanceResult, setBalanceResult] = useState<BalanceCheckResponse | null>(null);
-  const [reconciliationResult, setReconciliationResult] = useState<ReconciliationResponse | null>(null);
-  const [inventoryResult, setInventoryResult] = useState<InventoryCompleteResponse | null>(null);
-  const [inventoryDrafts, setInventoryDrafts] = useState<InventoryDraftState>({});
   const [activeSection, setActiveSection] = useState<SettingsSection>("snapshot");
+  const [mobileAccordions, setMobileAccordions] = useState<MobileAccordionState>(() => createAccordionState("snapshot"));
   const [actionErrorMessage, setActionErrorMessage] = useState<string | null>(null);
   const [retryAction, setRetryAction] = useState<SettingsAction | null>(null);
   const [confirmAction, setConfirmAction] = useState<SettingsConfirmAction>(null);
   const [isPending, startTransition] = useTransition();
-
-  useEffect(() => {
-    setInventoryDrafts((current) => {
-      const next = { ...current };
-
-      for (const count of inventoryCounts) {
-        if (!next[count.id]) {
-          next[count.id] = count.items.map((item) => ({
-            inventory_count_item_id: item.id,
-            actual_quantity: item.actual_quantity,
-            reason: item.reason ?? ""
-          }));
-        }
-      }
-
-      return next;
-    });
-  }, [inventoryCounts]);
-
-  const selectedCount = useMemo(
-    () => inventoryCounts.find((count) => count.id === selectedCountId) ?? null,
-    [inventoryCounts, selectedCountId]
-  );
-
-  const selectedCountDraft = selectedCount ? inventoryDrafts[selectedCount.id] ?? [] : [];
+  const tabRefs = useRef<Record<SettingsSection, HTMLButtonElement | null>>({
+    permissions: null,
+    policies: null,
+    snapshot: null,
+    integrity: null
+  });
 
   function clearActionFeedback() {
     setActionErrorMessage(null);
@@ -208,71 +193,6 @@ export function SettingsOps({
     });
   }
 
-  function executeReconciliation() {
-    clearActionFeedback();
-    startTransition(() => {
-      void (async () => {
-        const response = await fetch("/api/reconciliation", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            account_id: selectedAccountId,
-            actual_balance: Number(actualBalance),
-            notes: reconcileNotes
-          })
-        });
-
-        const envelope = (await response.json()) as StandardEnvelope<ReconciliationResponse>;
-        if (!response.ok || !envelope.success || !envelope.data) {
-          failAction(getApiErrorMessage(envelope), "reconciliation");
-          return;
-        }
-
-        setReconciliationResult(envelope.data);
-        setConfirmAction(null);
-        setRetryAction(null);
-        toast.success("تم إنشاء قيد التسوية بنجاح.");
-        router.refresh();
-      })();
-    });
-  }
-
-  function executeInventoryComplete() {
-    if (!selectedCount) {
-      return;
-    }
-
-    clearActionFeedback();
-    startTransition(() => {
-      void (async () => {
-        const response = await fetch("/api/inventory/counts/complete", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            inventory_count_id: selectedCount.id,
-            items: selectedCount.items.map((item, index) => ({
-              inventory_count_item_id: item.id,
-              actual_quantity: selectedCountDraft[index]?.actual_quantity ?? item.actual_quantity,
-              reason: selectedCountDraft[index]?.reason || undefined
-            }))
-          })
-        });
-
-        const envelope = (await response.json()) as StandardEnvelope<InventoryCompleteResponse>;
-        if (!response.ok || !envelope.success || !envelope.data) {
-          failAction(getApiErrorMessage(envelope), "inventory-complete");
-          return;
-        }
-
-        setInventoryResult(envelope.data);
-        setConfirmAction(null);
-        setRetryAction(null);
-        toast.success("تم إكمال الجرد وإنشاء التسويات اللازمة.");
-        router.refresh();
-      })();
-    });
-  }
-
   function retryLastAction() {
     switch (retryAction) {
       case "snapshot":
@@ -281,14 +201,256 @@ export function SettingsOps({
       case "balance-check":
         executeBalanceCheck();
         break;
-      case "reconciliation":
-        executeReconciliation();
+      default:
         break;
-      case "inventory-complete":
-        executeInventoryComplete();
+    }
+  }
+
+  function activateSection(section: SettingsSection) {
+    setActiveSection(section);
+    setMobileAccordions(createAccordionState(section));
+  }
+
+  function toggleAccordion(section: SettingsSection) {
+    setActiveSection(section);
+    setMobileAccordions((current) => {
+      if (current[section]) {
+        return createClosedAccordionState();
+      }
+
+      return createAccordionState(section);
+    });
+  }
+
+  function handleNavigatorKeyDown(
+    event: KeyboardEvent<HTMLButtonElement>,
+    currentSection: SettingsSection
+  ) {
+    const currentIndex = SETTINGS_SECTIONS.findIndex((section) => section.key === currentSection);
+
+    if (currentIndex === -1) {
+      return;
+    }
+
+    const focusSection = (index: number) => {
+      const nextSection = SETTINGS_SECTIONS[index]?.key;
+      if (nextSection) {
+        tabRefs.current[nextSection]?.focus();
+      }
+    };
+
+    switch (event.key) {
+      case "ArrowRight":
+      case "ArrowDown":
+        event.preventDefault();
+        focusSection((currentIndex + 1) % SETTINGS_SECTIONS.length);
+        break;
+      case "ArrowLeft":
+      case "ArrowUp":
+        event.preventDefault();
+        focusSection((currentIndex - 1 + SETTINGS_SECTIONS.length) % SETTINGS_SECTIONS.length);
+        break;
+      case "Home":
+        event.preventDefault();
+        focusSection(0);
+        break;
+      case "End":
+        event.preventDefault();
+        focusSection(SETTINGS_SECTIONS.length - 1);
+        break;
+      case "Enter":
+      case " ":
+        event.preventDefault();
+        activateSection(currentSection);
         break;
       default:
         break;
+    }
+  }
+
+  function renderSnapshotSection() {
+    return (
+      <div className="configuration-shell configuration-shell--split settings-page__split">
+        <section className="workspace-panel settings-page__panel">
+          <div className="section-heading">
+            <div>
+              <h2>حفظ اللقطة اليومية</h2>
+            </div>
+          </div>
+
+          <div className="stack-form">
+            <label className="stack-field">
+              <span>ملاحظات اختيارية</span>
+              <textarea
+                className="field-input"
+                rows={3}
+                maxLength={500}
+                value={snapshotNotes}
+                onChange={(event) => setSnapshotNotes(event.target.value)}
+                placeholder="ملخص تنفيذي لنهاية اليوم"
+              />
+            </label>
+
+            <button
+              type="button"
+              className="primary-button"
+              disabled={isPending}
+              onClick={() => setConfirmAction("snapshot")}
+            >
+              {isPending ? <Loader2 className="spin" size={16} /> : "حفظ اللقطة اليومية"}
+            </button>
+          </div>
+
+          {snapshotResult ? (
+            <div className="result-card" role="status" aria-live="polite">
+              <h3>{snapshotResult.is_replay ? "تمت إعادة نفس اللقطة" : "تم حفظ اللقطة"}</h3>
+              <p>إجمالي المبيعات: {formatCurrency(snapshotResult.total_sales)}</p>
+              <p>صافي المبيعات: {formatCurrency(snapshotResult.net_sales)}</p>
+              <p>عدد الفواتير: {formatCompactNumber(snapshotResult.invoice_count)}</p>
+            </div>
+          ) : null}
+        </section>
+
+        <section className="workspace-panel settings-page__panel">
+          <div className="section-heading">
+            <div>
+              <h2>آخر اللقطات</h2>
+            </div>
+          </div>
+          <div className="stack-list settings-page__list">
+            {snapshots.length > 0 ? (
+              snapshots.map((snapshot) => (
+                <article key={snapshot.id} className="list-card settings-page__snapshot-card">
+                  <div className="list-card__header">
+                    <strong>{formatDate(snapshot.snapshot_date)}</strong>
+                    <span className="status-pill badge badge--neutral">
+                      {formatCompactNumber(snapshot.invoice_count)} فاتورة
+                    </span>
+                  </div>
+                  <p>صافي المبيعات: {formatCurrency(snapshot.net_sales)}</p>
+                  <p className="workspace-footnote">آخر إنشاء: {formatDateTime(snapshot.created_at)}</p>
+                </article>
+              ))
+            ) : (
+              <div className="empty-panel settings-page__empty">
+                <RefreshCcw size={20} />
+                <h3>لا توجد لقطات محفوظة</h3>
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={() => setConfirmAction("snapshot")}
+                >
+                  حفظ اللقطة اليومية
+                </button>
+              </div>
+            )}
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  function renderIntegritySection() {
+    return (
+      <div className="configuration-shell settings-page__single">
+        <section className="workspace-panel settings-page__panel">
+          <div className="section-heading">
+            <div>
+              <h2>فحص سلامة الأرصدة</h2>
+            </div>
+          </div>
+
+          <p className="workspace-footnote">
+            يفحص هذا الإجراء تطابق الأرصدة المسجلة مع القيود المالية قبل تنفيذ أي تسوية يدوية.
+          </p>
+
+          <button
+            type="button"
+            className="secondary-button"
+            disabled={isPending}
+            onClick={executeBalanceCheck}
+          >
+            {isPending ? <Loader2 className="spin" size={16} /> : <RefreshCcw size={16} />}
+            إعادة الفحص
+          </button>
+
+          {balanceResult ? (
+            <div className="stack-list" role="status" aria-live="polite">
+              <article className="list-card">
+                <div className="list-card__header">
+                  <strong>{balanceResult.drift_count === 0 ? "الحالة: سليمة" : "الحالة: فروقات مكتشفة"}</strong>
+                  <span>{formatCompactNumber(balanceResult.drift_count)} حسابات</span>
+                </div>
+              </article>
+
+              {balanceResult.drifts.map((drift) => (
+                <article key={drift.account_id} className="list-card">
+                  <div className="list-card__header">
+                    <strong>{drift.account_name}</strong>
+                    <span>{formatCurrency(drift.drift)}</span>
+                  </div>
+                  <p>المخزن: {formatCurrency(drift.current_balance)}</p>
+                  <p>المحسوب: {formatCurrency(drift.calculated_balance)}</p>
+                </article>
+              ))}
+            </div>
+          ) : null}
+        </section>
+      </div>
+    );
+  }
+
+  function renderPoliciesSection() {
+    return (
+      <div className="configuration-summary-grid settings-page__policies">
+        <SectionCard
+          title="الطباعة"
+          className="configuration-card"
+        >
+          <p className="workspace-footnote">الطباعة المؤقتة خارج نطاق MVP الحالي.</p>
+        </SectionCard>
+
+        <SectionCard
+          title="الوصول من الأجهزة"
+          className="configuration-card configuration-card--danger"
+        >
+          <p className="warning-inline">
+            <AlertTriangle size={14} />
+            هذا قرار نطاق MVP موثق، وليس ادعاء بوجود إدارة أجهزة داخلية كاملة.
+          </p>
+        </SectionCard>
+
+        <SectionCard
+          title="الأدوات اليومية"
+          className="configuration-card"
+        >
+          <div className="operational-inline-summary">
+            <span className="status-pill badge badge--neutral">اللقطة اليومية</span>
+            <span className="status-pill badge badge--neutral">سلامة الأرصدة</span>
+          </div>
+        </SectionCard>
+      </div>
+    );
+  }
+
+  function renderSectionContent(section: SettingsSection) {
+    switch (section) {
+      case "permissions":
+        return (
+          <PermissionsPanel
+            permissionBundles={permissionBundles}
+            permissionUsers={permissionUsers}
+            activeAssignments={activeAssignments}
+          />
+        );
+      case "policies":
+        return renderPoliciesSection();
+      case "snapshot":
+        return renderSnapshotSection();
+      case "integrity":
+        return renderIntegritySection();
+      default:
+        return null;
     }
   }
 
@@ -304,62 +466,14 @@ export function SettingsOps({
             <span className="status-pill badge badge--neutral">
               اللقطات {formatCompactNumber(snapshots.length)}
             </span>
-            <span className="status-pill badge badge--neutral">
-              الجرد المفتوح {formatCompactNumber(inventoryCounts.filter((count) => count.status !== "completed").length)}
-            </span>
           </>
         }
         actions={
-          <button type="button" className="primary-button" onClick={() => setActiveSection("snapshot")}>
+          <button type="button" className="primary-button" onClick={() => activateSection("snapshot")}>
             اللقطة اليومية
           </button>
         }
       />
-
-      <div className="configuration-section-nav settings-page__sections" aria-label="أقسام شاشة الإعدادات">
-        <button
-          type="button"
-          className={activeSection === "permissions" ? "chip-button is-selected" : "chip-button"}
-          onClick={() => setActiveSection("permissions")}
-        >
-          الصلاحيات
-        </button>
-        <button
-          type="button"
-          className={activeSection === "snapshot" ? "chip-button is-selected" : "chip-button"}
-          onClick={() => setActiveSection("snapshot")}
-        >
-          اللقطة اليومية
-        </button>
-        <button
-          type="button"
-          className={activeSection === "integrity" ? "chip-button is-selected" : "chip-button"}
-          onClick={() => setActiveSection("integrity")}
-        >
-          سلامة الأرصدة
-        </button>
-        <button
-          type="button"
-          className={activeSection === "reconciliation" ? "chip-button is-selected" : "chip-button"}
-          onClick={() => setActiveSection("reconciliation")}
-        >
-          التسوية
-        </button>
-        <button
-          type="button"
-          className={activeSection === "inventory" ? "chip-button is-selected" : "chip-button"}
-          onClick={() => setActiveSection("inventory")}
-        >
-          إكمال الجرد
-        </button>
-        <button
-          type="button"
-          className={activeSection === "policies" ? "chip-button is-selected" : "chip-button"}
-          onClick={() => setActiveSection("policies")}
-        >
-          السياسات
-        </button>
-      </div>
 
       {actionErrorMessage ? (
         <StatusBanner
@@ -372,349 +486,114 @@ export function SettingsOps({
         />
       ) : null}
 
-      {activeSection === "permissions" ? (
-        <PermissionsPanel
-          permissionBundles={permissionBundles}
-          permissionUsers={permissionUsers}
-          activeAssignments={activeAssignments}
-        />
-      ) : null}
-
-      {activeSection === "snapshot" ? (
-        <div className="configuration-shell configuration-shell--split settings-page__split">
-          <section className="workspace-panel settings-page__panel">
-            <div className="section-heading">
-              <div>
-                <h2>حفظ اللقطة اليومية</h2>
+      <div className="settings-page__shell">
+        <nav
+          className="settings-page__navigator settings-page__sections"
+          aria-label="أقسام شاشة الإعدادات"
+        >
+          {SETTINGS_GROUPS.map((group) => (
+            <section key={group.key} className="settings-page__navigator-group">
+              <div className="settings-page__navigator-group-header">
+                <h2>{group.label}</h2>
               </div>
-            </div>
 
-            <div className="stack-form">
-              <label className="stack-field">
-                <span>ملاحظات اختيارية</span>
-                <textarea
-                  className="field-input"
-                  rows={3}
-                  maxLength={500}
-                  value={snapshotNotes}
-                  onChange={(event) => setSnapshotNotes(event.target.value)}
-                  placeholder="ملخص تنفيذي لنهاية اليوم"
-                />
-              </label>
-
-              <button
-                type="button"
-                className="primary-button"
-                disabled={isPending}
-                onClick={() => setConfirmAction("snapshot")}
-              >
-                {isPending ? <Loader2 className="spin" size={16} /> : "حفظ اللقطة اليومية"}
-              </button>
-            </div>
-
-            {snapshotResult ? (
-              <div className="result-card">
-                <h3>{snapshotResult.is_replay ? "تمت إعادة نفس اللقطة" : "تم حفظ اللقطة"}</h3>
-                <p>إجمالي المبيعات: {formatCurrency(snapshotResult.total_sales)}</p>
-                <p>صافي المبيعات: {formatCurrency(snapshotResult.net_sales)}</p>
-                <p>عدد الفواتير: {formatCompactNumber(snapshotResult.invoice_count)}</p>
-              </div>
-            ) : null}
-          </section>
-
-          <section className="workspace-panel settings-page__panel">
-            <div className="section-heading">
-              <div>
-                <h2>آخر اللقطات</h2>
-              </div>
-            </div>
-            <div className="stack-list settings-page__list">
-              {snapshots.length > 0 ? (
-                snapshots.map((snapshot) => (
-                  <article key={snapshot.id} className="list-card settings-page__snapshot-card">
-                    <div className="list-card__header">
-                      <strong>{formatDate(snapshot.snapshot_date)}</strong>
-                      <span className="status-pill badge badge--neutral">
-                        {formatCompactNumber(snapshot.invoice_count)} فاتورة
-                      </span>
-                    </div>
-                    <p>صافي المبيعات: {formatCurrency(snapshot.net_sales)}</p>
-                    <p className="workspace-footnote">آخر إنشاء: {formatDateTime(snapshot.created_at)}</p>
-                  </article>
-                ))
-              ) : (
-                <div className="empty-panel settings-page__empty">
-                  <RefreshCcw size={20} />
-                  <h3>لا توجد لقطات محفوظة</h3>
+              <div className="settings-page__navigator-list">
+                {SETTINGS_SECTIONS.filter((section) => section.group === group.key).map((section) => (
                   <button
+                    key={section.key}
+                    ref={(node) => {
+                      tabRefs.current[section.key] = node;
+                    }}
                     type="button"
-                    className="secondary-button"
-                    onClick={() => setConfirmAction("snapshot")}
+                    id={`settings-tab-${section.key}`}
+                    aria-pressed={activeSection === section.key}
+                    aria-controls={`settings-panel-${section.key}`}
+                    aria-labelledby={`settings-nav-title-${section.key}`}
+                    aria-describedby={`settings-nav-description-${section.key}`}
+                    className={`settings-page__navigator-item ${activeSection === section.key ? "is-selected" : ""}`}
+                    onClick={() => activateSection(section.key)}
+                    onKeyDown={(event) => handleNavigatorKeyDown(event, section.key)}
                   >
-                    حفظ اللقطة اليومية
+                    <span id={`settings-nav-title-${section.key}`} className="settings-page__navigator-item-title">
+                      {section.label}
+                    </span>
+                    <span
+                      id={`settings-nav-description-${section.key}`}
+                      className="settings-page__navigator-item-description"
+                    >
+                      {section.description}
+                    </span>
                   </button>
-                </div>
-              )}
-            </div>
-          </section>
-        </div>
-      ) : null}
-
-      {activeSection === "integrity" ? (
-        <div className="configuration-shell settings-page__single">
-          <section className="workspace-panel settings-page__panel">
-            <div className="section-heading">
-              <div>
-                <h2>فحص سلامة الأرصدة</h2>
-              </div>
-            </div>
-
-            <p className="workspace-footnote">
-              يفحص هذا الإجراء تطابق الأرصدة المسجلة مع القيود المالية قبل تنفيذ أي تسوية يدوية.
-            </p>
-
-            <button
-              type="button"
-              className="secondary-button"
-              disabled={isPending}
-              onClick={executeBalanceCheck}
-            >
-              {isPending ? <Loader2 className="spin" size={16} /> : <RefreshCcw size={16} />}
-              إعادة الفحص
-            </button>
-
-            {balanceResult ? (
-              <div className="stack-list">
-                <article className="list-card">
-                  <div className="list-card__header">
-                    <strong>{balanceResult.drift_count === 0 ? "الحالة: سليمة" : "الحالة: فروقات مكتشفة"}</strong>
-                    <span>{formatCompactNumber(balanceResult.drift_count)} حسابات</span>
-                  </div>
-                </article>
-
-                {balanceResult.drifts.map((drift) => (
-                  <article key={drift.account_id} className="list-card">
-                    <div className="list-card__header">
-                      <strong>{drift.account_name}</strong>
-                      <span>{formatCurrency(drift.drift)}</span>
-                    </div>
-                    <p>المخزن: {formatCurrency(drift.current_balance)}</p>
-                    <p>المحسوب: {formatCurrency(drift.calculated_balance)}</p>
-                  </article>
                 ))}
               </div>
-            ) : null}
-          </section>
-        </div>
-      ) : null}
+            </section>
+          ))}
+        </nav>
 
-      {activeSection === "reconciliation" ? (
-        <div className="configuration-shell configuration-shell--split settings-page__split">
-          <section className="workspace-panel settings-page__panel">
+        <div
+          className="settings-page__detail"
+          id={`settings-panel-${activeSection}`}
+          role="region"
+          aria-labelledby={`settings-tab-${activeSection}`}
+        >
+          <section className="workspace-panel settings-page__detail-intro">
             <div className="section-heading">
               <div>
-                <h2>تسوية الحسابات</h2>
+                <h2>{SETTINGS_SECTIONS.find((section) => section.key === activeSection)?.label}</h2>
+                <p className="workspace-footnote">
+                  {SETTINGS_SECTIONS.find((section) => section.key === activeSection)?.description}
+                </p>
               </div>
             </div>
+          </section>
 
-            <div className="stack-form">
-              <label className="stack-field">
-                <span>الحساب</span>
-                <select className="field-input" value={selectedAccountId} onChange={(event) => setSelectedAccountId(event.target.value)}>
-                  {accounts.map((account) => (
-                    <option key={account.id} value={account.id}>
-                      {account.name} - {formatCurrency(account.current_balance)}
-                    </option>
-                  ))}
-                </select>
-              </label>
+          <div className="settings-page__detail-body">
+            {renderSectionContent(activeSection)}
+          </div>
+        </div>
+      </div>
 
-              <label className="stack-field">
-                <span>الرصيد الفعلي</span>
-                <input
-                  className="field-input"
-                  type="number"
-                  min={0}
-                  step="0.001"
-                  value={actualBalance}
-                  onChange={(event) => setActualBalance(event.target.value)}
-                  placeholder="0.000"
-                />
-              </label>
+      <div className="settings-page__sections settings-page__accordion-list">
+        {SETTINGS_SECTIONS.map((section) => {
+          const isExpanded = mobileAccordions[section.key];
 
-              <label className="stack-field">
-                <span>سبب التسوية</span>
-                <textarea
-                  className="field-input"
-                  rows={3}
-                  value={reconcileNotes}
-                  onChange={(event) => setReconcileNotes(event.target.value)}
-                  placeholder="مثال: فرق صندوق نهاية المناوبة"
-                />
-              </label>
-
+          return (
+            <section key={section.key} className="settings-page__accordion">
               <button
                 type="button"
-                className="primary-button"
-                disabled={isPending || !selectedAccountId || !actualBalance || !reconcileNotes.trim()}
-                onClick={() => setConfirmAction("reconciliation")}
+                className={`settings-page__accordion-header ${isExpanded ? "is-expanded" : ""}`}
+                aria-expanded={isExpanded}
+                aria-controls={`settings-accordion-panel-${section.key}`}
+                id={`settings-accordion-trigger-${section.key}`}
+                aria-labelledby={`settings-accordion-title-${section.key}`}
+                aria-describedby={`settings-accordion-description-${section.key}`}
+                onClick={() => toggleAccordion(section.key)}
               >
-                {isPending ? <Loader2 className="spin" size={16} /> : "تأكيد التسوية"}
+                <span className="settings-page__accordion-copy">
+                  <strong id={`settings-accordion-title-${section.key}`}>{section.label}</strong>
+                  <span id={`settings-accordion-description-${section.key}`}>{section.description}</span>
+                </span>
+                <ChevronDown
+                  size={18}
+                  aria-hidden="true"
+                  className={`settings-page__accordion-icon ${isExpanded ? "is-rotated" : ""}`}
+                />
               </button>
-            </div>
 
-            {reconciliationResult ? (
-              <div className="result-card">
-                <h3>تمت التسوية</h3>
-                <p>المتوقع: {formatCurrency(reconciliationResult.expected)}</p>
-                <p>الفعلي: {formatCurrency(reconciliationResult.actual)}</p>
-                <p>الفرق: {formatCurrency(reconciliationResult.difference)}</p>
+              <div
+                id={`settings-accordion-panel-${section.key}`}
+                role="region"
+                aria-labelledby={`settings-accordion-trigger-${section.key}`}
+                className="settings-page__accordion-content"
+                hidden={!isExpanded}
+                aria-hidden={!isExpanded}
+              >
+                {isExpanded ? renderSectionContent(section.key) : null}
               </div>
-            ) : null}
-          </section>
-        </div>
-      ) : null}
-
-      {activeSection === "inventory" ? (
-        <div className="configuration-shell configuration-shell--split settings-page__split">
-          <section className="workspace-panel settings-page__panel">
-            <div className="section-heading">
-              <div>
-                <h2>إكمال الجرد</h2>
-              </div>
-            </div>
-
-            {inventoryCounts.length === 0 ? (
-              <div className="empty-panel settings-page__empty">
-                <RefreshCcw size={20} />
-                <h3>لا توجد عمليات جرد مفتوحة</h3>
-              </div>
-            ) : (
-              <>
-                <label className="stack-field">
-                  <span>عملية الجرد</span>
-                  <select className="field-input" value={selectedCountId} onChange={(event) => setSelectedCountId(event.target.value)}>
-                    {inventoryCounts.map((count) => (
-                      <option key={count.id} value={count.id}>
-                        {getCountTypeLabel(count.count_type)} - {formatDate(count.count_date)}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-
-                <div className="stack-list">
-                  {selectedCount?.items.map((item, index) => {
-                    const draft = selectedCountDraft[index];
-
-                    return (
-                      <article key={item.id} className="list-card">
-                        <div className="list-card__header">
-                          <strong>{item.product_name}</strong>
-                          <span>
-                            النظام: {formatCompactNumber(item.system_quantity)} | الفروقات الحالية:{" "}
-                            {formatCompactNumber(item.difference)}
-                          </span>
-                        </div>
-
-                        <div className="inline-form-grid">
-                          <label className="stack-field">
-                            <span>الكمية الفعلية</span>
-                            <input
-                              className="field-input"
-                              type="number"
-                              min={0}
-                              step={1}
-                              value={draft?.actual_quantity ?? item.actual_quantity}
-                              onChange={(event) => {
-                                const nextValue = Number(event.target.value);
-                                setInventoryDrafts((current) => ({
-                                  ...current,
-                                  [selectedCount.id]: (current[selectedCount.id] ?? []).map((entry, entryIndex) =>
-                                    entryIndex === index ? { ...entry, actual_quantity: nextValue } : entry
-                                  )
-                                }));
-                              }}
-                            />
-                          </label>
-
-                          <label className="stack-field">
-                            <span>سبب الفرق</span>
-                            <input
-                              className="field-input"
-                              type="text"
-                              maxLength={255}
-                              value={draft?.reason ?? ""}
-                              onChange={(event) => {
-                                const nextValue = event.target.value;
-                                setInventoryDrafts((current) => ({
-                                  ...current,
-                                  [selectedCount.id]: (current[selectedCount.id] ?? []).map((entry, entryIndex) =>
-                                    entryIndex === index ? { ...entry, reason: nextValue } : entry
-                                  )
-                                }));
-                              }}
-                              placeholder="اختياري"
-                            />
-                          </label>
-                        </div>
-                      </article>
-                    );
-                  })}
-                </div>
-
-                <button
-                  type="button"
-                  className="primary-button"
-                  disabled={isPending || !selectedCount}
-                  onClick={() => setConfirmAction("inventory-complete")}
-                >
-                  {isPending ? <Loader2 className="spin" size={16} /> : "إكمال الجرد"}
-                </button>
-              </>
-            )}
-
-            {inventoryResult ? (
-              <div className="result-card">
-                <h3>تم إكمال الجرد</h3>
-                <p>عدد المنتجات المعدلة: {formatCompactNumber(inventoryResult.adjusted_products)}</p>
-                <p>إجمالي الفرق: {formatCompactNumber(inventoryResult.total_difference)}</p>
-              </div>
-            ) : null}
-          </section>
-        </div>
-      ) : null}
-
-      {activeSection === "policies" ? (
-        <div className="configuration-summary-grid settings-page__policies">
-          <SectionCard
-            title="الطباعة"
-            className="configuration-card"
-          >
-            <p className="workspace-footnote">الطباعة المؤقتة خارج نطاق MVP الحالي.</p>
-          </SectionCard>
-
-          <SectionCard
-            title="الوصول من الأجهزة"
-            className="configuration-card configuration-card--danger"
-          >
-            <p className="warning-inline">
-              <AlertTriangle size={14} />
-              هذا قرار نطاق MVP موثق، وليس ادعاء بوجود إدارة أجهزة داخلية كاملة.
-            </p>
-          </SectionCard>
-
-          <SectionCard
-            title="الأدوات اليومية"
-            className="configuration-card"
-          >
-            <div className="operational-inline-summary">
-              <span className="status-pill badge badge--neutral">اللقطة اليومية</span>
-              <span className="status-pill badge badge--neutral">سلامة الأرصدة</span>
-              <span className="status-pill badge badge--neutral">إكمال الجرد</span>
-            </div>
-          </SectionCard>
-        </div>
-      ) : null}
+            </section>
+          );
+        })}
+      </div>
 
       <ConfirmationDialog
         open={confirmAction === "snapshot"}
@@ -724,28 +603,6 @@ export function SettingsOps({
         isPending={isPending}
         onCancel={() => setConfirmAction(null)}
         onConfirm={executeSnapshot}
-      />
-
-      <ConfirmationDialog
-        open={confirmAction === "reconciliation"}
-        title="تأكيد التسوية"
-        confirmLabel="تنفيذ التسوية"
-        cancelLabel="الرجوع"
-        tone="danger"
-        isPending={isPending}
-        onCancel={() => setConfirmAction(null)}
-        onConfirm={executeReconciliation}
-      />
-
-      <ConfirmationDialog
-        open={confirmAction === "inventory-complete"}
-        title="إكمال الجرد"
-        confirmLabel="إكمال الجرد"
-        cancelLabel="الرجوع"
-        tone="danger"
-        isPending={isPending}
-        onCancel={() => setConfirmAction(null)}
-        onConfirm={executeInventoryComplete}
       />
     </section>
   );

@@ -1,10 +1,11 @@
 import React from "react";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { PosWorkspace } from "@/components/pos/pos-workspace";
 import { usePosCartStore } from "@/stores/pos-cart";
 
 const mockUseProducts = vi.fn();
 const mockUsePosAccounts = vi.fn();
+const mockUseCustomerSearch = vi.fn();
 
 vi.mock("@/hooks/use-products", () => ({
   useProducts: (...args: unknown[]) => mockUseProducts(...args)
@@ -12,6 +13,10 @@ vi.mock("@/hooks/use-products", () => ({
 
 vi.mock("@/hooks/use-pos-accounts", () => ({
   usePosAccounts: () => mockUsePosAccounts()
+}));
+
+vi.mock("@/hooks/use-customer-search", () => ({
+  useCustomerSearch: (...args: unknown[]) => mockUseCustomerSearch(...args)
 }));
 
 vi.mock("sonner", () => ({
@@ -30,6 +35,7 @@ describe("PosWorkspace", () => {
 
     mockUseProducts.mockReset();
     mockUsePosAccounts.mockReset();
+    mockUseCustomerSearch.mockReset();
 
     mockUseProducts.mockReturnValue({
       products: [
@@ -96,6 +102,18 @@ describe("PosWorkspace", () => {
       refresh: vi.fn()
     });
 
+    mockUseCustomerSearch.mockReturnValue({
+      results: [
+        {
+          id: "customer-1",
+          name: "عميل اختبار",
+          phone: "0790000000",
+          current_balance: 25
+        }
+      ],
+      isLoading: false
+    });
+
     vi.spyOn(globalThis, "fetch").mockImplementation(async () => new Response());
   });
 
@@ -159,6 +177,45 @@ describe("PosWorkspace", () => {
     expect(usePosCartStore.getState().items[0]?.product_id).toBe("product-1");
     expect(searchInput).toHaveValue("");
     expect(globalThis.fetch).not.toHaveBeenCalled();
+  }, 30000);
+
+  it("applies validation tone classes to the live settlement state", async () => {
+    render(<PosWorkspace maxDiscountPercentage={null} />);
+
+    const quickAddButton = screen.getAllByRole("button", { name: /شاحن سريع/i })[0];
+    fireEvent.click(quickAddButton);
+
+    await waitFor(() => {
+      expect(usePosCartStore.getState().items).toHaveLength(1);
+    });
+
+    await waitFor(() => {
+      const indicator = screen
+        .getByText(/المتبقي للسداد:/)
+        .closest(".pos-remaining-balance");
+      expect(indicator).toHaveClass("validation-tone--error");
+    });
+
+    await act(async () => {
+      usePosCartStore.getState().setSelectedCustomer("customer-1", "عميل اختبار");
+    });
+
+    await waitFor(() => {
+      const indicator = screen
+        .getByText(/المتبقي للسداد:/)
+        .closest(".pos-remaining-balance");
+      expect(indicator).toHaveClass("validation-tone--warning");
+    });
+
+    const receivedInput = await screen.findByLabelText("المبلغ المستلم");
+    fireEvent.change(receivedInput, { target: { value: "100" } });
+
+    await waitFor(() => {
+      const indicator = screen
+        .getByText("تم تسديد المبلغ")
+        .closest(".pos-remaining-balance");
+      expect(indicator).toHaveClass("validation-tone--success");
+    });
   }, 30000);
 
   it("renders stabilized Arabic labels without mojibake in the active POS surface", () => {

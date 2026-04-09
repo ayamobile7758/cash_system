@@ -71,6 +71,7 @@ type PosCheckoutPanelProps = {
   posTerminalCode: string;
   primarySplitAmount: number | null;
   remainingToSettle: number;
+  remainingBalanceToneClass: string;
   selectedAccount: PosAccount | null;
   selectedAccountId: string | null;
   selectedCustomerBalance: number | null;
@@ -146,6 +147,7 @@ export function PosCheckoutPanel({
   posTerminalCode,
   primarySplitAmount,
   remainingToSettle,
+  remainingBalanceToneClass,
   selectedAccount,
   selectedAccountId,
   selectedCustomerBalance,
@@ -343,13 +345,7 @@ export function PosCheckoutPanel({
         </div>
       ) : null}
 
-      <div
-        className={
-          remainingToSettle > 0
-            ? "pos-remaining-balance pos-remaining-balance--danger"
-            : "pos-remaining-balance pos-remaining-balance--success"
-        }
-      >
+      <div className={`pos-remaining-balance ${remainingBalanceToneClass}`}>
         {remainingToSettle > 0 ? (
           <strong>المتبقي للسداد: {formatCurrency(remainingToSettle)}</strong>
         ) : changeToReturn !== null ? (
@@ -357,6 +353,16 @@ export function PosCheckoutPanel({
         ) : (
           <strong>تم تسديد المبلغ</strong>
         )}
+      </div>
+
+      <div className="pos-checkout-review">
+        <button
+          type="button"
+          className="secondary-button pos-checkout-review__button"
+          onClick={onToggleCheckoutOptions}
+        >
+          مراجعة الدفع
+        </button>
       </div>
 
       <button
@@ -382,34 +388,6 @@ export function PosCheckoutPanel({
         )}
       </button>
 
-      <div className="pos-checkout-secondary-actions">
-        <button
-          type="button"
-          className="secondary-button pos-checkout-secondary-actions__button"
-          onClick={onHoldCart}
-          disabled={!canHoldCart}
-        >
-          تعليق السلة
-        </button>
-        <button
-          type="button"
-          className="secondary-button pos-checkout-secondary-actions__button"
-          onClick={onClearCartRequest}
-          disabled={itemCount === 0}
-        >
-          تفريغ
-        </button>
-        <button
-          type="button"
-          className="secondary-button pos-checkout-secondary-actions__button"
-          onClick={onHeldCartsToggle}
-        >
-          السلال المعلقة
-          <span className="product-pill product-pill--accent">
-            {formatCompactNumber(heldCartsCount)}
-          </span>
-        </button>
-      </div>
 
       <div className="pos-checkout-options-toggle">
         <button

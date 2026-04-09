@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState, useTransition } from "react";
-import { Boxes, ClipboardCheck, Loader2, Scale } from "lucide-react";
+import { useEffect, useMemo, useRef, useState, useTransition, type KeyboardEvent } from "react";
+import { Boxes, ChevronDown, ClipboardCheck, Loader2, Scale } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
+import { MobileBottomSheet } from "@/components/ui/mobile-bottom-sheet";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBanner } from "@/components/ui/status-banner";
 import type {
@@ -55,11 +56,20 @@ type InventoryWorkspaceProps = {
 };
 
 type InventorySection = "create" | "active" | "reconcile" | "history";
+type InventoryAccordion = "counts" | "reconciliations";
+type InventoryAccordionState = Record<InventoryAccordion, boolean>;
 type RetryAction = "create-count" | "complete-count" | "reconcile-account" | null;
 type ConfirmAction =
   | { type: "complete-count" }
   | { type: "reconcile-account" }
   | null;
+
+const INVENTORY_TABS = [
+  { key: "create", label: "بدء الجرد" },
+  { key: "active", label: "الجرد المفتوح" },
+  { key: "reconcile", label: "التسوية" },
+  { key: "history", label: "آخر النتائج" }
+] as const satisfies ReadonlyArray<{ key: InventorySection; label: string }>;
 
 function getApiErrorMessage<T>(envelope: StandardEnvelope<T>) {
   return envelope.error?.message ?? "تعذر إتمام العملية.";
@@ -76,6 +86,13 @@ function getCountTypeLabel(countType: string) {
     default:
       return countType;
   }
+}
+
+function createAccordionState(activeAccordion: InventoryAccordion): InventoryAccordionState {
+  return {
+    counts: activeAccordion === "counts",
+    reconciliations: activeAccordion === "reconciliations"
+  };
 }
 
 export function InventoryWorkspace({
@@ -101,10 +118,22 @@ export function InventoryWorkspace({
   const [reconciliationResult, setReconciliationResult] = useState<ReconciliationResponse | null>(null);
   const [inventoryDrafts, setInventoryDrafts] = useState<InventoryDraftState>({});
   const [activeSection, setActiveSection] = useState<InventorySection>(inProgressCounts.length > 0 ? "active" : "create");
+  const [expandedAccordions, setExpandedAccordions] = useState<InventoryAccordionState>(() =>
+    createAccordionState("counts")
+  );
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
+  const [isDetailSheetOpen, setIsDetailSheetOpen] = useState(false);
   const [actionErrorMessage, setActionErrorMessage] = useState<string | null>(null);
   const [retryAction, setRetryAction] = useState<RetryAction>(null);
   const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
   const [isPending, startTransition] = useTransition();
+  const tabRefs = useRef<Record<InventorySection, HTMLButtonElement | null>>({
+    create: null,
+    active: null,
+    reconcile: null,
+    history: null
+  });
+  const selectedCountTriggerRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     setInventoryDrafts((current) => {
@@ -130,12 +159,34 @@ export function InventoryWorkspace({
     }
   }, [inProgressCounts, selectedCountId]);
 
+  useEffect(() => {
+    if (typeof window.matchMedia !== "function") {
+      return;
+    }
+
+    const query = window.matchMedia("(max-width: 767px)");
+    const updateViewport = () => setIsMobileViewport(query.matches);
+
+    updateViewport();
+    query.addEventListener("change", updateViewport);
+    return () => query.removeEventListener("change", updateViewport);
+  }, []);
+
+  useEffect(() => {
+    if (activeSection !== "active") {
+      setIsDetailSheetOpen(false);
+    }
+  }, [activeSection]);
+
   const selectedCount = useMemo(
     () => inProgressCounts.find((count) => count.id === selectedCountId) ?? null,
     [inProgressCounts, selectedCountId]
   );
 
-  const selectedCountDraft = selectedCount ? inventoryDrafts[selectedCount.id] ?? [] : [];
+  const selectedCountDraft = useMemo(
+    () => (selectedCount ? inventoryDrafts[selectedCount.id] ?? [] : []),
+    [inventoryDrafts, selectedCount]
+  );
 
   const selectedAccount = useMemo(
     () => accounts.find((account) => account.id === selectedAccountId) ?? null,
@@ -290,6 +341,215 @@ export function InventoryWorkspace({
     }
   }
 
+  function activateSection(section: InventorySection) {
+    setActiveSection(section);
+    if (section !== "active") {
+      setIsDetailSheetOpen(false);
+    }
+  }
+
+  function handleTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, currentSection: InventorySection) {
+    const currentIndex = visibleTabs.findIndex((tab) => tab.key === currentSection);
+    if (currentIndex === -1) {
+      return;
+    }
+
+    const focusSection = (index: number) => {
+      const nextSection = visibleTabs[index]?.key;
+      if (nextSection) {
+        tabRefs.current[nextSection]?.focus();
+      }
+    };
+
+    switch (event.key) {
+      case "ArrowRight":
+      case "ArrowDown":
+        event.preventDefault();
+        focusSection((currentIndex + 1) % visibleTabs.length);
+        break;
+      case "ArrowLeft":
+      case "ArrowUp":
+        event.preventDefault();
+        focusSection((currentIndex - 1 + visibleTabs.length) % visibleTabs.length);
+        break;
+      case "Home":
+        event.preventDefault();
+        focusSection(0);
+        break;
+      case "End":
+        event.preventDefault();
+        focusSection(visibleTabs.length - 1);
+        break;
+      case "Enter":
+      case " ":
+        event.preventDefault();
+        activateSection(currentSection);
+        break;
+      default:
+        break;
+    }
+  }
+
+  function toggleAccordion(accordion: InventoryAccordion) {
+    setExpandedAccordions((current) => {
+      if (current[accordion]) {
+        return { counts: false, reconciliations: false };
+      }
+
+      return createAccordionState(accordion);
+    });
+  }
+
+  function handleCountSelection(countId: string, trigger: HTMLButtonElement | null) {
+    setSelectedCountId(countId);
+    selectedCountTriggerRef.current = trigger;
+
+    if (isMobileViewport) {
+      setIsDetailSheetOpen(true);
+    }
+  }
+
+  const selectedCountVariance = useMemo(() => {
+    if (!selectedCount) {
+      return { absoluteDifference: 0, adjustedLines: 0 };
+    }
+
+    return selectedCount.items.reduce(
+      (summary, item, index) => {
+        const actualQuantity = selectedCountDraft[index]?.actual_quantity ?? item.actual_quantity;
+        const difference = actualQuantity - item.system_quantity;
+
+        return {
+          absoluteDifference: summary.absoluteDifference + Math.abs(difference),
+          adjustedLines: summary.adjustedLines + (difference !== 0 ? 1 : 0)
+        };
+      },
+      { absoluteDifference: 0, adjustedLines: 0 }
+    );
+  }, [selectedCount, selectedCountDraft]);
+
+  const visibleTabs = canReconcile ? INVENTORY_TABS : INVENTORY_TABS.filter((tab) => tab.key !== "reconcile");
+
+  function renderActiveCountDetail() {
+    if (!selectedCount) {
+      return (
+        <div className="empty-panel inventory-page__selection-empty">
+          <Boxes size={20} />
+          <h3>اختر جلسة جرد لعرض البنود</h3>
+        </div>
+      );
+    }
+
+    return (
+      <>
+        <div className="section-heading">
+          <div>
+            <h2>{getCountTypeLabel(selectedCount.count_type)}</h2>
+          </div>
+          <Boxes size={18} />
+        </div>
+
+        <div className="info-strip inventory-page__summary">
+          <span>التاريخ: {formatDate(selectedCount.count_date)}</span>
+          <span>البنود: {formatCompactNumber(selectedCount.items.length)}</span>
+          <span>الأسطر المعدلة: {formatCompactNumber(selectedCountVariance.adjustedLines)}</span>
+        </div>
+
+        <div className="info-strip inventory-page__variance">
+          <span>إجمالي الفروق: {formatCompactNumber(selectedCountVariance.absoluteDifference)}</span>
+          <span>تحديث الكميات والأسباب هنا قبل إكمال الجرد.</span>
+        </div>
+
+        <button
+          type="button"
+          className="primary-button inventory-page__primary-action"
+          disabled={isPending || !selectedCount}
+          onClick={() => setConfirmAction({ type: "complete-count" })}
+        >
+          {isPending ? <Loader2 className="spin" size={16} /> : "إكمال الجرد"}
+        </button>
+
+        <div className="stack-list inventory-line-list">
+          {selectedCount.items.map((item, index) => {
+            const draft = selectedCountDraft[index];
+            const actualQuantity = draft?.actual_quantity ?? item.actual_quantity;
+            const difference = actualQuantity - item.system_quantity;
+
+            return (
+              <article key={item.id} className="list-card inventory-line-card">
+                <div className="list-card__header">
+                  <strong>{item.product_name}</strong>
+                  <span
+                    className={
+                      difference === 0 ? "status-pill badge badge--neutral" : "status-pill badge badge--warning"
+                    }
+                  >
+                    {difference === 0
+                      ? "مطابق"
+                      : `فرق ${difference > 0 ? "+" : ""}${formatCompactNumber(difference)}`}
+                  </span>
+                </div>
+
+                <div className="inventory-line-card__meta">
+                  <span>النظام: {formatCompactNumber(item.system_quantity)}</span>
+                  <span>الفعلي: {formatCompactNumber(actualQuantity)}</span>
+                </div>
+
+                <div className="inline-form-grid">
+                  <label className="stack-field">
+                    <span>الكمية الفعلية</span>
+                    <input
+                      type="number"
+                      min={0}
+                      step={1}
+                      value={actualQuantity}
+                      onChange={(event) => {
+                        const nextValue = Number(event.target.value);
+                        setInventoryDrafts((current) => ({
+                          ...current,
+                          [selectedCount.id]: (current[selectedCount.id] ?? []).map((entry, entryIndex) =>
+                            entryIndex === index ? { ...entry, actual_quantity: nextValue } : entry
+                          )
+                        }));
+                      }}
+                    />
+                  </label>
+
+                  <label className="stack-field">
+                    <span>سبب الفرق</span>
+                    <input
+                      type="text"
+                      maxLength={255}
+                      value={draft?.reason ?? ""}
+                      onChange={(event) => {
+                        const nextValue = event.target.value;
+                        setInventoryDrafts((current) => ({
+                          ...current,
+                          [selectedCount.id]: (current[selectedCount.id] ?? []).map((entry, entryIndex) =>
+                            entryIndex === index ? { ...entry, reason: nextValue } : entry
+                          )
+                        }));
+                      }}
+                      placeholder="اختياري"
+                    />
+                  </label>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+
+        {inventoryResult ? (
+          <div className="result-card">
+            <h3>تم إكمال الجرد</h3>
+            <p>عدد المنتجات المعدلة: {formatCompactNumber(inventoryResult.adjusted_products)}</p>
+            <p>إجمالي الفرق: {formatCompactNumber(inventoryResult.total_difference)}</p>
+          </div>
+        ) : null}
+      </>
+    );
+  }
+
   return (
     <section className="operational-page inventory-page">
       <PageHeader
@@ -311,16 +571,7 @@ export function InventoryWorkspace({
         }
         actions={
           <div className="transaction-action-cluster">
-            {canReconcile ? (
-              <button
-                type="button"
-                className={activeSection === "reconcile" ? "secondary-button" : "ghost-button btn btn--ghost"}
-                onClick={() => setActiveSection("reconcile")}
-              >
-                التسوية
-              </button>
-            ) : null}
-            <button type="button" className="primary-button" onClick={() => setActiveSection("create")}>
+            <button type="button" className="primary-button" onClick={() => activateSection("create")}>
               بدء الجرد
             </button>
           </div>
@@ -338,40 +589,34 @@ export function InventoryWorkspace({
         />
       ) : null}
 
-      <div className="operational-section-nav inventory-page__sections" aria-label="أقسام شاشة الجرد">
-        <button
-          type="button"
-          className={activeSection === "create" ? "chip-button is-selected" : "chip-button"}
-          onClick={() => setActiveSection("create")}
-        >
-          بدء الجرد
-        </button>
-        <button
-          type="button"
-          className={activeSection === "active" ? "chip-button is-selected" : "chip-button"}
-          onClick={() => setActiveSection("active")}
-        >
-          الجرد المفتوح
-        </button>
-        {canReconcile ? (
+      <div className="operational-section-nav inventory-page__sections inventory-page__tabs" role="tablist" aria-label="أقسام شاشة الجرد">
+        {visibleTabs.map((tab) => (
           <button
+            key={tab.key}
+            ref={(node) => {
+              tabRefs.current[tab.key] = node;
+            }}
             type="button"
-            className={activeSection === "reconcile" ? "chip-button is-selected" : "chip-button"}
-            onClick={() => setActiveSection("reconcile")}
+            role="tab"
+            id={`inventory-tab-${tab.key}`}
+            aria-selected={activeSection === tab.key}
+            aria-controls={`inventory-panel-${tab.key}`}
+            className={`inventory-page__tab ${activeSection === tab.key ? "is-active chip-button is-selected" : "chip-button"}`}
+            onClick={() => activateSection(tab.key)}
+            onKeyDown={(event) => handleTabKeyDown(event, tab.key)}
           >
-            التسوية
+            {tab.label}
           </button>
-        ) : null}
-        <button
-          type="button"
-          className={activeSection === "history" ? "chip-button is-selected" : "chip-button"}
-          onClick={() => setActiveSection("history")}
-        >
-          آخر النتائج
-        </button>
+        ))}
       </div>
 
-      {activeSection === "create" ? (
+      <section
+        id="inventory-panel-create"
+        className="inventory-page__tab-panel"
+        role="tabpanel"
+        aria-labelledby="inventory-tab-create"
+        hidden={activeSection !== "create"}
+      >
         <div className="operational-layout operational-layout--wide inventory-page__create">
           <section className="workspace-panel inventory-page__create-panel">
             <div className="section-heading">
@@ -472,11 +717,17 @@ export function InventoryWorkspace({
             ) : null}
           </section>
         </div>
-      ) : null}
+      </section>
 
-      {activeSection === "active" ? (
-        <div className="operational-layout operational-layout--split inventory-page__active">
-          <section className="workspace-panel operational-sidebar operational-sidebar--sticky inventory-page__sidebar">
+      <section
+        id="inventory-panel-active"
+        className="inventory-page__tab-panel"
+        role="tabpanel"
+        aria-labelledby="inventory-tab-active"
+        hidden={activeSection !== "active"}
+      >
+        <div className="inventory-page__split inventory-page__active">
+          <section className="workspace-panel operational-sidebar inventory-page__sidebar inventory-page__split-primary">
             <div className="section-heading">
               <div>
                 <h2>الجلسات المفتوحة</h2>
@@ -501,13 +752,14 @@ export function InventoryWorkspace({
                 {inProgressCounts.map((count) => (
                   <button
                     key={count.id}
+                    ref={count.id === selectedCountId ? selectedCountTriggerRef : undefined}
                     type="button"
                     className={
                       count.id === selectedCountId
                         ? "list-card list-card--interactive is-selected inventory-count-card"
                         : "list-card list-card--interactive inventory-count-card"
                     }
-                    onClick={() => setSelectedCountId(count.id)}
+                    onClick={(event) => handleCountSelection(count.id, event.currentTarget)}
                   >
                     <div className="list-card__header">
                       <strong>{getCountTypeLabel(count.count_type)}</strong>
@@ -524,123 +776,30 @@ export function InventoryWorkspace({
             )}
           </section>
 
-          <section className="workspace-panel inventory-page__detail">
-            <div className="section-heading">
-              <div>
-                <h2>
-                  {selectedCount ? getCountTypeLabel(selectedCount.count_type) : "اختر جلسة جرد"}
-                </h2>
-              </div>
-              <Boxes size={18} />
-            </div>
-
-            {selectedCount ? (
-              <>
-                <div className="info-strip inventory-page__summary">
-                  <span>التاريخ: {formatDate(selectedCount.count_date)}</span>
-                  <span>البنود: {formatCompactNumber(selectedCount.items.length)}</span>
-                </div>
-
-                <button
-                  type="button"
-                  className="primary-button inventory-page__primary-action"
-                  disabled={isPending || !selectedCount}
-                  onClick={() => setConfirmAction({ type: "complete-count" })}
-                >
-                  {isPending ? <Loader2 className="spin" size={16} /> : "إكمال الجرد"}
-                </button>
-
-                <div className="stack-list inventory-line-list">
-                  {selectedCount.items.map((item, index) => {
-                    const draft = selectedCountDraft[index];
-                    const actualQuantity = draft?.actual_quantity ?? item.actual_quantity;
-                    const difference = actualQuantity - item.system_quantity;
-
-                    return (
-                      <article key={item.id} className="list-card inventory-line-card">
-                        <div className="list-card__header">
-                          <strong>{item.product_name}</strong>
-                          <span
-                            className={
-                              difference === 0
-                                ? "status-pill badge badge--neutral"
-                                : "status-pill badge badge--warning"
-                            }
-                          >
-                            {difference === 0
-                              ? "مطابق"
-                              : `فرق ${difference > 0 ? "+" : ""}${formatCompactNumber(difference)}`}
-                          </span>
-                        </div>
-
-                        <div className="inventory-line-card__meta">
-                          <span>النظام: {formatCompactNumber(item.system_quantity)}</span>
-                          <span>الفعلي: {formatCompactNumber(actualQuantity)}</span>
-                        </div>
-
-                        <div className="inline-form-grid">
-                          <label className="stack-field">
-                            <span>الكمية الفعلية</span>
-                            <input
-                              type="number"
-                              min={0}
-                              step={1}
-                              value={actualQuantity}
-                              onChange={(event) => {
-                                const nextValue = Number(event.target.value);
-                                setInventoryDrafts((current) => ({
-                                  ...current,
-                                  [selectedCount.id]: (current[selectedCount.id] ?? []).map((entry, entryIndex) =>
-                                    entryIndex === index ? { ...entry, actual_quantity: nextValue } : entry
-                                  )
-                                }));
-                              }}
-                            />
-                          </label>
-
-                          <label className="stack-field">
-                            <span>سبب الفرق</span>
-                            <input
-                              type="text"
-                              maxLength={255}
-                              value={draft?.reason ?? ""}
-                              onChange={(event) => {
-                                const nextValue = event.target.value;
-                                setInventoryDrafts((current) => ({
-                                  ...current,
-                                  [selectedCount.id]: (current[selectedCount.id] ?? []).map((entry, entryIndex) =>
-                                    entryIndex === index ? { ...entry, reason: nextValue } : entry
-                                  )
-                                }));
-                              }}
-                              placeholder="اختياري"
-                            />
-                          </label>
-                        </div>
-                      </article>
-                    );
-                  })}
-                </div>
-              </>
-            ) : (
-              <div className="empty-panel inventory-page__empty">
-                <Boxes size={20} />
-                <h3>اختر جلسة جرد لعرض البنود</h3>
-              </div>
-            )}
-
-            {inventoryResult ? (
-              <div className="result-card">
-                <h3>تم إكمال الجرد</h3>
-                <p>عدد المنتجات المعدلة: {formatCompactNumber(inventoryResult.adjusted_products)}</p>
-                <p>إجمالي الفرق: {formatCompactNumber(inventoryResult.total_difference)}</p>
-              </div>
-            ) : null}
-          </section>
+          {!isMobileViewport ? (
+            <section className="workspace-panel inventory-page__detail inventory-page__split-secondary">
+              {renderActiveCountDetail()}
+            </section>
+          ) : null}
         </div>
-      ) : null}
 
-      {activeSection === "reconcile" ? (
+        <MobileBottomSheet
+          isOpen={isMobileViewport && isDetailSheetOpen && activeSection === "active" && Boolean(selectedCount)}
+          onClose={() => setIsDetailSheetOpen(false)}
+          title={selectedCount ? getCountTypeLabel(selectedCount.count_type) : "الجرد المفتوح"}
+          description="راجع بنود الجلسة وعدّل الكميات ثم أكمل الجرد."
+          content={<section className="inventory-page__detail inventory-page__detail-sheet">{renderActiveCountDetail()}</section>}
+          returnFocusRef={selectedCountTriggerRef}
+        />
+      </section>
+
+      <section
+        id="inventory-panel-reconcile"
+        className="inventory-page__tab-panel"
+        role="tabpanel"
+        aria-labelledby="inventory-tab-reconcile"
+        hidden={activeSection !== "reconcile"}
+      >
         <div className="operational-layout operational-layout--wide inventory-page__reconcile">
           <section className="workspace-panel">
             <div className="section-heading">
@@ -711,80 +870,112 @@ export function InventoryWorkspace({
             ) : null}
           </section>
         </div>
-      ) : null}
+      </section>
 
-      {activeSection === "history" ? (
-        <div className="operational-layout operational-layout--split inventory-page__history">
-          <section className="workspace-panel">
-            <div className="section-heading">
-              <div>
-                <h2>آخر الجردات</h2>
-              </div>
-              <ClipboardCheck size={18} />
-            </div>
-            <div className="stack-list inventory-history-list">
-              {recentCompletedCounts.length > 0 ? (
-                recentCompletedCounts.map((count) => (
-                  <article key={count.id} className="list-card inventory-history-card">
-                    <div className="list-card__header">
-                      <strong>{getCountTypeLabel(count.count_type)}</strong>
-                      <span className="status-pill badge badge--neutral">
-                        {formatCompactNumber(count.items.length)} بند
-                      </span>
+      <section
+        id="inventory-panel-history"
+        className="inventory-page__tab-panel"
+        role="tabpanel"
+        aria-labelledby="inventory-tab-history"
+        hidden={activeSection !== "history"}
+      >
+        <div className="inventory-page__history-stack">
+          <section className="inventory-page__accordion">
+            <button
+              type="button"
+              className={`inventory-page__accordion-header ${expandedAccordions.counts ? "is-expanded" : ""}`}
+              aria-expanded={expandedAccordions.counts}
+              aria-controls="inventory-history-counts"
+              onClick={() => toggleAccordion("counts")}
+            >
+              <span>آخر الجردات</span>
+              <ChevronDown
+                size={18}
+                aria-hidden="true"
+                className={expandedAccordions.counts ? "inventory-page__accordion-icon is-rotated" : "inventory-page__accordion-icon"}
+              />
+            </button>
+            <div
+              id="inventory-history-counts"
+              className="inventory-page__accordion-content"
+              hidden={!expandedAccordions.counts}
+            >
+              <section className="workspace-panel">
+                <div className="stack-list inventory-history-list">
+                  {recentCompletedCounts.length > 0 ? (
+                    recentCompletedCounts.map((count) => (
+                      <article key={count.id} className="list-card inventory-history-card">
+                        <div className="list-card__header">
+                          <strong>{getCountTypeLabel(count.count_type)}</strong>
+                          <span className="status-pill badge badge--neutral">
+                            {formatCompactNumber(count.items.length)} بند
+                          </span>
+                        </div>
+                        <div className="inventory-history-card__meta">
+                          <span>{formatDate(count.count_date)}</span>
+                        </div>
+                      </article>
+                    ))
+                  ) : (
+                    <div className="empty-panel inventory-page__empty">
+                      <ClipboardCheck size={20} />
+                      <h3>لا توجد نتائج مكتملة</h3>
+                      <button type="button" className="secondary-button" onClick={() => activateSection("create")}>
+                        بدء الجرد
+                      </button>
                     </div>
-                    <div className="inventory-history-card__meta">
-                      <span>{formatDate(count.count_date)}</span>
-                    </div>
-                  </article>
-                ))
-              ) : (
-                <div className="empty-panel inventory-page__empty">
-                  <ClipboardCheck size={20} />
-                  <h3>لا توجد نتائج مكتملة</h3>
-                  <button
-                    type="button"
-                    className="secondary-button"
-                    onClick={() => setActiveSection("create")}
-                  >
-                    بدء الجرد
-                  </button>
+                  )}
                 </div>
-              )}
+              </section>
             </div>
           </section>
 
-          <section className="workspace-panel">
-            <div className="section-heading">
-              <div>
-                <h2>آخر التسويات</h2>
-              </div>
-              <Scale size={18} />
-            </div>
-            <div className="stack-list inventory-history-list">
-              {recentReconciliations.length > 0 ? (
-                recentReconciliations.map((entry) => (
-                  <article key={entry.id} className="list-card inventory-history-card">
-                    <div className="list-card__header">
-                      <strong>{entry.account_name}</strong>
-                      <span className="status-pill badge badge--warning">
-                        {formatCurrency(entry.difference)}
-                      </span>
+          <section className="inventory-page__accordion">
+            <button
+              type="button"
+              className={`inventory-page__accordion-header ${expandedAccordions.reconciliations ? "is-expanded" : ""}`}
+              aria-expanded={expandedAccordions.reconciliations}
+              aria-controls="inventory-history-reconciliations"
+              onClick={() => toggleAccordion("reconciliations")}
+            >
+              <span>آخر التسويات</span>
+              <ChevronDown
+                size={18}
+                aria-hidden="true"
+                className={expandedAccordions.reconciliations ? "inventory-page__accordion-icon is-rotated" : "inventory-page__accordion-icon"}
+              />
+            </button>
+            <div
+              id="inventory-history-reconciliations"
+              className="inventory-page__accordion-content"
+              hidden={!expandedAccordions.reconciliations}
+            >
+              <section className="workspace-panel">
+                <div className="stack-list inventory-history-list">
+                  {recentReconciliations.length > 0 ? (
+                    recentReconciliations.map((entry) => (
+                      <article key={entry.id} className="list-card inventory-history-card">
+                        <div className="list-card__header">
+                          <strong>{entry.account_name}</strong>
+                          <span className="status-pill badge badge--warning">{formatCurrency(entry.difference)}</span>
+                        </div>
+                        <div className="inventory-history-card__meta">
+                          <span>{formatDate(entry.reconciliation_date)}</span>
+                        </div>
+                      </article>
+                    ))
+                  ) : (
+                    <div className="empty-panel inventory-page__empty">
+                      <Scale size={20} />
+                      <h3>لا توجد تسويات مسجلة</h3>
                     </div>
-                    <div className="inventory-history-card__meta">
-                      <span>{formatDate(entry.reconciliation_date)}</span>
-                    </div>
-                  </article>
-                ))
-              ) : (
-                <div className="empty-panel inventory-page__empty">
-                  <Scale size={20} />
-                  <h3>لا توجد تسويات مسجلة</h3>
+                  )}
                 </div>
-              )}
+              </section>
             </div>
           </section>
         </div>
-      ) : null}
+      </section>
 
       <ConfirmationDialog
         open={confirmAction?.type === "complete-count"}

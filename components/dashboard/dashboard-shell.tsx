@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import * as React from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Bell,
@@ -142,6 +143,10 @@ export function DashboardShell({
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isOffline, setIsOffline] = useState(false);
   const [isMobileViewport, setIsMobileViewport] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement | null>(null);
+  const bottomMenuButtonRef = useRef<HTMLButtonElement | null>(null);
+  const menuRestoreFocusRef = useRef<HTMLElement | null>(null);
+  const navPopoverRef = useRef<HTMLDivElement | null>(null);
 
   const groupedNavigation = useMemo(() => {
     return navigation.reduce<Record<DashboardNavGroup, DashboardNavItem[]>>(
@@ -210,17 +215,113 @@ export function DashboardShell({
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    const focusableSelector =
+      'a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    const focusNavItem = window.requestAnimationFrame(() => {
+      navPopoverRef.current
+        ?.querySelector<HTMLElement>(".dashboard-nav__item")
+        ?.focus();
+    });
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        closeMenu();
+        return;
+      }
+
+      const popover = navPopoverRef.current;
+
+      if (!popover) {
+        return;
+      }
+
+      const focusableElements = Array.from(
+        popover.querySelectorAll(focusableSelector)
+      ) as HTMLElement[];
+
+      const tabbableElements = focusableElements.filter(
+        (element) => element.tabIndex >= 0 && !element.hasAttribute("disabled")
+      );
+
+      if (tabbableElements.length === 0) {
+        return;
+      }
+
+      const navItems = Array.from(popover.querySelectorAll(".dashboard-nav__item")) as HTMLElement[];
+
+      if (e.key === "Tab") {
+        const currentIndex = tabbableElements.indexOf(document.activeElement as HTMLElement);
+
+        if (currentIndex === -1) {
+          e.preventDefault();
+          tabbableElements[e.shiftKey ? tabbableElements.length - 1 : 0]?.focus();
+        } else if (e.shiftKey && currentIndex <= 0) {
+          e.preventDefault();
+          tabbableElements[tabbableElements.length - 1]?.focus();
+        } else if (!e.shiftKey && currentIndex === tabbableElements.length - 1) {
+          e.preventDefault();
+          tabbableElements[0]?.focus();
+        }
+
+        return;
+      }
+
+      if (!navItems.length) {
+        return;
+      }
+
+      const currentNavIndex = navItems.indexOf(document.activeElement as HTMLElement);
+      const moveNavIndex = (index: number, offset: number) =>
+        (index + offset + navItems.length) % navItems.length;
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        navItems[moveNavIndex(currentNavIndex < 0 ? 0 : currentNavIndex, 1)]?.focus();
+        return;
+      }
+
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        navItems[moveNavIndex(currentNavIndex < 0 ? 0 : currentNavIndex, -1)]?.focus();
+        return;
+      }
+
+      if (e.key === "Home") {
+        e.preventDefault();
+        navItems[0]?.focus();
+        return;
+      }
+
+      if (e.key === "End") {
+        e.preventDefault();
+        navItems[navItems.length - 1]?.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
 
     return () => {
+      window.cancelAnimationFrame(focusNavItem);
+      document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = previousOverflow;
     };
   }, [isMenuOpen]);
 
-  function closeMenu() {
+  function closeMenu(options: { restoreFocus?: boolean } = {}) {
+    const { restoreFocus = true } = options;
+    const focusTarget = menuRestoreFocusRef.current;
     setIsMenuOpen(false);
+
+    if (restoreFocus) {
+      window.requestAnimationFrame(() => {
+        focusTarget?.focus();
+      });
+    }
   }
 
-  function openMenu() {
+  function openMenu(trigger?: HTMLElement | null) {
+    menuRestoreFocusRef.current = trigger ?? menuButtonRef.current;
     setIsSearchOpen(false);
     setIsMenuOpen(true);
   }
@@ -231,7 +332,6 @@ export function DashboardShell({
 
     if (!trimmed) {
       router.push("/search");
-      closeMenu();
       setIsSearchOpen(false);
       return;
     }
@@ -241,7 +341,6 @@ export function DashboardShell({
     });
 
     router.push(`/search?${params.toString()}`);
-    closeMenu();
     setIsSearchOpen(false);
   }
 
@@ -278,7 +377,7 @@ export function DashboardShell({
                 }
                 aria-current={isActive ? "page" : undefined}
                 title={item.label}
-                onClick={closeMenu}
+                onClick={() => closeMenu({ restoreFocus: false })}
               >
                 <span className="dashboard-bottom-bar__icon">
                   <Icon size={18} />
@@ -291,7 +390,8 @@ export function DashboardShell({
           <button
             type="button"
             className="dashboard-bottom-bar__item dashboard-bottom-bar__item--menu"
-            onClick={openMenu}
+            ref={bottomMenuButtonRef}
+            onClick={(event) => openMenu(event.currentTarget)}
             aria-label="القائمة"
             aria-expanded={isMenuOpen}
           >
@@ -316,7 +416,8 @@ export function DashboardShell({
               <button
                 type="button"
                 className="icon-button dashboard-menu-toggle"
-                onClick={openMenu}
+                ref={menuButtonRef}
+                onClick={(event) => openMenu(event.currentTarget)}
                 aria-label="فتح القائمة"
                 aria-expanded={isMenuOpen}
                 aria-haspopup="dialog"
@@ -328,10 +429,11 @@ export function DashboardShell({
                 <>
                   <div
                     className="dashboard-nav-backdrop"
-                    onClick={closeMenu}
+                    onClick={() => closeMenu()}
                     aria-hidden="true"
                   />
                   <div
+                    ref={navPopoverRef}
                     className={[
                       "dashboard-nav-popover",
                       isMobileViewport
@@ -343,7 +445,11 @@ export function DashboardShell({
                     aria-modal="true"
                   >
                     <div className="dashboard-nav-popover__header">
-                      <Link href={homeHref} className="dashboard-brandmark" onClick={closeMenu}>
+                      <Link
+                        href={homeHref}
+                        className="dashboard-brandmark"
+                        onClick={() => closeMenu({ restoreFocus: false })}
+                      >
                         <span className="dashboard-brandmark__logo">Aya</span>
                         <span className="dashboard-brandmark__copy">
                           <strong>Aya Mobile</strong>
@@ -354,7 +460,7 @@ export function DashboardShell({
                       <button
                         type="button"
                         className="icon-button dashboard-menu-close"
-                        onClick={closeMenu}
+                        onClick={() => closeMenu()}
                         aria-label="إغلاق القائمة"
                       >
                         <X size={18} />
@@ -386,7 +492,7 @@ export function DashboardShell({
                                         : "dashboard-nav__item"
                                     }
                                     aria-current={isActive ? "page" : undefined}
-                                    onClick={closeMenu}
+                                    onClick={() => closeMenu({ restoreFocus: false })}
                                   >
                                     <span className="dashboard-nav__icon">
                                       <Icon size={18} />
@@ -424,7 +530,11 @@ export function DashboardShell({
                           <LogoutButton />
                         </>
                       ) : (
-                        <Link href="/" className="secondary-button" onClick={closeMenu}>
+                        <Link
+                          href="/"
+                          className="secondary-button"
+                          onClick={() => closeMenu({ restoreFocus: false })}
+                        >
                           تسجيل الدخول
                         </Link>
                       )}
@@ -434,20 +544,18 @@ export function DashboardShell({
               ) : null}
             </div>
 
-            {!isPosPage ? (
-              <div className="dashboard-header-title">
-                <div className="dashboard-header-title__row">
-                  <h1>{pageContext.title}</h1>
-                </div>
+            <div className="dashboard-header-title">
+              <div className="dashboard-header-title__row">
+                <h1>{pageContext.title}</h1>
               </div>
-            ) : null}
+            </div>
           </div>
 
           <div className="dashboard-topbar__end dashboard-topbar__actions">
             {!isPosPage ? (
               isSearchOpen ? (
                 <form
-                  className="dashboard-quick-search-minimal"
+                  className="dashboard-quick-search-minimal is-open"
                   onSubmit={handleSearchSubmit}
                 >
                   <Search size={16} className="search-icon" />
