@@ -7,8 +7,9 @@ describe("DashboardLoading", () => {
     const { container } = render(<DashboardLoading />);
 
     expect(container.querySelector(".dashboard-loading")).toBeTruthy();
-    expect(container.querySelectorAll(".skeleton-line").length).toBeGreaterThanOrEqual(5);
+    expect(container.querySelector(".dashboard-loading__topbar")).toBeTruthy();
+    expect(container.querySelectorAll(".skeleton-line").length).toBeGreaterThanOrEqual(10);
     expect(container.querySelectorAll(".skeleton-card").length).toBe(3);
-    expect(screen.getByRole("main")).toBeInTheDocument();
+    expect(screen.getByRole("main", { name: "جارٍ تحميل مساحة العمل" })).toBeInTheDocument();
   }, 20000);
 });

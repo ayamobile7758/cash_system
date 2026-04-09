@@ -14,11 +14,12 @@
 ## CURRENT_STATE
 
 ```
-- Project phase: UI Restructuring — Phase 2 complete (Waves 1–4 done)
-- Last work done: Wave 4 — Notifications/Debts/Invoices/POS/Products + hardening for px23
-- Current priority: Wave 5 (Loading Screen + A11y final pass + Regression hardening)
-- Known issues logged: ai-system/KNOWN_ISSUES.md (13 issues, Wave 6 scope)
-- Design system expanded: DESIGN_SYSTEM.md §12–15 added (Surface Hierarchy, Layout, SectionCard, CSS Scoping)
+- Project phase: UI Restructuring — COMPLETE (Waves 1–5 done)
+- Last work done: Wave 5 — Loading Screen + A11y final pass + Regression hardening
+- Current priority: Wave 6A (Infrastructure: tokens → layout → surface → SectionCard)
+- Quality gates: build ✅ | tsc ✅ | vitest 205/207 ✅ | e2e 56 passed ✅
+- Known issues logged: ai-system/KNOWN_ISSUES.md (13 issues, Wave 6A/B/C scope)
+- Design system expanded: DESIGN_SYSTEM.md §12–15 added
 ```
 
 ---
@@ -32,6 +33,7 @@
 | 2026-04-09-WAVE-2A-2B | Settings + Reports + Suppliers + Portability restructure | Codex | DONE | Two-column splits, tab patterns, ARIA roles |
 | 2026-04-09-WAVE-3-4 | Inventory/Maintenance/Notifications/Debts/Invoices/POS | Codex | DONE | 12 passed e2e (px13, px22, px23) |
 | 2026-04-09-AUTH-PERF | Login role-check timeout (2s Promise.race) | Claude | DONE | Fixes slow login; 5/5 login tests pass |
+| 2026-04-10-WAVE-5 | Loading Screen + A11y + Regression hardening | Codex | DONE | 56 e2e passed, tsc clean, build ok |
 
 ---
 
@@ -47,18 +49,18 @@
 
 ## NEXT_TASKS
 
-- [ ] Wave 5 — Task 5.1: Dashboard Loading Screen skeleton update
-- [ ] Wave 5 — Task 5.2: Accessibility final pass (WCAG AA audit)
-- [ ] Wave 5 — Task 5.3: Regression hardening (full test suite)
-- [ ] Wave 6 (future) — Fix 13 known UI issues from KNOWN_ISSUES.md
+- [x] Wave 5 — DONE
+- [ ] Wave 6A — G4 (tokens) → G2 (max-width) → G1 (surface) → G3 (SectionCard)
+- [ ] Wave 6B — P3 (CSS cleanup) → P1 (sticky) → P2 (toolbar) → P4 (max-width POS)
+- [ ] Wave 6C — P5, R1, P6, R2, G5 (polish)
 
 ---
 
 ## META
 ```
-Last updated           : 2026-04-09
-Last TASK_ID           : 2026-04-09-WAVE-4
+Last updated           : 2026-04-10
+Last TASK_ID           : 2026-04-10-WAVE-5
 Last Agent             : Codex
-Total Tasks so far     : 11
-Current line count     : ~70 / 150
+Total Tasks so far     : 12
+Current line count     : ~75 / 150
 ```

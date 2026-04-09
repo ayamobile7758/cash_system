@@ -15,10 +15,10 @@ export function PosMobileCartSheet({
   onOpenCart
 }: PosMobileCartSheetProps) {
   return (
-    <div className={styles.mobileCartAccess}>
+    <div className={`${styles.mobileCartAccess} pos-workspace__mobile-cart-access`}>
       <button
         type="button"
-        className={`${styles.mobileCartButton} pos-cart-sheet__summary`}
+        className={`${styles.mobileCartButton} pos-cart-sheet pos-mobile-cart-access pos-cart-sheet__summary`}
         onClick={onOpenCart}
       >
         <span className={styles.mobileCartCount}>

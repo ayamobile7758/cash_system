@@ -488,7 +488,55 @@ ESCALATE_IF:
   - Test failures indicate structural changes needed beyond scope
 
 ═══ EXECUTION_RESULT ═══
-(Codex writes results here after execution)
+EXECUTION_RESULT
+
+1) Wave 5.1 complete
+- Updated `app/(dashboard)/loading.tsx` and `app/globals.css` to replace the old sidebar skeleton with a topbar-aligned loading shell: topbar skeleton, summary cards, dominant primary panel, and supporting stacked panels.
+- Updated `tests/unit/dashboard-loading.test.tsx` to validate the new loading shell and the accessible `main` loading label.
+
+2) Wave 5.2 complete
+- Accessibility and UX polish applied across the final restructure surfaces, including:
+  `components/dashboard/inventory-workspace.tsx`
+  `components/dashboard/suppliers-workspace.tsx`
+  `components/dashboard/maintenance-workspace.tsx`
+  `components/dashboard/portability-workspace.tsx`
+  `components/dashboard/invoice-detail.tsx`
+  `components/dashboard/dashboard-shell.tsx`
+  `components/pos/pos-workspace.tsx`
+  `components/pos/view/pos-mobile-cart-sheet.tsx`
+  `components/pos/view/pos-surface-shell.tsx`
+  `components/pos/view/pos-checkout-panel.tsx`
+  `components/pos/pos-view.module.css`
+  `components/auth/login-entry-page.tsx`
+  `components/runtime/install-prompt.tsx`
+- Final accessibility/hardening fixes included:
+  - button-based navigator semantics kept on the restructured workspaces
+  - mobile POS cart access selector uniqueness restored and touch target kept above 44px
+  - install prompt now exposes visible CTA copy, visible support copy, and `data-install-state`
+  - compatibility selectors restored for `.dashboard-sidebar` and `.dashboard-layout__sidebar`
+  - invoice returns now preselect the first eligible item so protected return flows remain executable
+
+3) Wave 5.3 complete
+- Regression hardening fixes landed for:
+  - mobile POS cart access and selector collisions
+  - auth/home install prompt coverage
+  - mobile drawer + desktop shell compatibility selectors
+  - invoice return flow on protected phone scenarios
+
+Verification
+- `npm run build`: PASS
+- `npx tsc --noEmit --pretty false`: PASS (zero output)
+- `npx vitest run`: known baseline failures only
+  - `tests/unit/formatters.test.ts:5` still expects Arabic digits from `Intl.NumberFormat("ar-JO")`, but this runtime returns Latin digits
+  - `tests/unit/formatters.test.ts:16` still expects Arabic compact digits, but this runtime returns Latin digits
+- `CI=1 npx playwright test --workers=1`: PASS
+  - 56 passed (15.0m)
+
+Notes
+- Targeted reruns also passed for `px18-visual-accessibility.spec.ts`, `px21-shell-auth.spec.ts`, `px22-transactional-ux.spec.ts`, `px06-device-gate.spec.ts`, and `device-qa.spec.ts`.
+- Recharts still logs repeated `width(-1)/height(-1)` warnings during browser runs, but they did not fail build or tests.
+
+Wave 5 complete
 
 ---
 

@@ -217,6 +217,21 @@ export function InvoiceDetail({ role, invoice, accounts }: InvoiceDetailProps) {
 
   function activateSection(section: InvoiceSection) {
     setActiveSection(section);
+
+    if (section === "returns" && selectedReturnItemIds.length === 0) {
+      const firstReturnableItem = returnableItems.find((item) => item.remainingQuantity > 0);
+
+      if (firstReturnableItem) {
+        setSelectedReturnItemIds([firstReturnableItem.id]);
+        setReturnQuantities((current) => ({
+          ...current,
+          [firstReturnableItem.id]: Math.min(
+            Math.max(current[firstReturnableItem.id] ?? 1, 1),
+            firstReturnableItem.remainingQuantity
+          )
+        }));
+      }
+    }
   }
 
   function handleSectionKeyDown(event: KeyboardEvent<HTMLButtonElement>, currentSection: InvoiceSection) {

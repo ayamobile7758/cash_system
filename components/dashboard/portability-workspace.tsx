@@ -431,7 +431,7 @@ export function PortabilityWorkspace({
         }
       />
 
-      <nav className="configuration-section-nav portability-page__sections portability-page__tabs" role="tablist" aria-label="أقسام شاشة النقل والنسخ">
+      <nav className="configuration-section-nav portability-page__sections portability-page__tabs" aria-label="أقسام شاشة النقل والنسخ">
         {PORTABILITY_TABS.map((tab) => (
           <button
             key={tab.key}
@@ -439,9 +439,8 @@ export function PortabilityWorkspace({
               tabRefs.current[tab.key] = node;
             }}
             type="button"
-            role="tab"
             id={`portability-tab-${tab.key}`}
-            aria-selected={activeSection === tab.key}
+            aria-pressed={activeSection === tab.key}
             aria-controls={`portability-panel-${tab.key}`}
             className={`portability-page__tab ${activeSection === tab.key ? "is-active chip-button is-selected" : "chip-button"}`}
             onClick={() => setActiveSection(tab.key)}
@@ -483,7 +482,7 @@ export function PortabilityWorkspace({
       <section
         id="portability-panel-export"
         className="portability-page__tab-panel"
-        role="tabpanel"
+        role="region"
         aria-labelledby="portability-tab-export"
         hidden={activeSection !== "export"}
       >
@@ -571,7 +570,7 @@ export function PortabilityWorkspace({
       <section
         id="portability-panel-import"
         className="portability-page__tab-panel"
-        role="tabpanel"
+        role="region"
         aria-labelledby="portability-tab-import"
         hidden={activeSection !== "import"}
       >
@@ -674,7 +673,7 @@ export function PortabilityWorkspace({
       <section
         id="portability-panel-restore"
         className="portability-page__tab-panel"
-        role="tabpanel"
+        role="region"
         aria-labelledby="portability-tab-restore"
         hidden={activeSection !== "restore"}
       >
@@ -778,7 +777,7 @@ export function PortabilityWorkspace({
       <section
         id="portability-panel-history"
         className="portability-page__tab-panel"
-        role="tabpanel"
+        role="region"
         aria-labelledby="portability-tab-history"
         hidden={activeSection !== "history"}
       >

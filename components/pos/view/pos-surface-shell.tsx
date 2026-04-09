@@ -38,7 +38,7 @@ export function PosSurfaceShell({
         <aside
           className={
             isMobileViewport && activeMobileTab === "products"
-              ? "pos-cart-sheet is-hidden"
+              ? "pos-cart-panel is-hidden"
               : "pos-cart-sheet"
           }
         >

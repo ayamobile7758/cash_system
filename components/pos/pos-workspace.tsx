@@ -306,6 +306,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   const completeSale = usePosCartStore((state) => state.completeSale);
 
   const searchRef = useRef<HTMLInputElement | null>(null);
+  const previousItemCountRef = useRef(0);
 
   const [panelState, setPanelState] = useState<CartPanelState>("cart");
   const [cartHydrated, setCartHydrated] = useState(false);
@@ -638,6 +639,26 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   }, [activeMobileTab]);
 
   useEffect(() => {
+    if (!cartHydrated) {
+      previousItemCountRef.current = items.length;
+      return;
+    }
+
+    const previousItemCount = previousItemCountRef.current;
+
+    if (
+      isMobileCartViewport() &&
+      activeMobileTab === "products" &&
+      panelState !== "success" &&
+      items.length > previousItemCount
+    ) {
+      setActiveMobileTab("cart");
+    }
+
+    previousItemCountRef.current = items.length;
+  }, [activeMobileTab, cartHydrated, items.length, panelState]);
+
+  useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       const activeElement = document.activeElement;
       const isTypingField =
@@ -780,6 +801,11 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   function handleAddProduct(product: PosProduct) {
     clearSubmissionFeedback();
     addProduct(product);
+
+    if (isMobileViewport) {
+      openCheckout();
+    }
+
     toast.success(`تمت إضافة ${product.name}`, {
       id: "pos-product-added",
       duration: 1400
@@ -853,14 +879,20 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     resetCheckoutState();
   }
 
+  function isMobileCartViewport() {
+    return typeof window !== "undefined" &&
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(max-width: 767px)").matches;
+  }
+
   function openCheckout() {
-    if (isMobileViewport) {
+    if (isMobileCartViewport()) {
       setActiveMobileTab("cart");
     }
   }
 
   function goBackToCart() {
-    if (isMobileViewport) {
+    if (isMobileCartViewport()) {
       setActiveMobileTab("products");
     }
   }
@@ -1239,8 +1271,8 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
             type="button"
             className={
               activeMobileTab === "cart"
-                ? "pos-mobile-tabs__button pos-cart-sheet__summary is-active"
-                : "pos-mobile-tabs__button pos-cart-sheet__summary"
+                ? "pos-mobile-tabs__button is-active"
+                : "pos-mobile-tabs__button"
             }
             onClick={openCheckout}
             aria-pressed={activeMobileTab === "cart"}
@@ -1547,7 +1579,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
         products={productsSurface}
       />
 
-      {isMobileViewport && activeMobileTab === "products" && items.length > 0 && panelState !== "success" ? (
+      {isMobileViewport && activeMobileTab === "products" && panelState !== "success" ? (
         <PosMobileCartSheet
           itemCount={totalItemCount}
           netTotal={netTotal}

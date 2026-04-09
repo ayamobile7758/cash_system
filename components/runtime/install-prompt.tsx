@@ -72,15 +72,28 @@ export function InstallPrompt() {
   }
 
   return (
-    <button
-      type="button"
-      className="floating-install-btn"
-      onClick={handleInstallClick}
-      title="تثبيت النظام"
-      aria-label="تثبيت النظام"
-      data-state={installState}
-    >
-      <Download size={24} />
-    </button>
+    <section className="install-card" aria-label="تثبيت Aya Mobile">
+      <div className="install-card__body">
+        <p className="install-copy">النظام يعمل كتطبيق ويب ويمكن تثبيته للوصول الأسرع من الشاشة الرئيسية.</p>
+        <p className="install-status" aria-live="polite" data-install-state={installState}>
+          {statusLabel}
+        </p>
+      </div>
+
+      <div className="install-card__actions">
+        <button
+          type="button"
+          className="install-button"
+          onClick={handleInstallClick}
+          title="تثبيت Aya Mobile"
+          aria-label="تثبيت Aya Mobile"
+          data-state={installState}
+          disabled={!deferredPrompt}
+        >
+          <Download size={18} aria-hidden="true" />
+          <span>تثبيت Aya Mobile</span>
+        </button>
+      </div>
+    </section>
   );
 }

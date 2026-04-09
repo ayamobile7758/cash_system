@@ -190,7 +190,7 @@ export function PosCheckoutPanel({
 
       {!isSplitMode ? (
         <div className="stack-field">
-          <span className="field-label">طرق الدفع</span>
+          <span className="field-label">طريقة الدفع</span>
           <div className="chip-row pos-payment-chip-row">
             {accounts.map((account) => {
               const Icon = getAccountIcon(account.type);
@@ -372,6 +372,7 @@ export function PosCheckoutPanel({
             ? "primary-button btn btn--warning transaction-checkout-button"
             : "primary-button btn btn--primary transaction-checkout-button"
         }
+        aria-label="إتمام البيع"
         disabled={isProcessing || isSubmitting || !canCompleteSale || isOffline}
         onClick={onConfirmSale}
         title="Ctrl+Enter"

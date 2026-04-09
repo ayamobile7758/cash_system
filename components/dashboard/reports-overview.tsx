@@ -512,6 +512,46 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
               </span>
             </article>
           </div>
+
+          <div className="table-wrap">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>المؤشر</th>
+                  <th>القيمة</th>
+                  <th>القراءة التشغيلية</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>إجمالي المبيعات</td>
+                  <td>{formatCurrency(reportBaseline.salesSummary.total_sales)}</td>
+                  <td>
+                    {formatCompactNumber(reportBaseline.salesSummary.invoice_count)} فاتورة ضمن النطاق الحالي
+                  </td>
+                </tr>
+                <tr>
+                  <td>إجمالي الديون</td>
+                  <td>{formatCurrency(reportBaseline.debtReport.total_outstanding)}</td>
+                  <td>
+                    {formatCompactNumber(reportBaseline.debtReport.customers.length)} عميلًا بحاجة إلى متابعة
+                  </td>
+                </tr>
+                <tr>
+                  <td>المخزون المنخفض</td>
+                  <td>{formatCompactNumber(reportBaseline.inventoryReport.low_stock_count)}</td>
+                  <td>عدد المنتجات التي وصلت إلى حد التنبيه أو أقل</td>
+                </tr>
+                <tr>
+                  <td>الصيانة المسلّمة</td>
+                  <td>
+                    {formatCompactNumber(reportBaseline.profitReport.maintenance_delivered_count)}
+                  </td>
+                  <td>{formatCurrency(reportBaseline.profitReport.maintenance_revenue)} إيراد محقق</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </SectionCard>
       </section>
 

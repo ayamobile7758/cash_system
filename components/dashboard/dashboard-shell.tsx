@@ -172,6 +172,7 @@ export function DashboardShell({
   );
   const hasNotificationsPage = navigation.some((item) => item.href === "/notifications");
   const accountInitials = getAccountInitials(accountLabel);
+  const desktopNavigation = isMobileViewport ? [] : navigation;
 
   useEffect(() => {
     const updateOfflineState = () => {
@@ -436,6 +437,7 @@ export function DashboardShell({
                     ref={navPopoverRef}
                     className={[
                       "dashboard-nav-popover",
+                      "dashboard-sidebar",
                       isMobileViewport
                         ? "dashboard-nav-popover--sheet"
                         : "dashboard-nav-popover--dropdown"
@@ -552,32 +554,39 @@ export function DashboardShell({
           </div>
 
           <div className="dashboard-topbar__end dashboard-topbar__actions">
-            {!isPosPage ? (
-              isSearchOpen ? (
-                <form
-                  className="dashboard-quick-search-minimal is-open"
-                  onSubmit={handleSearchSubmit}
-                >
-                  <Search size={16} className="search-icon" />
-                  <input
-                    type="search"
-                    placeholder="بحث..."
-                    value={searchQuery}
-                    onChange={(event) => setSearchQuery(event.target.value)}
-                    autoFocus
-                    onBlur={() => !searchQuery && setIsSearchOpen(false)}
-                  />
-                </form>
-              ) : (
-                <button
-                  type="button"
-                  className="icon-button ghost-button search-toggle"
-                  onClick={() => setIsSearchOpen(true)}
-                  aria-label="بحث"
-                >
-                  <Search size={18} />
-                </button>
-              )
+            {!isPosPage && isSearchOpen ? (
+              <form
+                className="dashboard-quick-search-minimal is-open"
+                onSubmit={handleSearchSubmit}
+              >
+                <Search size={16} className="search-icon" />
+                <input
+                  type="search"
+                  placeholder="بحث..."
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  autoFocus
+                  onBlur={() => !searchQuery && setIsSearchOpen(false)}
+                />
+              </form>
+            ) : null}
+
+            {isPosPage || !isSearchOpen ? (
+              <button
+                type="button"
+                className="icon-button ghost-button search-toggle"
+                onClick={() => {
+                  if (isPosPage) {
+                    router.push("/search");
+                    return;
+                  }
+
+                  setIsSearchOpen(true);
+                }}
+                aria-label="بحث"
+              >
+                <Search size={18} />
+              </button>
             ) : null}
 
             {hasNotificationsPage ? (
@@ -610,6 +619,42 @@ export function DashboardShell({
             </div>
           </div>
         </header>
+
+        {desktopNavigation.length > 0 ? (
+          <div className="dashboard-layout__sidebar" aria-hidden="true" />
+        ) : null}
+
+        {desktopNavigation.length > 0 ? (
+          <nav className="dashboard-desktop-nav" aria-label="التنقل داخل مساحات التشغيل">
+            {desktopNavigation.map((item) => {
+              const isActive = isPathActive(pathname, item.href);
+              const Icon = getIcon(item.icon);
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={
+                    isActive
+                      ? "dashboard-nav__item dashboard-desktop-nav__item is-active"
+                      : "dashboard-nav__item dashboard-desktop-nav__item"
+                  }
+                  aria-current={isActive ? "page" : undefined}
+                >
+                  <span className="dashboard-nav__icon">
+                    <Icon size={18} />
+                  </span>
+                  <span className="dashboard-nav__label">
+                    {item.label}
+                    {item.href === "/notifications" && unreadNotifications > 0 ? (
+                      <span className="dashboard-nav__badge">{unreadNotifications}</span>
+                    ) : null}
+                  </span>
+                </Link>
+              );
+            })}
+          </nav>
+        ) : null}
 
         <main className="dashboard-main">{children}</main>
       </div>

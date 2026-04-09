@@ -20,6 +20,7 @@
 | 2026-04-09-WAVE-2A-2B | restructure | Codex | DONE | — | — | — | no | no |
 | 2026-04-09-WAVE-3-4 | restructure | Codex | DONE | — | — | — | no | no |
 | 2026-04-09-AUTH-PERF | bug-fix | Claude | DONE | — | — | — | no | no |
+| 2026-04-10-WAVE-5 | polish + hardening | Codex | DONE | — | — | — | no | no |
 
 ## AGENT_PATTERNS (updated every 10 Tasks)
 

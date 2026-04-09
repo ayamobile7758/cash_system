@@ -129,7 +129,7 @@
 
 .categoryChip {
   flex: 0 0 auto;
-  min-height: 40px;
+  min-height: 44px;
   padding-inline: var(--sp-3);
   white-space: nowrap;
 }
