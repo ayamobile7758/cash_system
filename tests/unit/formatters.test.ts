@@ -3,7 +3,7 @@ import { formatCompactNumber, formatCurrency, formatDate, formatDateTime } from 
 describe("formatters", () => {
   it("formats currency using the configured locale", () => {
     expect(formatCurrency(12.345)).toBe(
-      new Intl.NumberFormat("ar-JO", {
+      new Intl.NumberFormat("ar-JO-u-nu-latn", {
         style: "currency",
         currency: "JOD",
         minimumFractionDigits: 3,
@@ -14,7 +14,7 @@ describe("formatters", () => {
 
   it("formats compact numbers using the configured locale", () => {
     expect(formatCompactNumber(1234)).toBe(
-      new Intl.NumberFormat("ar-JO", {
+      new Intl.NumberFormat("ar-JO-u-nu-latn", {
         maximumFractionDigits: 0
       }).format(1234)
     );
