@@ -1,6 +1,6 @@
 import React, { type HTMLAttributes, type ReactNode } from "react";
 
-type SectionCardTone = "default" | "accent" | "subtle";
+type SectionCardTone = "default" | "accent" | "subtle" | "flat" | "inset";
 
 type SectionCardProps = HTMLAttributes<HTMLElement> & {
   eyebrow?: string;

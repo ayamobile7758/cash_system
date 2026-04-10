@@ -582,7 +582,7 @@ export function MaintenanceWorkspace({
         </article>
       </div>
 
-      <div className="operational-section-nav maintenance-page__tabs" role="tablist" aria-label="أقسام شاشة الصيانة">
+      <div className="operational-section-nav maintenance-page__tabs" aria-label="أقسام شاشة الصيانة">
         {MAINTENANCE_TABS.map((tab) => (
           <button
             key={tab.key}

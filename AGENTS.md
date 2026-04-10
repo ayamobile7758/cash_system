@@ -2621,3 +2621,216 @@ FINAL DELIVERY:
 
 ═══ EXECUTION_RESULT ═══
 (Codex writes results here after execution)
+
+---
+
+# ═════════════════════════════════════════════════════════════
+# WAVE 6A — INFRASTRUCTURE
+# ═════════════════════════════════════════════════════════════
+
+# ══════════════════════════════════════════════════════════════
+# ► CURRENT TASK ◄  Wave 6A — Infrastructure Fix (G4 → G2 → G1 → G3)
+# ══════════════════════════════════════════════════════════════
+
+```
+TASK_ID        : 2026-04-10-WAVE-6A
+TASK_TYPE      : refactor + infrastructure
+PROJECT        : Aya Mobile
+ROUTED_TO      : Codex
+ROUTING_REASON : CSS infrastructure — tokens, layout, surface system, SectionCard variants
+DEPENDS_ON     : Wave 5 complete
+```
+
+GOAL:
+  Fix 4 system-wide infrastructure issues in strict order.
+  Every page depends on globals.css — changes here affect everything.
+  Order is non-negotiable: each step is a prerequisite for the next.
+
+WHAT TO READ BEFORE STARTING:
+  1. ai-system/KNOWN_ISSUES.md  — full diagnosis for G1, G2, G3, G4
+  2. ai-system/DESIGN_SYSTEM.md §12–15 — Surface Hierarchy, Layout Constraints, SectionCard Variants, CSS Scoping Rules
+  3. app/globals.css — the file you will edit most
+  4. components/ui/section-card.tsx — the component you will extend
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 1 — G4: Remove remaining --aya-* tokens
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+File: app/globals.css
+
+Problem:
+  85 lines in globals.css still use --aya-* token names alongside the new --color-* system.
+  Two parallel token systems cause silent inconsistency — a change to one doesn't affect the other.
+
+Action:
+  1. grep globals.css for every --aya-* occurrence
+  2. For each, replace with the correct --color-* equivalent using the table in DESIGN_SYSTEM.md §9
+  3. After replacement, verify the :root block has NO remaining --aya-* definitions
+  4. Do NOT remove the :root block itself — only remove/replace --aya-* entries
+
+Key mappings (from DESIGN_SYSTEM.md §9):
+  --aya-bg            → --color-bg-base
+  --aya-panel         → --color-bg-surface
+  --aya-bg-soft       → --color-bg-muted
+  --aya-line          → --color-border
+  --aya-ink           → --color-text-primary
+  --aya-muted         → --color-text-secondary
+  --aya-primary       → --color-accent
+  --aya-primary-hover → --color-accent-hover
+  --aya-primary-soft  → --color-accent-light
+  --aya-success       → --color-success
+  --aya-success-soft  → --color-success-bg
+  --aya-danger        → --color-danger
+  --aya-danger-soft   → --color-danger-bg
+  --aya-warning       → --color-warning
+  --aya-warning-soft  → --color-warning-bg
+
+DONE_IF:
+  ✅ grep --aya- app/globals.css returns 0 results (outside comments)
+  ✅ tsc passes
+  ✅ vitest passes (same counts as before)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 2 — G2: Add central max-width to dashboard-main
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+File: app/globals.css
+
+Problem:
+  .dashboard-main has no max-width. Every page solves this locally in different ways,
+  creating visual inconsistency across screens (especially at ≥1600px).
+
+Current rule (globals.css ~line 6320):
+  .dashboard-main {
+    display: grid;
+    gap: var(--sp-6);
+    align-content: start;
+  }
+
+Action:
+  Edit .dashboard-main to add:
+    width: 100%;
+    max-width: 1600px;
+    margin-inline: auto;
+
+  Result:
+  .dashboard-main {
+    display: grid;
+    gap: var(--sp-6);
+    align-content: start;
+    width: 100%;
+    max-width: 1600px;
+    margin-inline: auto;
+  }
+
+POS exception — add to existing POS block:
+  .dashboard-layout--pos .dashboard-main,
+  .dashboard-shell--pos .dashboard-main {
+    max-width: none;
+    margin-inline: 0;
+  }
+
+DONE_IF:
+  ✅ .dashboard-main has max-width: 1600px and margin-inline: auto
+  ✅ POS pages still use full width (no unintended max-width on POS)
+  ✅ tsc passes, build passes
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 3 — G1: Fix Surface Layering
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+File: app/globals.css
+
+Problem:
+  Three disconnected visual layers create a "content stacked on background" feeling:
+  - dashboard-topbar: background #FFFFFF
+  - dashboard-content: weak gradient (surface 14% → transparent)
+  - section-card: background #FFFFFF + border + box-shadow 0.04 opacity
+
+Action — Two changes only:
+
+  Change A: dashboard-content background (~line 6307)
+    FROM:
+      background: linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--color-bg-surface) 14%, transparent),
+        transparent 10rem
+      );
+    TO:
+      background: transparent;
+
+  Change B: section-card box-shadow (~line 3651)
+    FROM:
+      box-shadow: 0 1px 3px rgba(24, 23, 21, 0.04);
+    TO:
+      (remove this line entirely)
+
+IMPORTANT — test impact:
+  Run px18-visual-accessibility.spec.ts after this step and verify it still passes.
+
+DONE_IF:
+  ✅ dashboard-content has background: transparent (no gradient)
+  ✅ section-card has NO box-shadow property
+  ✅ All e2e tests pass (especially px18-visual-accessibility.spec.ts)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 4 — G3: Add flat and inset variants to SectionCard
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Files:
+  - components/ui/section-card.tsx  (add tone values to type)
+  - app/globals.css                 (add CSS for new variants)
+
+Problem:
+  SectionCard has 3 tones: default | accent | subtle
+  No way to create sub-sections inside a card without nesting another raised card.
+
+Action A — section-card.tsx:
+  FROM: type SectionCardTone = "default" | "accent" | "subtle";
+  TO:   type SectionCardTone = "default" | "accent" | "subtle" | "flat" | "inset";
+
+Action B — globals.css (add after .section-card--subtle block):
+  .section-card--flat {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: var(--sp-4);
+  }
+
+  .section-card--inset {
+    background: var(--color-bg-muted);
+    border: none;
+    box-shadow: none;
+    padding: var(--sp-4);
+  }
+
+CONSTRAINTS:
+  - Do NOT change existing tone styles (default, accent, subtle)
+  - Do NOT change section-card base styles
+  - No existing test uses .section-card--flat or .section-card--inset — safe to add
+
+DONE_IF:
+  ✅ SectionCard accepts tone="flat" and tone="inset" without TypeScript error
+  ✅ .section-card--flat and .section-card--inset exist in globals.css
+  ✅ tsc: zero errors
+  ✅ vitest: same pass counts as before
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FINAL VERIFICATION (after all 4 steps)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Run in order:
+  1. npx tsc --noEmit --pretty false        → must be zero output
+  2. npm run build                           → must succeed
+  3. npx vitest run                          → 205/207 (same known failures)
+  4. CI=1 npx playwright test --workers=1   → must be 56 passed
+
+CONSTRAINTS (global):
+  - No changes to Arabic strings visible to users
+  - No renaming of CSS classes used in e2e tests
+  - No changes to component APIs beyond adding new tone values
+  - POS pages must not be affected by max-width change
+  - Single commit after all 4 steps pass verification
+
+═══ EXECUTION_RESULT ═══
+(Codex writes results here after execution)

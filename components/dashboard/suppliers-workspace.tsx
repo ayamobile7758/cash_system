@@ -468,7 +468,7 @@ export function SuppliersWorkspace({
         />
       ) : null}
 
-      <div className="operational-section-nav suppliers-page__sections suppliers-page__tabs" role="tablist" aria-label="أقسام الموردين والمشتريات">
+      <div className="operational-section-nav suppliers-page__sections suppliers-page__tabs" aria-label="أقسام الموردين والمشتريات">
         {SUPPLIERS_TABS.map((tab) => (
           <button
             key={tab.key}

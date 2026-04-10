@@ -589,7 +589,7 @@ export function InventoryWorkspace({
         />
       ) : null}
 
-      <div className="operational-section-nav inventory-page__sections inventory-page__tabs" role="tablist" aria-label="أقسام شاشة الجرد">
+      <div className="operational-section-nav inventory-page__sections inventory-page__tabs" aria-label="أقسام شاشة الجرد">
         {visibleTabs.map((tab) => (
           <button
             key={tab.key}

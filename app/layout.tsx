@@ -8,13 +8,13 @@ import "./globals.css";
 const tajawal = Tajawal({
   subsets: ["arabic", "latin"],
   weight: ["400", "500", "700", "800"],
-  variable: "--aya-font-body",
+  variable: "--font-primary",
   display: "swap"
 });
 
 const jetBrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  variable: "--aya-font-mono",
+  variable: "--font-mono",
   display: "swap"
 });
 
@@ -65,7 +65,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             style: {
               borderRadius: "8px",
               fontSize: "14px",
-              fontFamily: "var(--aya-font-body)"
+              fontFamily: "var(--font-primary)"
             }
           }}
         />
