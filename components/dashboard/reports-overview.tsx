@@ -162,6 +162,9 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
     "sales-returns": null,
     "accounts-operations": null
   });
+  const visibleSections = REPORT_SECTIONS.filter(
+    (section) => section.tab === "shared" || section.tab === activeTab
+  );
 
   useEffect(() => {
     setActiveTab(normalizeReportTab(reportTabParam));
@@ -291,7 +294,7 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
       </div>
 
       <nav className="analytical-section-nav reports-page__sections" aria-label="التنقل داخل أقسام التقارير">
-        {REPORT_SECTIONS.map((section) => (
+        {visibleSections.map((section) => (
           <a key={section.href} href={section.href} className="chip" onClick={() => handleSectionClick(section.tab)}>
             {section.label}
           </a>
@@ -301,7 +304,7 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
       <SectionCard
         id="reports-filters"
         title="نطاق التقرير"
-        tone="accent"
+        tone="subtle"
         className="analytical-card analytical-card--filters reports-page__filters reports-page__filter-block"
         actions={
           <div className="action-row">
@@ -459,7 +462,7 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
           <ReportsAdvancedCharts trend={advancedReport.trend} breakdown={advancedReport.breakdown} />
         </SectionCard>
 
-        <SectionCard id="reports-baseline" title="مؤشرات سريعة" className="analytical-card">
+        <SectionCard id="reports-baseline" title="مؤشرات سريعة" tone="accent" className="analytical-card">
           <div className="analytical-kpi-grid reports-page__baseline-grid">
             <article className="analytical-kpi-card">
               <span className="analytical-kpi-label">المبيعات</span>

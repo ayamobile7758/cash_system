@@ -22,6 +22,9 @@
 | 2026-04-09-AUTH-PERF | bug-fix | Claude | DONE | — | — | — | no | no |
 | 2026-04-10-WAVE-5 | polish + hardening | Codex | DONE | — | — | — | no | no |
 | 2026-04-10-WAVE-6A | refactor + infrastructure | Codex | DONE | — | — | — | no | no |
+| 2026-04-10-WAVE-6B | refactor + bug-fix | Codex | DONE | — | — | — | no | no |
+| 2026-04-10-WAVE-6C | polish + refactor | Codex | DONE | — | — | — | yes | no |
+| 2026-04-10-WAVE-6C-FIX | bug-fix (tests only) | Codex | DONE | — | — | — | no | no |
 
 ## AGENT_PATTERNS (updated every 10 Tasks)
 

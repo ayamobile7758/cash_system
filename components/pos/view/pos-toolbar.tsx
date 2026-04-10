@@ -1,22 +1,17 @@
 import * as React from "react";
-import { ImageIcon, List, Plus, RefreshCcw, Search, X } from "lucide-react";
-import { SectionCard } from "@/components/ui/section-card";
+import { ImageIcon, List, RefreshCcw, Search, X } from "lucide-react";
 import styles from "@/components/pos/pos-view.module.css";
-import { formatCompactNumber } from "@/lib/utils/formatters";
 
 type PosToolbarProps = {
   activeCategory: string;
   categories: string[];
   getCategoryLabel: (category: string) => string;
-  heldCartsCount: number;
   onCategoryChange: (category: string) => void;
   onClearSearch: () => void;
-  onNewSale: () => void;
   onProductViewChange: (view: "text" | "thumbnail") => void;
   onRefreshProducts: () => void;
   onSearchInputChange: (value: string) => void;
   onSearchSubmit: () => void;
-  onToggleHeldCarts: () => void;
   productView: "text" | "thumbnail";
   searchInput: string;
   searchRef: React.Ref<HTMLInputElement>;
@@ -26,21 +21,18 @@ export function PosToolbar({
   activeCategory,
   categories,
   getCategoryLabel,
-  heldCartsCount,
   onCategoryChange,
   onClearSearch,
-  onNewSale,
   onProductViewChange,
   onRefreshProducts,
   onSearchInputChange,
   onSearchSubmit,
-  onToggleHeldCarts,
   productView,
   searchInput,
   searchRef
 }: PosToolbarProps) {
   return (
-    <SectionCard className={`${styles.discoveryCard} transaction-card pos-discovery-card`}>
+    <div className={`${styles.discoveryCard} pos-sub-topbar__inner transaction-card pos-discovery-card`}>
       <div className={`${styles.discoveryToolbar} transaction-toolbar pos-discovery-toolbar`}>
         <label
           className={`${styles.searchField} workspace-search transaction-toolbar__search pos-search-field`}
@@ -82,29 +74,6 @@ export function PosToolbar({
         >
           <RefreshCcw size={18} />
         </button>
-
-        <div className={`${styles.toolbarActions} pos-discovery-toolbar__actions`}>
-          <button
-            type="button"
-            className={`${styles.secondaryAction} secondary-button pos-discovery-toolbar__secondary-action`}
-            onClick={onToggleHeldCarts}
-          >
-            سلال معلقة
-            {heldCartsCount > 0 ? (
-              <span className="product-pill product-pill--warning">
-                {formatCompactNumber(heldCartsCount)}
-              </span>
-            ) : null}
-          </button>
-          <button
-            type="button"
-            className={`${styles.primaryAction} primary-button pos-discovery-toolbar__primary-action`}
-            onClick={onNewSale}
-          >
-            <Plus size={16} />
-            بيع جديد
-          </button>
-        </div>
 
         <div className={`${styles.viewToggle} pos-view-toggle`}>
           <button
@@ -151,6 +120,6 @@ export function PosToolbar({
           </button>
         ))}
       </div>
-    </SectionCard>
+    </div>
   );
 }

@@ -355,16 +355,6 @@ export function PosCheckoutPanel({
         )}
       </div>
 
-      <div className="pos-checkout-review">
-        <button
-          type="button"
-          className="secondary-button pos-checkout-review__button"
-          onClick={onToggleCheckoutOptions}
-        >
-          مراجعة الدفع
-        </button>
-      </div>
-
       <button
         type="button"
         className={
@@ -383,7 +373,7 @@ export function PosCheckoutPanel({
             جارٍ التنفيذ...
           </>
         ) : canCreateDebt ? (
-          `إتمام البيع وتسجيل الدين • ${formatCurrency(netTotal)}`
+          `تسجيل دين • ${formatCurrency(netTotal)}`
         ) : (
           `تأكيد البيع • ${formatCurrency(netTotal)}`
         )}

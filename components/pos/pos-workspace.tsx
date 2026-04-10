@@ -35,6 +35,7 @@ import { PosProductGrid } from "@/components/pos/view/pos-product-grid";
 import { PosSuccessState } from "@/components/pos/view/pos-success-state";
 import { PosSurfaceShell } from "@/components/pos/view/pos-surface-shell";
 import { PosToolbar } from "@/components/pos/view/pos-toolbar";
+import { useTopbarContent } from "@/components/dashboard/topbar-content-context";
 import { useCustomerSearch } from "@/hooks/use-customer-search";
 import { usePosAccounts } from "@/hooks/use-pos-accounts";
 import { useProducts } from "@/hooks/use-products";
@@ -258,6 +259,7 @@ function formatStatusTime(value: Date) {
 }
 
 export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
+  const { setTopbarContent } = useTopbarContent();
   const items = usePosCartStore((state) => state.items);
   const selectedAccountId = usePosCartStore((state) => state.selectedAccountId);
   const selectedCustomerId = usePosCartStore((state) => state.selectedCustomerId);
@@ -334,7 +336,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   const [productView, setProductView] = useState<ProductViewMode>("thumbnail");
   const [isCompactViewport, setIsCompactViewport] = useState(false);
   const [isMobileViewport, setIsMobileViewport] = useState(false);
-  const [now, setNow] = useState(() => new Date());
+  const [now, setNow] = useState<Date | null>(null);
   const [, startTransition] = useTransition();
   const [isSubmitting, startSubmission] = useTransition();
 
@@ -369,7 +371,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     useCustomerSearch(deferredCustomerQuery);
 
   const isOffline = productsOffline || accountsOffline;
-  const categories = ["all", ...PRODUCT_CATEGORY_VALUES];
+  const categories = React.useMemo(() => ["all", ...PRODUCT_CATEGORY_VALUES], []);
   const filteredProducts = useMemo(() => {
     const sorted = [...products].sort((a, b) => {
       if (a.is_quick_add && !b.is_quick_add) return -1;
@@ -603,6 +605,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   }, []);
 
   useEffect(() => {
+    setNow(new Date());
     const intervalId = window.setInterval(() => {
       setNow(new Date());
     }, 30000);
@@ -1192,7 +1195,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     : "العميل: ضيف جديد";
   const checkoutOptionsToggleLabel = isCheckoutOptionsOpen
     ? "إخفاء الخيارات"
-    : "خيارات إضافية";
+    : "مراجعة الدفع";
 
   function handleCartLineRemove(item: (typeof items)[number]) {
     clearSubmissionFeedback();
@@ -1299,7 +1302,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
       </span>
       <span className="pos-status-bar__item">
         <Clock3 size={14} />
-        <bdi dir="ltr">{formatStatusTime(now)}</bdi>
+        <bdi dir="ltr">{now ? formatStatusTime(now) : ""}</bdi>
       </span>
       {lastCompletedSale ? (
         <button
@@ -1320,20 +1323,18 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     </footer>
   );
 
-  const productsSurface = (
-    <div className="transaction-stack pos-products-stack">
+  useEffect(() => {
+    setTopbarContent(
       <PosToolbar
         activeCategory={activeCategory}
         categories={categories}
         getCategoryLabel={getCategoryLabel}
-        heldCartsCount={heldCarts.length}
         onCategoryChange={setActiveCategory}
         onClearSearch={() => {
           setSearchInput("");
           setSearchQuery("");
           searchRef.current?.focus();
         }}
-        onNewSale={handleTopbarNewSale}
         onProductViewChange={setProductView}
         onRefreshProducts={refreshProducts}
         onSearchInputChange={(nextValue) => {
@@ -1342,12 +1343,16 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
           });
         }}
         onSearchSubmit={handleSearchSubmit}
-        onToggleHeldCarts={() => setIsHeldCartsOpen((currentValue) => !currentValue)}
         productView={productView}
         searchInput={searchInput}
         searchRef={searchRef}
       />
+    );
+    return () => setTopbarContent(null);
+  }, [activeCategory, categories, productView, searchInput, setTopbarContent]);
 
+  const productsSurface = (
+    <div className="transaction-stack pos-products-stack">
       <PosProductGrid
         onClearSearch={() => setSearchInput("")}
         onLoadMore={loadMoreProducts}
@@ -1395,6 +1400,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
           onDiscountChange={handleCartLineDiscountChange}
           onHoldCart={handleHoldCart}
           onIncreaseItem={handleCartLineIncrease}
+          onNewSale={handleTopbarNewSale}
           onRemoveItem={handleCartLineRemove}
           onRestoreHeldCart={handleRestoreHeldCart}
           onToggleHeldCarts={() => setIsHeldCartsOpen((currentValue) => !currentValue)}

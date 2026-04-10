@@ -21,6 +21,7 @@ type PosCartRailProps = {
   onDiscountChange: (item: PosCartItem, value: number) => void;
   onHoldCart: () => void;
   onIncreaseItem: (item: PosCartItem) => void;
+  onNewSale: () => void;
   onRemoveItem: (item: PosCartItem) => void;
   onRestoreHeldCart: (cartId: string) => void;
   onToggleHeldCarts: () => void;
@@ -43,6 +44,7 @@ export function PosCartRail({
   onDiscountChange,
   onHoldCart,
   onIncreaseItem,
+  onNewSale,
   onRemoveItem,
   onRestoreHeldCart,
   onToggleHeldCarts
@@ -71,6 +73,14 @@ export function PosCartRail({
       </div>
 
       <div className="cart-panel__actions pos-cart-card__toolbar">
+        <button
+          type="button"
+          className="primary-button cart-panel__header-button pos-cart-new-sale"
+          onClick={onNewSale}
+        >
+          <Plus size={14} />
+          بيع جديد
+        </button>
         <button
           type="button"
           className="secondary-button cart-panel__header-button"

@@ -118,9 +118,14 @@ test.describe.serial("PX-16 navigation + IA", () => {
     await page.goto("/reports", { waitUntil: "domcontentloaded" });
     await page.waitForLoadState("networkidle");
     const reportsSections = page.getByLabel("التنقل داخل أقسام التقارير");
+    // Default tab is "نظرة عامة" so shared + overview links are visible.
     await expect(reportsSections.getByRole("link", { name: "الفلاتر", exact: true })).toBeVisible();
     await expect(reportsSections.getByRole("link", { name: "المقارنة", exact: true })).toBeVisible();
+    await expect(reportsSections.getByRole("link", { name: "لوحة المؤشرات", exact: true })).toBeVisible();
+    await page.getByRole("tab", { name: "المبيعات والمرتجعات", exact: true }).click();
+    await expect(reportsSections.getByRole("link", { name: "المبيعات", exact: true })).toBeVisible();
     await expect(reportsSections.getByRole("link", { name: "المرتجعات", exact: true })).toBeVisible();
+    await page.getByRole("tab", { name: "الحسابات والعمليات", exact: true }).click();
     await expect(reportsSections.getByRole("link", { name: "الصيانة", exact: true })).toBeVisible();
     await expectNoHorizontalOverflow(page);
   });

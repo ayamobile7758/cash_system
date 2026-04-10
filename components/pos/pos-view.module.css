@@ -19,7 +19,7 @@
 .productsPane {
   display: grid;
   min-height: 0;
-  overflow: hidden;
+  overflow: auto;
   background: var(--color-bg-base);
 }
 
@@ -28,15 +28,11 @@
   align-content: start;
   gap: var(--sp-4);
   min-height: 0;
-  overflow: auto;
   padding: var(--sp-4);
   width: 100%;
-  max-width: 1540px;
-  margin-inline: auto;
   scrollbar-width: thin;
 }
 
-.discoveryCard,
 .productPanel {
   min-height: auto;
   border: 1px solid var(--color-border);
@@ -46,9 +42,9 @@
 }
 
 .discoveryCard {
-  position: sticky;
-  top: 0;
-  z-index: 3;
+  display: grid;
+  gap: var(--sp-3);
+  min-height: auto;
 }
 
 .discoveryToolbar {

@@ -20,7 +20,11 @@ export function PosSurfaceShell({
 }: PosSurfaceShellProps) {
   return (
     <div className={`${styles.stage} pos-workspace__stage`}>
-      {header}
+      {header ? (
+        <div className="pos-mobile-header-slot">
+          {header}
+        </div>
+      ) : null}
 
       <div className={`${styles.layout} pos-layout`}>
         <div
