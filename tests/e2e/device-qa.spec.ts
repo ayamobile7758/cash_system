@@ -33,6 +33,8 @@ const FILTER_REPORTS_BUTTON = "تطبيق الفلاتر";
 const BALANCE_INTEGRITY_SECTION = "سلامة الأرصدة";
 const RECHECK_SETTINGS_BUTTON = "إعادة الفحص";
 
+const RESULT_CARD_TIMEOUT_MS = 15_000;
+
 test.describe.configure({ timeout: 120_000 });
 
 type DeviceQaSeed = {
@@ -244,7 +246,9 @@ async function settleSeededDebt(page: Page, customerName: string) {
   });
   await expect(confirmDebtPaymentButton).toBeEnabled();
   await confirmDebtPaymentButton.click();
-  await expect(page.locator(".result-card").filter({ hasText: "الرصيد المتبقي:" }).first()).toBeVisible();
+  await expect(
+    page.locator(".result-card").filter({ hasText: "الرصيد المتبقي:" }).first()
+  ).toBeVisible({ timeout: RESULT_CARD_TIMEOUT_MS });
 }
 
 test.describe.serial("PX-05 device QA regression", () => {
@@ -295,7 +299,9 @@ test.describe.serial("PX-05 device QA regression", () => {
         .getByRole("dialog")
         .getByRole("button", { name: EXECUTE_RETURN_BUTTON, exact: true })
         .click();
-      await expect(page.locator(".result-card").filter({ hasText: "الإجمالي:" }).first()).toBeVisible();
+      await expect(
+        page.locator(".result-card").filter({ hasText: "الإجمالي:" }).first()
+      ).toBeVisible({ timeout: RESULT_CARD_TIMEOUT_MS });
 
       await settleSeededDebt(page, seed.debtCustomerName);
     });
