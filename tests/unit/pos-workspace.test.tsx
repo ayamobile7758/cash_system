@@ -1,22 +1,7 @@
 import React from "react";
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { PosWorkspace } from "@/components/pos/pos-workspace";
-import { TopbarContentProvider, useTopbarContent } from "@/components/dashboard/topbar-content-context";
 import { usePosCartStore } from "@/stores/pos-cart";
-
-function TopbarSlot() {
-  const { topbarContent } = useTopbarContent();
-  return <div data-testid="topbar-slot">{topbarContent}</div>;
-}
-
-function PosWorkspaceWithTopbar(props: React.ComponentProps<typeof PosWorkspace>) {
-  return (
-    <TopbarContentProvider>
-      <TopbarSlot />
-      <PosWorkspace {...props} />
-    </TopbarContentProvider>
-  );
-}
 
 const mockUseProducts = vi.fn();
 const mockUsePosAccounts = vi.fn();
@@ -137,7 +122,7 @@ describe("PosWorkspace", () => {
   });
 
   it("autofocuses the search input and forwards filters to the products hook", async () => {
-    render(<PosWorkspaceWithTopbar maxDiscountPercentage={null} />);
+    render(<PosWorkspace maxDiscountPercentage={null} />);
 
     const searchInput = await screen.findByRole("searchbox");
 
@@ -166,7 +151,7 @@ describe("PosWorkspace", () => {
   }, 30000);
 
   it("adds a product to the local cart without triggering a write request", async () => {
-    render(<PosWorkspaceWithTopbar maxDiscountPercentage={null} />);
+    render(<PosWorkspace maxDiscountPercentage={null} />);
 
     const quickAddButton = screen.getAllByRole("button", { name: /شاحن سريع/i })[0];
     fireEvent.click(quickAddButton);
@@ -178,7 +163,7 @@ describe("PosWorkspace", () => {
     expect(globalThis.fetch).not.toHaveBeenCalled();
   }, 30000);
   it("adds the first matching result when Enter is pressed in search", async () => {
-    render(<PosWorkspaceWithTopbar maxDiscountPercentage={null} />);
+    render(<PosWorkspace maxDiscountPercentage={null} />);
 
     const searchInput = await screen.findByRole("searchbox");
 
@@ -195,7 +180,7 @@ describe("PosWorkspace", () => {
   }, 30000);
 
   it("applies validation tone classes to the live settlement state", async () => {
-    render(<PosWorkspaceWithTopbar maxDiscountPercentage={null} />);
+    render(<PosWorkspace maxDiscountPercentage={null} />);
 
     const quickAddButton = screen.getAllByRole("button", { name: /شاحن سريع/i })[0];
     fireEvent.click(quickAddButton);
@@ -234,7 +219,7 @@ describe("PosWorkspace", () => {
   }, 30000);
 
   it("renders stabilized Arabic labels without mojibake in the active POS surface", async () => {
-    render(<PosWorkspaceWithTopbar maxDiscountPercentage={null} />);
+    render(<PosWorkspace maxDiscountPercentage={null} />);
 
     expect(screen.getByText("المنتجات")).toBeVisible();
     expect(screen.getByText("العميل: ضيف جديد")).toBeVisible();

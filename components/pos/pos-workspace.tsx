@@ -4,6 +4,7 @@ import * as React from "react";
 import {
   useDeferredValue,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -29,13 +30,12 @@ import { toast } from "sonner";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBanner } from "@/components/ui/status-banner";
+import { PosToolbar } from "@/components/pos/toolbar";
 import { PosCartRail } from "@/components/pos/view/pos-cart-rail";
 import { PosCheckoutPanel } from "@/components/pos/view/pos-checkout-panel";
 import { PosProductGrid } from "@/components/pos/view/pos-product-grid";
 import { PosSuccessState } from "@/components/pos/view/pos-success-state";
 import { PosSurfaceShell } from "@/components/pos/view/pos-surface-shell";
-import { PosToolbar } from "@/components/pos/view/pos-toolbar";
-import { useTopbarContent } from "@/components/dashboard/topbar-content-context";
 import { useCustomerSearch } from "@/hooks/use-customer-search";
 import { usePosAccounts } from "@/hooks/use-pos-accounts";
 import { useProducts } from "@/hooks/use-products";
@@ -258,8 +258,25 @@ function formatStatusTime(value: Date) {
   });
 }
 
+function getInitialCompactViewportState() {
+  return typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(max-width: 1023px)").matches;
+}
+
+function getInitialMobileViewportState() {
+  return typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(max-width: 767px)").matches;
+}
+
+declare global {
+  interface Window {
+    __ayaPosSalesWarmupDone__?: boolean;
+  }
+}
+
 export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
-  const { setTopbarContent } = useTopbarContent();
   const items = usePosCartStore((state) => state.items);
   const selectedAccountId = usePosCartStore((state) => state.selectedAccountId);
   const selectedCustomerId = usePosCartStore((state) => state.selectedCustomerId);
@@ -329,8 +346,8 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   const [isPrimarySplitSelectorOpen, setIsPrimarySplitSelectorOpen] = useState(false);
   const [isClearCartDialogOpen, setIsClearCartDialogOpen] = useState(false);
   const [productView, setProductView] = useState<ProductViewMode>("thumbnail");
-  const [isCompactViewport, setIsCompactViewport] = useState(false);
-  const [isMobileViewport, setIsMobileViewport] = useState(false);
+  const [isCompactViewport, setIsCompactViewport] = useState(getInitialCompactViewportState);
+  const [isMobileViewport, setIsMobileViewport] = useState(getInitialMobileViewportState);
   const [now, setNow] = useState<Date | null>(null);
   const [, startTransition] = useTransition();
   const [isSubmitting, startSubmission] = useTransition();
@@ -367,6 +384,15 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
 
   const isOffline = productsOffline || accountsOffline;
   const categories = React.useMemo(() => ["all", ...PRODUCT_CATEGORY_VALUES], []);
+  const toolbarCategories = useMemo(
+    () =>
+      categories.map((category) => ({
+        id: category,
+        label: category === "all" ? "الكل" : getCategoryLabel(category),
+        active: category === activeCategory
+      })),
+    [activeCategory, categories]
+  );
   const filteredProducts = useMemo(() => {
     const sorted = [...products].sort((a, b) => {
       if (a.is_quick_add && !b.is_quick_add) return -1;
@@ -487,6 +513,23 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   }, [searchInput]);
 
   useEffect(() => {
+    if (process.env.NODE_ENV !== "development" || typeof window === "undefined") {
+      return;
+    }
+
+    if (window.__ayaPosSalesWarmupDone__) {
+      return;
+    }
+
+    window.__ayaPosSalesWarmupDone__ = true;
+
+    void fetch("/api/sales", {
+      method: "GET",
+      cache: "no-store"
+    }).catch(() => undefined);
+  }, []);
+
+  useEffect(() => {
     if (!selectedAccountId && accounts.length > 0) {
       setSelectedAccountId(accounts[0].id);
     }
@@ -572,7 +615,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     }
   }, [isSplitMode]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (typeof window.matchMedia !== "function") {
       setIsCompactViewport(false);
       setIsMobileViewport(false);
@@ -911,6 +954,14 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     }
   }
 
+  function handleOpenHeldCarts() {
+    setIsHeldCartsOpen(true);
+
+    if (isMobileCartViewport()) {
+      setActiveMobileTab("cart");
+    }
+  }
+
   function selectCustomer(customer: CustomerSearchResult) {
     clearSubmissionFeedback();
     setSelectedCustomer(customer.id, customer.name);
@@ -1231,7 +1282,6 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
 
   const headerSlot = (
     <>
-      {/* Mobile-only header, since Desktop already has the Dashboard Navbar */}
       <header className="pos-mobile-header">
         <div className="pos-mobile-header__account">
           <span className="pos-mobile-header__account-name">
@@ -1292,6 +1342,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
           </button>
         </nav>
       ) : null}
+
     </>
   );
 
@@ -1328,36 +1379,36 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     </footer>
   );
 
-  useEffect(() => {
-    setTopbarContent(
-      <PosToolbar
-        activeCategory={activeCategory}
-        categories={categories}
-        getCategoryLabel={getCategoryLabel}
-        onCategoryChange={setActiveCategory}
-        onClearSearch={() => {
-          setSearchInput("");
-          setSearchQuery("");
-          searchRef.current?.focus();
-        }}
-        onProductViewChange={setProductView}
-        onRefreshProducts={refreshProducts}
-        onSearchInputChange={(nextValue) => {
-          startTransition(() => {
-            setSearchInput(nextValue);
-          });
-        }}
-        onSearchSubmit={handleSearchSubmit}
-        productView={productView}
-        searchInput={searchInput}
-        searchRef={searchRef}
-      />
-    );
-    return () => setTopbarContent(null);
-  }, [activeCategory, categories, productView, searchInput, setTopbarContent]);
-
   const productsSurface = (
     <div className="transaction-stack pos-products-stack">
+      <PosToolbar
+        search={{
+          value: searchInput,
+          onChange: (nextValue) => {
+            startTransition(() => {
+              setSearchInput(nextValue);
+            });
+          },
+          placeholder: "ابحث بالاسم أو رمز المنتج...",
+          onClear: () => {
+            setSearchInput("");
+            setSearchQuery("");
+            searchRef.current?.focus();
+          },
+          onSubmit: handleSearchSubmit,
+          inputRef: searchRef
+        }}
+        categories={toolbarCategories}
+        onCategorySelect={setActiveCategory}
+        heldCartsCount={heldCarts.length}
+        onHeldCartsOpen={handleOpenHeldCarts}
+        showHeldCartsButton={!isMobileViewport}
+        onRefreshProducts={refreshProducts}
+        showRefreshButton={!isMobileViewport}
+        productView={productView}
+        onProductViewChange={setProductView}
+        showViewToggle={!isMobileViewport}
+      />
       <PosProductGrid
         onClearSearch={() => setSearchInput("")}
         onLoadMore={loadMoreProducts}

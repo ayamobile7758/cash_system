@@ -25,7 +25,6 @@ import {
 } from "lucide-react";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { StatusBanner } from "@/components/ui/status-banner";
-import { TopbarContentProvider, useTopbarContent } from "@/components/dashboard/topbar-content-context";
 
 type DashboardNavGroup = "daily" | "operations" | "management";
 
@@ -126,12 +125,6 @@ function getAccountInitials(accountLabel: string) {
   }
 
   return `${words[0].slice(0, 1)}${words[1].slice(0, 1)}`.trim();
-}
-
-function TopbarCenter() {
-  const { topbarContent } = useTopbarContent();
-  if (!topbarContent) return null;
-  return <div className="dashboard-topbar__center">{topbarContent}</div>;
 }
 
 export function DashboardShell({
@@ -353,7 +346,6 @@ export function DashboardShell({
   }
 
   return (
-    <TopbarContentProvider>
     <div
       className={[
         "dashboard-shell",
@@ -561,8 +553,6 @@ export function DashboardShell({
             </div>
           </div>
 
-          <TopbarCenter />
-
           <div className="dashboard-topbar__end dashboard-topbar__actions">
             {!isPosPage && isSearchOpen ? (
               <form
@@ -669,6 +659,5 @@ export function DashboardShell({
         <main className="dashboard-main">{children}</main>
       </div>
     </div>
-    </TopbarContentProvider>
   );
 }

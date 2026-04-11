@@ -7013,7 +7013,13 @@ h3 {
 
 /* Mobile: cart sheet fixed at bottom */
 @media (max-width: 767px) {
-  .pos-cart-sheet {
+  .pos-cart-sheet:not(.pos-mobile-cart-access) {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
     position: fixed;
     bottom: calc(64px + var(--safe-area-bottom));
     inset-inline-start: 0;
@@ -8960,3 +8966,55 @@ h3 {
   }
 }
 
+
+
+
+/* POS Cart Sidebar NO-Scroll Layout */
+.pos-cart-panel,
+.pos-cart-sheet:not(.pos-mobile-cart-access) {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+.pos-cart-surface {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.pos-cart-surface > .section-card__body {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1 1 0;
+}
+.pos-cart-card__body {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1 1 0;
+  overflow: hidden;
+}
+.cart-line-list {
+  flex: 1 1 0;
+  overflow-y: auto !important;
+  min-height: 0;
+  scrollbar-width: thin;
+}
+.pos-checkout-panel {
+  flex-shrink: 0;
+  margin-top: auto;
+}
+
+/* Dense Grid for Flattened Checkout Options */
+.pos-checkout-dense-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--sp-3);
+  padding-top: var(--sp-2);
+}
+.pos-checkout-dense-grid .stack-field {
+  margin-bottom: 0;
+}

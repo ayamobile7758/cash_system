@@ -34,6 +34,7 @@ export function useProducts({ searchQuery = "", category = "all" }: UseProductsO
   const [refreshNonce, bumpRefreshNonce] = useReducer((value: number) => value + 1, 0);
   const loadedCountRef = useRef(0);
   const filterSignatureRef = useRef("");
+  const requestIdRef = useRef(0);
   const normalizedSearchQuery = sanitizeSearchTerm(searchQuery);
   const normalizedCategory = category !== "all" ? (category as ProductCategory) : null;
   const filterSignature = `${normalizedSearchQuery}\u0000${normalizedCategory ?? ""}`;
@@ -57,6 +58,8 @@ export function useProducts({ searchQuery = "", category = "all" }: UseProductsO
     filterSignatureRef.current = filterSignature;
 
     async function loadProducts() {
+      const requestId = requestIdRef.current + 1;
+      requestIdRef.current = requestId;
       const loadingMore = page > 0;
       if (loadingMore) {
         setIsLoadingMore(true);
@@ -103,7 +106,7 @@ export function useProducts({ searchQuery = "", category = "all" }: UseProductsO
             : new Error("تعذر جلب المنتجات الآن.");
       }
 
-      if (isCancelled) {
+      if (isCancelled || requestId !== requestIdRef.current) {
         return;
       }
 
