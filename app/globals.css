@@ -20,6 +20,13 @@
   --sidebar-collapsed: 56px;
   --topbar-height: 56px;
 
+  /* Archetype width hierarchy (AYA 08 §4) */
+  --width-operational: none;
+  --width-analytical: 1400px;
+  --width-management: 1600px;
+  --width-detail: 1100px;
+  --width-settings: 900px;
+
   /* POS */
   --pos-body-size: 15px;
   --pos-cart-width: clamp(320px, 30vw, 400px);
@@ -32,8 +39,8 @@
   --z-cart-sheet: 40;
   --z-bottom-bar: 50;
   --z-offline-bar: 60;
-  --z-drawer: 70;
-  --z-fullscreen-checkout: 110;
+  --z-fullscreen: 500;
+  --z-fullscreen-checkout: var(--z-fullscreen);
 
   /* Design system tokens */
   --color-bg-base: #F9F8F5;
@@ -73,6 +80,12 @@
   --z-nav-popover: 201;
   --z-toast: 300;
   --z-dialog: 400;
+
+  /* Semantic aliases for z-index roles (AYA 03 §10, DESIGN_SYSTEM §10) */
+  --z-sticky: var(--z-cart-sheet);
+  --z-floating: var(--z-bottom-bar);
+  --z-drawer: var(--z-nav-popover);
+  --z-overlay: var(--z-dialog);
 }
 * {
   box-sizing: border-box;
@@ -6250,8 +6263,36 @@ h3 {
   gap: var(--sp-6);
   align-content: start;
   width: 100%;
-  max-width: 1600px;
+  max-width: none;
+  margin-inline: 0;
+}
+
+.dashboard-main > .operational-page {
+  width: 100%;
+  max-width: var(--width-operational);
+}
+
+.dashboard-main > .analytical-page,
+.dashboard-main > .transaction-page,
+.dashboard-main > .configuration-page {
+  width: 100%;
   margin-inline: auto;
+}
+
+.dashboard-main > .analytical-page {
+  max-width: var(--width-analytical);
+}
+
+.dashboard-main > .transaction-page {
+  max-width: var(--width-management);
+}
+
+.dashboard-main > .transaction-page.invoice-detail-page {
+  max-width: var(--width-detail);
+}
+
+.dashboard-main > .configuration-page {
+  max-width: var(--width-settings);
 }
 
 .dashboard-brandmark {
@@ -6426,6 +6467,13 @@ h3 {
   padding-block: var(--sp-2);
   flex-wrap: wrap;
   gap: var(--sp-2);
+}
+
+.dashboard-layout--pos .dashboard-topbar,
+.dashboard-shell--pos .dashboard-topbar,
+.dashboard-layout--pos .dashboard-offline-bar,
+.dashboard-shell--pos .dashboard-offline-bar {
+  position: static;
 }
 
 .dashboard-topbar__center {
