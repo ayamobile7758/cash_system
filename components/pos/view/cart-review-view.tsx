@@ -3,17 +3,15 @@ import { SectionCard } from "@/components/ui/section-card";
 import { PosCartRail } from "@/components/pos/view/pos-cart-rail";
 import { PosSuccessState } from "@/components/pos/view/pos-success-state";
 
-type CartReviewViewProps = Omit<React.ComponentProps<typeof PosCartRail>, "checkoutPanel"> & {
-  checkoutPanel: React.ReactNode;
+type CartReviewViewProps = React.ComponentProps<typeof PosCartRail> & {
   completedSaleFeeTotal: number;
   lastCompletedSale: React.ComponentProps<typeof PosSuccessState>["lastCompletedSale"] | null;
   onStartNewSale: () => void;
   onPrint: () => void;
-  panelState: "cart" | "processing" | "success";
+  panelState: "cart" | "payment" | "processing" | "success";
 };
 
 export function CartReviewView({
-  checkoutPanel,
   completedSaleFeeTotal,
   lastCompletedSale,
   onPrint,
@@ -31,7 +29,7 @@ export function CartReviewView({
           onPrint={onPrint}
         />
       ) : panelState !== "success" ? (
-        <PosCartRail {...cartRailProps} checkoutPanel={checkoutPanel} />
+        <PosCartRail {...cartRailProps} />
       ) : null}
     </SectionCard>
   );

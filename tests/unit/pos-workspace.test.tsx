@@ -189,6 +189,8 @@ describe("PosWorkspace", () => {
       expect(usePosCartStore.getState().items).toHaveLength(1);
     });
 
+    fireEvent.click(await screen.findByRole("button", { name: "مراجعة الدفع" }));
+
     await waitFor(() => {
       const indicator = screen
         .getByText(/المتبقي للسداد:/)

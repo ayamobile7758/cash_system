@@ -8,12 +8,12 @@ type PosCartRailProps = {
   canHoldCart: boolean;
   cartHydrated: boolean;
   cartOverviewLabel: string;
-  checkoutPanel: React.ReactNode;
   customerSummaryLabel: string;
   effectiveMaxDiscount: number;
   getHeldCartAge: (heldAt: string) => string;
   heldCarts: HeldCart[];
   isHeldCartsOpen: boolean;
+  isReviewPaymentDisabled?: boolean;
   items: PosCartItem[];
   onClearCartRequest: () => void;
   onDecreaseItem: (item: PosCartItem) => void;
@@ -22,6 +22,7 @@ type PosCartRailProps = {
   onHoldCart: () => void;
   onIncreaseItem: (item: PosCartItem) => void;
   onNewSale: () => void;
+  onOpenCheckout: () => void;
   onRemoveItem: (item: PosCartItem) => void;
   onRestoreHeldCart: (cartId: string) => void;
   onToggleHeldCarts: () => void;
@@ -31,12 +32,12 @@ export function PosCartRail({
   canHoldCart,
   cartHydrated,
   cartOverviewLabel,
-  checkoutPanel,
   customerSummaryLabel,
   effectiveMaxDiscount,
   getHeldCartAge,
   heldCarts,
   isHeldCartsOpen,
+  isReviewPaymentDisabled = false,
   items,
   onClearCartRequest,
   onDecreaseItem,
@@ -45,6 +46,7 @@ export function PosCartRail({
   onHoldCart,
   onIncreaseItem,
   onNewSale,
+  onOpenCheckout,
   onRemoveItem,
   onRestoreHeldCart,
   onToggleHeldCarts
@@ -246,7 +248,16 @@ export function PosCartRail({
         </div>
       )}
 
-      {checkoutPanel}
+      <div className="actions-row">
+        <button
+          type="button"
+          className="secondary-button"
+          onClick={onOpenCheckout}
+          disabled={isReviewPaymentDisabled}
+        >
+          مراجعة الدفع
+        </button>
+      </div>
     </>
   );
 }
