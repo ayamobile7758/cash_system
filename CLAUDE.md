@@ -5,6 +5,30 @@
 - Primary users: `pos_staff` (cashier), `admin`
 - This file supplements `AGENTS.md`; it adds repo-specific AI safety rules and must not duplicate standing agent rules already defined there
 
+## Architectural Source of Truth
+The architectural and product-level decisions for this project live in the **AYA package**:
+`تصميم جديد/AYA_00 → AYA_09` (10 files).
+
+- **AYA 00** — index and authority map (read first)
+- **AYA 01** — product contract, page archetypes, sticky budget per archetype
+- **AYA 02** — POS final spec (toolbar is local to POS, not shell-injected)
+- **AYA 03** — shell, width hierarchy, surface hierarchy, primitive specs
+- **AYA 04** — post-POS roadmap (Reports → Management → Detail → Settings)
+- **AYA 05** — technical execution plan with test protection protocol + tiered testing
+- **AYA 06** — acceptance criteria, H-rules (H-01 … H-12), measurable metrics
+- **AYA 07** — non-technical owner review guide
+- **AYA 08** — bridge document between AYA, `DESIGN_SYSTEM.md`, and the code
+- **AYA 09** — primitive API reference (props/slots/a11y/test IDs)
+
+Split of authority:
+- Architecture / archetype / width policy / flow → **AYA wins**
+- Color / token / font / radius / numeric z-index → **`ai-system/DESIGN_SYSTEM.md` wins** (see its §16)
+- Business logic (payment, cart, debt, held carts) → **code truth wins**
+- Visible strings, CSS hooks, aria labels → **tests win** (grep `tests/e2e/` first)
+
+When these appear to conflict, go to **AYA 08 §11** before deciding.
+Do not re-invent decisions already made in AYA — extend them or ask.
+
 ## Mandatory Pre-Edit Checklist
 1. Read the file fully before editing it
 2. Search `tests/e2e/` for any reference to the component, class, string, or boolean you are about to change

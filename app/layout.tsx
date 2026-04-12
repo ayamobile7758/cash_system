@@ -1,9 +1,15 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import { JetBrains_Mono, Tajawal } from "next/font/google";
+import { Inter, JetBrains_Mono, Tajawal } from "next/font/google";
 import { Toaster } from "sonner";
 import { ServiceWorkerRegistration } from "@/components/runtime/service-worker-registration";
 import "./globals.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-numeric",
+  display: "swap"
+});
 
 const tajawal = Tajawal({
   subsets: ["arabic", "latin"],
@@ -53,7 +59,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
   return (
     <html lang="ar" dir="rtl" data-build-id={buildId} suppressHydrationWarning>
-      <body className={`${tajawal.variable} ${jetBrainsMono.variable} aya-shell`}>
+      <body className={`${tajawal.variable} ${jetBrainsMono.variable} ${inter.variable} aya-shell`}>
         {children}
         <ServiceWorkerRegistration buildId={buildId} />
         <Toaster

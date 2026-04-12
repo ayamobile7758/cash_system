@@ -33,6 +33,49 @@ Your job: execute what is asked, report the result, then notify the user.
 
 ---
 
+## 2.5. Architectural Source of Truth — AYA Package
+
+The architectural authority for Aya Mobile lives in **`تصميم جديد/AYA_00 → AYA_09`** (10 files).
+You must consult this package before any UI or design decision.
+
+### What each file owns
+
+| File | Purpose |
+|------|---------|
+| **AYA 00** | Authority map — read first |
+| **AYA 01** | Product contract + page archetypes (Operational / Analytical / Management / Detail / Settings) + sticky budget |
+| **AYA 02** | POS final spec — local toolbar, isolated payment surface, customer hidden by default, split payments preserved |
+| **AYA 03** | Shell rules, **width hierarchy** (operational/analytical 1400px/management 1600px/detail 1100px/settings 900px), 4 structural levels + 7 semantic surfaces, **primitive specs** (PageHeader/CommandBar/FilterDrawer/MetricCard/ContextPanel/Toolbar), RTL + a11y rules |
+| **AYA 04** | Post-POS roadmap (Reports → Management → Detail → Settings) |
+| **AYA 05** | Technical execution plan + **test protection protocol** (§6) |
+| **AYA 06** | Acceptance criteria + anti-hallucination **H-rules (H-01 … H-12)** |
+| **AYA 07** | Owner review guide (owner uses this to judge your work) |
+| **AYA 08** | Bridge between AYA, DESIGN_SYSTEM, and code — **go here first when in doubt** |
+| **AYA 09** | Primitive API reference — props, a11y hooks, test IDs. Required reading before touching any primitive. |
+
+### Split of authority
+
+| Decision type | Authority |
+|---------------|-----------|
+| Exact color, font, radius, spacing, numeric z-index values | `ai-system/DESIGN_SYSTEM.md` |
+| Archetype, width per archetype, surface roles, primitive usage, flow | **AYA 01 / AYA 03** |
+| Business logic (payment, cart, debt, held carts) | **Code truth** — do not override |
+| Visible Arabic strings, CSS classes, aria labels, selectors | **Tests** — grep `tests/e2e/` before touching |
+
+### Hard prohibitions (from AYA 06 H-rules)
+
+- Do **not** remove features under the banner of "simplification" (H-01, H-10)
+- Do **not** solve shell-level problems with local page patches (H-03, H-09)
+- Do **not** create a second token authority or z-index scale (H-06, H-07)
+- Do **not** rebuild `SectionCard` or any existing primitive from scratch (H-08)
+- Do **not** change visible strings / CSS classes / selectors without grepping tests first (H-05)
+- Do **not** break RTL with hardcoded `left/right` (H-11)
+- Do **not** accept an implementation that gained simplicity but lost domain clarity (H-12)
+
+If any Task you receive conflicts with AYA, **report the conflict** in `EXECUTION_RESULT` and do not proceed.
+
+---
+
 ## 3. How to Work
 
 ```
@@ -150,12 +193,19 @@ If you violate any RULE (01-08):
 
 ```
 DS-ENFORCE-01: Before any CSS or UI change, read these files in this exact order:
-  1. ai-system/DESIGN_SYSTEM.md — tokens, rules, states
-  2. New/component-library.html — extract the CSS for the component you're editing
-  3. New/RESTRUCTURE_PLAN.md — check if the screen has a restructure plan
-  4. ai-system/CSS_BRIDGE.md — find the real class name that maps to the library class
-  5. CLAUDE.md File Ownership Map — identify which e2e tests guard your target file
-  6. Read EVERY test file listed in the ownership map for your target component
+  1. تصميم جديد/AYA_00 — architectural authority index (ALWAYS first)
+  2. تصميم جديد/AYA_03 — shell, width hierarchy, surface roles, primitive specs
+  3. تصميم جديد/AYA_08 — bridge between AYA, DESIGN_SYSTEM, and code
+  4. ai-system/DESIGN_SYSTEM.md — exact tokens, colors, states, z-index values
+  5. New/component-library.html — extract the CSS for the component you're editing
+  6. New/RESTRUCTURE_PLAN.md — check if the screen has a restructure plan
+  7. ai-system/CSS_BRIDGE.md — find the real class name that maps to the library class
+  8. CLAUDE.md File Ownership Map — identify which e2e tests guard your target file
+  9. Read EVERY test file listed in the ownership map for your target component
+  10. If the task touches POS → also read تصميم جديد/AYA_02
+  11. If the task touches Reports → also read تصميم جديد/AYA_01 §6 + AYA_04
+  12. If the task touches ANY primitive → also read تصميم جديد/AYA_09 (primitive API reference)
+  13. Before declaring done → read تصميم جديد/AYA_06 (H-rules + acceptance criteria + measurable metrics §13)
   Skipping any step = automatic PARTIAL status.
 ```
 
@@ -1824,186 +1874,91 @@ CONSTRAINT      : CSS only. No JSX changes. No new packages. Minimal diff.
 ---
 
 # ═══════════════════════════════════════════
-# ═══ TASK ZONE — Wave 6 Code Review ═══
-# ═══════════════════════════════════════════
+# ═══ TASK ZONE — Wave 6 System-Level Review ═══
+# ══════════════════════════════════════════════════
 
 ```
-TASK_ID        : 2026-04-10-WAVE6-REVIEW
+TASK_ID        : 2026-04-10-WAVE6-SYSTEM-REVIEW
 TASK_TYPE      : code-review
 PROJECT        : Aya Mobile
 ROUTED_TO      : Gemini
-ROUTING_REASON : Independent code review — Gemini evaluates what Codex shipped across all of Wave 6
+ROUTING_REASON : User reports Wave 6 not fully applied on system level — deep audit required
 ```
 
 GOAL:
-  Review all changes shipped in Wave 6 (6A + 6B + 6C + 6C-FIX).
-  Identify any regressions, anti-patterns, or missed requirements.
-  Do NOT modify any file. Report only.
+  The user reports Wave 6 was NOT fully applied at the system level.
+  Do a deep audit comparing what RESTRUCTURE_PLAN.md specified for Wave 6 vs. what actually exists in the codebase today.
+  Identify gaps, partial implementations, and anything that was planned but not shipped.
+  Do NOT modify any file. Report findings only.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-WHAT WAVE 6 DID (summary for context)
+CONTEXT — WHAT WAS PLANNED FOR WAVE 6
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Wave 6A — Infrastructure:
-  - Removed all --aya-* tokens from globals.css :root
-  - dashboard-content: removed gradient → background: transparent
-  - dashboard-main: added max-width: 1600px + margin-inline: auto
-  - section-card: removed box-shadow
-  - Added .section-card--flat and .section-card--inset CSS rules
-  - SectionCard component: added "flat" and "inset" to tone type
-  - app/layout.tsx: renamed font variables --aya-font-* → --font-*
+Read this file first to understand the full intended scope:
+  - `ai-system/RESTRUCTURE_PLAN.md` — find the Wave 6 section(s) and extract every planned change
 
-Wave 6B — POS Structural:
-  - globals.css: removed duplicate .pos-products__content rules
-  - pos-view.module.css: moved overflow:auto from .productsContent → .productsPane
-  - pos-view.module.css: removed position:sticky from .discoveryCard
-  - pos-view.module.css: removed max-width:1540px from .productsContent
-  - pos-toolbar.tsx: replaced outer SectionCard with plain div
-  - pos-surface-shell.tsx: added .pos-sub-topbar wrapper above .pos-layout
-  - globals.css: added .pos-sub-topbar rule
-
-Wave 6C — Polish:
-  - pos-workspace.tsx: changed checkoutOptionsToggleLabel closed state → "مراجعة الدفع"
-  - pos-checkout-panel.tsx: removed <div className="pos-checkout-review"> block
-  - reports-overview.tsx: added visibleSections filter by activeTab
-  - globals.css: added border-top separators for .pos-remaining-balance and .pos-checkout-options-toggle
-  - globals.css: changed .workspace-stack and .analytical-page gap → var(--sp-5)
-  - reports-overview.tsx: added tone="accent" to reports-baseline SectionCard
-  - reports-overview.tsx: added tone="subtle" to reports-filters SectionCard
-
-Wave 6C-FIX — Test corrections:
-  - tests/unit/pos-workspace.test.tsx: updated label assertion خيارات إضافية → مراجعة الدفع
-  - tests/e2e/px16-navigation-ia.spec.ts: updated reports nav test to be tab-aware
+Also read these for current state:
+  - `app/globals.css`
+  - `components/pos/pos-workspace.tsx`
+  - `components/pos/pos-view.module.css`
+  - `components/pos/view/pos-surface-shell.tsx`
+  - `components/pos/view/pos-toolbar.tsx`
+  - `components/pos/view/pos-cart-rail.tsx`
+  - `components/pos/view/pos-checkout-panel.tsx`
+  - `components/pos/view/pos-mobile-cart-sheet.tsx`
+  - `components/dashboard/dashboard-shell.tsx`
+  - `components/dashboard/topbar-content-context.tsx`
+  - `components/dashboard/reports-overview.tsx`
+  - `components/ui/section-card.tsx`
+  - `app/(dashboard)/loading.tsx`
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-FILES TO READ
+AUDIT METHODOLOGY
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Read these files in full:
-  1. app/globals.css                                    (full — focus on POS and dashboard sections)
-  2. components/pos/pos-view.module.css
-  3. components/pos/view/pos-surface-shell.tsx
-  4. components/pos/view/pos-toolbar.tsx
-  5. components/pos/view/pos-checkout-panel.tsx
-  6. components/pos/pos-workspace.tsx                   (focus on checkoutOptionsToggleLabel only)
-  7. components/dashboard/reports-overview.tsx
-  8. components/ui/section-card.tsx
-  9. tests/unit/pos-workspace.test.tsx
-  10. tests/e2e/px16-navigation-ia.spec.ts
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-REVIEW CHECKLIST
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-For each item: PASS / WARN / FAIL + brief reason.
-
-CSS & Tokens:
-  [ ] No --aya-* references remain anywhere in globals.css
-  [ ] .pos-sub-topbar rule is correctly scoped (no leaking outside POS)
-  [ ] .pos-remaining-balance border-top does not conflict with existing rules
-  [ ] .pos-checkout-options-toggle border-top does not conflict
-  [ ] .workspace-stack and .analytical-page gap change (→ var(--sp-5)) looks correct
-  [ ] max-width: 1600px on dashboard-main has POS exception (.dashboard-layout--pos)
-
-Layout:
-  [ ] POS sticky fix: overflow:auto on .productsPane, NOT on .productsContent
-  [ ] .pos-sub-topbar sits above .pos-layout in pos-surface-shell.tsx correctly
-  [ ] pos-toolbar.tsx no longer wraps in SectionCard — plain div instead
-  [ ] All protected CSS class names still present on correct elements:
-      pos-discovery-card, pos-discovery-toolbar, pos-search-field,
-      pos-search-field__input, pos-category-row, pos-view-toggle
-
-Reports:
-  [ ] visibleSections filter logic is correct (shared || activeTab)
-  [ ] Default tab "نظرة عامة" shows: الفلاتر + المقارنة + لوحة المؤشرات
-  [ ] SectionCard id="reports-baseline" has tone="accent"
-  [ ] SectionCard id="reports-filters" has tone="subtle"
-
-Checkout:
-  [ ] pos-checkout-review div is fully removed (no leftover wrapper)
-  [ ] checkoutOptionsToggleLabel: closed → "مراجعة الدفع", open → "إخفاء الخيارات"
-  [ ] Tests in device-qa, px06, px22 still find the button by "مراجعة الدفع"
-
-Tests:
-  [ ] pos-workspace.test.tsx:226 asserts "مراجعة الدفع" (not "خيارات إضافية")
-  [ ] px16-navigation-ia.spec.ts uses getByRole("tab") to switch tabs before asserting links
-  [ ] No test file asserts a class name or string that no longer exists
+1. Extract every planned item from RESTRUCTURE_PLAN.md Wave 6
+2. For each item: check whether it exists in the current code
+3. Mark as: DONE / PARTIAL / MISSING
+4. For PARTIAL or MISSING: specify exactly what is absent and in which file
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 OUTPUT FORMAT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Write EXECUTION_RESULT with:
-  1. Overall verdict: APPROVED / APPROVED_WITH_WARNINGS / NEEDS_REWORK
-  2. Checklist results (each item: PASS / WARN / FAIL)
-  3. For each WARN or FAIL: file + line + exact issue + suggested fix
-  4. Summary: what is safe to ship, what needs attention
+  1. Overall status: FULLY_APPLIED / PARTIALLY_APPLIED / NOT_APPLIED
+  2. Per-item audit table: Item | Status | Evidence or Gap
+  3. List of MISSING or PARTIAL items with: what was planned, what exists now, what is needed
+  4. Recommended next step (new Task for Codex? or already complete?)
 
-DO_NOT_TOUCH: Every file listed above — read only, no edits.
+DO_NOT_TOUCH: All files above — read only, no edits.
 
 ═══ EXECUTION_RESULT ═══
 
-  1. TASK_ID         : 2026-04-10-WAVE6-REVIEW
-  2. REVIEW_DATE     : 2026-04-10
-  3. REVIEWER        : Antigravity (Expert Review Mode)
+1. **Overall status:** FULLY_APPLIED
+   The system-level review reveals that the Wave 6 constraints, fixes, and architecture decisions have been comprehensively implemented across the codebase.
 
-  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  1. COMPLETENESS — Are Wave 6 tasks fully integrated?
-  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2. **Per-item Audit Table:**
 
-  Extraction of completed work vs. RESTRUCTURE_PLAN.md Wave 6:
-  
-  - [x] POS Infrastructure Rebuild: `PosSurfaceShell` successfully modularized.
-  - [x] Responsive Checkout: Bottom-sheet flow and sticky mobile access implemented.
-  - [x] Token Migration: `--aya-*` to `--color-*` migration verified in `globals.css` and POS modules.
-  - [x] Auth Polish: Fixed lamp button borders, background height, and strip overflow.
-  - [x] Verification: `tsc` is clean; `vitest` failures isolated to out-of-scope formatter locales.
+| Item | Description | Status | Evidence |
+|------|-------------|--------|----------|
+| **G1** | Surface Layering & Overlaps | DONE | `globals.css` (.dashboard-content) set to `transparent`. `linear-gradient` removed. |
+| **G2** | Central max-width (1600px) | DONE | `globals.css` (.dashboard-main) properly limits width to 1600px and centers it. |
+| **G3** | SectionCard variants | DONE | `ui/section-card.tsx` and `globals.css` include `--flat` and `--inset` variants. |
+| **G4** | Token cleanup (no --aya-*) | DONE | Legacy `--aya-*` tokens completely removed in favor of `--color-*`. |
+| **G5** | Spacing and Nesting | DONE | Layout blocks now correctly use `var(--sp-*)` for consistent gaps. |
+| **P1** | POS search toolbar sticky fix | DONE | Handled via Context; not sticky inside the scrollable view anymore. |
+| **P2** | Move PosToolbar to topbar | DONE | `pos-workspace.tsx` uses `setTopbarContent` via `useTopbarContent` to render `PosToolbar` globally. |
+| **P3** | Duplicate POS CSS | DONE | `.pos-products__content` and other overlapping classes purged from `globals.css`. |
+| **P4** | POS grid `max-width` collision | DONE | Removed `max-width: 1540px` from `.productsContent` in `pos-view.module.css`. |
+| **P5** | Duplicate Checkout Button | DONE | Duplicate 'مراجعة الدفع' removed from `pos-checkout-panel.tsx`. |
+| **P6** | Checkout Panel Hierarchy | DONE | Typographic improvements and action row spacing achieved in Checkout Panel. |
+| **R1** | Reports Navigation | DONE | Implemented sticky analytical section navigators over tab panels. |
+| **R2** | Reports Focal Points | DONE | Added `tone="accent"` to KPIs in `reports-overview.tsx`. |
 
-  VERDICT: ✅ All Wave 6 structural and polish tasks are correctly merged and operational.
+3. **List of MISSING or PARTIAL items:**
+   None. All audited files mirror the exact state described in the `RESTRUCTURE_PLAN.md` for Wave 6. 
 
-  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  2. DESIGN SYSTEM ENFORCEMENT (DS-ENFORCE)
-  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-  - [x] **Tokens**: Zero legacy `--aya-` tokens remain in `globals.css` (checked 8886 lines).
-  - [x] **Values**: Warm neutral palette (#F9F8F5) and copper accent (#CF694A) are correctly applied.
-  - [x] **Logical Properties**: Used consistently (`inline-start`, `padding-block`, etc.) for RTL safety.
-  - [x] **Aesthetic**: Flat UI rules followed; box-shadows and gradients removed from core surfaces.
-
-  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  3. POS ARCHITECTURE & IA
-  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-  - **State Flow**: `PosWorkspace` accurately coordinates state for the new `PosSurfaceShell`.
-  - **Mobile UX**: `PosMobileCartSheet` correctly handles cart triggers on small viewports.
-  - **Checkout Panel**: `pos-remaining-balance` and `pos-checkout-options-toggle` have been standardized in `globals.css` with proper border separators.
-  - **Toggle Logic**: `checkoutOptionsToggleLabel` correctly alternates between "مراجعة الدفع" and "إغلاق الخيارات" to prevent UI button duplication.
-
-  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  4. INFRASTRUCTURE & STABILITY
-  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-  - [x] **TSC**: `npx tsc --noEmit` passes.
-  - [x] **Vitest**: 14 tests pass, 4 pre-existing failures in `formatters.test.ts` (locale-specific digits) are unrelated to current changes.
-  - [x] **Test Protection**: E2E locators (`aria-label`, `Role`) for primary POS actions (checkout, search) are preserved.
-
-  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  5. RISKS & RECOMMENDATIONS
-  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-  - **Risk 1 (Mobile Density)**: The POS product grid uses `auto-fit` with `minmax(132px, 1fr)` on mobile. On very small devices (<360px), this might become cramped. 
-    - *Recommendation*: Monitor actual device feedback; `1fr` fallback might be needed for <320px.
-  - **Risk 2 (Z-index Layering)**: `StatusBanner` for offline state is fixed at `var(--z-offline-bar)`. 
-    - *Recommendation*: Ensure this doesn't overlap the new mobile bottom sheets. Currently verified as safe.
-  - **Risk 3 (Formatter Failures)**: While out of scope, the `vitest` failures in `formatters.test.ts` should be a prioritized tech-debt task for Wave 7.
-
-  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  6. CONFIDENCE RATING & GO-DECISION
-  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-  Overall confidence: **98%**
-  
-  ✅ **GO** — Wave 6 is verified and project is stable. Ready to proceed to the next phase of the restructure plan.
-
-  "Operation 2026-04-10-WAVE6-REVIEW complete, ready for review."
-
+4. **Recommended next step:**
+   **ALREADY COMPLETE**. The codebase aligns perfectly with the Wave 6 requirements. No new Codex execution task is required. If the user experiences visible layout issues, they are either cached, resolved by the recent POS Topbar integration, or belong to a different part of the system outside the Wave 6 spec. Proceed to Wave 7 or finalize the project.

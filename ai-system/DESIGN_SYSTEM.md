@@ -249,6 +249,7 @@ with the new tokens. Do not leave mixed tokens in the same file.
 These values are fixed. Never use a raw number — always use the token.
 
 ```css
+/* Numeric scale — physical layering */
 --z-base:               0;    /* Normal document flow */
 --z-cart-sheet:        40;    /* POS cart bottom sheet */
 --z-bottom-bar:        50;    /* Mobile bottom navigation */
@@ -258,10 +259,18 @@ These values are fixed. Never use a raw number — always use the token.
 --z-toast:            300;    /* Toast notifications */
 --z-dialog:           400;    /* Modal dialogs */
 --z-fullscreen:       500;    /* Fullscreen checkout */
+
+/* Semantic aliases — AYA 03 §10 mapping */
+--z-sticky:            var(--z-cart-sheet);   /* Sticky headers, local command bars */
+--z-floating:          var(--z-bottom-bar);   /* Floating aids, FABs, pinned CTAs */
+--z-drawer:            var(--z-nav-popover);  /* Side drawers, filter panels */
+--z-overlay:           var(--z-dialog);       /* Modal overlays, payment surface */
 ```
 
 **Rule:** Any new element that needs to float above others must use one of these tokens.
-If none fits, report to Planner — do not invent a new number.
+- Use **semantic aliases** (`--z-sticky`, `--z-floating`, `--z-drawer`, `--z-overlay`) when the element's role is obvious.
+- Use **numeric tokens** directly when mapping a specific system primitive (cart sheet, toast, nav popover).
+- If none fits, report to Planner — do not invent a new number.
 
 ---
 
@@ -510,3 +519,61 @@ MOD-RULE-04: .operational-* classes (used in Inventory, Suppliers, Maintenance, 
              ✅  .inventory-page .operational-list-card { ... }
              ❌  .operational-list-card { ... }
 ```
+
+---
+
+## 16. AYA Architectural Package — External Authority
+
+This file owns **visual/token truth** (colors, fonts, spacing, states, z-index, section-card tones).
+It does **not** own architectural decisions like page archetypes, width hierarchy per archetype,
+surface roles, primitive specs, sticky budgets, or implementation flow.
+
+Those live in the AYA package at:
+`تصميم جديد/AYA_00 → AYA_08`
+
+### Split of authority
+
+| Decision type | Authority |
+|---------------|-----------|
+| Color tokens, font tokens, radius, spacing primitives | **This file** (sections 1–15) |
+| Numeric z-index scale | **This file** (section 10) |
+| SectionCard tones and structural surface levels | **This file** (sections 12, 14) |
+| Page archetypes (Operational / Analytical / Management / Detail / Settings) | **AYA 01** |
+| Width tokens per archetype (`--width-operational` / `--width-analytical` / etc.) | **AYA 03 §5** |
+| Semantic surface roles and their mapping to structural levels | **AYA 03 §6** + **AYA 08 §5** |
+| Primitive specs (PageHeader, CommandBar, FilterDrawer, MetricCard, ContextPanel) | **AYA 03 §8** |
+| Sticky budget per archetype | **AYA 03 §9** |
+| POS flow, toolbar ownership, payment surface isolation | **AYA 02** |
+| Reports archetype rules | **AYA 01 §6** + **AYA 03 §14** + **AYA 04** |
+| Test protection protocol before CSS/string refactors | **AYA 05 §6** + **AYA 06 §4** |
+| Hallucination rules (H-01 … H-12) | **AYA 06 §3** |
+| Migration phases and implementation order | **AYA 05 §7** |
+
+### Reading order for any agent touching UI
+
+1. `AYA_00` — index + authority map
+2. `AYA_01` — product contract + archetypes
+3. `AYA_08` — bridge document (prevents conflicts between AYA and this file)
+4. `AYA_03` — shell, width, surfaces, primitives
+5. This file — for exact values only
+6. `AYA_02` (only when touching POS)
+7. `AYA_05` (only when executing refactors)
+8. `AYA_06` (acceptance criteria — before declaring done)
+
+### Conflict resolution
+
+If a decision appears to conflict between this file and AYA, go to **AYA 08 §11** first.
+The default rule:
+
+- Color / token / radius / numeric z-index → this file wins
+- Archetype / width policy / surface role / flow → AYA wins
+- Business logic (payment, cart, debt) → code truth wins (neither this file nor AYA)
+- Visible strings, CSS hooks, aria labels → tests win (grep `tests/e2e/` and `tests/unit/` first)
+
+### Semantic z-index aliases
+
+AYA 03 §10 references semantic z-index tokens (`z-sticky`, `z-floating`, `z-drawer`, `z-overlay`).
+These are now defined as aliases over the numeric scale in section 10 of this file.
+Use semantic aliases for role-based layering, numeric tokens for primitive-specific mappings.
+
+---

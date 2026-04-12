@@ -14,30 +14,24 @@
 ## CURRENT_STATE
 
 ```
-- Project phase: Wave 6 complete + POS topbar merge + vitest fix done
-- Last work done: Moved PosToolbar into TopbarContentProvider context slot (sub-topbar → dashboard topbar)
-                  Fixed 4 vitest failures + 2 hydration/loop runtime errors
-- Current priority: verify e2e after topbar restructure, then commit
-- Quality gates: build ✅ | tsc ✅ | vitest 208/208 ✅ | e2e pending re-run
-- Known issues: Recharts width(-1)/height(-1) warnings in Playwright logs — non-blocking
+- Project phase: AYA package complete (10 files) + ALL 7 PHASES COMPLETE ✅✅✅
+- Last work done: Phase 7 (Reports archetype cleanup) ✅
+- Current priority: POST-PHASE STABILIZATION & POLISH
+- Quality gates: build ✅ | tsc ✅ | vitest 207/207 ✅ | device-qa 8/8 ✅ | px11-reports 4/4 ✅ | px18-a11y 6/6 ✅
+- Known issues: None blocking; Recharts warnings persist (non-blocking)
 ```
 
 ---
 
 ## LAST_5_DECISIONS
 
-| TASK_ID | Operation | Agent | STATUS | Note |
-|---------|-----------|-------|--------|------|
-| 2026-04-06-TOKEN-MIGRATION | Migrate all --aya-* tokens → --color-* in globals.css | Codex | DONE | Full token migration complete |
-| 2026-04-06-SHELL-REFACTOR | Replace sidebar with Mega Popover nav | Codex | DONE | Sidebar removed, popover implemented |
-| 2026-04-09-WAVE-2A-2B | Settings + Reports + Suppliers + Portability restructure | Codex | DONE | Two-column splits, tab patterns, ARIA roles |
-| 2026-04-09-WAVE-3-4 | Inventory/Maintenance/Notifications/Debts/Invoices/POS | Codex | DONE | 12 passed e2e (px13, px22, px23) |
-| 2026-04-10-WAVE-5 | Loading Screen + A11y + Regression hardening | Codex | DONE | 56 e2e passed, tsc clean, build ok |
-| 2026-04-10-WAVE-6A | Token cleanup + max-width + surface + SectionCard | Codex | DONE | 207/207 vitest, 55 passed + 1 flaky e2e |
-| 2026-04-10-WAVE-6B | POS structural fix (P3+P1+P2+P4) | Codex | DONE | 207/207 vitest, 52 passed + 4 flaky e2e |
-| 2026-04-10-WAVE-6C | Polish (P5+R1+P6+R2+G5) + test fix | Codex | DONE | 207/207 vitest, 56/56 e2e zero flaky |
-| 2026-04-10-POS-TOPBAR | Move PosToolbar into dashboard topbar via React Context | Planner+Gemini | DONE | 208/208 vitest, hydration+loop fixed |
-| 2026-04-10-VITEST-FIX | Fix 4 vitest failures after topbar context refactor | Gemini | DONE | 208/208 vitest, tsc clean |
+| TASK_ID | Operation | Agent | STATUS | Metrics |
+|---------|-----------|-------|--------|---------|
+| 2026-04-12-PHASE-4-EXTRACT | Extract CartReviewView (cart rail + success state) | Codex | DONE | commit d3bc971, cart isolated, tsc ✅ vitest 207/207 ✅ device-qa 8/8 ✅ |
+| 2026-04-12-PHASE-5-OVERLAY | Extract PaymentCheckoutOverlay (isolated payment) | Codex | DONE | commit efcb615, payment isolated, tsc ✅ vitest 207/207 ✅ device-qa 8/8 ✅ px06-device-gate 5/5 ✅ |
+| 2026-04-12-PHASE-6-SUCCESS | Stabilize success surface (moved to top-level) | Codex | DONE | commit 11ea90f, success surface isolated, tsc ✅ vitest 207/207 ✅ device-qa 8/8 ✅ px22 4/4 ✅ |
+| 2026-04-12-PHASE-7-REPORTS | Align Reports to Analytical archetype | Codex | DONE | commit a7c4d2b, reports unified, tsc ✅ vitest 207/207 ✅ px11 4/4 ✅ px18 6/6 ✅ |
+| 2026-04-12-ALL-PHASES-DONE | Complete AYA execution: 7 phases + POS golden flow + Reports | Multiple | DONE | **ALL 7 PHASES COMPLETE** ✅ Branch ready for final QA |
 
 ---
 
@@ -49,20 +43,39 @@
 
 ---
 
-## NEXT_TASKS
+## NEXT_TASKS (AYA Execution Roadmap)
 
-- [x] Wave 5 — DONE
-- [x] Wave 6A — DONE
-- [x] Wave 6B — DONE
-- [x] Wave 6C — DONE (+ 6C-FIX test corrections)
+- [x] Phase 0 — Domain Audit — DONE (2026-04-11)
+- [x] Phase 1 — Shell/System Fixes — DONE (2026-04-11, commit 0772974)
+- [x] Phase 2 — POS toolbar decoupling — DONE (2026-04-12, commit e137cc0)
+- [x] Phase 3 — Product selection extraction — DONE (2026-04-12, commit e0a57a2)
+- [x] Phase 4 — Cart review extraction — DONE (2026-04-12, commit d3bc971)
+- [x] Phase 5 — Payment isolation (overlay surface) — DONE (2026-04-12, commit efcb615)
+- [x] Phase 6 — Success state stabilization — DONE (2026-04-12, commit 11ea90f)
+- [x] Phase 7 — Reports archetype cleanup — DONE (2026-04-12, commit a7c4d2b)
+
+---
+
+## POST-PHASE RECOMMENDATIONS
+
+1. **Final QA sweep** — Run full e2e suite on device-qa + px06 + px11 + px18 + px22 + px24
+2. **Performance audit** — Profile POS on tablet/mobile (chart rendering, list virtualization)
+3. **RTL validation** — Manual check on iPad/tablet in RTL mode
+4. **Browser compatibility** — Safari/iPad smoke test for overlays + sticky surfaces
+5. **Owner acceptance** — Review AYA 07 (owner review guide) and deliver for sign-off
 
 ---
 
 ## META
 ```
-Last updated           : 2026-04-10
-Last TASK_ID           : 2026-04-10-VITEST-FIX
-Last Agent             : Gemini
-Total Tasks so far     : 18
-Current line count     : ~80 / 150
+Last updated           : 2026-04-12
+Last TASK_ID           : 2026-04-12-PHASE-7-REPORTS-ARCHETYPE
+Last Agent             : Codex (reports archetype alignment)
+Total Tasks so far     : 30 (ALL 7 PHASES + debug complete)
+Current line count     : ~150 / 150 (at capacity — comprehensive coverage)
+Phases complete        : 0, 1, 2, 3, 4, 5, 6, 7 ✅ ALL DONE
+Phases pending         : NONE (all phases complete)
+Commits on branch      : 9 (0772974 Phase 1, e137cc0 Phase 2, e0a57a2 Phase 3, ad39d79 test, d3bc971 Phase 4, efcb615 Phase 5, 11ea90f Phase 6, a7c4d2b Phase 7, + 1 before)
+
+**BRANCH STATUS: READY FOR FINAL QA & OWNER REVIEW**
 ```
