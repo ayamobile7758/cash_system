@@ -843,7 +843,7 @@ code {
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   background: var(--color-bg-surface);
-  text-align: right;
+  text-align: end;
 }
 
 .list-card--interactive {
@@ -1026,8 +1026,7 @@ code {
 .transaction-page .status-banner {
   position: fixed;
   top: var(--topbar-height);
-  left: 0;
-  right: 0;
+  inset-inline: 0;
   margin: var(--sp-3);
   margin-inline-start: calc(56px + var(--sp-3));
   width: auto;
@@ -1451,7 +1450,7 @@ a:focus-visible {
     rgba(255, 255, 255, 0.82),
     rgba(255, 255, 255, 0.62)
   );
-  text-align: right;
+  text-align: end;
   box-shadow: 0 1px 3px rgba(24, 23, 21, 0.04);
 }
 
@@ -2993,7 +2992,7 @@ section[id] {
 }
 
 .input-wrapper .icon {
-  margin-right: 1.25rem;
+  margin-inline-end: 1.25rem;
   color: var(--color-text-secondary);
   width: 18px;
   height: 18px;
@@ -3022,8 +3021,8 @@ section[id] {
 
 /* Special case for the password toggle so it aligns visually inside the box on the left */
 .input-wrapper .password-toggle {
-  margin-left: 0.75rem;
-  margin-right: 0.5rem;
+  margin-inline-start: 0.75rem;
+  margin-inline-end: 0.5rem;
   border: none;
   background: transparent;
   color: var(--color-text-secondary);
@@ -3044,7 +3043,7 @@ section[id] {
 
 /* Password field does not need extra padding now because of flexbox */
 .input-wrapper.password-input .input-field {
-  padding-left: 0rem;
+  padding-inline-start: 0rem;
 }
 
 /* Form Actions & Links */
@@ -3199,7 +3198,7 @@ section[id] {
   width: 800px;
   height: 800px;
   top: -200px;
-  left: -200px;
+  inset-inline-start: -200px;
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -3207,13 +3206,13 @@ section[id] {
   width: 600px;
   height: 600px;
   bottom: -150px;
-  right: -100px;
+  inset-inline-end: -100px;
   border: 80px solid rgba(255, 255, 255, 0.02);
 }
 
 .pattern-grid {
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
+  inset: 0;
   background-image: 
     linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
@@ -6227,8 +6226,7 @@ h3 {
 .offline-bar {
   position: fixed;
   top: 0;
-  left: 0;
-  right: 0;
+  inset-inline: 0;
   height: 36px;
   background: var(--color-warning-bg);
   color: var(--color-warning);
@@ -7346,8 +7344,7 @@ h3 {
   .dashboard-bottom-bar {
     position: fixed;
     bottom: 0;
-    right: 0;
-    left: 0;
+    inset-inline: 0;
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 0;
