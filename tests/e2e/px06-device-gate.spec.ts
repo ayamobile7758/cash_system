@@ -24,6 +24,7 @@ const deviceViewports = [
 ] as const;
 
 const REVIEW_PAYMENT_BUTTON = "مراجعة الدفع";
+const PAYMENT_OPTIONS_BUTTON = "خيارات دفع أخرى";
 const PAYMENT_METHOD_TITLE = "طريقة الدفع";
 const RECEIVED_AMOUNT_LABEL = "المبلغ المستلم";
 const COMPLETE_SALE_BUTTON = "إتمام البيع";
@@ -177,7 +178,10 @@ test.describe.serial("PX-06-T03 device gate", () => {
         await productButton.click();
         await expect(posPage.getByRole("complementary").getByText(seed.productName)).toBeVisible();
         await posPage
-          .getByRole("button", { name: REVIEW_PAYMENT_BUTTON, exact: true })
+          .getByRole("button", {
+            name: viewport.label === "phone" ? REVIEW_PAYMENT_BUTTON : PAYMENT_OPTIONS_BUTTON,
+            exact: true
+          })
           .evaluate((element: HTMLButtonElement) => element.click());
         await expect(posPage.getByText(PAYMENT_METHOD_TITLE, { exact: true })).toBeVisible();
         await posPage.getByLabel(RECEIVED_AMOUNT_LABEL).fill("100");

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { GripHorizontal, Minus, Plus, Trash2 } from "lucide-react";
+import { GripHorizontal, Loader2, Minus, Plus, Trash2 } from "lucide-react";
 import type { PosCartItem } from "@/lib/pos/types";
 import { formatCompactNumber, formatCurrency } from "@/lib/utils/formatters";
 import type { HeldCart } from "@/stores/pos-cart";
@@ -30,9 +30,16 @@ type PosCartRailProps = {
   onIncreaseItem: (item: PosCartItem) => void;
   onNewSale: () => void;
   onOpenCheckout: () => void;
+  onOpenPaymentOptions?: () => void;
   onRemoveItem: (item: PosCartItem) => void;
   onRestoreHeldCart: (cartId: string) => void;
+  onSmartPaymentSubmit?: () => void;
   onToggleHeldCarts: () => void;
+  smartPaymentActionLabel?: string;
+  smartPaymentAriaLabel?: string;
+  smartPaymentErrorMessage?: string | null;
+  smartPaymentSubmitDisabled?: boolean;
+  smartPaymentSubmitting?: boolean;
 };
 
 export function PosCartRail({
@@ -56,9 +63,16 @@ export function PosCartRail({
   onIncreaseItem,
   onNewSale,
   onOpenCheckout,
+  onOpenPaymentOptions,
   onRemoveItem,
   onRestoreHeldCart,
-  onToggleHeldCarts
+  onSmartPaymentSubmit,
+  onToggleHeldCarts,
+  smartPaymentActionLabel,
+  smartPaymentAriaLabel,
+  smartPaymentErrorMessage = null,
+  smartPaymentSubmitDisabled = false,
+  smartPaymentSubmitting = false
 }: PosCartRailProps) {
   const lineRefs = React.useRef<Record<string, HTMLElement | null>>({});
 
@@ -292,6 +306,40 @@ export function PosCartRail({
 
         {items.length === 0 ? (
           <div className="pos-cart-rail__empty-message">ابدأ بإضافة منتج</div>
+        ) : layout === "inline" && onSmartPaymentSubmit && onOpenPaymentOptions ? (
+          <div className="pos-cart-rail__smart-actions">
+            {smartPaymentErrorMessage ? (
+              <div className="pos-cart-rail__smart-error" role="alert">
+                {smartPaymentErrorMessage}
+              </div>
+            ) : null}
+
+            <button
+              type="button"
+              className="primary-button pos-cart-rail__smart-button"
+              onClick={onSmartPaymentSubmit}
+              disabled={smartPaymentSubmitDisabled || smartPaymentSubmitting}
+              aria-label={smartPaymentAriaLabel}
+            >
+              {smartPaymentSubmitting ? (
+                <>
+                  <Loader2 className="spin" size={16} />
+                  جارٍ التنفيذ...
+                </>
+              ) : (
+                smartPaymentActionLabel
+              )}
+            </button>
+
+            <button
+              type="button"
+              className="pos-cart-rail__smart-link"
+              onClick={onOpenPaymentOptions}
+              disabled={smartPaymentSubmitting}
+            >
+              خيارات دفع أخرى
+            </button>
+          </div>
         ) : (
           <div className="actions-row pos-cart-rail__actions">
             <button

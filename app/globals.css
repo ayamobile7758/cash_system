@@ -9128,6 +9128,47 @@ h3 {
   margin: 0;
 }
 
+.pos-cart-rail__smart-actions {
+  display: grid;
+  gap: var(--sp-2);
+}
+
+.pos-cart-rail__smart-error {
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid color-mix(in srgb, var(--color-danger) 20%, var(--color-border));
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-danger) 10%, var(--color-bg-surface));
+  color: var(--color-danger);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.pos-cart-rail__smart-button {
+  width: 100%;
+  justify-content: center;
+}
+
+.pos-cart-rail__smart-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 40px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.pos-cart-rail__smart-link:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .pos-cart-rail__actions .secondary-button {
   width: 100%;
   justify-content: center;

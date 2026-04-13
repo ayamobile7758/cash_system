@@ -52,6 +52,31 @@ function clampQuantity(item: PosCartItem, nextQuantity: number) {
 
 type SubmissionState = "idle" | "submitting" | "success" | "error";
 
+const LAST_PAYMENT_METHOD_STORAGE_KEY = "aya.pos.lastPaymentMethod";
+
+function readLastPaymentMethodFromStorage() {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const storedValue = window.localStorage.getItem(LAST_PAYMENT_METHOD_STORAGE_KEY)?.trim();
+
+  return storedValue ? storedValue : null;
+}
+
+function writeLastPaymentMethodToStorage(methodId: string | null) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  if (methodId && methodId.trim().length > 0) {
+    window.localStorage.setItem(LAST_PAYMENT_METHOD_STORAGE_KEY, methodId);
+    return;
+  }
+
+  window.localStorage.removeItem(LAST_PAYMENT_METHOD_STORAGE_KEY);
+}
+
 export type HeldCart = {
   id: string;
   label: string;
@@ -68,6 +93,7 @@ export type HeldCart = {
 
 interface PosCartStore {
   items: PosCartItem[];
+  lastPaymentMethod: string | null;
   selectedAccountId: string | null;
   selectedCustomerId: string | null;
   selectedCustomerName: string | null;
@@ -108,12 +134,15 @@ interface PosCartStore {
   markError: (errorCode: string) => void;
   refreshIdempotencyKey: () => void;
   completeSale: (sale: SaleResponseData) => void;
+  hydrateLastPaymentMethod: (validMethodIds: string[]) => void;
+  setLastPaymentMethod: (methodId: string | null) => void;
   resetStore: () => void;
 }
 
 function createDefaultState() {
   return {
     items: [] as PosCartItem[],
+    lastPaymentMethod: null as string | null,
     selectedAccountId: null,
     selectedCustomerId: null as string | null,
     selectedCustomerName: null as string | null,
@@ -435,6 +464,21 @@ export const usePosCartStore = create<PosCartStore>()(
           lastErrorCode: null,
           currentIdempotencyKey: createDraftIdempotencyKey()
         }));
+      },
+      hydrateLastPaymentMethod(validMethodIds) {
+        const storedMethodId = readLastPaymentMethodFromStorage();
+        const normalizedMethodId =
+          storedMethodId && validMethodIds.includes(storedMethodId) ? storedMethodId : null;
+
+        if (storedMethodId && !normalizedMethodId) {
+          writeLastPaymentMethodToStorage(null);
+        }
+
+        set({ lastPaymentMethod: normalizedMethodId });
+      },
+      setLastPaymentMethod(methodId) {
+        writeLastPaymentMethodToStorage(methodId);
+        set({ lastPaymentMethod: methodId });
       },
       resetStore() {
         set(createDefaultState());

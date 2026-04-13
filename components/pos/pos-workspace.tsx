@@ -61,7 +61,7 @@ type PosWorkspaceProps = {
   maxDiscountPercentage: number | null;
 };
 
-type CartPanelState = "cart" | "payment" | "processing" | "success";
+type CartPanelState = "products" | "cart" | "payment" | "processing" | "success";
 type MobileTab = "products" | "cart";
 type ProductViewMode = "text" | "thumbnail";
 type LastTouchedCartLine = {
@@ -304,6 +304,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   const heldCarts = usePosCartStore((state) => state.heldCarts);
   const currentIdempotencyKey = usePosCartStore((state) => state.currentIdempotencyKey);
   const lastCompletedSale = usePosCartStore((state) => state.lastCompletedSale);
+  const lastPaymentMethod = usePosCartStore((state) => state.lastPaymentMethod);
   const addProduct = usePosCartStore((state) => state.addProduct);
   const removeItem = usePosCartStore((state) => state.removeItem);
   const setQuantity = usePosCartStore((state) => state.setQuantity);
@@ -335,11 +336,15 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   const markError = usePosCartStore((state) => state.markError);
   const refreshIdempotencyKey = usePosCartStore((state) => state.refreshIdempotencyKey);
   const completeSale = usePosCartStore((state) => state.completeSale);
+  const hydrateLastPaymentMethod = usePosCartStore(
+    (state) => state.hydrateLastPaymentMethod
+  );
+  const setLastPaymentMethod = usePosCartStore((state) => state.setLastPaymentMethod);
 
   const searchRef = useRef<HTMLInputElement | null>(null);
   const previousItemCountRef = useRef(0);
 
-  const [panelState, setPanelState] = useState<CartPanelState>("cart");
+  const [panelState, setPanelState] = useState<CartPanelState>("products");
   const [cartHydrated, setCartHydrated] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -354,6 +359,9 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   const [submissionErrorMessage, setSubmissionErrorMessage] = useState<string | null>(
     null
   );
+  const [smartPaymentErrorMessage, setSmartPaymentErrorMessage] = useState<string | null>(
+    null
+  );
   const [primarySplitAmount, setPrimarySplitAmount] = useState<number | null>(null);
   const [isPrimarySplitSelectorOpen, setIsPrimarySplitSelectorOpen] = useState(false);
   const [isClearCartDialogOpen, setIsClearCartDialogOpen] = useState(false);
@@ -362,9 +370,9 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   const [productView, setProductView] = useState<ProductViewMode>("thumbnail");
   const [isCompactViewport, setIsCompactViewport] = useState(getInitialCompactViewportState);
   const [isMobileViewport, setIsMobileViewport] = useState(getInitialMobileViewportState);
-  const [hasContainerQuerySupport, setHasContainerQuerySupport] = useState(
-    supportsContainerQueries
-  );
+  const [hasContainerQuerySupport, setHasContainerQuerySupport] = useState(false);
+  const [hasHydratedLastPaymentMethod, setHasHydratedLastPaymentMethod] = useState(false);
+  const [isSmartSubmitting, setIsSmartSubmitting] = useState(false);
   const [now, setNow] = useState<Date | null>(null);
   const [, startTransition] = useTransition();
   const [isSubmitting, startSubmission] = useTransition();
@@ -400,6 +408,10 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     useCustomerSearch(deferredCustomerQuery);
 
   const isOffline = productsOffline || accountsOffline;
+  const supportedPaymentMethodIds = useMemo(
+    () => Array.from(new Set(accounts.map((account) => account.type))),
+    [accounts]
+  );
   const categories = React.useMemo(() => ["all", ...PRODUCT_CATEGORY_VALUES], []);
   const toolbarCategories = useMemo(
     () =>
@@ -547,10 +559,36 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   }, []);
 
   useEffect(() => {
-    if (!selectedAccountId && accounts.length > 0) {
-      setSelectedAccountId(accounts[0].id);
+    if (accounts.length === 0) {
+      return;
     }
-  }, [accounts, selectedAccountId, setSelectedAccountId]);
+
+    hydrateLastPaymentMethod(supportedPaymentMethodIds);
+    setHasHydratedLastPaymentMethod(true);
+  }, [accounts.length, hydrateLastPaymentMethod, supportedPaymentMethodIds]);
+
+  useEffect(() => {
+    if (!hasHydratedLastPaymentMethod || accounts.length === 0) {
+      return;
+    }
+
+    if (selectedAccountId && accounts.some((account) => account.id === selectedAccountId)) {
+      return;
+    }
+
+    const defaultAccount =
+      (lastPaymentMethod
+        ? accounts.find((account) => account.type === lastPaymentMethod)
+        : null) ?? accounts[0];
+
+    setSelectedAccountId(defaultAccount.id);
+  }, [
+    accounts,
+    hasHydratedLastPaymentMethod,
+    lastPaymentMethod,
+    selectedAccountId,
+    setSelectedAccountId
+  ]);
 
   useEffect(() => {
     if (cartHydrated && !currentIdempotencyKey) {
@@ -733,7 +771,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
       if (event.key === "Escape") {
         if (panelState === "payment") {
           event.preventDefault();
-          setPanelState("cart");
+          returnToActiveCartSurface();
           return;
         }
 
@@ -870,6 +908,10 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     if (submissionErrorMessage) {
       setSubmissionErrorMessage(null);
     }
+
+    if (smartPaymentErrorMessage) {
+      setSmartPaymentErrorMessage(null);
+    }
   }
 
   function markLastTouchedCartLine(productId: string) {
@@ -945,16 +987,36 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     void refreshAccounts();
   }
 
+  function setProductsPanelState() {
+    setPanelState((currentValue) => (currentValue === "success" ? currentValue : "products"));
+  }
+
+  function setCartPanelState() {
+    setPanelState((currentValue) => (currentValue === "success" ? currentValue : "cart"));
+  }
+
+  function returnToActiveCartSurface() {
+    if (isMobileCartViewport()) {
+      setCartPanelState();
+      setActiveMobileTab("cart");
+      return;
+    }
+
+    setProductsPanelState();
+  }
+
   function resetCheckoutState() {
-    setPanelState("cart");
-    goBackToCart();
+    setPanelState("products");
+    setActiveMobileTab("products");
     setSubmissionErrorMessage(null);
+    setSmartPaymentErrorMessage(null);
     setCustomerSearchInput("");
     setSelectedCustomerBalance(null);
     setSelectedCustomerPhone(null);
     setIsHeldCartsOpen(false);
     setPrimarySplitAmount(null);
     setIsPrimarySplitSelectorOpen(false);
+    setIsSmartSubmitting(false);
     setLastTouchedCartLine(null);
   }
 
@@ -979,16 +1041,26 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   }
 
   function openCheckout() {
-    setPanelState((currentValue) => (currentValue === "success" ? currentValue : "cart"));
-
     if (isMobileCartViewport()) {
+      setCartPanelState();
       setActiveMobileTab("cart");
+      return;
     }
+
+    setProductsPanelState();
   }
 
   function openPaymentOverlay() {
+    clearSubmissionFeedback();
+    setIsSmartSubmitting(false);
+
     if (items.length === 0) {
-      openCheckout();
+      if (isMobileCartViewport()) {
+        openCheckout();
+        return;
+      }
+
+      setProductsPanelState();
       return;
     }
 
@@ -1000,20 +1072,20 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   }
 
   function goBackToCart() {
-    setPanelState((currentValue) => (currentValue === "success" ? currentValue : "cart"));
-
-    if (isMobileCartViewport()) {
-      setActiveMobileTab("products");
-    }
+    setProductsPanelState();
+    setActiveMobileTab("products");
   }
 
   function handleOpenHeldCarts() {
-    setPanelState((currentValue) => (currentValue === "success" ? currentValue : "cart"));
     setIsHeldCartsOpen(true);
 
     if (isMobileCartViewport()) {
+      setCartPanelState();
       setActiveMobileTab("cart");
+      return;
     }
+
+    setProductsPanelState();
   }
 
   function selectCustomer(customer: CustomerSearchResult) {
@@ -1030,6 +1102,27 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     setSelectedCustomerBalance(null);
     setSelectedCustomerPhone(null);
     setCustomerSearchInput("");
+  }
+
+  function handleSmartPaymentSubmit() {
+    if (!selectedAccount || !canUseSmartPayment || isSmartSubmitting) {
+      return;
+    }
+
+    clearSubmissionFeedback();
+    setIsSmartSubmitting(true);
+
+    startSubmission(() => {
+      void submitSale({
+        amountReceived: selectedAccount.type === "cash" ? netTotal : null,
+        mode: "smart",
+        notes: "",
+        selectedAccountId: selectedAccount.id,
+        selectedCustomerId: null,
+        selectedCustomerName: null,
+        splitPayments: []
+      });
+    });
   }
 
   function handleHoldCart() {
@@ -1103,26 +1196,40 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     setIsPrimarySplitSelectorOpen(false);
   }
 
-  function buildSalePayloadPayments() {
-    if (!selectedAccountId) {
+  type SubmitSaleOptions = {
+    amountReceived?: number | null;
+    mode?: "overlay" | "smart";
+    notes?: string;
+    selectedAccountId?: string | null;
+    selectedCustomerId?: string | null;
+    selectedCustomerName?: string | null;
+    splitPayments?: typeof splitPayments;
+  };
+
+  function buildSalePayloadPayments(
+    effectiveSelectedAccountId: string | null,
+    effectivePrimaryPaymentAmount: number,
+    effectiveSplitPayments: typeof splitPayments
+  ) {
+    if (!effectiveSelectedAccountId) {
       return [];
     }
 
-    const payments = isSplitMode
+    const payments = effectiveSplitPayments.length > 0
       ? [
           {
-            account_id: selectedAccountId,
+            account_id: effectiveSelectedAccountId,
             amount: roundAmount(primarySplitAmount ?? 0)
           },
-          ...splitPayments.map((payment) => ({
+          ...effectiveSplitPayments.map((payment) => ({
             account_id: payment.accountId,
             amount: roundAmount(payment.amount)
           }))
         ]
       : [
           {
-            account_id: selectedAccountId,
-            amount: primaryPaymentAmount
+            account_id: effectiveSelectedAccountId,
+            amount: effectivePrimaryPaymentAmount
           }
         ];
 
@@ -1133,60 +1240,154 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     return payments.filter((payment) => payment.amount > 0);
   }
 
-  async function submitSale() {
+  async function submitSale(options: SubmitSaleOptions = {}) {
+    const mode = options.mode ?? "overlay";
+    const effectiveSelectedAccountId = options.selectedAccountId ?? selectedAccountId;
+    const effectiveSelectedCustomerId = options.selectedCustomerId ?? selectedCustomerId;
+    const effectiveSelectedCustomerName =
+      options.selectedCustomerName ?? selectedCustomerName;
+    const effectiveAmountReceived = options.amountReceived ?? amountReceived;
+    const effectiveSplitPayments = options.splitPayments ?? splitPayments;
+    const effectiveNotes = options.notes ?? notes;
+    const effectiveSelectedAccount =
+      accounts.find((account) => account.id === effectiveSelectedAccountId) ?? null;
+    const effectiveIsSplitMode = effectiveSplitPayments.length > 0;
+    const effectivePrimaryPaymentAmount = effectiveIsSplitMode
+      ? roundAmount(primarySplitAmount ?? 0)
+      : effectiveSelectedAccount?.type === "cash"
+        ? roundAmount(effectiveAmountReceived ?? 0)
+        : roundAmount(netTotal);
+    const effectivePaymentRows: SaleCompletionPayment[] = [
+      ...(effectiveSelectedAccount
+        ? [
+            {
+              account_id: effectiveSelectedAccount.id,
+              account_name: effectiveSelectedAccount.name,
+              account_type: effectiveSelectedAccount.type,
+              amount: effectivePrimaryPaymentAmount,
+              fee_percentage: effectiveSelectedAccount.fee_percentage,
+              fee_amount: roundAmount(
+                (effectivePrimaryPaymentAmount * effectiveSelectedAccount.fee_percentage) /
+                  100
+              )
+            }
+          ]
+        : []),
+      ...effectiveSplitPayments
+        .map((payment) => {
+          const account = accounts.find((entry) => entry.id === payment.accountId);
+
+          if (!account) {
+            return null;
+          }
+
+          return {
+            account_id: account.id,
+            account_name: account.name,
+            account_type: account.type,
+            amount: roundAmount(payment.amount),
+            fee_percentage: account.fee_percentage,
+            fee_amount: roundAmount((payment.amount * account.fee_percentage) / 100)
+          };
+        })
+        .filter((payment): payment is SaleCompletionPayment => payment !== null)
+    ];
+    const effectiveTotalPaid = roundAmount(
+      effectivePaymentRows.reduce((sum, payment) => sum + payment.amount, 0)
+    );
+    const effectiveRemainingToSettle = roundAmount(netTotal - effectiveTotalPaid);
+    const effectiveHasCashPayment = effectivePaymentRows.some(
+      (payment) => payment.account_type === "cash"
+    );
+    const effectiveChangeToReturn =
+      effectiveHasCashPayment && effectiveRemainingToSettle < 0
+        ? roundAmount(Math.abs(effectiveRemainingToSettle))
+        : null;
+    const effectiveCanCreateDebt =
+      effectiveRemainingToSettle > 0 && Boolean(effectiveSelectedCustomerId);
+    const effectiveShouldBlockForDebt =
+      effectiveRemainingToSettle > 0 && !effectiveSelectedCustomerId;
+    const effectiveCanConfirmSale =
+      items.length > 0 && (effectiveRemainingToSettle <= 0 || effectiveCanCreateDebt);
+    const finishSmartSubmission = () => {
+      if (mode === "smart") {
+        setIsSmartSubmitting(false);
+      }
+    };
+    const setActiveErrorMessage = (message: string | null) => {
+      if (mode === "smart") {
+        setSmartPaymentErrorMessage(message);
+        return;
+      }
+
+      setSubmissionErrorMessage(message);
+    };
+
     if (!cartHydrated) {
+      finishSmartSubmission();
       return;
     }
 
     if (items.length === 0) {
       const message = "أضف منتجًا واحدًا على الأقل قبل تأكيد البيع.";
-      setSubmissionErrorMessage(message);
+      setActiveErrorMessage(message);
       toast.error(message);
+      finishSmartSubmission();
       return;
     }
 
-    if (!selectedAccountId) {
+    if (!effectiveSelectedAccountId) {
       const message = "يلزم تحديد طريقة الدفع.";
-      setSubmissionErrorMessage(message);
+      setActiveErrorMessage(message);
       toast.error(message);
+      finishSmartSubmission();
       return;
     }
 
     if (!currentIdempotencyKey) {
       refreshIdempotencyKey();
       const message = "جارٍ تهيئة الطلب. أعد المحاولة بعد لحظة.";
-      setSubmissionErrorMessage(message);
+      setActiveErrorMessage(message);
       toast.error(message);
+      finishSmartSubmission();
       return;
     }
 
-    if (!canConfirmSale) {
-      const message = shouldBlockForDebt
+    if (!effectiveCanConfirmSale) {
+      const message = effectiveShouldBlockForDebt
         ? "يجب اختيار عميل أو إكمال المبلغ."
         : "أكمل طريقة الدفع قبل تأكيد البيع.";
-      setSubmissionErrorMessage(message);
+      setActiveErrorMessage(message);
       toast.error(message);
+      finishSmartSubmission();
       return;
     }
 
     if (outOfStockItems.length > 0) {
       const message = `الكميات غير متاحة: ${outOfStockItems.map((item) => item.name).join("، ")}`;
-      setSubmissionErrorMessage(message);
+      setActiveErrorMessage(message);
       toast.error(message);
+      finishSmartSubmission();
       return;
     }
 
-    const payments = buildSalePayloadPayments();
+    const payments = buildSalePayloadPayments(
+      effectiveSelectedAccountId,
+      effectivePrimaryPaymentAmount,
+      effectiveSplitPayments
+    );
 
     if (payments.length === 0) {
       const message = "يجب إدخال مبلغ صحيح للدفع.";
-      setSubmissionErrorMessage(message);
+      setActiveErrorMessage(message);
       toast.error(message);
+      finishSmartSubmission();
       return;
     }
 
     markSubmitting();
     setSubmissionErrorMessage(null);
+    setSmartPaymentErrorMessage(null);
     setPanelState("processing");
 
     const payload = {
@@ -1196,10 +1397,10 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
         discount_percentage: item.discount_percentage
       })),
       payments,
-      customer_id: selectedCustomerId || undefined,
+      customer_id: effectiveSelectedCustomerId || undefined,
       invoice_discount_percentage: invoiceDiscountPercentage || undefined,
       pos_terminal_code: posTerminalCode || undefined,
-      notes: notes || undefined,
+      notes: effectiveNotes || undefined,
       idempotency_key: currentIdempotencyKey
     };
 
@@ -1219,7 +1420,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
         const message = getSafeArabicErrorMessage(envelope.error, "تعذر تنفيذ البيع.");
 
         markError(errorCode);
-        setPanelState("cart");
+        returnToActiveCartSurface();
 
         if (errorCode === "ERR_IDEMPOTENCY") {
           const existingInvoice = (
@@ -1229,8 +1430,9 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
             ? `تم تنفيذ الطلب مسبقًا. الفاتورة السابقة: ${existingInvoice.invoice_number}.`
             : "تم استخدام نفس الطلب مسبقًا، لذلك لم تُنشأ فاتورة جديدة.";
 
-          setSubmissionErrorMessage(duplicateMessage);
+          setActiveErrorMessage(duplicateMessage);
           toast.warning(duplicateMessage);
+          finishSmartSubmission();
           return;
         }
 
@@ -1238,28 +1440,35 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
           refreshIdempotencyKey();
           const concurrencyMessage =
             "تغير المخزون أثناء التنفيذ. حدّث السلة ثم أعد المحاولة.";
-          setSubmissionErrorMessage(concurrencyMessage);
+          setActiveErrorMessage(concurrencyMessage);
           toast.error(concurrencyMessage);
           void refreshProducts();
+          finishSmartSubmission();
           return;
         }
 
-        setSubmissionErrorMessage(message);
+        setActiveErrorMessage(message);
         toast.error(message);
+        finishSmartSubmission();
         return;
+      }
+
+      if (effectiveSelectedAccount?.type) {
+        setLastPaymentMethod(effectiveSelectedAccount.type);
       }
 
       completeSale({
         ...envelope.data,
-        change: changeToReturn ?? envelope.data.change,
-        customer_name: selectedCustomerName,
-        debt_amount: remainingToSettle > 0 ? remainingToSettle : 0,
+        change: effectiveChangeToReturn ?? envelope.data.change,
+        customer_name: effectiveSelectedCustomerName,
+        debt_amount: effectiveRemainingToSettle > 0 ? effectiveRemainingToSettle : 0,
         invoice_discount_amount: invoiceDiscountAmount,
         net_total: netTotal,
-        payments: paymentRows
+        payments: effectivePaymentRows
       });
 
       setIsPrimarySplitSelectorOpen(false);
+      finishSmartSubmission();
       setPanelState("success");
       setActiveMobileTab("cart");
       toast.success(`تم إنشاء الفاتورة ${envelope.data.invoice_number} بنجاح.`);
@@ -1268,9 +1477,10 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
       const message = getSafeArabicErrorMessage(error, "تعذر الوصول إلى مسار البيع.");
 
       markError("ERR_API_INTERNAL");
-      setPanelState("cart");
-      setSubmissionErrorMessage(message);
+      returnToActiveCartSurface();
+      setActiveErrorMessage(message);
       toast.error(message);
+      finishSmartSubmission();
     }
   }
 
@@ -1306,6 +1516,24 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     ? `العميل: ${selectedCustomerName}`
     : "العميل: ضيف جديد";
 
+
+  const smartPaymentActionLabel = selectedAccount
+    ? `دفع ${getAccountChipLabel(selectedAccount)}`
+    : "دفع";
+  const smartPaymentAriaLabel = `${smartPaymentActionLabel} — الإجمالي ${formatCurrency(netTotal)}`;
+  const canUseSmartPayment =
+    cartHydrated &&
+    items.length > 0 &&
+    Boolean(selectedAccount) &&
+    splitPayments.length === 0 &&
+    !selectedCustomerId &&
+    notes.trim().length === 0 &&
+    !hasInvalidDiscount &&
+    outOfStockItems.length === 0 &&
+    !isOffline &&
+    panelState !== "payment" &&
+    panelState !== "processing" &&
+    panelState !== "success";
 
   function handleCartLineRemove(item: (typeof items)[number]) {
     clearSubmissionFeedback();
@@ -1514,8 +1742,9 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
       }}
       onClearCartRequest={() => setIsClearCartDialogOpen(true)}
       onClearCustomerSelection={clearCustomerSelection}
-      onClose={() => setPanelState("cart")}
+      onClose={returnToActiveCartSurface}
       onConfirmSale={() => {
+        setIsSmartSubmitting(false);
         startSubmission(() => {
           void submitSale();
         });
@@ -1575,7 +1804,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
 
         lockTerminalCode();
       }}
-      open={panelState === "payment" || panelState === "processing"}
+      open={panelState === "payment" || (panelState === "processing" && !isSmartSubmitting)}
       paymentRowCount={paymentRows.length}
       posTerminalCode={posTerminalCode}
       primarySplitAmount={primarySplitAmount}
@@ -1659,17 +1888,26 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     onIncreaseItem: handleCartLineIncrease,
     onNewSale: handleTopbarNewSale,
     onOpenCheckout: openPaymentOverlay,
+    onOpenPaymentOptions: openPaymentOverlay,
     onRemoveItem: handleCartLineRemove,
     onRestoreHeldCart: handleRestoreHeldCart,
-    onToggleHeldCarts: () => setIsHeldCartsOpen((currentValue) => !currentValue)
+    onSmartPaymentSubmit: handleSmartPaymentSubmit,
+    onToggleHeldCarts: () => setIsHeldCartsOpen((currentValue) => !currentValue),
+    smartPaymentActionLabel,
+    smartPaymentAriaLabel,
+    smartPaymentErrorMessage,
+    smartPaymentSubmitting: isSmartSubmitting,
+    smartPaymentSubmitDisabled: !canUseSmartPayment
   } satisfies React.ComponentProps<typeof PosCartRail>;
 
   const cartSurface = (
     hasContainerQuerySupport ? (
       <>
-        <div className="pos-cart-rail-shell">
-          <PosCartRail {...cartRailProps} layout="inline" />
-        </div>
+        {!isMobileViewport ? (
+          <div className="pos-cart-rail-shell">
+            <PosCartRail {...cartRailProps} layout="inline" />
+          </div>
+        ) : null}
 
         <div className="pos-cart-review-shell">
           <CartReviewView

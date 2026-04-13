@@ -189,7 +189,7 @@ describe("PosWorkspace", () => {
       expect(usePosCartStore.getState().items).toHaveLength(1);
     });
 
-    fireEvent.click(await screen.findByRole("button", { name: "مراجعة الدفع" }));
+    fireEvent.click(await screen.findByRole("button", { name: "خيارات دفع أخرى" }));
 
     await waitFor(() => {
       const indicator = screen
@@ -218,6 +218,116 @@ describe("PosWorkspace", () => {
         .closest(".pos-remaining-balance");
       expect(indicator).toHaveClass("validation-tone--success");
     });
+  }, 30000);
+
+  it("hydrates the smart rail method from localStorage when the stored method is valid", async () => {
+    localStorage.setItem("aya.pos.lastPaymentMethod", "card");
+
+    mockUsePosAccounts.mockReturnValue({
+      accounts: [
+        {
+          id: "account-1",
+          name: "الصندوق",
+          type: "cash",
+          module_scope: "core",
+          fee_percentage: 0,
+          is_active: true,
+          display_order: 1,
+          created_at: "",
+          updated_at: ""
+        },
+        {
+          id: "account-2",
+          name: "بطاقة",
+          type: "card",
+          module_scope: "core",
+          fee_percentage: 0,
+          is_active: true,
+          display_order: 2,
+          created_at: "",
+          updated_at: ""
+        }
+      ],
+      isLoading: false,
+      isOffline: false,
+      errorMessage: null,
+      refresh: vi.fn()
+    });
+
+    render(<PosWorkspace maxDiscountPercentage={null} />);
+
+    fireEvent.click(screen.getAllByRole("button", { name: /شاحن سريع/i })[0]);
+
+    await waitFor(() => {
+      expect(usePosCartStore.getState().selectedAccountId).toBe("account-2");
+    });
+
+    expect(await screen.findByRole("button", { name: /^دفع بطاقة/ })).toBeVisible();
+  }, 30000);
+
+  it("submits the smart rail payment inline and persists the successful method", async () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          success: true,
+          data: {
+            invoice_id: "invoice-1",
+            invoice_number: "INV-1",
+            total: 100,
+            change: 0
+          }
+        }),
+        {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+      )
+    );
+
+    render(<PosWorkspace maxDiscountPercentage={null} />);
+
+    fireEvent.click(screen.getAllByRole("button", { name: /شاحن سريع/i })[0]);
+
+    const smartButton = await screen.findByRole("button", { name: /^دفع كاش/ });
+    fireEvent.click(smartButton);
+
+    await waitFor(() => {
+      expect(fetchSpy).toHaveBeenCalledWith(
+        "/api/sales",
+        expect.objectContaining({
+          method: "POST"
+        })
+      );
+    });
+
+    const requestInit = fetchSpy.mock.calls.find(([url]) => url === "/api/sales")?.[1];
+    const payload = JSON.parse(String(requestInit?.body ?? "{}"));
+
+    expect(payload).toMatchObject({
+      items: [
+        {
+          product_id: "product-1",
+          quantity: 1,
+          discount_percentage: 0
+        }
+      ],
+      payments: [
+        {
+          account_id: "account-1",
+          amount: 100
+        }
+      ]
+    });
+    expect(payload.customer_id).toBeUndefined();
+    expect(payload.notes).toBeUndefined();
+
+    await waitFor(() => {
+      expect(screen.getByText("تم إتمام البيع بنجاح")).toBeVisible();
+    });
+
+    expect(localStorage.getItem("aya.pos.lastPaymentMethod")).toBe("cash");
   }, 30000);
 
   it("renders stabilized Arabic labels without mojibake in the active POS surface", async () => {
