@@ -176,14 +176,18 @@ test.describe.serial("PX-06-T03 device gate", () => {
           .first();
         await expect(productButton).toBeVisible({ timeout: 15_000 });
         await productButton.click();
-        await expect(posPage.getByRole("complementary").getByText(seed.productName)).toBeVisible();
+        await expect(
+          posPage.getByRole("complementary").getByText(seed.productName).first()
+        ).toBeVisible();
         await posPage
           .getByRole("button", {
             name: viewport.label === "phone" ? REVIEW_PAYMENT_BUTTON : PAYMENT_OPTIONS_BUTTON,
             exact: true
           })
           .evaluate((element: HTMLButtonElement) => element.click());
-        await expect(posPage.getByText(PAYMENT_METHOD_TITLE, { exact: true })).toBeVisible();
+        await expect(
+          posPage.getByRole("heading", { name: PAYMENT_METHOD_TITLE, exact: true })
+        ).toBeVisible();
         await posPage.getByLabel(RECEIVED_AMOUNT_LABEL).fill("100");
         const confirmSaleButton = posPage
           .locator(".pos-cart-surface")

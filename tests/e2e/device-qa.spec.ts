@@ -272,14 +272,18 @@ test.describe.serial("PX-05 device QA regression", () => {
       const productButton = page.getByRole("button", { name: new RegExp(seed.productName) }).first();
       await expect(productButton).toBeVisible({ timeout: 15_000 });
       await productButton.click();
-      await expect(page.getByRole("complementary").getByText(seed.productName)).toBeVisible();
+      await expect(
+        page.getByRole("complementary").getByText(seed.productName).first()
+      ).toBeVisible();
       await page
         .getByRole("button", {
           name: viewport.label === "phone" ? REVIEW_PAYMENT_BUTTON : PAYMENT_OPTIONS_BUTTON,
           exact: true
         })
         .evaluate((element: HTMLButtonElement) => element.click());
-      await expect(page.getByText(PAYMENT_METHOD_TITLE, { exact: true })).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: PAYMENT_METHOD_TITLE, exact: true })
+      ).toBeVisible();
       await page.getByLabel(RECEIVED_AMOUNT_LABEL).fill("100");
       const confirmSaleButton = page
         .locator(".pos-cart-surface")

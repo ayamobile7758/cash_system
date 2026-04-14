@@ -92,6 +92,8 @@ test.describe.serial("PX-18 visual system + accessibility", () => {
     await expectTouchTarget(cartSummaryButton);
     await expect(productSearchInput).toBeFocused();
 
+    await page.keyboard.press("Tab");
+
     await menuToggle.focus();
     await expectVisibleFocus(menuToggle);
 

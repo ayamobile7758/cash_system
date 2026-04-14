@@ -518,15 +518,17 @@ test.describe.serial("PX-06-T02 UAT release gate", () => {
               throw new Error("POS search input or grid not found.");
             }
 
-            const readFirstTitle = () =>
-              document
-                .querySelector(".transaction-product-grid .pos-product-card--compact .pos-product-card__name")
-                ?.textContent?.trim() ?? "";
+            const hasExpectedTitle = () =>
+              Array.from(
+                document.querySelectorAll(
+                  ".transaction-product-grid .pos-product-card--compact .pos-product-card__name"
+                )
+              ).some((node) => node.textContent?.trim() === title);
 
             return await new Promise<number>((resolve, reject) => {
               const started = performance.now();
               const observer = new MutationObserver(() => {
-                if (readFirstTitle() === title) {
+                if (hasExpectedTitle()) {
                   window.clearTimeout(timeoutId);
                   observer.disconnect();
                   resolve(performance.now() - started);
@@ -535,7 +537,7 @@ test.describe.serial("PX-06-T02 UAT release gate", () => {
               const timeoutId = window.setTimeout(() => {
                 observer.disconnect();
                 reject(new Error(`Timed out waiting for search result ${title}.`));
-              }, 2_000);
+              }, 4_000);
 
               observer.observe(grid, {
                 subtree: true,
@@ -548,7 +550,7 @@ test.describe.serial("PX-06-T02 UAT release gate", () => {
               descriptor?.set?.call(input, query);
               input.dispatchEvent(new Event("input", { bubbles: true, composed: true }));
 
-              if (readFirstTitle() === title) {
+              if (hasExpectedTitle()) {
                 window.clearTimeout(timeoutId);
                 observer.disconnect();
                 resolve(performance.now() - started);

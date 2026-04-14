@@ -8839,6 +8839,145 @@ h3 {
   cursor: not-allowed;
 }
 
+.pos-payment-overlay__header {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  border-block-end: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+}
+
+.pos-payment-overlay__close {
+  min-width: 44px;
+  width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border-color: var(--color-border);
+  background: transparent;
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+.pos-payment-overlay__close:hover:not(:disabled) {
+  background: var(--color-bg-muted);
+  color: var(--color-text-primary);
+}
+
+.pos-payment-overlay__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--color-text-primary);
+}
+
+.pos-payment-overlay__body {
+  flex: 1 1 0;
+  min-block-size: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 0 var(--sp-4) var(--sp-4);
+}
+
+.pos-unified-checkout {
+  padding-top: var(--sp-4);
+  margin-top: 0;
+  border-top: 0;
+}
+
+.pos-checkout-quick-actions {
+  padding-top: var(--sp-1);
+}
+
+.pos-checkout-primary-action {
+  display: flex;
+}
+
+.pos-checkout-primary-action .transaction-checkout-button {
+  width: 100%;
+  justify-content: center;
+}
+
+.pos-checkout-sections {
+  display: grid;
+  gap: var(--sp-3);
+}
+
+.pos-checkout-section {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-muted);
+}
+
+.pos-checkout-section__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  cursor: pointer;
+  list-style: none;
+}
+
+.pos-checkout-section__summary::-webkit-details-marker {
+  display: none;
+}
+
+.pos-checkout-section__summary::marker {
+  display: none;
+  content: "";
+}
+
+.pos-checkout-section__summary-main,
+.pos-checkout-section__summary-side {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.pos-checkout-section__summary-side {
+  min-inline-size: 0;
+}
+
+.pos-checkout-section__summary-side .product-pill {
+  max-inline-size: 100%;
+}
+
+.pos-checkout-section__label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.pos-checkout-section__chevron {
+  color: var(--color-text-secondary);
+  transition: transform 160ms ease;
+}
+
+.pos-checkout-section[open] .pos-checkout-section__chevron {
+  transform: rotate(-180deg);
+}
+
+.pos-checkout-section__body {
+  display: grid;
+  gap: var(--sp-3);
+  padding: 0 var(--sp-4) var(--sp-4);
+  border-block-start: 1px solid var(--color-border);
+}
+
+.pos-checkout-section:not([open]) .pos-checkout-section__body {
+  display: none;
+}
+
+.pos-checkout-section__stack {
+  display: grid;
+  gap: var(--sp-3);
+}
+
 @media (min-width: 768px) and (max-width: 1023px) {
   .pos-workspace .pos-layout {
     grid-template-columns: minmax(0, 1fr) 320px;
@@ -9152,7 +9291,7 @@ h3 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-block-size: 40px;
+  min-block-size: 44px;
   padding: 0;
   border: none;
   background: transparent;

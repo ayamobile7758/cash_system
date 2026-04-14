@@ -1,4 +1,5 @@
 import * as React from "react";
+import { X } from "lucide-react";
 import { PosCheckoutPanel } from "@/components/pos/view/pos-checkout-panel";
 
 const FOCUSABLE_SELECTOR = [
@@ -23,6 +24,11 @@ export function PaymentCheckoutOverlay({
   ...checkoutProps
 }: PaymentCheckoutOverlayProps) {
   const contentRef = React.useRef<HTMLDivElement | null>(null);
+  const handleClose = React.useCallback(() => {
+    if (!checkoutProps.isProcessing) {
+      onClose();
+    }
+  }, [checkoutProps.isProcessing, onClose]);
 
   React.useEffect(() => {
     if (!open) {
@@ -46,10 +52,8 @@ export function PaymentCheckoutOverlay({
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        if (!checkoutProps.isProcessing) {
-          event.preventDefault();
-          onClose();
-        }
+        event.preventDefault();
+        handleClose();
         return;
       }
 
@@ -89,7 +93,7 @@ export function PaymentCheckoutOverlay({
       document.removeEventListener("keydown", handleKeyDown);
       previousActiveElement?.focus();
     };
-  }, [checkoutProps.isProcessing, onClose, open]);
+  }, [handleClose, open]);
 
   if (!open) {
     return null;
@@ -112,11 +116,7 @@ export function PaymentCheckoutOverlay({
         type="button"
         className="pos-payment-overlay__backdrop"
         aria-label="إغلاق"
-        onClick={() => {
-          if (!checkoutProps.isProcessing) {
-            onClose();
-          }
-        }}
+        onClick={handleClose}
         style={{
           background: "rgba(24, 23, 21, 0.42)",
           border: "none",
@@ -144,13 +144,28 @@ export function PaymentCheckoutOverlay({
           height: isMobileViewport ? "auto" : "100%",
           marginTop: isMobileViewport ? "auto" : "0",
           maxHeight: isMobileViewport ? "85vh" : "100%",
-          overflowX: "hidden",
-          overflowY: "auto",
+          overflow: "hidden",
           position: "relative",
           width: isMobileViewport ? "100%" : "min(100%, var(--pos-cart-width))"
         }}
       >
-        <PosCheckoutPanel {...checkoutProps} />
+        <div className="pos-payment-overlay__header">
+          <button
+            type="button"
+            className="icon-button pos-payment-overlay__close"
+            aria-label="إغلاق"
+            title="إغلاق"
+            onClick={handleClose}
+          >
+            <X size={18} />
+          </button>
+
+          <h2 className="pos-payment-overlay__title">طريقة الدفع</h2>
+        </div>
+
+        <div className="pos-payment-overlay__body">
+          <PosCheckoutPanel {...checkoutProps} />
+        </div>
       </div>
     </div>
   );
