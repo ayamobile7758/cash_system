@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Eye, EyeOff, KeyRound, Loader2, Mail } from "lucide-react";
 import { toast } from "sonner";
-import { redirectAfterLogin } from "@/lib/auth/redirect-after-login";
+import { useRouter } from "next/navigation";
 import { StatusBanner } from "@/components/ui/status-banner";
 import { getSafeArabicErrorMessage } from "@/lib/error-messages";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -11,6 +11,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 const REMEMBERED_EMAIL_KEY = "aya.login.email";
 
 export function LoginForm() {
+  const router = useRouter();
   const submitLockRef = useRef(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -87,6 +88,7 @@ export function LoginForm() {
 
       // Check role with 2-second timeout
       if (data.user) {
+        let timeoutId: ReturnType<typeof setTimeout> | undefined;
         try {
           const profilePromise = supabase
             .from("profiles")
@@ -94,19 +96,21 @@ export function LoginForm() {
             .eq("id", data.user.id)
             .maybeSingle<{ role: "admin" | "pos_staff" }>();
 
-          const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("Timeout")), 2000)
-          );
+          const timeoutPromise = new Promise((_, reject) => {
+            timeoutId = setTimeout(() => reject(new Error("Timeout")), 2000);
+          });
 
           const { data: profile } = await Promise.race([
             profilePromise,
             timeoutPromise
           ]) as Awaited<typeof profilePromise>;
 
+          clearTimeout(timeoutId);
           if (profile?.role === "admin") {
             nextRoute = "/reports";
           }
         } catch {
+          clearTimeout(timeoutId);
           // Timeout or error: use default route
         }
       }
@@ -122,7 +126,7 @@ export function LoginForm() {
       }
 
       didRequestRedirect = true;
-      redirectAfterLogin(nextRoute);
+      router.replace(nextRoute);
     } catch (error) {
       const message = getSafeArabicErrorMessage(
         error,
@@ -140,7 +144,7 @@ export function LoginForm() {
 
   return (
     <>
-      <form action="#" method="POST" onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
         {isOffline ? (
           <StatusBanner
             variant="offline"

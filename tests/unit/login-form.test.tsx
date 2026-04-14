@@ -2,14 +2,16 @@ import React from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { LoginForm } from "@/components/auth/login-form";
 
-const { mockRedirectAfterLogin, mockSignInWithPassword, mockSingle } = vi.hoisted(() => ({
-  mockRedirectAfterLogin: vi.fn(),
+const { mockRouterReplace, mockSignInWithPassword, mockSingle } = vi.hoisted(() => ({
+  mockRouterReplace: vi.fn(),
   mockSignInWithPassword: vi.fn(),
   mockSingle: vi.fn()
 }));
 
-vi.mock("@/lib/auth/redirect-after-login", () => ({
-  redirectAfterLogin: mockRedirectAfterLogin
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({
+    replace: mockRouterReplace
+  })
 }));
 
 vi.mock("@/lib/supabase/client", () => ({
@@ -41,7 +43,7 @@ describe("LoginForm", () => {
       value: true
     });
     window.localStorage.clear();
-    mockRedirectAfterLogin.mockReset();
+    mockRouterReplace.mockReset();
     mockSignInWithPassword.mockReset();
     mockSingle.mockReset();
   });
@@ -68,7 +70,7 @@ describe("LoginForm", () => {
         email: "admin@aya.local",
         password: "password123"
       });
-      expect(mockRedirectAfterLogin).toHaveBeenCalledWith("/reports");
+      expect(mockRouterReplace).toHaveBeenCalledWith("/reports");
     });
   }, 15000);
 
@@ -90,7 +92,7 @@ describe("LoginForm", () => {
     expect(await screen.findByText("تعذر تسجيل الدخول")).toBeInTheDocument();
     expect(screen.getByText("تعذر إكمال تسجيل الدخول. حاول مجددًا.")).toBeInTheDocument();
     expect(screen.queryByText("Bad credentials")).not.toBeInTheDocument();
-    expect(mockRedirectAfterLogin).not.toHaveBeenCalled();
+    expect(mockRouterReplace).not.toHaveBeenCalled();
   }, 15000);
 
   it("redirects pos staff to /pos and falls back to /pos when profile is unavailable", async () => {
@@ -111,7 +113,7 @@ describe("LoginForm", () => {
     fireEvent.click(screen.getByRole("button", { name: /تسجيل الدخول/i }));
 
     await waitFor(() => {
-      expect(mockRedirectAfterLogin).toHaveBeenCalledWith("/pos");
+      expect(mockRouterReplace).toHaveBeenCalledWith("/pos");
     });
   }, 15000);
 
@@ -147,7 +149,7 @@ describe("LoginForm", () => {
         email: "admin@aya.local",
         password: "password123"
       });
-      expect(mockRedirectAfterLogin).toHaveBeenCalledWith("/reports");
+      expect(mockRouterReplace).toHaveBeenCalledWith("/reports");
     });
   }, 15000);
 
@@ -170,7 +172,7 @@ describe("LoginForm", () => {
 
     await waitFor(() => {
       expect(window.localStorage.getItem("aya.login.email")).toBe("admin@aya.local");
-      expect(mockRedirectAfterLogin).toHaveBeenCalledWith("/reports");
+      expect(mockRouterReplace).toHaveBeenCalledWith("/reports");
     });
   }, 15000);
 });

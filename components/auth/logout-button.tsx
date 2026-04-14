@@ -1,12 +1,14 @@
 "use client";
 
 import { useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { LogOut, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { getSafeArabicErrorMessage } from "@/lib/error-messages";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 export function LogoutButton() {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   return (
@@ -25,7 +27,7 @@ export function LogoutButton() {
               return;
             }
 
-            window.location.href = "/";
+            router.replace("/");
           })();
         });
       }}
