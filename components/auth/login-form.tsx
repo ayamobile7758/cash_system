@@ -105,13 +105,13 @@ export function LoginForm() {
             timeoutPromise
           ]) as Awaited<typeof profilePromise>;
 
-          clearTimeout(timeoutId);
           if (profile?.role === "admin") {
             nextRoute = "/reports";
           }
         } catch {
-          clearTimeout(timeoutId);
           // Timeout or error: use default route
+        } finally {
+          clearTimeout(timeoutId);
         }
       }
 
