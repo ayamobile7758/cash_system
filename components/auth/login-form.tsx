@@ -100,6 +100,9 @@ export function LoginForm() {
             timeoutId = setTimeout(() => reject(new Error("Timeout")), 2000);
           });
 
+          // Prevent unhandled promise rejection if profile resolves before timeout
+          timeoutPromise.catch(() => {});
+
           const { data: profile } = await Promise.race([
             profilePromise,
             timeoutPromise
