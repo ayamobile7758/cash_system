@@ -7718,7 +7718,7 @@ h3 {
   -webkit-box-orient: vertical;
   overflow: hidden;
   max-width: 100%;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
   word-break: break-word;
 }
 
@@ -7734,7 +7734,7 @@ h3 {
   direction: ltr;
   text-align: center;
   max-width: 100%;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
   word-break: break-word;
 }
 
@@ -7758,7 +7758,7 @@ h3 {
   font-weight: 700;
   letter-spacing: -0.02em;
   max-width: 100%;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
   word-break: break-word;
 }
 
@@ -7773,7 +7773,7 @@ h3 {
   font-size: 11px;
   font-weight: 700;
   max-width: 100%;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
   word-break: break-word;
 }
 
@@ -8452,7 +8452,7 @@ h3 {
 .pos-workspace .pos-product-card__name {
   font-size: 13px;
   font-weight: 600;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
   word-break: break-word;
 }
 
@@ -8460,14 +8460,14 @@ h3 {
   font-size: 17px;
   font-weight: 700;
   color: var(--color-accent);
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
   word-break: break-word;
 }
 
 .pos-workspace .pos-product-card__sku,
 .pos-workspace .pos-product-card__stock {
   max-width: 100%;
-  overflow-wrap: break-word;
+  overflow-wrap: anywhere;
   word-break: break-word;
 }
 
