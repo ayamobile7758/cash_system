@@ -35,6 +35,7 @@ type ProductSelectionViewProps = {
   productsLoadingMore: boolean;
   searchInput: string;
   showEmptySearchState: boolean;
+  children?: React.ReactNode;
 };
 
 export function ProductSelectionView({
@@ -57,7 +58,8 @@ export function ProductSelectionView({
   productsLoading,
   productsLoadingMore,
   searchInput,
-  showEmptySearchState
+  showEmptySearchState,
+  children
 }: ProductSelectionViewProps) {
   return (
     <div className="transaction-stack pos-products-stack">
@@ -73,7 +75,9 @@ export function ProductSelectionView({
         productView={productView}
         onProductViewChange={onProductViewChange}
         showViewToggle={showViewToggle}
-      />
+      >
+        {children}
+      </PosToolbar>
       <PosProductGrid
         onClearSearch={onClearSearch}
         onLoadMore={onLoadMore}

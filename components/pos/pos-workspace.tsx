@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useDeferredValue, useEffect, useLayoutEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, useTransition } from "react";
 import {
   AlertTriangle,
   ArrowRight,
@@ -22,6 +22,8 @@ import { toast } from "sonner";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { StatusBanner } from "@/components/ui/status-banner";
 import { CartReviewView } from "@/components/pos/view/cart-review-view";
+import { PosSettingsButton } from "@/components/pos/pos-settings-button";
+import { PosSettingsModal } from "@/components/pos/pos-settings-modal";
 import { PaymentCheckoutOverlay } from "@/components/pos/view/payment-checkout-overlay";
 import { PosCartRail } from "@/components/pos/view/pos-cart-rail";
 import { PosSuccessState } from "@/components/pos/view/pos-success-state";
@@ -29,6 +31,7 @@ import { ProductSelectionView } from "@/components/pos/view/product-selection-vi
 import { PosSurfaceShell } from "@/components/pos/view/pos-surface-shell";
 import { useCustomerSearch } from "@/hooks/use-customer-search";
 import { usePosAccounts } from "@/hooks/use-pos-accounts";
+import { usePosSettings } from "@/hooks/use-pos-settings";
 import { useProducts } from "@/hooks/use-products";
 import { getSafeArabicErrorMessage } from "@/lib/error-messages";
 import { PosMobileCartSheet } from "@/components/pos/view/pos-mobile-cart-sheet";
@@ -344,6 +347,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [activeMobileTab, setActiveMobileTab] = useState<MobileTab>("products");
   const [isHeldCartsOpen, setIsHeldCartsOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [selectedCustomerBalance, setSelectedCustomerBalance] = useState<number | null>(
     null
   );
@@ -367,8 +371,9 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   const [isSmartSubmitting, setIsSmartSubmitting] = useState(false);
   const [now, setNow] = useState<Date | null>(null);
   const [isSubmitting, startSubmission] = useTransition();
+  const settingsTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const posSettings = usePosSettings();
 
-  const deferredCustomerQuery = useDeferredValue(customerSearchInput);
   const normalizedQuery = normalizeArabic(searchQuery);
   const categoryFilter = activeCategory === "all" ? "all" : activeCategory;
 
@@ -395,7 +400,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   } = usePosAccounts();
 
   const { results: customerResults, isLoading: customersLoading } =
-    useCustomerSearch(deferredCustomerQuery);
+    useCustomerSearch(customerSearchInput);
 
   const isOffline = productsOffline || accountsOffline;
   const supportedPaymentMethodIds = useMemo(
@@ -1688,7 +1693,12 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
       productsLoadingMore={productsLoadingMore}
       searchInput={searchInput}
       showEmptySearchState={filteredProducts.length === 0 && normalizedQuery.length > 0}
-    />
+    >
+      <PosSettingsButton
+        buttonRef={settingsTriggerRef}
+        onClick={() => setIsSettingsOpen(true)}
+      />
+    </ProductSelectionView>
   );
 
   const paymentOverlay = (
@@ -1916,7 +1926,13 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   );
 
   return (
-    <section className="pos-workspace">
+    <>
+      <section
+        className="pos-workspace pos-settings-scope"
+        data-pos-density={posSettings.density}
+        data-pos-font-size={posSettings.fontSize}
+        data-pos-contrast={posSettings.contrast}
+      >
       {isOffline ? (
         <StatusBanner
           variant="offline"
@@ -1987,6 +2003,18 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
           setIsClearCartDialogOpen(false);
         }}
       />
-    </section>
+      </section>
+
+      <PosSettingsModal
+        open={isSettingsOpen}
+        density={posSettings.density}
+        fontSize={posSettings.fontSize}
+        contrast={posSettings.contrast}
+        onChange={posSettings.set}
+        onReset={posSettings.reset}
+        onClose={() => setIsSettingsOpen(false)}
+        triggerRef={settingsTriggerRef}
+      />
+    </>
   );
 }

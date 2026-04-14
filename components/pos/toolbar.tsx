@@ -28,6 +28,7 @@ type PosToolbarProps = {
   productView?: "text" | "thumbnail";
   onProductViewChange?: (view: "text" | "thumbnail") => void;
   showViewToggle?: boolean;
+  children?: React.ReactNode;
 };
 
 export function PosToolbar({
@@ -41,7 +42,8 @@ export function PosToolbar({
   showRefreshButton = true,
   productView,
   onProductViewChange,
-  showViewToggle = true
+  showViewToggle = true,
+  children
 }: PosToolbarProps) {
   const inputElementRef = React.useRef<HTMLInputElement | null>(null);
 
@@ -164,6 +166,8 @@ export function PosToolbar({
               </button>
             </div>
           ) : null}
+
+          {children}
         </div>
       </div>
 
