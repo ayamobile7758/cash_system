@@ -1,0 +1,150 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary "التنقل داخل مساحات التشغيل" [ref=e3]:
+      - link "Aya" [ref=e5] [cursor=pointer]:
+        - /url: /home
+        - generic [ref=e6]: Aya
+      - navigation "التنقل داخل مساحات التشغيل" [ref=e7]:
+        - generic [ref=e9]:
+          - link [ref=e10] [cursor=pointer]:
+            - /url: /pos
+            - img [ref=e12]
+          - link [ref=e16] [cursor=pointer]:
+            - /url: /products
+            - img [ref=e18]
+          - link [ref=e22] [cursor=pointer]:
+            - /url: /invoices
+            - img [ref=e24]
+          - link [ref=e26] [cursor=pointer]:
+            - /url: /debts
+            - img [ref=e28]
+          - link [ref=e32] [cursor=pointer]:
+            - /url: /notifications
+            - img [ref=e34]
+        - generic [ref=e38]:
+          - link [ref=e39] [cursor=pointer]:
+            - /url: /expenses
+            - img [ref=e41]
+          - link [ref=e47] [cursor=pointer]:
+            - /url: /inventory
+            - img [ref=e49]
+          - link [ref=e55] [cursor=pointer]:
+            - /url: /suppliers
+            - img [ref=e57]
+          - link [ref=e61] [cursor=pointer]:
+            - /url: /operations
+            - img [ref=e63]
+          - link [ref=e69] [cursor=pointer]:
+            - /url: /maintenance
+            - img [ref=e71]
+        - generic [ref=e74]:
+          - link [ref=e75] [cursor=pointer]:
+            - /url: /home
+            - img [ref=e77]
+          - link [ref=e80] [cursor=pointer]:
+            - /url: /reports
+            - img [ref=e82]
+          - link [ref=e84] [cursor=pointer]:
+            - /url: /portability
+            - img [ref=e86]
+          - link [ref=e90] [cursor=pointer]:
+            - /url: /settings
+            - img [ref=e92]
+      - button "تسجيل الخروج" [ref=e96] [cursor=pointer]:
+        - img [ref=e97]
+        - text: تسجيل الخروج
+    - generic [ref=e100]:
+      - banner [ref=e101]:
+        - generic [ref=e102]:
+          - link "الإشعارات (2928)" [ref=e103] [cursor=pointer]:
+            - /url: /notifications
+            - img [ref=e104]
+            - generic [ref=e107]: "2928"
+          - generic "Ahmad Admin" [ref=e108]:
+            - generic [ref=e109]: AA
+            - generic [ref=e110]:
+              - strong [ref=e111]: إداري
+              - generic [ref=e112]: Ahmad Admin
+      - main [ref=e113]:
+        - generic [ref=e115]:
+          - generic [ref=e116]:
+            - generic [ref=e117]: نقطة البيعجاهز للبيع
+            - generic [ref=e118]:
+              - button "بيع جديد" [ref=e119] [cursor=pointer]:
+                - img [ref=e120]
+                - text: بيع جديد
+              - button "معلقة0" [ref=e121] [cursor=pointer]
+          - generic [ref=e122]:
+            - generic [ref=e127]:
+              - generic [ref=e128]:
+                - generic [ref=e129]:
+                  - img [ref=e130]
+                  - searchbox [active] [ref=e133]
+                - button "تحديث المنتجات" [ref=e134] [cursor=pointer]:
+                  - img [ref=e135]
+                - generic [ref=e140]:
+                  - button "سلال معلقة" [ref=e141] [cursor=pointer]
+                  - button "بيع جديد" [ref=e142] [cursor=pointer]:
+                    - img [ref=e143]
+                    - text: بيع جديد
+                - generic [ref=e144]:
+                  - button "عرض مدمج" [ref=e145] [cursor=pointer]:
+                    - img [ref=e146]
+                  - button "عرض بالصور" [ref=e147] [cursor=pointer]:
+                    - img [ref=e148]
+              - generic [ref=e152]:
+                - button "الكل" [pressed] [ref=e153] [cursor=pointer]
+                - button "أجهزة" [ref=e154] [cursor=pointer]
+                - button "إكسسوارات" [ref=e155] [cursor=pointer]
+                - button "شرائح" [ref=e156] [cursor=pointer]
+                - button "خدمات صيانة" [ref=e157] [cursor=pointer]
+                - button "خدمات عامة" [ref=e158] [cursor=pointer]
+            - complementary [ref=e159]:
+              - article [ref=e160]:
+                - generic [ref=e161]:
+                  - generic [ref=e162]:
+                    - generic [ref=e163]:
+                      - generic [ref=e164]:
+                        - heading "السلة" [level=2] [ref=e165]
+                        - generic [ref=e166]: "0"
+                      - paragraph [ref=e167]: السلة فارغة
+                    - button "تفريغ السلة" [disabled]:
+                      - img
+                  - generic [ref=e168]:
+                    - button "تعليق" [disabled]
+                    - button "السلال المعلقة 0" [ref=e169] [cursor=pointer]:
+                      - text: السلال المعلقة
+                      - generic [ref=e170]: "0"
+                  - generic "جارٍ استعادة السلة" [ref=e171]
+                  - generic [ref=e174]:
+                    - generic [ref=e176]:
+                      - generic [ref=e177]:
+                        - term [ref=e178]: المجموع الخُقاني
+                        - definition [ref=e179]: ‏0.000 د.أ.‏
+                      - generic [ref=e180]:
+                        - term [ref=e181]: المبلغ المستحق
+                        - definition [ref=e182]: ‏0.000 د.أ.‏
+                    - generic [ref=e184]: طرق الدفع
+                    - strong [ref=e186]: تم تسديد المبلغ
+                    - generic [ref=e187]:
+                      - button "تمدة" [disabled] [ref=e188]:
+                        - img [ref=e189]
+                        - text: تمدة
+                      - button "خصم" [ref=e190] [cursor=pointer]:
+                        - img [ref=e191]
+                        - text: خصم
+                      - button "عميل" [ref=e192] [cursor=pointer]:
+                        - img [ref=e193]
+                        - text: عميل
+                    - button "تاكيد البيع • ‏0.000 د.أ.‏" [disabled]
+          - generic [ref=e194]:
+            - generic [ref=e195]:
+              - img [ref=e196]
+              - strong [ref=e203]: POS-01
+            - generic [ref=e204]:
+              - img [ref=e205]
+              - generic [ref=e208]: بحث بالباركود
+            - generic [ref=e209]:
+              - img [ref=e210]
+              - generic [ref=e213]: 10:55 AM
+  - region "Notifications alt+T"

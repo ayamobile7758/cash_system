@@ -1,0 +1,119 @@
+
+> aya-mobile-runtime-skeleton@0.1.0 dev
+> next dev -p 5000 -H 0.0.0.0
+
+   ▲ Next.js 15.5.14
+   - Local:        http://localhost:5000
+   - Network:      http://0.0.0.0:5000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 11.8s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 5.4s (115 modules)
+ ○ Compiling /unsupported-device ...
+ ✓ Compiled /unsupported-device in 14.6s (569 modules)
+ GET /unsupported-device 200 in 16262ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 8.2s (924 modules)
+ GET /login 200 in 10122ms
+ GET /login 200 in 293ms
+ GET /login 200 in 809ms
+ GET /login 200 in 663ms
+ GET /login 200 in 258ms
+ ○ Compiling /pos ...
+ ✓ Compiled /pos in 12.3s (2111 modules)
+ GET /login 200 in 248ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 14.9s (3149 modules)
+ GET /reports 200 in 17818ms
+ GET /pos 200 in 8463ms
+ ○ Compiling /api/pos/accounts ...
+ ✓ Compiled /api/pos/accounts in 5.1s (3156 modules)
+ ✓ Compiled in 1779ms (1925 modules)
+ ✓ Compiled in 1177ms (1400 modules)
+ ✓ Compiled in 1894ms (1390 modules)
+ ✓ Compiled in 715ms (1390 modules)
+ ✓ Compiled in 3.2s (1390 modules)
+ ✓ Compiled in 2.5s (1390 modules)
+ GET /login 200 in 2256ms
+ ○ Compiling /pos ...
+ ✓ Compiled /pos in 3.2s (1213 modules)
+ GET /pos 200 in 10446ms
+ ○ Compiling /api/pos/products ...
+ ✓ Compiled /api/pos/products in 1104ms (1218 modules)
+ ✓ Compiled (1220 modules)
+ GET /login 200 in 1932ms
+ GET /pos 200 in 2504ms
+ GET /api/pos/accounts 200 in 1005ms
+ GET /api/pos/products?page=0 200 in 1190ms
+ GET /api/pos/products?page=0&q=52ef0b 200 in 757ms
+ GET /login 200 in 476ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 12.9s (1769 modules)
+ GET /reports 200 in 15838ms
+ GET /pos 200 in 6828ms
+ GET /api/pos/accounts 200 in 968ms
+ GET /api/pos/products?page=0 200 in 1005ms
+ ✓ Compiled in 769ms (537 modules)
+ ✓ Compiled in 1533ms (1004 modules)
+ GET /login 200 in 2643ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 1461ms (1270 modules)
+ GET /reports 200 in 11776ms
+ ✓ Compiled in 2.5s (994 modules)
+ GET /login 200 in 678ms
+ GET /reports 200 in 7980ms
+ ✓ Compiled in 2.8s (994 modules)
+ ✓ Compiled in 2.4s (994 modules)
+ GET /login 200 in 268ms
+ GET /reports 200 in 7066ms
+ GET /login 200 in 367ms
+ GET /reports 200 in 1201ms
+ ○ Compiling /pos ...
+ ✓ Compiled /pos in 3.6s (1365 modules)
+ GET /pos 200 in 8970ms
+ ○ Compiling /api/pos/accounts ...
+ ✓ Compiled /api/pos/accounts in 1398ms (1370 modules)
+ ✓ Compiled (1372 modules)
+ ✓ Compiled in 5.2s (2264 modules)
+ ✓ Compiled in 1662ms (995 modules)
+ ○ Compiling /pos ...
+ ✓ Compiled /pos in 1316ms (1366 modules)
+ GET /pos 200 in 3830ms
+ GET /pos 200 in 342ms
+ GET /login 200 in 418ms
+ GET /pos 200 in 377ms
+ ✓ Compiled in 2.8s (2265 modules)
+ ✓ Compiled in 1723ms (997 modules)
+ ✓ Compiled in 933ms (997 modules)
+ ✓ Compiled in 856ms (997 modules)
+ ✓ Compiled in 654ms (997 modules)
+ ✓ Compiled in 1214ms (997 modules)
+ ✓ Compiled in 758ms (1000 modules)
+ ✓ Compiled in 520ms (1000 modules)
+ ✓ Compiled in 624ms (1000 modules)
+ ✓ Compiled in 400ms (1000 modules)
+ ✓ Compiled in 385ms (1000 modules)
+ ✓ Compiled in 405ms (1002 modules)
+ ✓ Compiled in 355ms (1002 modules)
+ ✓ Compiled in 795ms (1004 modules)
+ ✓ Compiled in 386ms (1004 modules)
+ ✓ Compiled in 601ms (1006 modules)
+ ✓ Compiled in 522ms (1006 modules)
+ ✓ Compiled in 339ms (1016 modules)
+ ✓ Compiled in 326ms (947 modules)
+ ✓ Compiled in 394ms (949 modules)
+ ✓ Compiled in 527ms (949 modules)
+ ✓ Compiled in 347ms (961 modules)
+ ✓ Compiled in 1173ms (949 modules)
+ ✓ Compiled in 444ms (949 modules)
+ ✓ Compiled in 536ms (949 modules)
+ ✓ Compiled in 450ms (949 modules)
+ ✓ Compiled in 313ms (949 modules)
+ ✓ Compiled in 323ms (959 modules)
+ ✓ Compiled in 2.3s (2233 modules)
+ ✓ Compiled in 1133ms (2233 modules)
+ ✓ Compiled in 1405ms (2233 modules)
+ ✓ Compiled in 1266ms (2233 modules)
+[?25h

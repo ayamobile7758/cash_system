@@ -1,15 +1,7 @@
 "use client";
 
 import * as React from "react";
-import {
-  useDeferredValue,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  useTransition
-} from "react";
+import { useDeferredValue, useEffect, useLayoutEffect, useMemo, useRef, useState, useTransition } from "react";
 import {
   AlertTriangle,
   ArrowRight,
@@ -374,12 +366,10 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   const [hasHydratedLastPaymentMethod, setHasHydratedLastPaymentMethod] = useState(false);
   const [isSmartSubmitting, setIsSmartSubmitting] = useState(false);
   const [now, setNow] = useState<Date | null>(null);
-  const [, startTransition] = useTransition();
   const [isSubmitting, startSubmission] = useTransition();
 
-  const deferredQuery = useDeferredValue(searchQuery);
   const deferredCustomerQuery = useDeferredValue(customerSearchInput);
-  const normalizedQuery = normalizeArabic(deferredQuery);
+  const normalizedQuery = normalizeArabic(searchQuery);
   const categoryFilter = activeCategory === "all" ? "all" : activeCategory;
 
   const {
@@ -393,7 +383,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     loadMore: loadMoreProducts,
     refresh: refreshProducts
   } = useProducts({
-    searchQuery: deferredQuery,
+    searchQuery,
     category: categoryFilter
   });
 
@@ -428,8 +418,8 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
       if (!a.is_quick_add && b.is_quick_add) return 1;
       return 0;
     });
-    return filterProductsByQuery(sorted, deferredQuery);
-  }, [deferredQuery, products]);
+    return filterProductsByQuery(sorted, searchQuery);
+  }, [products, searchQuery]);
 
   const subtotal = calculateCartSubtotal(items);
   const totalDiscount = calculateCartDiscount(items);
@@ -532,14 +522,10 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
   }, []);
 
   useEffect(() => {
-    const timeoutHandle = window.setTimeout(() => {
+    if (searchQuery !== searchInput) {
       setSearchQuery(searchInput);
-    }, 200);
-
-    return () => {
-      window.clearTimeout(timeoutHandle);
-    };
-  }, [searchInput]);
+    }
+  }, [searchInput, searchQuery]);
 
   useEffect(() => {
     if (process.env.NODE_ENV !== "development" || typeof window === "undefined") {
@@ -1671,9 +1657,8 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
       search={{
         value: searchInput,
         onChange: (nextValue) => {
-          startTransition(() => {
-            setSearchInput(nextValue);
-          });
+          setSearchInput(nextValue);
+          setSearchQuery(nextValue);
         },
         placeholder: "ابحث بالاسم أو رمز المنتج...",
         onClear: () => {

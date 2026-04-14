@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aya Mobile Design Preview - Speed POS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Inter:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F9F8F5;
+      --card-bg: #FFFFFF;
+      --muted-bg: #F3F1EC;
+      --border: #E8E6E1;
+      --text-pri: #181715;
+      --text-sec: #6D6A62;
+      --accent: #CF694A;
+      --accent-hover: #BB5B3E;
+      --accent-light: #FCF4F1;
+      --success: #13773A;
+      --success-bg: #EDF9F1;
+      --danger: #BA1C1C;
+      --danger-bg: #FEF1F1;
+      --warning: #B85F0E;
+      --warning-bg: #FEFAEB;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Tajawal', sans-serif;
+      font-variant-numeric: tabular-nums;
+      background: var(--bg);
+      color: var(--text-pri);
+      font-size: 14px;
+      line-height: 1.5;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #D1CFCA; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #B3B0A9; }
+
+    button { font-family: inherit; cursor: pointer; border: none; background: transparent; }
+    input { font-family: inherit; outline: none; }
+
+    .container { display: flex; flex-direction: column; height: 100dvh; }
+
+    /* Unified Header — menu + tabs + actions in one 52px bar */
+    .main-header {
+      height: 52px; background: #FFFFFF; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; padding: 0 12px;
+      flex-shrink: 0; position: relative; gap: 8px;
+      box-shadow: 0 1px 0 var(--border);
+    }
+    .header-actions { display: flex; gap: 10px; align-items: center; color: var(--text-sec); flex-shrink: 0; }
+    .page-title { font-weight: 700; font-size: 15px; color: var(--text-pri); position: absolute; left: 50%; transform: translateX(-50%); }
+
+    /* Tabs live inside the same header bar */
+    .tabs-wrapper {
+      display: flex; gap: 0; height: 100%; align-items: stretch; flex: 1; overflow: hidden;
+    }
+    .tabs-left { display: flex; gap: 0; height: 100%; margin-inline-start: 8px; }
+    .tab {
+      height: 100%; display: flex; align-items: center; color: var(--text-sec);
+      font-weight: 600; font-size: 13px; position: relative; transition: color 0.15s;
+      padding: 0 12px; white-space: nowrap;
+    }
+    .tab:hover { color: var(--text-pri); }
+    .tab.active { color: var(--accent); }
+    .tab.active::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+      height: 3px; background: var(--accent); border-radius: 3px 3px 0 0;
+    }
+
+    .tabs-right { display: flex; align-items: center; gap: 12px; }
+    .brand-mark { font-weight: 700; font-size: 15px; color: var(--text-pri); display: flex; align-items: center; gap: 6px; border-right: 1px solid var(--border); padding-right: 12px;}
+    .brand-mark::before { content: ''; width: 8px; height: 8px; background: var(--accent); border-radius: 50%; }
+
+    /* Super Fast Popover CSS */
+    .popover-container { position: relative; display: flex; align-items: center; }
+    .icon-btn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; color: var(--text-sec); cursor: pointer; transition: background 0.15s; }
+    .icon-btn:hover { background: var(--muted-bg); color: var(--text-pri); }
+    .nav-popover {
+      position: absolute; top: calc(100% + 12px); right: 0;
+      width: 240px; background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      z-index: 200; opacity: 0; visibility: hidden; transform: translateY(-4px);
+      transition: all 0.15s; padding: 8px; display: flex; flex-direction: column; gap: 4px;
+    }
+    .nav-popover.open { opacity: 1; visibility: visible; transform: translateY(0); }
+    .nav-label {
+      font-size: 11px; color: var(--text-sec); font-weight: 700; 
+      padding: 8px 12px 4px; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px; padding: 10px 12px;
+      color: var(--text-sec); font-weight: 500; font-size: 14px;
+      border-radius: var(--radius-sm); cursor: pointer; transition: all 0.15s;
+    }
+    .nav-item:hover { background: var(--muted-bg); color: var(--text-pri); }
+    .nav-item.active { background: var(--accent-light); color: var(--accent); }
+    .nav-item.active svg { color: var(--accent); }
+
+    /* Content Area */
+    .main-content {
+      flex: 1; overflow: hidden; padding: 16px;
+      background: var(--bg);
+      position: relative;
+    }
+
+    .tab-content { display: none; height: 100%; opacity: 0; transition: opacity 0.2s; }
+    .tab-content.active { display: flex; opacity: 1; flex-direction: column; }
+
+    /* DASHBOARD LAYOUT */
+    .dashboard-layout { gap: 16px; display: flex; flex-direction: column; height: 100%; overflow-y: auto;}
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px;}
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .stat-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+    .stat-label { font-size: 13px; color: var(--text-sec); font-weight: 500;}
+    .stat-value { font-size: 28px; font-weight: 800; color: var(--text-pri); letter-spacing: -1px; line-height: 1.1; margin-top: 6px; font-family: 'Inter', sans-serif; }
+
+    /* Dashboard Table */
+    .dash-table-wrapper { border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--card-bg); overflow: hidden; margin-top: 8px;}
+    .dash-table-header { padding: 16px; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 15px;}
+    table { width: 100%; border-collapse: collapse; text-align: right; }
+    th { padding: 12px 16px; font-size: 13px; color: var(--text-sec); font-weight: 500; border-bottom: 1px solid var(--border); background: var(--bg); }
+    td { padding: 14px 16px; font-size: 14px; border-bottom: 1px solid var(--border); }
+    .badge { padding: 4px 10px; border-radius: 100px; font-size: 12px; font-weight: 700; }
+    .badge.success { background: var(--success-bg); color: var(--success); }
+    .badge.danger { background: var(--danger-bg); color: var(--danger); }
+    .badge.warning { background: var(--warning-bg); color: var(--warning); }
+    .dash-actions { display: flex; gap: 12px; margin-top: 8px; }
+    .btn-ghost { height: 40px; padding: 0 16px; font-weight: 600; font-size: 14px; border: 1px solid var(--border); border-radius: 8px; color: var(--text-pri); cursor: pointer; transition: background 0.15s;}
+    .btn-ghost:hover { background: var(--muted-bg); }
+
+    /* POS High Density Layout */
+    .pos-layout { display: flex; gap: 16px; height: 100%; }
+    .pos-grid-area { flex: 7; display: flex; flex-direction: column; gap: 12px; overflow: hidden; }
+    .pos-cart-area { flex: 3; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* Cart panel distinct surface */
+    .cart-panel {
+      background: var(--card-bg) !important;
+      border: 1px solid var(--border) !important;
+      border-radius: var(--radius-lg) !important;
+    }
+    
+    /* Inputs */
+    .input-wrapper { position: relative; flex-shrink: 0; }
+    .search-icon { position: absolute; right: 12px; top: 10px; color: var(--text-sec); width: 18px; height: 18px;}
+    .input-field {
+      width: 100%; height: 40px; border: 1px solid var(--border);
+      border-radius: var(--radius-sm); background: var(--card-bg);
+      padding: 0 16px 0 36px; font-size: 14px; color: var(--text-pri);
+      transition: border-color 0.15s;
+    }
+    .input-field:focus { border-color: var(--accent); }
+
+    /* Compact Categories */
+    .categories { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; flex-shrink: 0; }
+    .category-chip {
+      padding: 6px 14px; border-radius: 100px; background: var(--card-bg); border: 1px solid var(--border);
+      color: var(--text-sec); font-size: 12px; font-weight: 700; white-space: nowrap; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .category-chip:hover { border-color: var(--text-sec); color: var(--text-pri); }
+    .category-chip.active { background: var(--accent-light); color: var(--accent); border-color: var(--accent); }
+
+    /* Ultra Compact Products Grid */
+    .products-grid {
+      display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px;
+      overflow-y: auto; padding: 2px; align-content: start;
+    }
+    @media(max-width: 1100px) { .products-grid { grid-template-columns: repeat(5, 1fr); } }
+    @media(max-width: 900px)  { .products-grid { grid-template-columns: repeat(4, 1fr); } }
+    @media(max-width: 600px)  { .products-grid { grid-template-columns: repeat(3, 1fr); } }
+    
+    .product-card {
+      border: 1px solid var(--border); background: var(--card-bg);
+      border-radius: var(--radius-md); padding: 0; cursor: pointer;
+      display: flex; flex-direction: column;
+      user-select: none; transition: transform 0.12s, border-color 0.15s, box-shadow 0.15s;
+      overflow: hidden; position: relative;
+      aspect-ratio: 1 / 1;
+    }
+    .product-card:hover { border-color: var(--accent); box-shadow: 0 4px 16px rgba(207, 105, 74, 0.10); transform: translateY(-1px); }
+    .product-card:active { transform: scale(0.97); border-color: var(--accent); }
+
+    /* Image placeholder — tinted per category */
+    .prod-thumb {
+      width: 100%; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: filter 0.15s;
+    }
+    .product-card:hover .prod-thumb { filter: brightness(0.95); }
+
+    /* Category tints */
+    .prod-thumb--case    { background: #FDF3EE; color: #CF694A; }
+    .prod-thumb--screen  { background: #EFF6FF; color: #3B82F6; }
+    .prod-thumb--cable   { background: #F0FDF4; color: #16A34A; }
+    .prod-thumb--charger { background: #FFFBEB; color: #D97706; }
+    .prod-thumb--audio   { background: #F5F3FF; color: #7C3AED; }
+    .prod-thumb--power   { background: #FFF1F2; color: #E11D48; }
+
+    .prod-body { padding: 4px 6px 6px; flex-shrink: 0; }
+    .prod-name { font-weight: 600; font-size: 11px; color: var(--text-pri); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .prod-price { color: var(--accent); font-weight: 700; font-size: 11px; margin-top: 1px; font-family: 'Inter', sans-serif; letter-spacing: -0.3px; }
+    .prod-stock { font-size: 10px; font-weight: 600; margin-top: 2px; display: inline-flex; align-items: center; gap: 3px; }
+    .prod-stock--ok   { color: var(--success); }
+    .prod-stock--low  { color: var(--warning); }
+    .prod-stock--cash { color: var(--danger); }
+
+    /* Compact Cart Panel */
+    .cart-panel {
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius-lg);
+      display: flex; flex-direction: column; height: 100%;
+    }
+    .cart-header {
+      padding: 14px 16px; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--bg); border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+    .cart-title { font-weight: 700; font-size: 15px; color: var(--text-pri); display: flex; align-items: center; gap: 8px; }
+    .cart-count { background: var(--accent); color: #fff; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 999px; }
+    .cart-clear { font-size: 12px; color: var(--danger); font-weight: 700; cursor: pointer; padding: 4px 8px; border-radius: 4px; }
+    .cart-clear:hover { background: var(--danger-bg); }
+    
+    .cart-items { flex: 1; overflow-y: auto; padding: 8px 12px; display: flex; flex-direction: column; gap: 6px; }
+    .cart-item {
+      display: flex; flex-direction: column; gap: 6px;
+      padding: 10px 10px 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-md);
+      background: var(--card-bg); transition: background 0.1s;
+      border-inline-start: 2px solid var(--accent);
+    }
+    .ci-top { display: flex; justify-content: space-between; align-items: flex-start; }
+    .ci-name { font-weight: 700; color: var(--text-pri); font-size: 13px; line-height: 1.2; padding-left: 20px;}
+    .ci-remove { color: var(--text-sec); cursor: pointer; padding: 2px; border-radius: 4px;}
+    .ci-remove:hover { color: var(--danger); background: var(--danger-bg); }
+    
+    .ci-bottom { display: flex; justify-content: space-between; align-items: center; }
+    .ci-qty-wrapper { display: flex; align-items: center; background: var(--muted-bg); border-radius: 6px; padding: 2px; }
+    .qty-btn { color: var(--text-pri); font-weight: 700; width: 26px; height: 26px; border-radius: 4px; display: grid; place-items: center; background: var(--card-bg); box-shadow: 0 1px 2px rgba(0,0,0,0.05);}
+    .qty-btn:active { background: var(--border); }
+    .ci-qty { font-size: 13px; font-weight: 700; width: 24px; text-align: center;}
+    .ci-price { font-weight: 700; font-size: 14px; color: var(--text-pri); font-family: 'Inter', sans-serif; letter-spacing: -0.3px; }
+
+    .cart-summary {
+      padding: 12px 16px 16px; border-top: 1px solid var(--border);
+      background: var(--bg); border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    }
+    .summary-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px;}
+    .sr-label { color: var(--text-sec); font-weight: 500;}
+    .sr-val { font-weight: 700; }
+    .total-row { padding-top: 8px; border-top: 1px dashed var(--border); margin-top: 4px; margin-bottom: 12px; align-items: center;}
+    .sr-total-label { font-weight: 700; font-size: 14px; color: var(--text-pri); }
+    .sr-total-val { font-weight: 800; font-size: 22px; color: var(--accent); letter-spacing: -1px; font-family: 'Inter', sans-serif; }
+    
+    .btn-pay {
+      background: var(--success); color: #FFF; height: 44px; font-size: 16px; width: 100%;
+      border-radius: var(--radius-sm); font-weight: 700; transition: transform 0.05s, background 0.15s;
+      display: flex; justify-content: center; align-items: center; gap: 8px;
+    }
+    .btn-pay:hover { background: #0E5A2A; }
+    .btn-pay:active { transform: scale(0.98); }
+
+    .empty-cart { text-align: center; color: var(--text-sec); padding: 40px 0; font-weight: 500; font-size: 13px;}
+
+    /* طرق الدفع */
+    .pay-methods { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-bottom: 10px; }
+    .pay-method-btn {
+      height: 36px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700;
+      border: 1px solid var(--border); color: var(--text-sec); background: var(--card-bg);
+      cursor: pointer; transition: all 0.15s;
+    }
+    .pay-method-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .pay-method-btn--active { background: var(--success); color: #fff; border-color: var(--success); }
+
+    /* حقل المبلغ المستلم */
+    .pay-received-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .pay-input {
+      width: 120px; height: 34px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+      padding: 0 10px; font-size: 13px; font-family: 'Inter', sans-serif; font-weight: 600;
+      text-align: left; color: var(--text-pri); background: var(--card-bg);
+      transition: border-color 0.15s;
+    }
+    .pay-input:focus { border-color: var(--accent); outline: none; }
+
+    /* شريط المعلومات السفلي */
+    .status-bar {
+      height: 32px; background: var(--card-bg); border-top: 1px solid var(--border);
+      display: flex; align-items: center; padding: 0 16px; gap: 20px;
+      flex-shrink: 0; font-size: 11px; color: var(--text-sec);
+    }
+    .status-bar__item { display: flex; align-items: center; gap: 5px; }
+    .status-bar__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); flex-shrink: 0; }
+    .status-bar__spacer { flex: 1; }
+    .status-bar__time { font-family: 'Inter', sans-serif; font-weight: 600; color: var(--text-pri); }
+
+    /* Checkout Overlay */
+    .overlay {
+      position: fixed; inset: 0; background: rgba(24, 23, 21, 0.6); z-index: 1000;
+      display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.15s;
+    }
+    .overlay.open { display: flex; opacity: 1; }
+    .popup {
+      background: var(--card-bg); width: 340px; border-radius: var(--radius-lg);
+      padding: 24px; text-align: center; transform: scale(0.95); opacity: 0; transition: all 0.15s;
+    }
+    .overlay.open .popup { transform: scale(1); opacity: 1; }
+    .popup-icon { width: 56px; height: 56px; background: var(--success-bg); color: var(--success); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+  
+  <header class="main-header">
+    <div class="popover-container">
+      <button class="icon-btn" id="menuBtn" title="القائمة">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+      <div class="nav-popover" id="navPopover">
+        <div class="nav-label">التشغيل اليومي</div>
+        <div class="nav-item active"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg> نقطة البيع</div>
+        <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg> الفواتير</div>
+        
+        <div class="nav-label">المخزون والخدمات</div>
+        <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg> المخزون</div>
+        <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg> الموردين</div>
+
+        <div class="nav-label">المتابعة والإدارة</div>
+        <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg> التقارير</div>
+        <div class="nav-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> الإعدادات</div>
+        <div class="nav-item" style="color:var(--danger);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> تسجيل الخروج</div>
+      </div>
+    </div>
+    
+    <div class="tabs-wrapper">
+      <div class="tabs-left">
+      <button class="tab" data-target="dashboard">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:6px;"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
+        نظرة عامة
+      </button>
+      <button class="tab active" data-target="pos">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:6px;"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+        نظام المبيعات (POS)
+      </button>
+      <button class="tab" style="color:var(--text-sec); opacity:0.5;">سجل العمليات</button>
+    </div>
+    </div>
+
+    <div class="header-actions">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <div style="position:relative;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+        <div style="position:absolute; top:-2px; right:-2px; width:7px; height:7px; background:var(--accent); border-radius:50%; border:1.5px solid #FFF;"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    
+    <!-- DASHBOARD TAB -->
+    <div class="tab-content" id="dashboard">
+      <div class="dashboard-layout">
+        <div class="stats-grid">
+          <div class="card">
+            <div class="stat-header">
+              <span class="stat-label">المبيعات اليوم</span>
+              <span style="width:32px;height:32px;border-radius:8px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;color:var(--accent);flex-shrink:0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              </span>
+            </div>
+            <div class="stat-value">4,250 ر.س</div>
+          </div>
+          <div class="card">
+            <div class="stat-header">
+              <span class="stat-label">الفواتير</span>
+              <span style="width:32px;height:32px;border-radius:8px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;color:var(--accent);flex-shrink:0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              </span>
+            </div>
+            <div class="stat-value">18</div>
+          </div>
+          <div class="card">
+            <div class="stat-header">
+              <span class="stat-label">المخزون المنخفض</span>
+              <span style="width:32px;height:32px;border-radius:8px;background:var(--danger-bg);display:flex;align-items:center;justify-content:center;color:var(--danger);flex-shrink:0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </span>
+            </div>
+            <div class="stat-value" style="color:var(--danger);">3 منتجات</div>
+          </div>
+          <div class="card">
+            <div class="stat-header">
+              <span class="stat-label">الديون المستحقة</span>
+              <span style="width:32px;height:32px;border-radius:8px;background:var(--warning-bg);display:flex;align-items:center;justify-content:center;color:var(--warning);flex-shrink:0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+              </span>
+            </div>
+            <div class="stat-value" style="color:var(--warning);">1,200 ر.س</div>
+          </div>
+        </div>
+        
+        <div class="dash-table-wrapper">
+          <div class="dash-table-header">آخر الفواتير</div>
+          <table>
+            <thead>
+              <tr>
+                <th>رقم الفاتورة</th>
+                <th>العميل</th>
+                <th>المبلغ</th>
+                <th>الحالة</th>
+                <th>التاريخ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>#INV-1024</td><td>عميل نقدي</td><td>145 ر.س</td><td><span class="badge success">مكتملة</span></td><td>اليوم 14:30</td></tr>
+              <tr><td>#INV-1025</td><td>محمد الخالد</td><td>850 ر.س</td><td><span class="badge warning">معلقة</span></td><td>اليوم 13:15</td></tr>
+              <tr><td>#INV-1026</td><td>شركة الرواد</td><td>1,200 ر.س</td><td><span class="badge warning">معلقة</span></td><td>الأمس 18:00</td></tr>
+              <tr><td>#INV-1027</td><td>أحمد سامي</td><td>35 ر.س</td><td><span class="badge danger">مرتجعة</span></td><td>الأمس 16:20</td></tr>
+              <tr><td>#INV-1028</td><td>هدى عبدالله</td><td>220 ر.س</td><td><span class="badge success">مكتملة</span></td><td>الأمس 12:00</td></tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="dash-actions">
+          <button class="btn-ghost">عرض كل الفواتير</button>
+          <button class="btn-ghost">تصدير التقرير</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- POS TAB (Ultra Speed Focus) -->
+    <div class="tab-content active" id="pos">
+      <div class="pos-layout">
+        
+        <!-- Cart Area (Right) - 30% Width -->
+        <div class="pos-cart-area">
+          <div class="cart-panel">
+            <div class="cart-header">
+              <span class="cart-title">الطلب الحالي <span class="cart-count" id="cartCount" style="display:none">0</span></span>
+              <span class="cart-clear" onclick="clearCart()">إفراغ</span>
+            </div>
+            
+            <div id="emptyCart" class="empty-cart">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:8px;opacity:0.5"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg><br>
+              اختر منتجاً للبدء
+            </div>
+
+            <div class="cart-items" id="cartItemsContainer"></div>
+            
+            <div class="cart-summary" style="display:none;" id="cartSummary">
+              <div class="summary-row"><span class="sr-label">المجموع</span><span class="sr-val" id="subtotalVal">0.00 ر.س</span></div>
+              <div class="summary-row total-row"><span class="sr-total-label">المبلغ المستحق</span><span class="sr-total-val" id="totalVal">0.00 ر.س</span></div>
+
+              <!-- طرق الدفع -->
+              <div class="pay-methods">
+                <button class="pay-method-btn pay-method-btn--active" onclick="selectPayMethod(this)">كاش</button>
+                <button class="pay-method-btn" onclick="selectPayMethod(this)">بطاقة</button>
+                <button class="pay-method-btn" onclick="selectPayMethod(this)">آجل</button>
+              </div>
+
+              <!-- المبلغ المستلم -->
+              <div class="pay-received-row">
+                <label class="sr-label">المبلغ المستلم</label>
+                <input type="number" class="pay-input" id="receivedInput" placeholder="0.000" oninput="calcChange()">
+              </div>
+              <div class="summary-row" id="changeRow" style="display:none;">
+                <span class="sr-label">الباقي للعميل</span>
+                <span class="sr-val" id="changeVal" style="color:var(--success);">0.00 ر.س</span>
+              </div>
+
+              <button class="btn-pay" id="payBtn" onclick="openCheckout()">تأكيد البيع — <span id="payBtnTotal">0.00</span> ر.س</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Products Area (Left) - 70% Width -->
+        <div class="pos-grid-area">
+          
+          <div class="categories">
+            <button class="category-chip active">الكل</button>
+            <button class="category-chip">جرابات</button>
+            <button class="category-chip">حمايات الشاشة</button>
+            <button class="category-chip">كابلات وشواحن</button>
+            <button class="category-chip">بطاريات متنقلة</button>
+            <button class="category-chip">سماعات</button>
+          </div>
+
+          <div class="products-grid">
+            <!-- Product Card is the entire clickable area now -->
+            <div class="product-card" onclick="addToCart('iPhone 15 Silicon Case', 145)">
+              <div class="prod-thumb prod-thumb--case"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="3"/><line x1="9" y1="7" x2="15" y2="7"/></svg></div>
+              <div class="prod-body"><div class="prod-name">iPhone 15 Case</div><div class="prod-price">145 ر.س</div><div class="prod-stock prod-stock--ok">● متوفر</div></div>
+            </div>
+
+            <div class="product-card" onclick="addToCart('Privacy Screen Protector', 35)">
+              <div class="prod-thumb prod-thumb--screen"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="8" y1="20" x2="16" y2="20"/></svg></div>
+              <div class="prod-body"><div class="prod-name">Privacy Screen</div><div class="prod-price">35 ر.س</div><div class="prod-stock prod-stock--ok">● متوفر</div></div>
+            </div>
+
+            <div class="product-card" onclick="addToCart('USB-C Anker Cable', 60)">
+              <div class="prod-thumb prod-thumb--cable"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v6M8 6l4-4 4 4M5 12h14M5 12a7 7 0 0 0 14 0"/></svg></div>
+              <div class="prod-body"><div class="prod-name">USB-C Cable 2m</div><div class="prod-price">60 ر.س</div><div class="prod-stock prod-stock--low">● منخفض</div></div>
+            </div>
+
+            <div class="product-card" onclick="addToCart('Apple Charger 20W', 180)">
+              <div class="prod-thumb prod-thumb--charger"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="7" y="2" width="10" height="12" rx="2"/><path d="M12 14v8M9 22h6"/><line x1="10" y1="7" x2="14" y2="7"/></svg></div>
+              <div class="prod-body"><div class="prod-name">Apple Charger 20W</div><div class="prod-price">180 ر.س</div><div class="prod-stock prod-stock--ok">● متوفر</div></div>
+            </div>
+
+            <div class="product-card" onclick="addToCart('AirPods Case', 25)">
+              <div class="prod-thumb prod-thumb--audio"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="14" r="4"/><circle cx="16" cy="14" r="4"/><path d="M8 10V6a4 4 0 0 1 8 0v4"/></svg></div>
+              <div class="prod-body"><div class="prod-name">AirPods Case</div><div class="prod-price">25 ر.س</div><div class="prod-stock prod-stock--cash">نقد فقط</div></div>
+            </div>
+
+            <div class="product-card" onclick="addToCart('Belkin PowerBank 10K', 120)">
+              <div class="prod-thumb prod-thumb--power"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="18" height="11" rx="2"/><path d="M20 11h2v3h-2"/><line x1="6" y1="12" x2="14" y2="12"/></svg></div>
+              <div class="prod-body">
+                <div class="prod-name">Belkin PowerBank 10000mAh</div>
+                <div class="prod-price">120 ر.س</div>
+              </div>
+              <svg class="prod-add-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- شريط المعلومات السفلي -->
+  <div class="status-bar">
+    <div class="status-bar__item"><div class="status-bar__dot"></div> متصل</div>
+    <div class="status-bar__item">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>
+      فاتورة #1007
+    </div>
+    <div class="status-bar__item">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/></svg>
+      بحث بالباركود
+    </div>
+    <div class="status-bar__spacer"></div>
+    <div class="status-bar__item">كاشير: أحمد</div>
+    <div class="status-bar__time" id="statusTime">10:24</div>
+  </div>
+</div>
+
+<!-- Super Fast Checkout Popup -->
+<div class="overlay" id="checkoutOverlay">
+  <div class="popup">
+    <div class="popup-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></div>
+    <h2 style="margin-bottom:6px; color:var(--text-pri); font-size:18px;">تم إغلاق الفاتورة</h2>
+    <p style="color:var(--text-sec); font-size:14px; margin-bottom:20px;">العملية استغرقت 8 ثوانٍ فقط.</p>
+    <button class="btn-pay" style="box-shadow:none; height:40px; font-size:14px;" onclick="closeCheckout()">عظيم، طلب جديد</button>
+  </div>
+</div>
+
+<script>
+  let cart = [];
+
+  const tabs = document.querySelectorAll('.tab');
+  const tabContents = document.querySelectorAll('.tab-content');
+  const categoryChips = document.querySelectorAll('.category-chip');
+  const cartItemsContainer = document.getElementById('cartItemsContainer');
+  const emptyCartElem = document.getElementById('emptyCart');
+  const cartSummary = document.getElementById('cartSummary');
+  const subtotalVal = document.getElementById('subtotalVal');
+  const taxVal = document.getElementById('taxVal');
+  const totalVal = document.getElementById('totalVal');
+  const payBtn = document.getElementById('payBtn');
+  const checkoutOverlay = document.getElementById('checkoutOverlay');
+
+  // Tabs Transition Minimal
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      if(!tab.dataset.target) return;
+      tabs.forEach(t => t.classList.remove('active'));
+      tabContents.forEach(c => { c.classList.remove('active'); c.style.opacity = '0'; });
+      
+      tab.classList.add('active');
+      const target = document.getElementById(tab.dataset.target);
+      target.classList.add('active');
+      setTimeout(() => target.style.opacity = '1', 10);
+    });
+  });
+
+  // Categories
+  categoryChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      categoryChips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+  });
+
+  // Nav Popover
+  const menuBtn = document.getElementById('menuBtn');
+  const navPopover = document.getElementById('navPopover');
+  menuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    navPopover.classList.toggle('open');
+  });
+  document.addEventListener('click', (e) => {
+    if(!navPopover.contains(e.target) && e.target !== menuBtn) {
+      navPopover.classList.remove('open');
+    }
+  });
+  categoryChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      categoryChips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+    });
+  });
+
+  // Fast Render Cart
+  function renderCart() {
+    cartItemsContainer.innerHTML = '';
+    let subtotal = 0;
+
+    if (cart.length === 0) {
+      emptyCartElem.style.display = 'block';
+      cartSummary.style.display = 'none';
+      const countBadge = document.getElementById('cartCount');
+      countBadge.style.display = 'none';
+      return;
+    }
+
+    emptyCartElem.style.display = 'none';
+    cartSummary.style.display = 'block';
+
+    // Update cart count badge
+    const countBadge = document.getElementById('cartCount');
+    const totalItems = cart.reduce((sum, i) => sum + i.qty, 0);
+    countBadge.textContent = totalItems;
+    countBadge.style.display = 'inline';
+
+    cart.forEach((item, index) => {
+      const itemTotal = item.price * item.qty;
+      subtotal += itemTotal;
+      
+      const el = document.createElement('div');
+      el.className = 'cart-item';
+      // Extremely tight cart item layout
+      el.innerHTML = `
+        <div class="ci-top">
+          <span class="ci-name">${item.name}</span>
+          <svg class="ci-remove" onclick="removeItem(${index})" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </div>
+        <div class="ci-bottom">
+          <div class="ci-qty-wrapper">
+             <button class="qty-btn" onclick="updateQty(${index}, 1)">+</button>
+             <span class="ci-qty">${item.qty}</span>
+             <button class="qty-btn" onclick="updateQty(${index}, -1)">-</button>
+          </div>
+          <div class="ci-price">${itemTotal.toFixed(2)}</div>
+        </div>
+      `;
+      cartItemsContainer.appendChild(el);
+    });
+
+    const tax = subtotal * 0.15;
+    const total = subtotal + tax;
+
+    const total = subtotal;
+
+    subtotalVal.textContent = `${subtotal.toFixed(2)} ر.س`;
+    totalVal.textContent = `${total.toFixed(2)} ر.س`;
+    document.getElementById('payBtnTotal').textContent = total.toFixed(2);
+    calcChange();
+  }
+
+  // Bind to Window for inline HTML events
+  window.addToCart = function(name, price) {
+    const existing = cart.find(i => i.name === name);
+    if (existing) existing.qty += 1;
+    else cart.push({ name, price, qty: 1 });
+    renderCart();
+    
+    // Auto-scroll cart to bottom
+    setTimeout(() => { cartItemsContainer.scrollTop = cartItemsContainer.scrollHeight; }, 10);
+  };
+
+  window.updateQty = function(index, diff) {
+    cart[index].qty += diff;
+    if (cart[index].qty <= 0) cart.splice(index, 1);
+    renderCart();
+  };
+
+  window.removeItem = function(index) {
+    cart.splice(index, 1);
+    renderCart();
+  };
+
+  window.clearCart = function() {
+    cart = [];
+    renderCart();
+  };
+
+  // طرق الدفع
+  window.selectPayMethod = function(btn) {
+    document.querySelectorAll('.pay-method-btn').forEach(b => b.classList.remove('pay-method-btn--active'));
+    btn.classList.add('pay-method-btn--active');
+  };
+
+  // حساب الباقي
+  window.calcChange = function() {
+    const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    const received = parseFloat(document.getElementById('receivedInput')?.value) || 0;
+    const changeRow = document.getElementById('changeRow');
+    const changeVal = document.getElementById('changeVal');
+    if (received > 0 && received >= total) {
+      changeRow.style.display = 'flex';
+      changeVal.textContent = `${(received - total).toFixed(2)} ر.س`;
+    } else {
+      changeRow.style.display = 'none';
+    }
+  };
+
+  // ساعة الشريط السفلي
+  function updateTime() {
+    const now = new Date();
+    const h = now.getHours().toString().padStart(2,'0');
+    const m = now.getMinutes().toString().padStart(2,'0');
+    const el = document.getElementById('statusTime');
+    if (el) el.textContent = `${h}:${m}`;
+  }
+  updateTime();
+  setInterval(updateTime, 30000);
+
+  // Checkout Actions
+  window.openCheckout = function() {
+    if (cart.length > 0) checkoutOverlay.classList.add('open');
+  };
+  window.closeCheckout = function() {
+    checkoutOverlay.classList.remove('open');
+    clearCart();
+  };
+
+  renderCart();
+</script>
+</body>
+</html>

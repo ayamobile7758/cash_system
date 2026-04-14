@@ -1,0 +1,2874 @@
+   ▲ Next.js 15.5.14
+   - Local:        http://127.0.0.1:3100
+   - Network:      http://127.0.0.1:3100
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 5s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 1468ms (115 modules)
+ ○ Compiling /login ...
+ ✓ Compiled /login in 12.7s (963 modules)
+ GET /login 200 in 14084ms
+ ○ Compiling /pos ...
+ ✓ Compiled /pos in 3.9s (1252 modules)
+ GET /pos 200 in 6981ms
+ ○ Compiling /api/pos/accounts ...
+ ✓ Compiled /api/pos/accounts in 1440ms (1240 modules)
+ GET /api/pos/accounts 200 in 2915ms
+ GET /api/pos/products?page=0 200 in 2943ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+5b6f4b 200 in 2838ms
+ ○ Compiling / ...
+ ✓ Compiled / in 897ms (1242 modules)
+ GET / 200 in 2540ms
+ GET / 200 in 187ms
+ GET / 200 in 203ms
+ GET /login 200 in 718ms
+ GET /pos 200 in 1199ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 11.9s (2286 modules)
+ GET /reports 200 in 14268ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 2.2s (2300 modules)
+ GET /notifications 200 in 4288ms
+ ○ Compiling /debts ...
+ ✓ Compiled /debts in 2.2s (2312 modules)
+ GET /debts 200 in 3936ms
+ ○ Compiling /invoices ...
+ ✓ Compiled /invoices in 1960ms (2326 modules)
+ GET /invoices 200 in 3559ms
+ ○ Compiling /settings ...
+ ✓ Compiled /settings in 1689ms (2340 modules)
+ GET /settings 200 in 2993ms
+ GET /login 200 in 334ms
+ GET /pos 200 in 1615ms
+ GET /api/pos/products?page=0 200 in 1009ms
+ GET /api/pos/accounts 200 in 1112ms
+ GET /api/pos/products?page=0 200 in 707ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+c896d4 200 in 852ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+c896d4 200 in 792ms
+ GET / 200 in 302ms
+ GET / 200 in 248ms
+ GET / 200 in 264ms
+ GET /login 200 in 657ms
+ GET /pos 200 in 1027ms
+ GET /reports 200 in 991ms
+ GET /notifications 200 in 1005ms
+ GET /debts 200 in 1188ms
+ GET /invoices 200 in 976ms
+ GET /settings 200 in 754ms
+ GET /login 200 in 259ms
+ GET /pos 200 in 1387ms
+ GET /api/pos/accounts 200 in 1016ms
+ GET /api/pos/products?page=0 200 in 1179ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+25b25a 200 in 1031ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+25b25a 200 in 822ms
+ GET /api/pos/products?page=0 200 in 869ms
+ GET /login 200 in 254ms
+ GET /login 200 in 371ms
+ GET /pos 200 in 1841ms
+ GET /api/pos/accounts 200 in 1233ms
+ GET /api/pos/products?page=0 200 in 1380ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+6395b3 200 in 1061ms
+ GET /api/pos/products?page=0 200 in 960ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+6395b3 200 in 770ms
+ GET /login 200 in 365ms
+ GET /pos 200 in 1649ms
+ GET /api/pos/products?page=0 200 in 1007ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+88c32a 200 in 1011ms
+ GET /api/pos/products?page=0 200 in 814ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+88c32a 200 in 762ms
+ GET /api/pos/accounts 200 in 1350ms
+ ✓ Compiled in 5.4s (1766 modules)
+ GET /login 200 in 2069ms
+ GET /pos 200 in 4115ms
+ GET /api/pos/accounts 200 in 1340ms
+ GET /api/pos/products?page=0 200 in 1396ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+9eb3cd 200 in 939ms
+ GET /api/pos/products?page=0 200 in 955ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+9eb3cd 200 in 853ms
+ GET /login 200 in 411ms
+ GET /pos 200 in 1931ms
+ GET /api/pos/accounts 200 in 1360ms
+ GET /api/pos/products?page=0 200 in 1511ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+c6bf58 200 in 976ms
+ GET /api/pos/products?page=0 200 in 980ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+c6bf58 200 in 775ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1718ms (774 modules)
+ GET / 200 in 4418ms
+ GET / 200 in 1235ms
+ GET / 200 in 583ms
+ GET /login 200 in 1173ms
+ GET /pos 200 in 2864ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 2.9s (1317 modules)
+ GET /reports 200 in 7993ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 2.1s (1327 modules)
+ GET /notifications 200 in 6885ms
+ ○ Compiling /debts ...
+ ✓ Compiled /debts in 2.8s (1335 modules)
+ GET /debts 200 in 7704ms
+ ○ Compiling /invoices ...
+ ✓ Compiled /invoices in 4.1s (1344 modules)
+ GET /invoices 200 in 7154ms
+ ○ Compiling /settings ...
+ ✓ Compiled /settings in 2.9s (1353 modules)
+ GET /settings 200 in 5604ms
+ GET /login 200 in 382ms
+ GET /pos 200 in 2778ms
+ ○ Compiling /api/pos/accounts ...
+ ✓ Compiled /api/pos/accounts in 3s (1356 modules)
+ ✓ Compiled (1358 modules)
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+80ff40 200 in 6402ms
+ GET /api/pos/accounts 200 in 7250ms
+ GET /api/pos/products?page=0 200 in 6424ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+80ff40 200 in 6209ms
+ GET /api/pos/products?page=0 200 in 7327ms
+ GET /login 200 in 1411ms
+ GET /pos 200 in 1786ms
+ GET /api/pos/products?page=0 200 in 1688ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+55f4a9 200 in 1008ms
+ GET /api/pos/accounts 200 in 1735ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+55f4a9 200 in 1168ms
+ GET /api/pos/products?page=0 200 in 1205ms
+ GET /login 200 in 244ms
+ GET /pos 200 in 2258ms
+ GET /api/pos/accounts 200 in 1271ms
+ GET /api/pos/products?page=0 200 in 1316ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+85cf44 200 in 1138ms
+ GET /api/pos/products?page=0 200 in 1040ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+85cf44 200 in 968ms
+ GET /login 200 in 415ms
+ GET /pos 200 in 1554ms
+ GET /api/pos/products?page=0 200 in 1033ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+6816b4 200 in 907ms
+ GET /api/pos/products?page=0 200 in 773ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+6816b4 200 in 745ms
+ GET /api/pos/accounts 200 in 1422ms
+ GET /login 200 in 354ms
+ GET /pos 200 in 1346ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+5c7d78 200 in 751ms
+ GET /api/pos/products?page=0 200 in 1016ms
+ GET /api/pos/accounts 200 in 1020ms
+ GET /api/pos/products?page=0 200 in 810ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+5c7d78 200 in 814ms
+ GET /login 200 in 302ms
+ GET /pos 200 in 1651ms
+ GET /api/pos/accounts 200 in 1096ms
+ GET /api/pos/products?page=0 200 in 1239ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+fcd910 200 in 1086ms
+ GET /api/pos/products?page=0 200 in 1082ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+fcd910 200 in 749ms
+ GET /login 200 in 329ms
+ GET /pos 200 in 1552ms
+ GET /api/pos/products?page=0 200 in 975ms
+ GET /api/pos/accounts 200 in 1068ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+dabeee 200 in 886ms
+ GET /api/pos/products?page=0 200 in 756ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+dabeee 200 in 698ms
+ GET /login 200 in 317ms
+ GET /pos 200 in 1276ms
+ GET /api/pos/accounts 200 in 960ms
+ GET /api/pos/products?page=0 200 in 970ms
+ GET /api/pos/products?page=0 200 in 789ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+a45502 200 in 965ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+a45502 200 in 789ms
+ GET /login 200 in 269ms
+ GET /pos 200 in 1316ms
+ GET /api/pos/accounts 200 in 883ms
+ GET /api/pos/products?page=0 200 in 971ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+5626c7 200 in 857ms
+ GET /api/pos/products?page=0 200 in 781ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+5626c7 200 in 696ms
+ GET /login 200 in 246ms
+ GET /pos 200 in 1728ms
+ GET /api/pos/products?page=0 200 in 1039ms
+ GET /api/pos/accounts 200 in 1197ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+9e800b 200 in 876ms
+ GET /api/pos/products?page=0 200 in 758ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+9e800b 200 in 819ms
+ ✓ Compiled in 2.2s (1752 modules)
+ GET /login 200 in 1354ms
+ GET /pos 200 in 1574ms
+ GET /api/pos/products?page=0 200 in 904ms
+ GET /api/pos/accounts 200 in 980ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+d251fb 200 in 657ms
+ GET /login 200 in 196ms
+ GET /pos 200 in 1141ms
+ GET /api/pos/products?page=0 200 in 838ms
+ GET /api/pos/accounts 200 in 949ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+eff9bc 200 in 655ms
+ GET /login 200 in 202ms
+ GET /pos 200 in 1193ms
+ GET /api/pos/products?page=0 200 in 950ms
+ GET /api/pos/accounts 200 in 1011ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+79977a 200 in 884ms
+ GET /login 200 in 178ms
+ GET /pos 200 in 1362ms
+ GET /api/pos/products?page=0 200 in 898ms
+ GET /api/pos/accounts 200 in 923ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+d87b56 200 in 725ms
+ GET /login 200 in 147ms
+ GET /pos 200 in 1185ms
+ GET /api/pos/products?page=0 200 in 879ms
+ GET /api/pos/accounts 200 in 1033ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+deebd6 200 in 685ms
+ ○ Compiling / ...
+ ✓ Compiled / in 3.5s (774 modules)
+ GET / 200 in 8789ms
+ GET / 200 in 1243ms
+ GET / 200 in 2224ms
+ GET /login 200 in 3936ms
+ GET /pos 200 in 8072ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 7.6s (1324 modules)
+ GET /reports 200 in 16450ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 8.2s (1327 modules)
+ GET /notifications 200 in 19191ms
+ ○ Compiling /debts ...
+ ✓ Compiled /debts in 11s (1335 modules)
+ GET /debts 200 in 18591ms
+ ○ Compiling /invoices ...
+ ✓ Compiled /invoices in 13.8s (1342 modules)
+ GET /invoices 200 in 18088ms
+ ○ Compiling /settings ...
+ ✓ Compiled /settings in 2.7s (1351 modules)
+ GET /settings 200 in 5194ms
+ GET /login 200 in 915ms
+ GET /pos 200 in 2024ms
+ ○ Compiling /api/pos/accounts ...
+ ✓ Compiled /api/pos/accounts in 1464ms (851 modules)
+ ✓ Compiled (853 modules)
+ GET /api/pos/products?page=0 200 in 5100ms
+ GET /api/pos/accounts 200 in 5162ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+e7b4de 200 in 4538ms
+ ○ Compiling /api/sales ...
+ ✓ Compiled /api/sales in 2.7s (1837 modules)
+ POST /api/sales 200 in 4678ms
+ GET /api/pos/accounts 200 in 797ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+e7b4de 200 in 910ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.2s (778 modules)
+ GET / 200 in 4919ms
+ GET / 200 in 379ms
+ GET / 200 in 318ms
+ GET /login 200 in 663ms
+ GET /pos 200 in 1394ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 13.1s (1328 modules)
+ GET /reports 200 in 15782ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 3s (1338 modules)
+ GET /notifications 200 in 4935ms
+ ○ Compiling /debts ...
+ ✓ Compiled /debts in 1790ms (1346 modules)
+ GET /debts 200 in 3598ms
+ ○ Compiling /invoices ...
+ ✓ Compiled /invoices in 2.4s (1344 modules)
+ GET /invoices 200 in 5144ms
+ ○ Compiling /settings ...
+ ✓ Compiled /settings in 2.1s (1353 modules)
+ GET /settings 200 in 4698ms
+ GET /login 200 in 287ms
+ GET /pos 200 in 2010ms
+ ○ Compiling /api/pos/accounts ...
+ ✓ Compiled /api/pos/accounts in 1401ms (1358 modules)
+ ✓ Compiled (1360 modules)
+ GET /api/pos/accounts 200 in 4007ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+f2aef9 200 in 3155ms
+ GET /api/pos/products?page=0 200 in 4214ms
+ ✓ Compiled in 2.6s (1825 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 2.9s (774 modules)
+ GET / 200 in 5714ms
+ GET / 200 in 279ms
+ GET / 200 in 315ms
+ GET /login 200 in 633ms
+ GET /pos 200 in 1252ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 1281ms (1317 modules)
+ GET /reports 200 in 3468ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 1281ms (1327 modules)
+ GET /notifications 200 in 3109ms
+ ○ Compiling /debts ...
+ ✓ Compiled /debts in 1925ms (1335 modules)
+ GET /debts 200 in 3275ms
+ ○ Compiling /invoices ...
+ ✓ Compiled /invoices in 1647ms (1344 modules)
+ GET /invoices 200 in 2887ms
+ ○ Compiling /settings ...
+ ✓ Compiled /settings in 1939ms (1353 modules)
+ GET /settings 200 in 4280ms
+ GET /login 200 in 459ms
+ GET /pos 200 in 2169ms
+ ○ Compiling /api/pos/accounts ...
+ ✓ Compiled /api/pos/accounts in 1614ms (1358 modules)
+ ✓ Compiled (1360 modules)
+ GET /api/pos/accounts 200 in 4544ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+f48645 200 in 4052ms
+ GET /api/pos/products?page=0 200 in 4939ms
+ ○ Compiling /api/sales ...
+ ✓ Compiled /api/sales in 1938ms (1364 modules)
+ POST /api/sales 200 in 4618ms
+ GET /api/pos/accounts 200 in 1203ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+f48645 200 in 1338ms
+ GET /login 200 in 776ms
+ GET /pos 200 in 1498ms
+ GET /api/pos/accounts 200 in 1109ms
+ GET /api/pos/products?page=0 200 in 1167ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+773a66 200 in 696ms
+ GET /login 200 in 206ms
+ GET /pos 200 in 1320ms
+ GET /api/pos/accounts 200 in 991ms
+ GET /api/pos/products?page=0 200 in 1205ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+042938 200 in 713ms
+ GET /login 200 in 228ms
+ GET /pos 200 in 1445ms
+ GET /api/pos/accounts 200 in 1104ms
+ GET /api/pos/products?page=0 200 in 1121ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+390db0 200 in 766ms
+ GET /login 200 in 308ms
+ GET /pos 200 in 1513ms
+ GET /api/pos/products?page=0 200 in 1312ms
+ GET /api/pos/accounts 200 in 1326ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+716abe 200 in 789ms
+ POST /api/sales 200 in 777ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+716abe 200 in 211ms
+ GET /api/pos/accounts 200 in 219ms
+ GET /login 200 in 271ms
+ GET /pos 200 in 1275ms
+ GET /api/pos/accounts 200 in 953ms
+ GET /api/pos/products?page=0 200 in 1008ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+0fcdf0 200 in 751ms
+ POST /api/sales 200 in 640ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+0fcdf0 200 in 322ms
+ GET /api/pos/accounts 200 in 330ms
+ GET /login 200 in 278ms
+ GET /pos 200 in 1965ms
+ GET /api/pos/products?page=0 200 in 832ms
+ GET /api/pos/accounts 200 in 849ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+fcfd0b 200 in 682ms
+ POST /api/sales 200 in 631ms
+ GET /api/pos/accounts 200 in 320ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+fcfd0b 200 in 324ms
+ GET /login 200 in 201ms
+ GET /pos 200 in 1239ms
+ GET /api/pos/accounts 200 in 850ms
+ GET /api/pos/products?page=0 200 in 957ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+858bd9 200 in 686ms
+ POST /api/sales 200 in 617ms
+ GET /api/pos/accounts 200 in 377ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+858bd9 200 in 401ms
+ GET /login 200 in 283ms
+ GET /pos 200 in 1532ms
+ GET /api/pos/accounts 200 in 848ms
+ GET /api/pos/products?page=0 200 in 950ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+66f35d 200 in 680ms
+ POST /api/sales 200 in 625ms
+ GET /api/pos/accounts 200 in 325ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+66f35d 200 in 329ms
+ ✓ Compiled in 2s (1745 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 740ms (767 modules)
+ GET / 200 in 2858ms
+ GET / 200 in 280ms
+ GET / 200 in 384ms
+ GET /login 200 in 722ms
+ GET /pos 200 in 966ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 1330ms (1317 modules)
+ GET /reports 200 in 3199ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 897ms (1327 modules)
+ GET /notifications 200 in 2387ms
+ ○ Compiling /debts ...
+ ✓ Compiled /debts in 2s (1335 modules)
+ GET /debts 200 in 3170ms
+ ○ Compiling /invoices ...
+ ✓ Compiled /invoices in 1432ms (1344 modules)
+ GET /invoices 200 in 2532ms
+ ○ Compiling /settings ...
+ ✓ Compiled /settings in 1952ms (1353 modules)
+ GET /settings 200 in 3000ms
+ GET /login 200 in 418ms
+ GET /pos 200 in 1619ms
+ ○ Compiling /api/sales ...
+ ✓ Compiled /api/sales in 1215ms (1358 modules)
+ ✓ Compiled (1364 modules)
+ GET /api/sales 405 in 2731ms
+ GET /api/pos/accounts 200 in 3424ms
+ GET /api/pos/products?page=0 200 in 3567ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+cd01c5 200 in 2777ms
+ POST /api/sales 200 in 683ms
+ GET /api/pos/accounts 200 in 1122ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+cd01c5 200 in 1148ms
+ GET /invoices 200 in 2175ms
+ ○ Compiling /invoices/[id] ...
+ ✓ Compiled /invoices/[id] in 3.4s (2374 modules)
+ GET /invoices/9e50affe-c176-4332-a206-a984bab07183 200 in 7806ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 1764ms (2378 modules)
+ POST /api/returns 200 in 2860ms
+ GET /invoices/9e50affe-c176-4332-a206-a984bab07183 200 in 2582ms
+ GET /debts 200 in 2956ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 2.5s (1875 modules)
+ POST /api/payments/debt 200 in 3641ms
+ GET /debts 200 in 401ms
+ ○ Compiling / ...
+ ✓ Compiled / in 7.9s (879 modules)
+ GET / 200 in 10632ms
+ GET / 200 in 13181ms
+ GET / 200 in 1698ms
+ GET / 200 in 1787ms
+ GET / 200 in 3701ms
+ GET / 200 in 3750ms
+ GET /login 200 in 6582ms
+ GET /login 200 in 6036ms
+ GET /pos 200 in 14851ms
+ GET /pos 200 in 14849ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 9.4s (1355 modules)
+ GET /reports 200 in 22268ms
+ GET /reports 200 in 22307ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 10.1s (1365 modules)
+ GET /notifications 200 in 20710ms
+ GET /notifications 200 in 20744ms
+ GET /debts 200 in 4540ms
+ GET /debts 200 in 4506ms
+ GET /invoices 200 in 4486ms
+ GET /invoices 200 in 4576ms
+ ○ Compiling /settings ...
+ ✓ Compiled /settings in 2.3s (1372 modules)
+ GET /settings 200 in 4913ms
+ GET /settings 200 in 4912ms
+ GET /login 200 in 611ms
+ GET /login 200 in 556ms
+ GET /pos 200 in 2826ms
+ GET /pos 200 in 3192ms
+ ○ Compiling /api/sales ...
+ ✓ Compiled /api/sales in 1196ms (882 modules)
+ ✓ Compiled (888 modules)
+ GET /api/sales 405 in 2911ms
+ GET /api/sales 405 in 2842ms
+ GET /api/pos/products?page=0 200 in 3635ms
+ GET /api/pos/products?page=0 200 in 3592ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+a20250 200 in 3150ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+e1b63e 200 in 2457ms
+ GET /api/pos/accounts 200 in 3742ms
+ GET /api/pos/accounts 200 in 3974ms
+ POST /api/sales 200 in 881ms
+ POST /api/sales 200 in 1509ms
+ GET /api/pos/accounts 200 in 1616ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+a20250 200 in 1692ms
+ GET /api/pos/accounts 200 in 955ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+e1b63e 200 in 1128ms
+ GET /invoices 200 in 2671ms
+ GET /invoices 200 in 2007ms
+ GET /invoices/80e9a1ff-67d0-4521-b19f-a0ad68615ff4 200 in 2676ms
+ GET /invoices/30f1e901-bcaa-4483-9249-527328998359 200 in 2192ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 1198ms (882 modules)
+ POST /api/returns 200 in 2247ms
+ POST /api/returns 200 in 2318ms
+ GET /invoices/30f1e901-bcaa-4483-9249-527328998359 200 in 5946ms
+ GET /invoices/80e9a1ff-67d0-4521-b19f-a0ad68615ff4 200 in 5817ms
+ GET /debts 200 in 8285ms
+ GET /debts 200 in 8313ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 2.2s (877 modules)
+ POST /api/payments/debt 200 in 3404ms
+ POST /api/payments/debt 200 in 2370ms
+ GET /debts 200 in 469ms
+ GET /debts 200 in 3167ms
+ GET /login 200 in 1402ms
+ GET /login 200 in 342ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 9.3s (1372 modules)
+ GET /reports 200 in 26410ms
+ GET /reports 200 in 26398ms
+ GET /pos 200 in 9394ms
+ GET /pos 200 in 9407ms
+ GET /api/sales 405 in 277ms
+ GET /api/sales 405 in 277ms
+ GET /api/pos/products?page=0 200 in 1754ms
+ GET /api/pos/accounts 200 in 1755ms
+ GET /api/pos/products?page=0 200 in 1793ms
+ GET /api/pos/accounts 200 in 4766ms
+ GET /reports 200 in 8950ms
+ GET /reports 200 in 9011ms
+ ○ Compiling /settings ...
+ ✓ Compiled /settings in 2.9s (1377 modules)
+ GET /settings 200 in 11380ms
+ GET /settings 200 in 11242ms
+ ○ Compiling /api/health/balance-check ...
+ ✓ Compiled /api/health/balance-check in 4.3s (2364 modules)
+ POST /api/health/balance-check 200 in 5716ms
+ POST /api/health/balance-check 200 in 5402ms
+ ○ Compiling /api/reconciliation ...
+ ✓ Compiled /api/reconciliation in 2.9s (2368 modules)
+ GET /login 200 in 1973ms
+ POST /api/reconciliation 200 in 4183ms
+ ○ Compiling /api/snapshots ...
+ ✓ Compiled /api/snapshots in 1919ms (2372 modules)
+ POST /api/snapshots 200 in 3083ms
+ GET /login 200 in 658ms
+ GET /pos 200 in 2057ms
+ GET /api/sales 405 in 972ms
+ GET /api/pos/products?page=0 200 in 1865ms
+ GET /api/pos/accounts 200 in 1962ms
+ GET /pos 200 in 2827ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+e1b63e 200 in 1273ms
+ POST /api/sales 200 in 1120ms
+ GET /api/sales 405 in 904ms
+ GET /api/pos/accounts 200 in 2169ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+e1b63e 200 in 2424ms
+ GET /api/pos/accounts 200 in 1777ms
+ GET /api/pos/products?page=0 200 in 1811ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+a20250 200 in 1078ms
+ GET /invoices 200 in 3566ms
+ POST /api/sales 200 in 870ms
+ GET /api/pos/accounts 200 in 1604ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+a20250 200 in 1893ms
+ GET /invoices 200 in 4025ms
+ GET /invoices/667fb7b4-a43b-46e3-91a6-78e4130d979f 200 in 3804ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 2.8s (1379 modules)
+ POST /api/returns 200 in 6226ms
+ GET /invoices/b76b6b96-20a6-4007-b613-14b4436c5752 200 in 6237ms
+ GET /invoices/667fb7b4-a43b-46e3-91a6-78e4130d979f 200 in 956ms
+ ○ Compiling / ...
+ POST /api/returns 200 in 1460ms
+ ✓ Compiled / in 2.1s (1381 modules)
+ ✓ Compiled /debts in 1ms (1381 modules)
+ ✓ Compiled in 1ms (1389 modules)
+ GET / 200 in 7971ms
+ GET / 200 in 389ms
+ GET /invoices/b76b6b96-20a6-4007-b613-14b4436c5752 200 in 8802ms
+ GET /debts 200 in 9948ms
+ GET / 200 in 518ms
+ GET /login 200 in 673ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 1356ms (896 modules)
+ GET /pos 200 in 2861ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 1010ms (1374 modules)
+ POST /api/payments/debt 200 in 5268ms
+ GET /reports 200 in 2545ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 2.2s (1384 modules)
+ GET /notifications 200 in 3212ms
+ GET /debts 200 in 557ms
+ GET /invoices 200 in 510ms
+ ○ Compiling /settings ...
+ ✓ Compiled /settings in 1008ms (1393 modules)
+ GET /settings 200 in 1834ms
+ GET /login 200 in 394ms
+ GET /pos 200 in 1639ms
+ GET /api/sales 405 in 280ms
+ GET /api/pos/products?page=0 200 in 1047ms
+ GET /api/pos/accounts 200 in 1166ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+a7b064 200 in 701ms
+ POST /api/sales 200 in 627ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+a7b064 200 in 882ms
+ GET /api/pos/accounts 200 in 918ms
+ GET /invoices 200 in 1274ms
+ GET /invoices/b0d367ac-92ed-45d0-b80e-3503c35c0e49 200 in 1172ms
+ POST /api/returns 200 in 963ms
+ GET /invoices/b0d367ac-92ed-45d0-b80e-3503c35c0e49 200 in 1712ms
+ GET /debts 200 in 2652ms
+ POST /api/payments/debt 200 in 933ms
+ GET /debts 200 in 194ms
+ GET /login 200 in 282ms
+ GET /reports 200 in 3321ms
+ GET /pos 200 in 1412ms
+ GET /api/sales 405 in 278ms
+ GET /api/pos/products?page=0 200 in 1310ms
+ GET /api/pos/accounts 200 in 1311ms
+ GET /reports 200 in 2956ms
+ GET /settings 200 in 3106ms
+ ○ Compiling /api/health/balance-check ...
+ ✓ Compiled /api/health/balance-check in 1145ms (1383 modules)
+ POST /api/health/balance-check 200 in 2258ms
+ ○ Compiling /api/reconciliation ...
+ ✓ Compiled /api/reconciliation in 1060ms (1387 modules)
+ POST /api/reconciliation 200 in 1846ms
+ ○ Compiling /api/snapshots ...
+ ✓ Compiled /api/snapshots in 952ms (1391 modules)
+ POST /api/snapshots 200 in 1847ms
+ GET /login 200 in 425ms
+ GET /pos 200 in 2152ms
+ GET /api/sales 405 in 676ms
+ GET /api/pos/products?page=0 200 in 1570ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+a7b064 200 in 1336ms
+ GET /api/pos/accounts 200 in 2047ms
+ POST /api/sales 200 in 692ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+a7b064 200 in 1032ms
+ GET /api/pos/accounts 200 in 1044ms
+ GET /invoices 200 in 1514ms
+ GET /invoices/bbc98024-8d2c-4229-a40c-5a1a6b6c14e8 200 in 1194ms
+ POST /api/returns 200 in 702ms
+ GET /invoices/bbc98024-8d2c-4229-a40c-5a1a6b6c14e8 200 in 3250ms
+ GET /debts 200 in 3726ms
+ POST /api/payments/debt 200 in 787ms
+ GET /debts 200 in 205ms
+ GET /login 200 in 231ms
+ GET /reports 200 in 4980ms
+ GET /pos 200 in 2139ms
+ GET /api/sales 405 in 204ms
+ GET /api/pos/accounts 200 in 1683ms
+ GET /api/pos/products?page=0 200 in 1687ms
+ GET /reports 200 in 4941ms
+ GET /settings 200 in 4438ms
+ POST /api/health/balance-check 200 in 966ms
+ POST /api/reconciliation 200 in 640ms
+ POST /api/snapshots 200 in 708ms
+ GET /login 200 in 258ms
+ GET /pos 200 in 1934ms
+ GET /api/sales 405 in 372ms
+ GET /api/pos/accounts 200 in 1042ms
+ GET /api/pos/products?page=0 200 in 1128ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+a7b064 200 in 755ms
+ POST /api/sales 200 in 813ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+a7b064 200 in 1014ms
+ GET /api/pos/accounts 200 in 1178ms
+ GET /invoices 200 in 1609ms
+ GET /invoices/93412281-371c-450d-afd0-6cd45c7a948d 200 in 2129ms
+ POST /api/returns 200 in 790ms
+ GET /invoices/93412281-371c-450d-afd0-6cd45c7a948d 200 in 2060ms
+ GET /debts 200 in 3475ms
+ POST /api/payments/debt 200 in 982ms
+ GET /debts 200 in 276ms
+ GET /login 200 in 310ms
+ GET /reports 200 in 7578ms
+ GET /pos 200 in 2142ms
+ GET /api/sales 405 in 511ms
+ GET /api/pos/products?page=0 200 in 1440ms
+ GET /api/pos/accounts 200 in 1584ms
+ GET /reports 200 in 7597ms
+ GET /settings 200 in 2722ms
+ POST /api/health/balance-check 200 in 998ms
+ POST /api/reconciliation 200 in 690ms
+ POST /api/snapshots 200 in 736ms
+ GET /login 200 in 481ms
+ GET /reports 200 in 5582ms
+ GET /pos 200 in 1643ms
+ GET /api/sales 405 in 582ms
+ GET /api/pos/accounts 200 in 1510ms
+ GET /api/pos/products?page=0 200 in 2381ms
+ GET /settings 200 in 5087ms
+ ○ Compiling /api/inventory/counts/complete ...
+ ✓ Compiled /api/inventory/counts/complete in 3.1s (2346 modules)
+ POST /api/inventory/counts/complete 200 in 4881ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.1s (1359 modules)
+ GET / 200 in 3525ms
+ GET / 200 in 363ms
+ GET / 200 in 307ms
+ GET /login 200 in 554ms
+ GET /pos 200 in 784ms
+ GET /reports 200 in 801ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 6.8s (1359 modules)
+ GET /notifications 200 in 8984ms
+ GET /debts 200 in 1066ms
+ ○ Compiling /invoices ...
+ ✓ Compiled /invoices in 1259ms (1368 modules)
+ GET /invoices 200 in 2678ms
+ GET /settings 200 in 664ms
+ GET /login 200 in 395ms
+ GET /pos 200 in 2528ms
+ GET /api/sales 405 in 625ms
+ GET /api/pos/accounts 200 in 1479ms
+ GET /api/pos/products?page=0 200 in 1596ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+3c29ed 200 in 937ms
+ POST /api/sales 200 in 781ms
+ GET /api/pos/accounts 200 in 997ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+3c29ed 200 in 1101ms
+ GET /invoices 200 in 2537ms
+ ○ Compiling /invoices/[id] ...
+ ✓ Compiled /invoices/[id] in 2.2s (1385 modules)
+ GET /invoices/b546896c-ada3-4964-97af-3ff913c76cfc 200 in 4385ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 1533ms (1389 modules)
+ POST /api/returns 200 in 2701ms
+ GET /invoices/b546896c-ada3-4964-97af-3ff913c76cfc 200 in 3248ms
+ GET /debts 200 in 4427ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 1285ms (896 modules)
+ POST /api/payments/debt 200 in 2339ms
+ GET /debts 200 in 2658ms
+ GET /login 200 in 950ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 1910ms (1372 modules)
+ GET /reports 200 in 8457ms
+ GET /pos 200 in 3133ms
+ GET /api/sales 405 in 2764ms
+ GET /api/pos/accounts 200 in 3563ms
+ GET /api/pos/products?page=0 200 in 3575ms
+ GET /reports 200 in 7988ms
+ ○ Compiling /settings ...
+ ✓ Compiled /settings in 1859ms (1377 modules)
+ GET /settings 200 in 5606ms
+ ○ Compiling /api/health/balance-check ...
+ ✓ Compiled /api/health/balance-check in 1901ms (1379 modules)
+ POST /api/health/balance-check 200 in 3148ms
+ GET /login 200 in 920ms
+ GET /pos 200 in 1946ms
+ GET /api/sales 405 in 742ms
+ GET /api/pos/accounts 200 in 1421ms
+ GET /api/pos/products?page=0 200 in 1444ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+3c29ed 200 in 723ms
+ POST /api/sales 200 in 784ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+3c29ed 200 in 1056ms
+ GET /api/pos/accounts 200 in 1206ms
+ GET /invoices 200 in 1984ms
+ GET /invoices/570b5516-63ec-40b9-94da-d7d9478103bb 200 in 1574ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 2.6s (1379 modules)
+ POST /api/returns 200 in 3782ms
+ GET /invoices/570b5516-63ec-40b9-94da-d7d9478103bb 200 in 4414ms
+ GET /debts 200 in 4537ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 1421ms (1383 modules)
+ POST /api/payments/debt 200 in 2528ms
+ GET /debts 200 in 1957ms
+ GET /login 200 in 827ms
+ GET /reports 200 in 4545ms
+ GET /pos 200 in 1792ms
+ GET /api/sales 405 in 591ms
+ GET /api/pos/products?page=0 200 in 1565ms
+ GET /api/pos/accounts 200 in 1595ms
+ GET /reports 200 in 4954ms
+ GET /settings 200 in 2792ms
+ POST /api/health/balance-check 200 in 897ms
+ GET /login 200 in 290ms
+ GET /pos 200 in 2111ms
+ GET /api/sales 405 in 303ms
+ GET /api/pos/products?page=0 200 in 1075ms
+ GET /api/pos/accounts 200 in 1121ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+3c29ed 200 in 1009ms
+ POST /api/sales 200 in 724ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+3c29ed 200 in 1080ms
+ GET /api/pos/accounts 200 in 1170ms
+ GET /invoices 200 in 2151ms
+ GET /invoices/20e8e7dc-1935-4b23-9bbb-9efb13418158 200 in 1505ms
+ POST /api/returns 200 in 798ms
+ GET /invoices/20e8e7dc-1935-4b23-9bbb-9efb13418158 200 in 3490ms
+ GET /debts 200 in 4400ms
+ POST /api/payments/debt 200 in 1121ms
+ GET /debts 200 in 1602ms
+ GET /login 200 in 575ms
+ GET /reports 200 in 6612ms
+ GET /pos 200 in 1656ms
+ GET /api/sales 405 in 231ms
+ GET /api/pos/accounts 200 in 1956ms
+ GET /api/pos/products?page=0 200 in 1960ms
+ GET /reports 200 in 6221ms
+ GET /settings 200 in 2906ms
+ POST /api/health/balance-check 200 in 987ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1822ms (1373 modules)
+ GET / 200 in 2854ms
+ ○ Compiling /manifest.webmanifest ...
+ ✓ Compiled /manifest.webmanifest in 2.9s (2366 modules)
+ GET /manifest.webmanifest 200 in 3394ms
+ GET / 200 in 1034ms
+ GET / 200 in 1441ms
+ GET / 200 in 2584ms
+ GET / 200 in 1698ms
+ GET /login 200 in 1366ms
+ GET / 200 in 2279ms
+ GET / 200 in 3220ms
+ GET /pos 200 in 8433ms
+ GET /login 200 in 3801ms
+ GET /login 200 in 2429ms
+ GET /pos 200 in 4478ms
+ GET /pos 200 in 3226ms
+ GET /reports 200 in 2579ms
+ GET /reports 200 in 2032ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /api/pos/accounts in 5.1s (1366 modules)
+ ✓ Compiled (1377 modules)
+ GET /api/sales 405 in 6273ms
+ GET /notifications 200 in 11052ms
+ GET /notifications 200 in 11610ms
+ GET /api/pos/accounts 200 in 9636ms
+ GET /api/pos/products?page=0&q=PX05+Tablet+POS+c4b325 200 in 9347ms
+ GET /api/pos/products?page=0 200 in 9807ms
+ GET /debts 200 in 3734ms
+ GET /debts 200 in 3737ms
+ ○ Compiling /invoices ...
+ ✓ Compiled /invoices in 3.6s (1364 modules)
+ GET /invoices 200 in 7800ms
+ GET /invoices 200 in 7817ms
+ GET /settings 200 in 2014ms
+ GET /settings 200 in 2069ms
+ GET /login 200 in 1000ms
+ GET /login 200 in 757ms
+ GET /pos 200 in 6191ms
+ GET /pos 200 in 5480ms
+ GET /api/sales 405 in 621ms
+ GET /api/sales 405 in 621ms
+ GET /api/pos/accounts 200 in 15393ms
+ GET /api/pos/products?page=0 200 in 15399ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+2ea970 200 in 15137ms
+ GET /api/pos/accounts 200 in 16515ms
+ GET /api/pos/products?page=0 200 in 16526ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+3e0c3f 200 in 15538ms
+ GET /login 200 in 371ms
+ GET /pos 200 in 2231ms
+ ○ Compiling /manifest.webmanifest ...
+ ✓ Compiled /manifest.webmanifest in 2.8s (1339 modules)
+ GET /manifest.webmanifest 200 in 6375ms
+ ○ Compiling /api/pos/accounts ...
+ ✓ Compiled /api/pos/accounts in 1326ms (1341 modules)
+ ✓ Compiled (1347 modules)
+ GET /api/sales 405 in 3092ms
+ GET /api/pos/accounts 200 in 3922ms
+ GET /api/pos/products?page=0 200 in 4013ms
+ GET /api/pos/products?page=0&q=PX05+Tablet+Observe+7b5cec 200 in 954ms
+ GET /api/pos/products?page=0 200 in 1194ms
+ ✓ Compiled in 4.9s (2321 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 2.6s (1334 modules)
+ GET / 200 in 4823ms
+ GET / 200 in 317ms
+ GET / 200 in 364ms
+ GET /login 200 in 1033ms
+ GET /pos 200 in 3261ms
+ GET /reports 200 in 1272ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 4.1s (1344 modules)
+ GET /notifications 200 in 6477ms
+ GET /debts 200 in 1580ms
+ ○ Compiling /invoices ...
+ ✓ Compiled /invoices in 2.6s (1353 modules)
+ GET /invoices 200 in 4905ms
+ GET /settings 200 in 2281ms
+ GET /login 200 in 363ms
+ GET /pos 200 in 3423ms
+ ○ Compiling /api/sales ...
+ ✓ Compiled /api/sales in 1871ms (1358 modules)
+ ✓ Compiled (1364 modules)
+ GET /api/sales 405 in 7922ms
+ GET /api/pos/accounts 200 in 8785ms
+ GET /api/pos/products?page=0 200 in 8823ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+0fadb9 200 in 8527ms
+ POST /api/sales 200 in 1024ms
+ GET /api/pos/accounts 200 in 2483ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+0fadb9 200 in 2676ms
+ GET /invoices 200 in 4082ms
+ ○ Compiling /invoices/[id] ...
+ ✓ Compiled /invoices/[id] in 3.7s (1383 modules)
+ GET /invoices/f35d919f-9b9c-4513-a954-89d66a938829 200 in 7857ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 2.1s (1369 modules)
+ POST /api/returns 200 in 3597ms
+ ○ Compiling /debts ...
+ ✓ Compiled /debts in 3.4s (882 modules)
+ GET /invoices/f35d919f-9b9c-4513-a954-89d66a938829 200 in 4940ms
+ GET /debts 200 in 7882ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 1396ms (886 modules)
+ POST /api/payments/debt 200 in 2653ms
+ GET /debts 200 in 1291ms
+ GET /login 200 in 1310ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 1406ms (1372 modules)
+ GET /reports 200 in 8709ms
+ GET /pos 200 in 1942ms
+ GET /api/sales 405 in 761ms
+ GET /api/pos/products?page=0 200 in 1714ms
+ GET /api/pos/accounts 200 in 1734ms
+ GET /reports 200 in 4199ms
+ ○ Compiling /settings ...
+ ✓ Compiled /settings in 1444ms (1381 modules)
+ GET /settings 200 in 4862ms
+ ○ Compiling /api/health/balance-check ...
+ ✓ Compiled /api/health/balance-check in 1624ms (1379 modules)
+ POST /api/health/balance-check 200 in 2675ms
+ ○ Compiling /api/reconciliation ...
+ ✓ Compiled /api/reconciliation in 1574ms (1383 modules)
+ POST /api/reconciliation 200 in 2662ms
+ ○ Compiling /api/snapshots ...
+ ✓ Compiled /api/snapshots in 2.3s (1387 modules)
+ POST /api/snapshots 200 in 3344ms
+ ✓ Compiled in 8.9s (2364 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 2.8s (1375 modules)
+ GET / 200 in 4104ms
+ GET / 200 in 633ms
+ GET / 200 in 527ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 3.3s (1369 modules)
+ GET /login 200 in 8580ms
+ GET /pos 200 in 2924ms
+ GET /reports 200 in 1224ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 5.1s (1377 modules)
+ GET /notifications 200 in 7839ms
+ GET /debts 200 in 3060ms
+ ○ Compiling /invoices ...
+ ✓ Compiled /invoices in 6.5s (1374 modules)
+ GET /invoices 200 in 11659ms
+ GET /settings 200 in 2047ms
+ GET /login 200 in 619ms
+ GET /pos 200 in 2863ms
+ ○ Compiling /api/sales ...
+ ✓ Compiled /api/sales in 1817ms (1356 modules)
+ ✓ Compiled (1362 modules)
+ GET /api/sales 405 in 4704ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+915dbf 200 in 4316ms
+ GET /api/pos/products?page=0 200 in 5659ms
+ GET /api/pos/accounts 200 in 6352ms
+ POST /api/sales 200 in 776ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+915dbf 200 in 2549ms
+ GET /api/pos/accounts 200 in 2577ms
+ GET /invoices 200 in 4066ms
+ ○ Compiling /invoices/[id] ...
+ ✓ Compiled /invoices/[id] in 3s (1373 modules)
+ GET /invoices/9e049a86-b808-4458-be63-7207ea378edc 200 in 6979ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 2.2s (1369 modules)
+ POST /api/returns 200 in 3897ms
+ ○ Compiling /debts ...
+ ✓ Compiled /debts in 3.6s (1377 modules)
+ GET /invoices/9e049a86-b808-4458-be63-7207ea378edc 200 in 4605ms
+ GET /debts 200 in 7619ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 1488ms (886 modules)
+ POST /api/payments/debt 200 in 2542ms
+ GET /debts 200 in 2218ms
+ GET /login 200 in 616ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 2s (1372 modules)
+ GET /reports 200 in 7117ms
+ GET /pos 200 in 2073ms
+ GET /api/sales 405 in 2146ms
+ GET /api/pos/accounts 200 in 3100ms
+ GET /api/pos/products?page=0 200 in 4494ms
+ GET /reports 200 in 6849ms
+ ○ Compiling /settings ...
+ ✓ Compiled /settings in 2.2s (1381 modules)
+ GET /settings 200 in 6490ms
+ ○ Compiling /api/health/balance-check ...
+ ✓ Compiled /api/health/balance-check in 1489ms (1379 modules)
+ POST /api/health/balance-check 200 in 2956ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2s (1369 modules)
+ GET / 200 in 2850ms
+ GET / 200 in 312ms
+ GET / 200 in 293ms
+ GET /login 200 in 2172ms
+ GET /pos 200 in 1106ms
+ GET /reports 200 in 858ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 2.7s (1379 modules)
+ GET /notifications 200 in 4184ms
+ GET /debts 200 in 859ms
+ ○ Compiling /invoices ...
+ ✓ Compiled /invoices in 2000ms (1387 modules)
+ GET /invoices 200 in 3528ms
+ GET /settings 200 in 780ms
+ GET /login 200 in 327ms
+ GET /pos 200 in 2608ms
+ GET /api/sales 405 in 505ms
+ GET /api/pos/accounts 200 in 1402ms
+ GET /api/pos/products?page=0 200 in 1501ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+142522 200 in 950ms
+ POST /api/sales 200 in 914ms
+ GET /api/pos/accounts 200 in 1552ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+142522 200 in 1657ms
+ GET /invoices 200 in 3072ms
+ GET /invoices/933c443f-3a22-4c28-a457-c7a5f8078b28 200 in 2270ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 2.4s (1389 modules)
+ POST /api/returns 200 in 3651ms
+ GET /invoices/933c443f-3a22-4c28-a457-c7a5f8078b28 200 in 4520ms
+ GET /debts 200 in 4682ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 1447ms (896 modules)
+ POST /api/payments/debt 200 in 3035ms
+ GET /login 200 in 1047ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 2.2s (1381 modules)
+ GET /reports 200 in 8636ms
+ GET /pos 200 in 3634ms
+ GET /api/sales 405 in 512ms
+ GET /api/pos/accounts 200 in 2673ms
+ GET /api/pos/products?page=0 200 in 2681ms
+ GET /reports 200 in 6344ms
+ GET /settings 200 in 3692ms
+ ○ Compiling /api/health/balance-check ...
+ ✓ Compiled /api/health/balance-check in 1344ms (1383 modules)
+ POST /api/health/balance-check 200 in 4754ms
+ ○ Compiling /api/reconciliation ...
+ ✓ Compiled /api/reconciliation in 1469ms (1383 modules)
+ POST /api/reconciliation 200 in 2490ms
+ ○ Compiling /api/snapshots ...
+ ✓ Compiled /api/snapshots in 1851ms (1387 modules)
+ POST /api/snapshots 200 in 3158ms
+ GET /login 200 in 1075ms
+ GET /pos 200 in 3105ms
+ GET /api/sales 405 in 521ms
+ GET /api/pos/accounts 200 in 1305ms
+ GET /api/pos/products?page=0 200 in 1475ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+142522 200 in 1109ms
+ POST /api/sales 200 in 731ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+142522 200 in 1027ms
+ GET /api/pos/accounts 200 in 1481ms
+ GET /invoices 200 in 2249ms
+ GET /invoices/b52ced0d-6ddf-4869-b100-a81e15819e0b 200 in 2503ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 1941ms (1387 modules)
+ POST /api/returns 200 in 3230ms
+ GET /invoices/b52ced0d-6ddf-4869-b100-a81e15819e0b 200 in 3044ms
+ GET /debts 200 in 5255ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 2.1s (896 modules)
+ POST /api/payments/debt 200 in 4369ms
+ GET /debts 200 in 828ms
+ GET /login 200 in 1393ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 2.9s (1381 modules)
+ GET /reports 200 in 12884ms
+ GET /pos 200 in 2876ms
+ GET /api/sales 405 in 501ms
+ GET /api/pos/products?page=0 200 in 2079ms
+ GET /api/pos/accounts 200 in 3633ms
+ GET /reports 200 in 7040ms
+ GET /settings 200 in 3196ms
+ ○ Compiling /api/health/balance-check ...
+ ✓ Compiled /api/health/balance-check in 1332ms (1379 modules)
+ POST /api/health/balance-check 200 in 3014ms
+ ○ Compiling /api/reconciliation ...
+ ✓ Compiled /api/reconciliation in 977ms (1383 modules)
+ POST /api/reconciliation 200 in 1822ms
+ ○ Compiling /api/snapshots ...
+ ✓ Compiled /api/snapshots in 946ms (1387 modules)
+ POST /api/snapshots 200 in 1909ms
+ GET /login 200 in 610ms
+ GET /pos 200 in 1805ms
+ GET /api/sales 405 in 935ms
+ GET /api/pos/accounts 200 in 1942ms
+ GET /api/pos/products?page=0 200 in 2123ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+142522 200 in 1296ms
+ POST /api/sales 200 in 938ms
+ GET /api/pos/accounts 200 in 1951ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+142522 200 in 1997ms
+ GET /invoices 200 in 2434ms
+ GET /invoices/646361b3-e1e0-42c6-951f-ce4d8fc3350e 200 in 2452ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 2.3s (1387 modules)
+ POST /api/returns 200 in 3829ms
+ GET /invoices/646361b3-e1e0-42c6-951f-ce4d8fc3350e 200 in 3500ms
+ GET /debts 200 in 4312ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 1834ms (896 modules)
+ POST /api/payments/debt 200 in 3113ms
+ GET /debts 200 in 1029ms
+ GET /login 200 in 926ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 1885ms (1391 modules)
+ GET /reports 200 in 9352ms
+ GET /pos 200 in 2964ms
+ GET /api/sales 405 in 255ms
+ GET /api/pos/accounts 200 in 1993ms
+ GET /api/pos/products?page=0 200 in 1997ms
+ GET /reports 200 in 7682ms
+ GET /settings 200 in 4527ms
+ POST /api/health/balance-check 200 in 959ms
+ POST /api/reconciliation 200 in 1020ms
+ POST /api/snapshots 200 in 751ms
+ GET /login 200 in 492ms
+ GET /reports 200 in 5425ms
+ GET /pos 200 in 1589ms
+ GET /api/sales 405 in 282ms
+ GET /api/pos/products?page=0 200 in 915ms
+ GET /api/pos/accounts 200 in 916ms
+ GET /settings 200 in 2401ms
+ ○ Compiling /api/inventory/counts/complete ...
+ ✓ Compiled /api/inventory/counts/complete in 2.4s (1357 modules)
+ POST /api/inventory/counts/complete 200 in 3925ms
+ GET /login 200 in 941ms
+ GET /pos 200 in 2095ms
+ GET /api/sales 405 in 457ms
+ GET /api/pos/accounts 200 in 1061ms
+ GET /api/pos/products?page=0 200 in 1171ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+93c84b 200 in 767ms
+ POST /api/sales 200 in 659ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+93c84b 200 in 837ms
+ GET /api/pos/accounts 200 in 972ms
+ ○ Compiling /invoices ...
+ ✓ Compiled /invoices in 900ms (1366 modules)
+ GET /invoices 200 in 2831ms
+ ○ Compiling /invoices/[id] ...
+ ✓ Compiled /invoices/[id] in 2.8s (1387 modules)
+ GET /invoices/8f86a7f4-4fe2-48af-b34f-e227c1ff1edc 200 in 5773ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 996ms (1373 modules)
+ POST /api/returns 200 in 2028ms
+ ○ Compiling /debts ...
+ GET /invoices/8f86a7f4-4fe2-48af-b34f-e227c1ff1edc 200 in 3220ms
+ ✓ Compiled /debts in 2.5s (1381 modules)
+ GET /debts 200 in 5006ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 1057ms (1385 modules)
+ POST /api/payments/debt 200 in 2167ms
+ GET /debts 200 in 1534ms
+ GET /login 200 in 528ms
+ GET /reports 200 in 4120ms
+ GET /pos 200 in 2491ms
+ GET /api/sales 405 in 294ms
+ GET /api/pos/accounts 200 in 1418ms
+ GET /api/pos/products?page=0 200 in 1423ms
+ GET /reports 200 in 2962ms
+ GET /settings 200 in 2994ms
+ ○ Compiling /api/health/balance-check ...
+ ✓ Compiled /api/health/balance-check in 1462ms (1383 modules)
+ POST /api/health/balance-check 200 in 2736ms
+ GET /login 200 in 462ms
+ GET /pos 200 in 1949ms
+ GET /api/sales 405 in 599ms
+ GET /api/pos/accounts 200 in 1366ms
+ GET /api/pos/products?page=0 200 in 1406ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+93c84b 200 in 768ms
+ POST /api/sales 200 in 714ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+93c84b 200 in 907ms
+ GET /api/pos/accounts 200 in 1195ms
+ GET /invoices 200 in 1734ms
+ GET /invoices/fac8573e-4b44-4032-8cea-ac84f0588b37 200 in 1518ms
+ POST /api/returns 200 in 820ms
+ GET /invoices/fac8573e-4b44-4032-8cea-ac84f0588b37 200 in 2242ms
+ GET /debts 200 in 2807ms
+ POST /api/payments/debt 200 in 934ms
+ GET /debts 200 in 1216ms
+ GET /login 200 in 232ms
+ GET /reports 200 in 6089ms
+ GET /pos 200 in 1225ms
+ GET /api/sales 405 in 777ms
+ GET /api/pos/products?page=0 200 in 1982ms
+ GET /api/pos/accounts 200 in 1983ms
+ GET /reports 200 in 4690ms
+ GET /settings 200 in 2189ms
+ POST /api/health/balance-check 200 in 736ms
+ GET /login 200 in 274ms
+ GET /pos 200 in 1482ms
+ GET /api/sales 405 in 326ms
+ GET /api/pos/accounts 200 in 1066ms
+ GET /api/pos/products?page=0 200 in 1124ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+93c84b 200 in 967ms
+ POST /api/sales 200 in 658ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+93c84b 200 in 998ms
+ GET /api/pos/accounts 200 in 1035ms
+ GET /invoices 200 in 1960ms
+ GET /invoices/99a47bfc-2006-4cef-bce8-c00b5f88882e 200 in 1438ms
+ POST /api/returns 200 in 758ms
+ GET /invoices/99a47bfc-2006-4cef-bce8-c00b5f88882e 200 in 2708ms
+ GET /debts 200 in 3359ms
+ POST /api/payments/debt 200 in 712ms
+ GET /debts 200 in 1138ms
+ GET /login 200 in 268ms
+ GET /reports 200 in 4544ms
+ GET /pos 200 in 2048ms
+ GET /api/sales 405 in 196ms
+ GET /api/pos/accounts 200 in 1237ms
+ GET /api/pos/products?page=0 200 in 2349ms
+ GET /reports 200 in 6280ms
+ GET /settings 200 in 5150ms
+ POST /api/health/balance-check 200 in 1551ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1899ms (1377 modules)
+ GET / 200 in 2557ms
+ ○ Compiling /manifest.webmanifest ...
+ ✓ Compiled /manifest.webmanifest in 1930ms (1381 modules)
+ GET /manifest.webmanifest 200 in 2390ms
+ ✓ Compiled in 7.5s (2326 modules)
+ ✓ Compiled in 4.1s (2301 modules)
+ ✓ Compiled in 4.7s (2328 modules)
+ ✓ Compiled in 4.4s (2328 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 2.1s (1355 modules)
+ GET / 200 in 3655ms
+ GET / 200 in 360ms
+ GET / 200 in 336ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 1404ms (1357 modules)
+ GET /login 200 in 2815ms
+ GET /pos 200 in 1260ms
+ GET /reports 200 in 894ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 4.9s (1367 modules)
+ GET /notifications 200 in 6297ms
+ GET /debts 200 in 964ms
+ ○ Compiling /invoices ...
+ ✓ Compiled /invoices in 2.1s (1375 modules)
+ GET /invoices 200 in 3714ms
+ GET /settings 200 in 780ms
+ GET /login 200 in 378ms
+ GET /pos 200 in 2350ms
+ ○ Compiling /api/sales ...
+ ✓ Compiled /api/sales in 1617ms (1380 modules)
+ ✓ Compiled (1386 modules)
+ GET /api/sales 405 in 3729ms
+ GET /api/pos/accounts 200 in 4666ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+d79ae0 200 in 4216ms
+ GET /api/pos/products?page=0 200 in 4784ms
+ POST /api/sales 200 in 766ms
+ GET /api/pos/accounts 200 in 1471ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+d79ae0 200 in 1521ms
+ GET /invoices 200 in 3528ms
+ GET /invoices/6f3a8965-b197-4997-9894-f7069e4fbadb 200 in 1727ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 1531ms (1390 modules)
+ POST /api/returns 200 in 2715ms
+ GET /invoices/6f3a8965-b197-4997-9894-f7069e4fbadb 200 in 4130ms
+ GET /debts 200 in 4162ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 2.1s (1392 modules)
+ POST /api/payments/debt 200 in 3234ms
+ GET /debts 200 in 912ms
+ GET /login 200 in 931ms
+ GET /reports 200 in 7720ms
+ GET /pos 200 in 2413ms
+ GET /api/sales 405 in 852ms
+ GET /api/pos/accounts 200 in 1979ms
+ GET /api/pos/products?page=0 200 in 2077ms
+ GET /reports 200 in 5979ms
+ GET /settings 200 in 3800ms
+ ○ Compiling /api/health/balance-check ...
+ ✓ Compiled /api/health/balance-check in 1585ms (1372 modules)
+ POST /api/health/balance-check 200 in 2761ms
+ ○ Compiling /api/reconciliation ...
+ ✓ Compiled /api/reconciliation in 2.3s (1376 modules)
+ POST /api/reconciliation 200 in 3301ms
+ ○ Compiling /api/snapshots ...
+ ✓ Compiled /api/snapshots in 1840ms (1376 modules)
+ POST /api/snapshots 200 in 2818ms
+ GET /login 200 in 948ms
+ GET /pos 200 in 3120ms
+ GET /api/sales 405 in 433ms
+ GET /api/pos/accounts 200 in 1160ms
+ GET /api/pos/products?page=0 200 in 1241ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+d79ae0 200 in 851ms
+ POST /api/sales 200 in 726ms
+ ○ Compiling /invoices ...
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+d79ae0 200 in 2443ms
+ GET /api/pos/accounts 200 in 2466ms
+ ✓ Compiled /invoices in 1921ms (1384 modules)
+ GET /invoices 200 in 5039ms
+ GET /invoices/81435fad-a40c-48c8-b465-a817e6a59114 200 in 2785ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 8.1s (1380 modules)
+ GET /login 200 in 3919ms
+ GET /pos 200 in 2780ms
+ GET /api/sales 405 in 428ms
+ GET /api/pos/accounts 200 in 1075ms
+ GET /api/pos/products?page=0 200 in 1243ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+55b2f4 200 in 784ms
+ POST /api/sales 200 in 724ms
+ GET /api/pos/accounts 200 in 1315ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+55b2f4 200 in 1366ms
+ GET /invoices 200 in 3244ms
+ GET /invoices/4bf5a9dc-2da2-4261-96c1-fde44b18aedd 200 in 1534ms
+ POST /api/returns 200 in 655ms
+ ○ Compiling /debts ...
+ ✓ Compiled /debts in 2.1s (883 modules)
+ GET /invoices/4bf5a9dc-2da2-4261-96c1-fde44b18aedd 200 in 2792ms
+ GET /debts 200 in 5248ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 1151ms (887 modules)
+ POST /api/payments/debt 200 in 2091ms
+ GET /debts 200 in 1930ms
+ GET /login 200 in 754ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 1184ms (1373 modules)
+ GET /reports 200 in 9946ms
+ GET /pos 200 in 2267ms
+ GET /api/sales 405 in 369ms
+ GET /api/pos/products?page=0 200 in 1109ms
+ GET /api/pos/accounts 200 in 1825ms
+ GET /reports 200 in 3377ms
+ ○ Compiling /settings ...
+ ✓ Compiled /settings in 2.1s (1382 modules)
+ GET /settings 200 in 5214ms
+ ○ Compiling /api/health/balance-check ...
+ ✓ Compiled /api/health/balance-check in 1240ms (1384 modules)
+ POST /api/health/balance-check 200 in 2439ms
+ GET /login 200 in 511ms
+ GET /pos 200 in 1797ms
+ GET /api/sales 405 in 461ms
+ GET /api/pos/products?page=0 200 in 1211ms
+ GET /api/pos/accounts 200 in 1222ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+55b2f4 200 in 743ms
+ POST /api/sales 200 in 744ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+55b2f4 200 in 972ms
+ GET /api/pos/accounts 200 in 999ms
+ GET /invoices 200 in 1669ms
+ GET /invoices/e0a670e8-a2b5-4317-8356-18e7f0ee3a3d 200 in 2048ms
+ POST /api/returns 200 in 808ms
+ GET /invoices/e0a670e8-a2b5-4317-8356-18e7f0ee3a3d 200 in 2458ms
+ GET /debts 200 in 4465ms
+ POST /api/payments/debt 200 in 865ms
+ GET /debts 200 in 1734ms
+ GET /login 200 in 477ms
+ GET /reports 200 in 5081ms
+ GET /pos 200 in 1582ms
+ GET /api/sales 405 in 193ms
+ GET /api/pos/accounts 200 in 926ms
+ GET /api/pos/products?page=0 200 in 1986ms
+ GET /reports 200 in 6205ms
+ GET /settings 200 in 4448ms
+ POST /api/health/balance-check 200 in 831ms
+ GET /login 200 in 488ms
+ GET /pos 200 in 2217ms
+ GET /api/sales 405 in 285ms
+ GET /api/pos/products?page=0 200 in 1034ms
+ GET /api/pos/accounts 200 in 1067ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+55b2f4 200 in 763ms
+ POST /api/sales 200 in 920ms
+ GET /api/pos/accounts 200 in 1246ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+55b2f4 200 in 1387ms
+ GET /invoices 200 in 2147ms
+ GET /invoices/6e945d90-66ed-4087-90e3-e47ae32f6e3f 200 in 1649ms
+ POST /api/returns 200 in 1219ms
+ GET /invoices/6e945d90-66ed-4087-90e3-e47ae32f6e3f 200 in 2094ms
+ GET /debts 200 in 3770ms
+ POST /api/payments/debt 200 in 1118ms
+ GET /debts 200 in 1087ms
+ GET /login 200 in 302ms
+ GET /reports 200 in 5200ms
+ GET /pos 200 in 2461ms
+ GET /api/sales 405 in 246ms
+ GET /api/pos/products?page=0 200 in 1328ms
+ GET /api/pos/accounts 200 in 2819ms
+ GET /reports 200 in 4853ms
+ GET /settings 200 in 2637ms
+ POST /api/health/balance-check 200 in 821ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1305ms (1378 modules)
+ GET / 200 in 2186ms
+ ○ Compiling /manifest.webmanifest ...
+ ✓ Compiled /manifest.webmanifest in 1610ms (1382 modules)
+ GET /manifest.webmanifest 200 in 2001ms
+ GET / 200 in 1170ms
+ GET / 200 in 384ms
+ GET / 200 in 559ms
+ GET /login 200 in 2019ms
+ GET /pos 200 in 2947ms
+ GET /reports 200 in 684ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 1999ms (1384 modules)
+ GET /notifications 200 in 3925ms
+ GET /debts 200 in 778ms
+ ○ Compiling /invoices ...
+ ✓ Compiled /invoices in 1242ms (1392 modules)
+ GET /invoices 200 in 2400ms
+ GET /settings 200 in 581ms
+ GET /login 200 in 870ms
+ GET /pos 200 in 1959ms
+ GET /api/sales 405 in 488ms
+ GET /api/pos/accounts 200 in 3219ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+7e9f8c 200 in 2648ms
+ GET /api/pos/products?page=0 200 in 3258ms
+ POST /api/sales 200 in 1444ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+7e9f8c 200 in 1167ms
+ GET /api/pos/accounts 200 in 1203ms
+ GET /invoices 200 in 3901ms
+ GET /invoices/c74dd817-a5fa-4320-8c9c-afc5ed9e30a0 200 in 2047ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 3.8s (1390 modules)
+ POST /api/returns 200 in 5998ms
+ GET /invoices/c74dd817-a5fa-4320-8c9c-afc5ed9e30a0 200 in 807ms
+ ✓ Compiled in 3.4s (2336 modules)
+ ✓ Compiled in 7.4s (2336 modules)
+ ✓ Compiled in 3.4s (2336 modules)
+ ✓ Compiled in 2.4s (2336 modules)
+ ✓ Compiled in 2.9s (2336 modules)
+ ✓ Compiled in 2.4s (2336 modules)
+ ✓ Compiled in 1917ms (2336 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 1962ms (1348 modules)
+ GET / 200 in 5853ms
+ GET / 200 in 191ms
+ GET / 200 in 232ms
+ GET /login 200 in 706ms
+ GET /pos 200 in 1320ms
+ GET /reports 200 in 982ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 2.9s (1358 modules)
+ GET /notifications 200 in 4914ms
+ ○ Compiling /debts ...
+ ✓ Compiled /debts in 2.1s (1366 modules)
+ GET /debts 200 in 3915ms
+ GET /invoices 200 in 817ms
+ ○ Compiling /settings ...
+ ✓ Compiled /settings in 2.1s (1375 modules)
+ GET /settings 200 in 3740ms
+ GET /login 200 in 314ms
+ GET /pos 200 in 2122ms
+ ○ Compiling /api/sales ...
+ ✓ Compiled /api/sales in 2s (1380 modules)
+ ✓ Compiled (1386 modules)
+ GET /api/sales 405 in 4595ms
+ GET /api/pos/accounts 200 in 5260ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+775d7b 200 in 5190ms
+ GET /api/pos/products?page=0 200 in 5438ms
+ POST /api/sales 200 in 709ms
+ GET /api/pos/accounts 200 in 1486ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+775d7b 200 in 1538ms
+ GET /invoices 200 in 2656ms
+ GET /invoices/fae8cb37-9359-44f5-bc9d-d886b7925f33 200 in 1382ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 2.3s (1390 modules)
+ POST /api/returns 200 in 3599ms
+ GET /invoices/fae8cb37-9359-44f5-bc9d-d886b7925f33 200 in 4232ms
+ GET /debts 200 in 5417ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 5.4s (1392 modules)
+ POST /api/payments/debt 200 in 7526ms
+ GET /debts 200 in 1070ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1221ms (861 modules)
+ GET / 200 in 2578ms
+ GET / 200 in 264ms
+ GET / 200 in 378ms
+ GET /login 200 in 608ms
+ GET /pos 200 in 818ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 1494ms (1356 modules)
+ GET /reports 200 in 2984ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 1325ms (1366 modules)
+ GET /notifications 200 in 2559ms
+ GET /debts 200 in 855ms
+ GET /invoices 200 in 1246ms
+ ○ Compiling /settings ...
+ ✓ Compiled /settings in 4.7s (1375 modules)
+ GET /settings 200 in 6455ms
+ GET /login 200 in 417ms
+ GET /pos 200 in 2271ms
+ ○ Compiling /api/sales ...
+ ✓ Compiled /api/sales in 2.2s (1380 modules)
+ ✓ Compiled (1386 modules)
+ GET /api/sales 405 in 3905ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+de1e51 200 in 4151ms
+ GET /api/pos/accounts 200 in 4730ms
+ GET /api/pos/products?page=0 200 in 4797ms
+ POST /api/sales 200 in 1194ms
+ GET /api/pos/accounts 200 in 697ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+de1e51 200 in 769ms
+ GET /invoices 200 in 1985ms
+ GET /invoices/fa009eb4-a6e7-4406-905d-f08ee00ffaa4 200 in 1351ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 1198ms (1390 modules)
+ POST /api/returns 200 in 2156ms
+ GET /invoices/fa009eb4-a6e7-4406-905d-f08ee00ffaa4 200 in 2927ms
+ GET /debts 200 in 3307ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 1203ms (1392 modules)
+ POST /api/payments/debt 200 in 2404ms
+ GET /debts 200 in 684ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1182ms (889 modules)
+ GET / 200 in 1928ms
+ GET / 200 in 228ms
+ GET / 200 in 316ms
+ GET /login 200 in 468ms
+ GET /pos 200 in 802ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 978ms (1375 modules)
+ GET /reports 200 in 2479ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 1220ms (1385 modules)
+ GET /notifications 200 in 4499ms
+ GET /debts 200 in 572ms
+ GET /invoices 200 in 553ms
+ ○ Compiling /settings ...
+ ✓ Compiled /settings in 1483ms (1394 modules)
+ GET /settings 200 in 3124ms
+ GET /login 200 in 355ms
+ GET /pos 200 in 3602ms
+ GET /api/sales 405 in 288ms
+ GET /api/pos/products?page=0 200 in 959ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+6e405e 200 in 644ms
+ GET /api/pos/accounts 200 in 1228ms
+ POST /api/sales 200 in 694ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+6e405e 200 in 837ms
+ GET /api/pos/accounts 200 in 849ms
+ GET /invoices 200 in 2075ms
+ GET /invoices/d4c11ee5-7131-484d-8b28-4052d17946c9 200 in 1130ms
+ POST /api/returns 200 in 697ms
+ GET /invoices/d4c11ee5-7131-484d-8b28-4052d17946c9 200 in 2864ms
+ GET /debts 200 in 3215ms
+ POST /api/payments/debt 200 in 1220ms
+ GET /debts 200 in 1235ms
+ GET /login 200 in 1243ms
+ GET /reports 200 in 6302ms
+ GET /pos 200 in 1159ms
+ GET /api/sales 405 in 212ms
+ GET /api/pos/accounts 200 in 1388ms
+ GET /api/pos/products?page=0 200 in 1393ms
+ GET /reports 200 in 2882ms
+ GET /settings 200 in 1948ms
+ ○ Compiling /api/health/balance-check ...
+ ✓ Compiled /api/health/balance-check in 1278ms (1384 modules)
+ POST /api/health/balance-check 200 in 2454ms
+ ○ Compiling /api/reconciliation ...
+ ✓ Compiled /api/reconciliation in 1513ms (1388 modules)
+ POST /api/reconciliation 200 in 2531ms
+ ○ Compiling /api/snapshots ...
+ ✓ Compiled /api/snapshots in 1007ms (1392 modules)
+ POST /api/snapshots 200 in 2045ms
+ GET /login 200 in 510ms
+ GET /pos 200 in 1612ms
+ GET /api/sales 405 in 367ms
+ GET /api/pos/products?page=0 200 in 1069ms
+ GET /api/pos/accounts 200 in 1104ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+6e405e 200 in 708ms
+ POST /api/sales 200 in 720ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+6e405e 200 in 989ms
+ GET /api/pos/accounts 200 in 1022ms
+ GET /invoices 200 in 1345ms
+ GET /invoices/5ceab613-695f-48b7-a03c-0539764e35f0 200 in 3309ms
+ POST /api/returns 200 in 948ms
+ GET /invoices/5ceab613-695f-48b7-a03c-0539764e35f0 200 in 2504ms
+ GET /debts 200 in 3695ms
+ POST /api/payments/debt 200 in 880ms
+ GET /debts 200 in 207ms
+ GET /login 200 in 336ms
+ GET /reports 200 in 4152ms
+ GET /pos 200 in 1987ms
+ GET /api/sales 405 in 241ms
+ GET /api/pos/products?page=0 200 in 1775ms
+ GET /api/pos/accounts 200 in 1775ms
+ GET /reports 200 in 4223ms
+ GET /settings 200 in 2472ms
+ POST /api/health/balance-check 200 in 839ms
+ POST /api/reconciliation 200 in 625ms
+ POST /api/snapshots 200 in 564ms
+ GET /login 200 in 213ms
+ GET /pos 200 in 1562ms
+ GET /api/sales 405 in 217ms
+ GET /api/pos/accounts 200 in 844ms
+ GET /api/pos/products?page=0 200 in 903ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+6e405e 200 in 681ms
+ POST /api/sales 200 in 644ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+6e405e 200 in 891ms
+ GET /api/pos/accounts 200 in 945ms
+ GET /invoices 200 in 1700ms
+ GET /invoices/1e26ff66-8167-40f7-a1d4-4863c369007c 200 in 1240ms
+ POST /api/returns 200 in 647ms
+ GET /invoices/1e26ff66-8167-40f7-a1d4-4863c369007c 200 in 1777ms
+ GET /debts 200 in 2732ms
+ POST /api/payments/debt 200 in 896ms
+ GET /debts 200 in 531ms
+ GET /login 200 in 355ms
+ GET /reports 200 in 3751ms
+ GET /pos 200 in 1311ms
+ GET /api/sales 405 in 198ms
+ GET /api/pos/products?page=0 200 in 1361ms
+ GET /api/pos/accounts 200 in 1362ms
+ GET /reports 200 in 4041ms
+ GET /settings 200 in 1996ms
+ POST /api/health/balance-check 200 in 618ms
+ POST /api/reconciliation 200 in 931ms
+ POST /api/snapshots 200 in 641ms
+ GET /login 200 in 284ms
+ GET /reports 200 in 4117ms
+ GET /pos 200 in 1435ms
+ GET /api/sales 405 in 2035ms
+ GET /api/pos/products?page=0 200 in 2835ms
+ GET /api/pos/accounts 200 in 2852ms
+ GET /settings 200 in 4714ms
+ ○ Compiling /api/inventory/counts/complete ...
+ ✓ Compiled /api/inventory/counts/complete in 1177ms (1380 modules)
+ POST /api/inventory/counts/complete 200 in 2480ms
+ ✓ Compiled in 5.3s (2325 modules)
+ ✓ Compiled in 3.5s (2325 modules)
+ ✓ Compiled in 4.4s (2325 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 936ms (1336 modules)
+ GET / 200 in 2563ms
+ GET / 200 in 308ms
+ GET / 200 in 578ms
+ GET /login 200 in 866ms
+ GET /pos 200 in 4188ms
+ GET /reports 200 in 1029ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 2.1s (1346 modules)
+ GET /notifications 200 in 3814ms
+ GET /debts 200 in 765ms
+ ○ Compiling /invoices ...
+ ✓ Compiled /invoices in 1827ms (1355 modules)
+ GET /invoices 200 in 3045ms
+ GET /settings 200 in 787ms
+ GET /login 200 in 341ms
+ GET /pos 200 in 2717ms
+ ○ Compiling /api/sales ...
+ ✓ Compiled /api/sales in 2.2s (1360 modules)
+ ✓ Compiled (1366 modules)
+ GET /api/sales 405 in 4762ms
+ GET /api/pos/accounts 200 in 5565ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+02f6ee 200 in 5056ms
+ GET /api/pos/products?page=0 200 in 5772ms
+ POST /api/sales 200 in 894ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+02f6ee 200 in 1758ms
+ GET /api/pos/accounts 200 in 1766ms
+ GET /invoices 200 in 2894ms
+ ○ Compiling /invoices/[id] ...
+ ✓ Compiled /invoices/[id] in 2.3s (1387 modules)
+ GET /invoices/a707bbed-88a1-4a43-aa64-62f631d742e5 200 in 5282ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 1458ms (1391 modules)
+ POST /api/returns 200 in 2632ms
+ GET /invoices/a707bbed-88a1-4a43-aa64-62f631d742e5 200 in 4309ms
+ GET /debts 200 in 6326ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 2.1s (888 modules)
+ POST /api/payments/debt 200 in 3539ms
+ GET /debts 200 in 874ms
+ GET /login 200 in 1176ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 4.3s (1383 modules)
+ GET /reports 200 in 10395ms
+ GET /pos 200 in 1714ms
+ GET /api/sales 405 in 455ms
+ GET /api/pos/accounts 200 in 1596ms
+ GET /api/pos/products?page=0 200 in 1603ms
+ GET /reports 200 in 4947ms
+ GET /settings 200 in 3451ms
+ ○ Compiling /api/health/balance-check ...
+ ✓ Compiled /api/health/balance-check in 1186ms (1381 modules)
+ POST /api/health/balance-check 200 in 2952ms
+ ○ Compiling /api/reconciliation ...
+ ✓ Compiled /api/reconciliation in 1058ms (1385 modules)
+ POST /api/reconciliation 200 in 1879ms
+ ○ Compiling /api/snapshots ...
+ ✓ Compiled /api/snapshots in 1486ms (1381 modules)
+ POST /api/snapshots 200 in 2378ms
+ GET /login 200 in 671ms
+ GET /pos 200 in 2301ms
+ GET /api/sales 405 in 473ms
+ GET /api/pos/accounts 200 in 1176ms
+ GET /api/pos/products?page=0 200 in 1230ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+02f6ee 200 in 780ms
+ POST /api/sales 200 in 699ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+02f6ee 200 in 1081ms
+ ○ Compiling /invoices ...
+ GET /api/pos/accounts 200 in 1262ms
+ ✓ Compiled /invoices in 1133ms (1364 modules)
+ GET /invoices 200 in 5434ms
+ ○ Compiling /invoices/[id] ...
+ ✓ Compiled /invoices/[id] in 2.1s (1385 modules)
+ GET /invoices/8b2fc79b-3481-4e59-b8a6-bb5824a98c66 200 in 5200ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 1923ms (1381 modules)
+ POST /api/returns 200 in 3141ms
+ ○ Compiling /debts ...
+ ✓ Compiled /debts in 2.4s (1389 modules)
+ GET /invoices/8b2fc79b-3481-4e59-b8a6-bb5824a98c66 200 in 5337ms
+ GET /debts 200 in 6883ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 1619ms (1393 modules)
+ POST /api/payments/debt 200 in 2820ms
+ GET /debts 200 in 614ms
+ GET /login 200 in 757ms
+ GET /reports 200 in 7656ms
+ GET /pos 200 in 2124ms
+ GET /api/sales 405 in 359ms
+ GET /api/pos/products?page=0 200 in 1150ms
+ GET /api/pos/accounts 200 in 2163ms
+ GET /reports 200 in 4291ms
+ GET /settings 200 in 3404ms
+ POST /api/health/balance-check 200 in 820ms
+ POST /api/reconciliation 200 in 652ms
+ POST /api/snapshots 200 in 604ms
+ GET /login 200 in 239ms
+ GET /pos 200 in 1685ms
+ GET /api/sales 405 in 605ms
+ GET /api/pos/accounts 200 in 1258ms
+ GET /api/pos/products?page=0 200 in 1412ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+02f6ee 200 in 808ms
+ POST /api/sales 200 in 701ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+02f6ee 200 in 1257ms
+ GET /api/pos/accounts 200 in 1461ms
+ GET /invoices 200 in 2527ms
+ GET /invoices/993d8ceb-a058-4186-991e-59c9ac9ef141 200 in 1671ms
+ POST /api/returns 200 in 701ms
+ GET /invoices/993d8ceb-a058-4186-991e-59c9ac9ef141 200 in 2669ms
+ GET /debts 200 in 5367ms
+ POST /api/payments/debt 200 in 1293ms
+ GET /debts 200 in 960ms
+ GET /login 200 in 299ms
+ GET /reports 200 in 5515ms
+ GET /pos 200 in 1597ms
+ GET /api/sales 405 in 206ms
+ GET /api/pos/accounts 200 in 3052ms
+ GET /api/pos/products?page=0 200 in 3058ms
+ GET /reports 200 in 4457ms
+ GET /settings 200 in 3600ms
+ POST /api/health/balance-check 200 in 1076ms
+ POST /api/reconciliation 200 in 911ms
+ POST /api/snapshots 200 in 822ms
+ GET /login 200 in 372ms
+ GET /reports 200 in 5820ms
+ GET /pos 200 in 1697ms
+ GET /api/sales 405 in 316ms
+ GET /api/pos/accounts 200 in 1158ms
+ GET /api/pos/products?page=0 200 in 1163ms
+ GET /settings 200 in 3611ms
+ ○ Compiling /api/inventory/counts/complete ...
+ ✓ Compiled /api/inventory/counts/complete in 1481ms (1359 modules)
+ POST /api/inventory/counts/complete 200 in 3251ms
+ ✓ Compiled in 3.7s (2325 modules)
+ ✓ Compiled in 2.2s (2325 modules)
+ ✓ Compiled in 4.5s (2325 modules)
+ ✓ Compiled in 4.1s (2325 modules)
+ ✓ Compiled in 9.6s (2327 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 2.2s (1337 modules)
+ GET / 200 in 3569ms
+ GET / 200 in 3727ms
+ GET / 200 in 370ms
+ GET / 200 in 439ms
+ GET / 200 in 673ms
+ GET / 200 in 684ms
+ GET /login 200 in 1478ms
+ GET /login 200 in 1477ms
+ GET /pos 200 in 2236ms
+ GET /pos 200 in 2254ms
+ GET /reports 200 in 2323ms
+ GET /reports 200 in 2342ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 2.7s (1347 modules)
+ GET /notifications 200 in 6477ms
+ GET /notifications 200 in 6498ms
+ GET /debts 200 in 1933ms
+ GET /debts 200 in 1839ms
+ ○ Compiling /invoices ...
+ ✓ Compiled /invoices in 2.9s (1356 modules)
+ GET /invoices 200 in 8125ms
+ GET /invoices 200 in 8161ms
+ GET /settings 200 in 4495ms
+ GET /settings 200 in 4493ms
+ GET /login 200 in 829ms
+ GET /login 200 in 834ms
+ GET /pos 200 in 7970ms
+ GET /pos 200 in 7434ms
+ ○ Compiling /api/pos/accounts ...
+ ✓ Compiled /api/pos/accounts in 3.1s (1359 modules)
+ ✓ Compiled (1365 modules)
+ GET /api/sales 405 in 7367ms
+ GET /api/sales 405 in 7367ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+d588df 200 in 7537ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+6a4aee 200 in 7101ms
+ GET /api/pos/accounts 200 in 8719ms
+ GET /api/pos/accounts 200 in 8724ms
+ GET /api/pos/products?page=0 200 in 8738ms
+ GET /api/pos/products?page=0 200 in 8801ms
+ POST /api/sales 200 in 2638ms
+ POST /api/sales 200 in 1435ms
+ GET /api/pos/accounts 200 in 2000ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+d588df 200 in 2071ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+6a4aee 200 in 2077ms
+ GET /api/pos/accounts 200 in 2111ms
+ GET /invoices 200 in 10050ms
+ GET /invoices 200 in 10204ms
+ ○ Compiling /invoices/[id] ...
+ ✓ Compiled /invoices/[id] in 4.3s (1376 modules)
+ GET /invoices/2795649a-4d82-4fe5-a1a8-2ca3621504fd 200 in 8946ms
+ GET /invoices/3d16daeb-0750-4aa8-9e1f-b3bbeb814896 200 in 8805ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 2.2s (1372 modules)
+ POST /api/returns 200 in 2687ms
+ POST /api/returns 200 in 3404ms
+ ○ Compiling /debts ...
+ GET /invoices/2795649a-4d82-4fe5-a1a8-2ca3621504fd 200 in 3858ms
+ GET /invoices/3d16daeb-0750-4aa8-9e1f-b3bbeb814896 200 in 3900ms
+ ✓ Compiled /debts in 3.3s (1380 modules)
+ GET /debts 200 in 11897ms
+ GET /debts 200 in 12118ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 2.2s (1367 modules)
+ POST /api/payments/debt 200 in 3280ms
+ POST /api/payments/debt 200 in 1758ms
+ GET /debts 200 in 866ms
+ ○ Compiling /login ...
+ GET /debts 200 in 3351ms
+ ✓ Compiled /login in 2.5s (889 modules)
+ GET /login 200 in 1728ms
+ GET /login 200 in 3576ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 1369ms (1376 modules)
+ GET /reports 200 in 12219ms
+ GET /reports 200 in 12553ms
+ GET /pos 200 in 3352ms
+ GET /pos 200 in 3559ms
+ ○ Compiling /api/sales ...
+ ✓ Compiled /api/sales in 2.2s (1365 modules)
+ ✓ Compiled (1371 modules)
+ GET /api/sales 405 in 12303ms
+ GET /reports 200 in 14135ms
+ ○ Compiling /settings ...
+ GET /api/pos/accounts 200 in 17564ms
+ GET /api/pos/products?page=0 200 in 17567ms
+ GET /reports 200 in 21712ms
+ ✓ Compiled /settings in 6.3s (1372 modules)
+ GET /settings 200 in 11318ms
+ GET /settings 200 in 2376ms
+ ○ Compiling /api/health/balance-check ...
+ ✓ Compiled /api/health/balance-check in 1046ms (1370 modules)
+ POST /api/health/balance-check 200 in 1912ms
+ ○ Compiling /api/reconciliation ...
+ ✓ Compiled /api/reconciliation in 1350ms (1374 modules)
+ POST /api/reconciliation 200 in 4625ms
+ POST /api/health/balance-check 200 in 3944ms
+ ○ Compiling /api/snapshots ...
+ ✓ Compiled /api/snapshots in 1411ms (1378 modules)
+ GET /login 200 in 654ms
+ POST /api/snapshots 200 in 3382ms
+ GET /login 200 in 343ms
+ GET /pos 200 in 4231ms
+ GET /pos 200 in 4198ms
+ GET /api/sales 405 in 625ms
+ GET /api/sales 405 in 477ms
+ GET /api/pos/accounts 200 in 1599ms
+ GET /api/pos/products?page=0 200 in 1229ms
+ GET /api/pos/products?page=0 200 in 1685ms
+ GET /api/pos/accounts 200 in 1452ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+d588df 200 in 989ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+6a4aee 200 in 1367ms
+ POST /api/sales 200 in 1141ms
+ POST /api/sales 200 in 930ms
+ ○ Compiling /invoices ...
+ GET /api/pos/accounts 200 in 1133ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+6a4aee 200 in 1316ms
+ ✓ Compiled /invoices in 2.5s (1365 modules)
+ GET /api/pos/accounts 200 in 5914ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+d588df 200 in 6630ms
+ GET /invoices 200 in 9765ms
+ GET /invoices 200 in 10244ms
+ ○ Compiling /invoices/[id] ...
+ ✓ Compiled /invoices/[id] in 2.6s (1386 modules)
+ GET /invoices/70cfef08-4b52-403d-82de-08a218ca6e3e 200 in 7614ms
+ GET /invoices/efaa4013-1fc2-402e-9984-5e2e0a5cb0c5 200 in 7450ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 2.2s (1382 modules)
+ POST /api/returns 200 in 3703ms
+ POST /api/returns 200 in 3291ms
+ ○ Compiling /debts ...
+ GET /invoices/70cfef08-4b52-403d-82de-08a218ca6e3e 200 in 3197ms
+ GET /invoices/efaa4013-1fc2-402e-9984-5e2e0a5cb0c5 200 in 3952ms
+ ✓ Compiled /debts in 3.6s (1390 modules)
+ GET /debts 200 in 16601ms
+ GET /debts 200 in 17316ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 1755ms (872 modules)
+ POST /api/payments/debt 200 in 2814ms
+ POST /api/payments/debt 200 in 3232ms
+ GET /debts 200 in 223ms
+ ○ Compiling /login ...
+ GET /debts 200 in 3085ms
+ ✓ Compiled /login in 2.9s (889 modules)
+ GET /login 200 in 3930ms
+ GET /login 200 in 894ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 1359ms (1376 modules)
+ GET /reports 200 in 21765ms
+ GET /reports 200 in 21310ms
+ GET /pos 200 in 8382ms
+ GET /pos 200 in 8532ms
+ ○ Compiling /api/sales ...
+ ✓ Compiled /api/sales in 4.3s (1374 modules)
+ ✓ Compiled (1380 modules)
+ GET /api/sales 405 in 7896ms
+ GET /api/sales 405 in 7893ms
+ GET /api/pos/accounts 200 in 8753ms
+ GET /api/pos/accounts 200 in 9588ms
+ GET /api/pos/products?page=0 200 in 9632ms
+ GET /api/pos/products?page=0 200 in 11169ms
+ GET /reports 200 in 18615ms
+ GET /reports 200 in 19207ms
+ GET /settings 200 in 11303ms
+ GET /settings 200 in 9226ms
+ ○ Compiling /api/health/balance-check ...
+ ✓ Compiled /api/health/balance-check in 1439ms (1370 modules)
+ POST /api/health/balance-check 200 in 2497ms
+ POST /api/health/balance-check 200 in 2102ms
+ ○ Compiling /api/reconciliation ...
+ ✓ Compiled /api/reconciliation in 1576ms (1374 modules)
+ POST /api/reconciliation 200 in 2825ms
+ ○ Compiling /api/snapshots ...
+ ✓ Compiled /api/snapshots in 943ms (1378 modules)
+ POST /api/snapshots 200 in 2014ms
+ GET /login 200 in 425ms
+ GET /pos 200 in 1368ms
+ GET /api/sales 405 in 1268ms
+ GET /api/pos/products?page=0 200 in 1996ms
+ GET /api/pos/accounts 200 in 2026ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+d588df 200 in 737ms
+ POST /api/sales 200 in 1068ms
+ ○ Compiling /invoices ...
+ GET /api/pos/accounts 200 in 1322ms
+ ✓ Compiled /invoices in 1989ms (1365 modules)
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+d588df 200 in 2446ms
+ GET /invoices 200 in 6281ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.2s (1367 modules)
+ GET / 200 in 3200ms
+ GET / 200 in 3247ms
+ GET / 200 in 457ms
+ GET / 200 in 482ms
+ ○ Compiling /invoices/[id] ...
+ ✓ Compiled /invoices/[id] in 2.1s (1388 modules)
+ GET / 200 in 2469ms
+ GET / 200 in 2474ms
+ GET /invoices/e799ad8c-bdde-4009-bf55-fe054eadf679 200 in 11370ms
+ GET /login 200 in 1296ms
+ GET /login 200 in 1302ms
+ GET /pos 200 in 1753ms
+ GET /pos 200 in 1769ms
+ ○ Compiling /api/returns ...
+ GET /reports 200 in 2086ms
+ GET /reports 200 in 2091ms
+ ✓ Compiled /notifications in 2.6s (1384 modules)
+ ✓ Compiled (1394 modules)
+ GET /notifications 200 in 5813ms
+ GET /notifications 200 in 5819ms
+ ○ Compiling /debts ...
+ POST /api/returns 200 in 8058ms
+ ✓ Compiled /debts in 2.1s (1402 modules)
+ GET /debts 200 in 7468ms
+ GET /debts 200 in 7529ms
+ GET /invoices/e799ad8c-bdde-4009-bf55-fe054eadf679 200 in 6711ms
+ GET /debts 200 in 10952ms
+ GET /invoices 200 in 3934ms
+ GET /invoices 200 in 3948ms
+ GET /settings 200 in 1678ms
+ GET /settings 200 in 1684ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 1898ms (1396 modules)
+ POST /api/payments/debt 200 in 2919ms
+ GET /debts 200 in 528ms
+ GET /login 200 in 898ms
+ GET /login 200 in 900ms
+ GET /pos 200 in 2982ms
+ GET /pos 200 in 2998ms
+ GET /api/sales 405 in 323ms
+ GET /api/sales 405 in 325ms
+ GET /api/pos/products?page=0 200 in 997ms
+ GET /api/pos/accounts 200 in 1007ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+e0e546 200 in 1057ms
+ GET /api/pos/accounts 200 in 1083ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+389f27 200 in 1114ms
+ GET /api/pos/products?page=0 200 in 1123ms
+ POST /api/sales 200 in 736ms
+ POST /api/sales 200 in 1276ms
+ GET /api/pos/accounts 200 in 1017ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+389f27 200 in 1085ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+e0e546 200 in 817ms
+ GET /api/pos/accounts 200 in 818ms
+ GET /invoices 200 in 1555ms
+ GET /invoices 200 in 1765ms
+ GET /invoices/4c1331ac-3c0f-40f1-9dc2-a42bf3268990 200 in 1994ms
+ GET /invoices/8d011b24-f715-40de-a01b-acde97c9e172 200 in 1883ms
+ POST /api/returns 200 in 843ms
+ POST /api/returns 200 in 1410ms
+ GET /invoices/4c1331ac-3c0f-40f1-9dc2-a42bf3268990 200 in 3247ms
+ GET /debts 200 in 7591ms
+ GET /invoices/8d011b24-f715-40de-a01b-acde97c9e172 200 in 6923ms
+ GET /debts 200 in 5501ms
+ POST /api/payments/debt 200 in 1130ms
+ POST /api/payments/debt 200 in 633ms
+ GET /debts 200 in 1113ms
+ GET /debts 200 in 1866ms
+ GET /login 200 in 615ms
+ GET /login 200 in 548ms
+ GET /reports 200 in 9989ms
+ GET /reports 200 in 9781ms
+ GET /pos 200 in 2526ms
+ GET /pos 200 in 2219ms
+ GET /api/sales 405 in 759ms
+ GET /api/sales 405 in 761ms
+ GET /api/pos/products?page=0 200 in 2923ms
+ GET /api/pos/accounts 200 in 2927ms
+ GET /api/pos/accounts 200 in 3027ms
+ GET /api/pos/products?page=0 200 in 3031ms
+ GET /reports 200 in 6581ms
+ GET /reports 200 in 6689ms
+ GET /settings 200 in 6230ms
+ GET /settings 200 in 6450ms
+ ○ Compiling /api/health/balance-check ...
+ ✓ Compiled /api/health/balance-check in 1597ms (1374 modules)
+ POST /api/health/balance-check 200 in 4731ms
+ POST /api/health/balance-check 200 in 4730ms
+ ○ Compiling /api/reconciliation ...
+ ✓ Compiled /api/reconciliation in 867ms (1356 modules)
+ GET /login 200 in 1207ms
+ POST /api/reconciliation 200 in 3098ms
+ ○ Compiling /api/snapshots ...
+ ✓ Compiled /api/snapshots in 933ms (1360 modules)
+ POST /api/snapshots 200 in 2201ms
+ GET /login 200 in 762ms
+ GET /pos 200 in 2512ms
+ GET /api/sales 405 in 362ms
+ GET /pos 200 in 2506ms
+ GET /api/pos/products?page=0 200 in 1499ms
+ GET /api/pos/accounts 200 in 1601ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+e0e546 200 in 925ms
+ POST /api/sales 200 in 898ms
+ GET /api/sales 405 in 353ms
+ ○ Compiling /invoices ...
+ ✓ Compiled /invoices in 1227ms (1365 modules)
+ GET /api/pos/accounts 200 in 1587ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+e0e546 200 in 1708ms
+ GET /api/pos/products?page=0 200 in 1751ms
+ GET /api/pos/accounts 200 in 1765ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+389f27 200 in 3251ms
+ GET /invoices 200 in 4857ms
+ POST /api/sales 200 in 859ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+389f27 200 in 964ms
+ GET /api/pos/accounts 200 in 1035ms
+ ○ Compiling /invoices/[id] ...
+ GET /invoices 200 in 3797ms
+ ✓ Compiled /invoices/[id] in 4.2s (1386 modules)
+ GET /invoices/600c9e63-c9c0-45e9-99fe-2a0a9b96728f 200 in 7034ms
+ ○ Compiling /api/returns ...
+ GET /invoices/d8d57c3b-13c2-4841-b18c-46eef829a2d2 200 in 2048ms
+ ✓ Compiled /api/returns in 3s (1390 modules)
+ POST /api/returns 200 in 4208ms
+ POST /api/returns 200 in 1959ms
+ GET /invoices/600c9e63-c9c0-45e9-99fe-2a0a9b96728f 200 in 4289ms
+ GET /debts 200 in 8625ms
+ GET /invoices/d8d57c3b-13c2-4841-b18c-46eef829a2d2 200 in 5622ms
+ GET /debts 200 in 7203ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 2.6s (1392 modules)
+ POST /api/payments/debt 200 in 3994ms
+ POST /api/payments/debt 200 in 1233ms
+ GET /debts 200 in 2769ms
+ GET /login 200 in 1561ms
+ GET /login 200 in 1342ms
+ GET /reports 200 in 9441ms
+ GET /reports 200 in 9074ms
+ GET /pos 200 in 1851ms
+ GET /pos 200 in 2372ms
+ GET /api/sales 405 in 712ms
+ GET /api/sales 405 in 711ms
+ GET /api/pos/products?page=0 200 in 1466ms
+ GET /api/pos/accounts 200 in 2240ms
+ GET /api/pos/accounts 200 in 2260ms
+ GET /api/pos/products?page=0 200 in 2278ms
+ GET /reports 200 in 8513ms
+ GET /reports 200 in 9016ms
+ GET /settings 200 in 8583ms
+ GET /settings 200 in 8492ms
+ ○ Compiling /api/health/balance-check ...
+ ✓ Compiled /api/health/balance-check in 4.2s (1382 modules)
+ POST /api/health/balance-check 200 in 6949ms
+ POST /api/health/balance-check 200 in 6947ms
+ ○ Compiling /api/reconciliation ...
+ ✓ Compiled /api/reconciliation in 1146ms (1386 modules)
+ GET /login 200 in 642ms
+ POST /api/reconciliation 200 in 3528ms
+ ○ Compiling /api/snapshots ...
+ ✓ Compiled /api/snapshots in 1150ms (1370 modules)
+ POST /api/snapshots 200 in 2508ms
+ GET /login 200 in 985ms
+ GET /pos 200 in 2633ms
+ GET /api/sales 405 in 666ms
+ GET /api/pos/accounts 200 in 1514ms
+ GET /api/pos/products?page=0 200 in 1698ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+e0e546 200 in 1035ms
+ GET /pos 200 in 1605ms
+ POST /api/sales 200 in 1445ms
+ GET /api/pos/accounts 200 in 841ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+e0e546 200 in 1061ms
+ ○ Compiling /invoices ...
+ ✓ Compiled /invoices in 1937ms (1378 modules)
+ GET /api/sales 405 in 3449ms
+ GET /api/pos/products?page=0 200 in 4577ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+389f27 200 in 4152ms
+ GET /api/pos/accounts 200 in 5005ms
+ GET /invoices 200 in 5614ms
+ POST /api/sales 200 in 944ms
+ GET /api/pos/accounts 200 in 1567ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+389f27 200 in 1687ms
+ GET /invoices/f6f21306-3521-49bd-920a-7ba255f975aa 200 in 2807ms
+ GET /invoices 200 in 3515ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 2.4s (1382 modules)
+ GET /invoices/221ef9bb-c610-4f37-9419-6876d0af3897 200 in 3065ms
+ POST /api/returns 200 in 3744ms
+ ○ Compiling /debts ...
+ GET /invoices/f6f21306-3521-49bd-920a-7ba255f975aa 200 in 2791ms
+ ✓ Compiled /debts in 3s (1390 modules)
+ POST /api/returns 200 in 8716ms
+ GET /debts 200 in 15672ms
+ GET /invoices/221ef9bb-c610-4f37-9419-6876d0af3897 200 in 4571ms
+ GET /debts 200 in 6374ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 1482ms (1392 modules)
+ POST /api/payments/debt 200 in 3286ms
+ POST /api/payments/debt 200 in 3115ms
+ GET /debts 200 in 924ms
+ GET /login 200 in 905ms
+ GET /debts 200 in 2615ms
+ GET /login 200 in 401ms
+ GET /reports 200 in 8169ms
+ GET /reports 200 in 8165ms
+ GET /pos 200 in 2917ms
+ GET /pos 200 in 3215ms
+ GET /api/sales 405 in 514ms
+ GET /api/sales 405 in 518ms
+ GET /api/pos/products?page=0 200 in 1617ms
+ GET /api/pos/accounts 200 in 1634ms
+ GET /api/pos/accounts 200 in 2582ms
+ GET /api/pos/products?page=0 200 in 2590ms
+ GET /reports 200 in 8544ms
+ GET /reports 200 in 8943ms
+ GET /settings 200 in 10513ms
+ GET /settings 200 in 10425ms
+ ○ Compiling /api/health/balance-check ...
+ ✓ Compiled /api/health/balance-check in 1184ms (1374 modules)
+ POST /api/health/balance-check 200 in 2223ms
+ POST /api/health/balance-check 200 in 2160ms
+ ○ Compiling /api/reconciliation ...
+ ✓ Compiled /api/reconciliation in 1234ms (1378 modules)
+ ○ Compiling / ...
+ POST /api/reconciliation 200 in 2277ms
+ ✓ Compiled /api/snapshots in 1295ms (1380 modules)
+ ✓ Compiled (1384 modules)
+ GET / 200 in 3239ms
+ POST /api/snapshots 200 in 2700ms
+ ○ Compiling /manifest.webmanifest ...
+ ✓ Compiled /manifest.webmanifest in 1206ms (1362 modules)
+ GET /manifest.webmanifest 200 in 2400ms
+ GET /login 200 in 3485ms
+ GET /reports 200 in 3961ms
+ GET /pos 200 in 1179ms
+ GET /api/sales 405 in 263ms
+ GET /api/pos/products?page=0 200 in 1002ms
+ GET /api/pos/accounts 200 in 1006ms
+ GET /settings 200 in 2296ms
+ ○ Compiling /api/inventory/counts/complete ...
+ ✓ Compiled /api/inventory/counts/complete in 960ms (1366 modules)
+ POST /api/inventory/counts/complete 200 in 2006ms
+ ✓ Compiled in 2.5s (2323 modules)
+ ✓ Compiled in 3.7s (2327 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 7.4s (1337 modules)
+ GET / 200 in 17227ms
+ GET / 200 in 17515ms
+ GET / 200 in 3938ms
+ GET / 200 in 4440ms
+ GET / 200 in 3482ms
+ GET / 200 in 3461ms
+ GET /login 200 in 9616ms
+ GET /login 200 in 7619ms
+ GET /pos 200 in 18018ms
+ GET /pos 200 in 16752ms
+ GET /reports 200 in 27097ms
+ GET /reports 200 in 24562ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 26.1s (1345 modules)
+ GET /notifications 200 in 33241ms
+ GET /notifications 200 in 39538ms
+ GET /debts 200 in 3751ms
+ GET /debts 200 in 3644ms
+ ○ Compiling /invoices ...
+ ✓ Compiled /invoices in 4.1s (1354 modules)
+ GET /invoices 200 in 9132ms
+ GET /invoices 200 in 9181ms
+ GET /settings 200 in 2990ms
+ GET /settings 200 in 3015ms
+ GET /login 200 in 873ms
+ GET /login 200 in 672ms
+ GET /pos 200 in 3720ms
+ GET /pos 200 in 3769ms
+ ○ Compiling /api/sales ...
+ ✓ Compiled /api/sales in 1643ms (1359 modules)
+ ✓ Compiled (1365 modules)
+ GET /api/sales 405 in 3973ms
+ GET /api/sales 405 in 3630ms
+ GET /api/pos/accounts 200 in 4550ms
+ GET /api/pos/accounts 200 in 5743ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+ce9108 200 in 4500ms
+ GET /api/pos/products?page=0 200 in 5783ms
+ GET /api/pos/products?page=0 200 in 4642ms
+ POST /api/sales 200 in 1222ms
+ GET /api/pos/accounts 200 in 711ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+ce9108 200 in 899ms
+ GET /invoices 200 in 2192ms
+ ○ Compiling /invoices/[id] ...
+ ✓ Compiled /invoices/[id] in 2.4s (1376 modules)
+ GET /invoices/797d4c22-c3a4-4aed-bf0b-0cfc3bab12d2 200 in 7355ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 1294ms (1372 modules)
+ POST /api/returns 200 in 2604ms
+ ○ Compiling /debts ...
+ GET /invoices/797d4c22-c3a4-4aed-bf0b-0cfc3bab12d2 200 in 4979ms
+ ✓ Compiled /debts in 7.8s (1380 modules)
+ GET /debts 200 in 11858ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 2.5s (1384 modules)
+ POST /api/payments/debt 200 in 3928ms
+ GET /debts 200 in 952ms
+ GET /login 200 in 1325ms
+ GET /reports 200 in 5117ms
+ GET /pos 200 in 1812ms
+ GET /api/sales 405 in 434ms
+ GET /api/pos/products?page=0 200 in 1407ms
+ GET /api/pos/accounts 200 in 1470ms
+ GET /reports 200 in 3531ms
+ GET /settings 200 in 3309ms
+ ○ Compiling /api/health/balance-check ...
+ ✓ Compiled /api/health/balance-check in 2.5s (1374 modules)
+ POST /api/health/balance-check 200 in 4516ms
+ ○ Compiling /api/reconciliation ...
+ ✓ Compiled /api/reconciliation in 2.2s (1378 modules)
+ POST /api/reconciliation 200 in 3490ms
+ ○ Compiling /api/snapshots ...
+ ✓ Compiled /api/snapshots in 3.1s (1360 modules)
+ POST /api/snapshots 200 in 5615ms
+ GET /login 200 in 1627ms
+ GET /pos 200 in 2893ms
+ GET /api/sales 405 in 767ms
+ GET /api/pos/accounts 200 in 1442ms
+ GET /api/pos/products?page=0 200 in 1522ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+ce9108 200 in 811ms
+ POST /api/sales 200 in 774ms
+ ○ Compiling /invoices ...
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+ce9108 200 in 1088ms
+ GET /api/pos/accounts 200 in 1534ms
+ ✓ Compiled /invoices in 1204ms (1365 modules)
+ GET /invoices 200 in 3824ms
+ ○ Compiling /invoices/[id] ...
+ ✓ Compiled /invoices/[id] in 1847ms (1386 modules)
+ GET /invoices/e9ea0762-993d-4017-894d-906f8329e69d 200 in 4380ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 1406ms (1382 modules)
+ POST /api/returns 200 in 2664ms
+ ○ Compiling /debts ...
+ ✓ Compiled /debts in 2.8s (1390 modules)
+ GET /invoices/e9ea0762-993d-4017-894d-906f8329e69d 200 in 5125ms
+ GET /debts 200 in 6340ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 1524ms (1394 modules)
+ POST /api/payments/debt 200 in 2618ms
+ GET /debts 200 in 886ms
+ GET /login 200 in 657ms
+ GET /reports 200 in 5439ms
+ GET /pos 200 in 2215ms
+ GET /api/sales 405 in 251ms
+ GET /api/pos/accounts 200 in 1555ms
+ GET /api/pos/products?page=0 200 in 1753ms
+ GET /reports 200 in 4158ms
+ GET /settings 200 in 2601ms
+ POST /api/health/balance-check 200 in 977ms
+ POST /api/reconciliation 200 in 641ms
+ POST /api/snapshots 200 in 701ms
+ GET /login 200 in 693ms
+ GET /pos 200 in 2357ms
+ GET /api/sales 405 in 716ms
+ GET /api/pos/accounts 200 in 1372ms
+ GET /api/pos/products?page=0 200 in 1476ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+ce9108 200 in 1398ms
+ POST /api/sales 200 in 1006ms
+ GET /api/pos/accounts 200 in 1126ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+ce9108 200 in 1140ms
+ GET /invoices 200 in 1616ms
+ GET /invoices/58352870-2f16-4ff7-a638-509dd04ce5dc 200 in 1530ms
+ POST /api/returns 200 in 887ms
+ GET /invoices/58352870-2f16-4ff7-a638-509dd04ce5dc 200 in 2016ms
+ GET /debts 200 in 5403ms
+ POST /api/payments/debt 200 in 968ms
+ GET /debts 200 in 208ms
+ GET /login 200 in 374ms
+ GET /reports 200 in 6663ms
+ GET /pos 200 in 1463ms
+ GET /api/sales 405 in 467ms
+ GET /api/pos/accounts 200 in 1504ms
+ GET /api/pos/products?page=0 200 in 1538ms
+ GET /reports 200 in 4187ms
+ GET /settings 200 in 3313ms
+ POST /api/health/balance-check 200 in 864ms
+ POST /api/reconciliation 200 in 886ms
+ POST /api/snapshots 200 in 625ms
+ GET /login 200 in 387ms
+ GET /reports 200 in 4904ms
+ GET /pos 200 in 1410ms
+ GET /api/sales 405 in 297ms
+ GET /api/pos/products?page=0 200 in 1141ms
+ GET /api/pos/accounts 200 in 1141ms
+ GET /settings 200 in 3835ms
+ ○ Compiling /api/inventory/counts/complete ...
+ ✓ Compiled /api/inventory/counts/complete in 1803ms (1382 modules)
+ POST /api/inventory/counts/complete 200 in 2885ms
+ ✓ Compiled in 2.6s (2374 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 3.6s (1310 modules)
+ GET / 200 in 6631ms
+ GET / 200 in 6774ms
+ GET / 200 in 1424ms
+ GET / 200 in 1472ms
+ GET / 200 in 1678ms
+ GET / 200 in 2038ms
+ GET /login 200 in 2765ms
+ GET /login 200 in 2782ms
+ ○ Compiling /pos ...
+ ✓ Compiled /pos in 3.8s (1359 modules)
+ GET /pos 200 in 17812ms
+ GET /pos 200 in 17852ms
+ GET /reports 200 in 2844ms
+ GET /reports 200 in 2863ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 5.4s (1369 modules)
+ GET /notifications 200 in 9599ms
+ GET /notifications 200 in 9701ms
+ GET /debts 200 in 2360ms
+ GET /debts 200 in 2370ms
+ ○ Compiling /invoices ...
+ ✓ Compiled /invoices in 2.7s (1377 modules)
+ GET /invoices 200 in 5696ms
+ GET /invoices 200 in 5703ms
+ GET /settings 200 in 2300ms
+ GET /settings 200 in 2310ms
+ GET /login 200 in 456ms
+ GET /login 200 in 421ms
+ GET /pos 200 in 3812ms
+ GET /pos 200 in 3894ms
+ ○ Compiling /api/sales ...
+ ✓ Compiled /api/sales in 1802ms (1380 modules)
+ ✓ Compiled (1386 modules)
+ GET /api/sales 405 in 4065ms
+ GET /login 200 in 4146ms
+ GET /api/pos/products?page=0 200 in 5798ms
+ GET /api/pos/accounts 200 in 5852ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+5f6847 200 in 5754ms
+ POST /api/sales 200 in 1394ms
+ GET /api/pos/accounts 200 in 2101ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+5f6847 200 in 2267ms
+ GET /invoices 200 in 7287ms
+ GET /reports 200 in 7967ms
+ GET /invoices/3cb9f7af-4ed1-4be8-a922-f039633937d4 200 in 6460ms
+ GET /invoices 200 in 7494ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 2.5s (1371 modules)
+ POST /api/returns 200 in 6181ms
+ GET /invoices/3cb9f7af-4ed1-4be8-a922-f039633937d4 200 in 5869ms
+ GET /invoices/3cb9f7af-4ed1-4be8-a922-f039633937d4 200 in 6325ms
+ GET /login 200 in 2408ms
+ GET /debts 200 in 9774ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 2.6s (1375 modules)
+ GET /reports 200 in 7697ms
+ POST /api/payments/debt 200 in 6084ms
+ GET /debts 200 in 1094ms
+ GET /login 200 in 1158ms
+ GET /debts 200 in 12499ms
+ GET /reports 200 in 12051ms
+ GET /pos 200 in 1996ms
+ GET /api/sales 405 in 314ms
+ GET /api/pos/products?page=0 200 in 1580ms
+ GET /api/pos/accounts 200 in 1581ms
+ GET /reports 200 in 4389ms
+ ○ Compiling /settings ...
+ ✓ Compiled /settings in 1919ms (1380 modules)
+ GET /settings 200 in 4945ms
+ ○ Compiling /api/health/balance-check ...
+ ✓ Compiled /api/health/balance-check in 1465ms (1382 modules)
+ POST /api/health/balance-check 200 in 2673ms
+ ○ Compiling /api/reconciliation ...
+ ✓ Compiled /api/reconciliation in 1479ms (1386 modules)
+ POST /api/reconciliation 200 in 2290ms
+ ○ Compiling /api/snapshots ...
+ ✓ Compiled /api/snapshots in 1474ms (1390 modules)
+ POST /api/snapshots 200 in 2390ms
+ GET /login 200 in 1009ms
+ GET /pos 200 in 1616ms
+ GET /api/sales 405 in 483ms
+ GET /api/pos/products?page=0 200 in 1279ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+5f6847 200 in 808ms
+ GET /api/pos/accounts 200 in 1450ms
+ POST /api/sales 200 in 736ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+5f6847 200 in 1172ms
+ GET /api/pos/accounts 200 in 1259ms
+ GET /invoices 200 in 2058ms
+ GET /invoices/e03ea7e2-cdc4-4fe1-9ffb-1db4861cfec4 200 in 2140ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 2.8s (1382 modules)
+ POST /api/returns 200 in 4209ms
+ ○ Compiling /debts ...
+ ✓ Compiled /debts in 4.4s (1390 modules)
+ GET /invoices/e03ea7e2-cdc4-4fe1-9ffb-1db4861cfec4 200 in 5488ms
+ GET /debts 200 in 11025ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 1242ms (1394 modules)
+ POST /api/payments/debt 200 in 2457ms
+ GET /debts 200 in 665ms
+ GET /login 200 in 679ms
+ GET /reports 200 in 5478ms
+ GET /pos 200 in 1452ms
+ GET /api/sales 405 in 413ms
+ GET /api/pos/accounts 200 in 1889ms
+ GET /api/pos/products?page=0 200 in 1904ms
+ GET /reports 200 in 5219ms
+ GET /settings 200 in 7327ms
+ POST /api/health/balance-check 200 in 957ms
+ POST /api/reconciliation 200 in 730ms
+ POST /api/snapshots 200 in 782ms
+ GET /login 200 in 391ms
+ GET /pos 200 in 1826ms
+ GET /api/sales 405 in 400ms
+ GET /api/pos/accounts 200 in 1250ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+5f6847 200 in 841ms
+ GET /api/pos/products?page=0 200 in 1648ms
+ POST /api/sales 200 in 790ms
+ GET /api/pos/accounts 200 in 994ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+5f6847 200 in 1088ms
+ GET /invoices 200 in 2032ms
+ GET /invoices/4ea60145-97e6-49b1-ba83-d080fe0c78fb 200 in 1666ms
+ POST /api/returns 200 in 835ms
+ GET /invoices/4ea60145-97e6-49b1-ba83-d080fe0c78fb 200 in 2521ms
+ GET /debts 200 in 3266ms
+ POST /api/payments/debt 200 in 1219ms
+ GET /debts 200 in 938ms
+ GET /login 200 in 397ms
+ GET /reports 200 in 5256ms
+ GET /pos 200 in 4717ms
+ GET /api/sales 405 in 223ms
+ GET /api/pos/accounts 200 in 1868ms
+ GET /api/pos/products?page=0 200 in 1873ms
+ GET /reports 200 in 5254ms
+ GET /settings 200 in 4739ms
+ POST /api/health/balance-check 200 in 921ms
+ POST /api/reconciliation 200 in 713ms
+ POST /api/snapshots 200 in 687ms
+ GET /login 200 in 246ms
+ GET /reports 200 in 4927ms
+ GET /pos 200 in 1510ms
+ GET /api/sales 405 in 219ms
+ GET /api/pos/products?page=0 200 in 1126ms
+ GET /api/pos/accounts 200 in 1127ms
+ GET /settings 200 in 3147ms
+ ○ Compiling /api/inventory/counts/complete ...
+ ✓ Compiled /api/inventory/counts/complete in 1993ms (1382 modules)
+ POST /api/inventory/counts/complete 200 in 3161ms
+ ✓ Compiled in 2.6s (2300 modules)
+ ✓ Compiled in 3.8s (2314 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 3.4s (1310 modules)
+ GET / 200 in 5630ms
+ GET / 200 in 398ms
+ GET / 200 in 701ms
+ GET /login 200 in 846ms
+ ○ Compiling /pos ...
+ ✓ Compiled /pos in 1949ms (1359 modules)
+ GET /pos 200 in 4495ms
+ GET /reports 200 in 1085ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 9.3s (1369 modules)
+ GET /notifications 200 in 11747ms
+ GET /debts 200 in 987ms
+ ○ Compiling /invoices ...
+ ✓ Compiled /invoices in 2.4s (1377 modules)
+ GET /invoices 200 in 4449ms
+ GET /settings 200 in 890ms
+ GET /login 200 in 376ms
+ GET /reports 200 in 7584ms
+ GET /reports?from_date=2026-04-12&to_date=2026-04-12 200 in 4880ms
+ ✓ Compiled in 1778ms (2300 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 2s (1310 modules)
+ GET / 200 in 3774ms
+ GET / 200 in 3859ms
+ GET / 200 in 736ms
+ GET / 200 in 767ms
+ GET / 200 in 2206ms
+ GET / 200 in 2272ms
+ GET /login 200 in 2246ms
+ GET /login 200 in 2274ms
+ ○ Compiling /pos ...
+ ✓ Compiled /pos in 2.8s (1359 modules)
+ GET /pos 200 in 6759ms
+ GET /pos 200 in 6773ms
+ GET /reports 200 in 2943ms
+ GET /reports 200 in 2967ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 2.4s (1369 modules)
+ GET /notifications 200 in 7460ms
+ GET /notifications 200 in 7499ms
+ GET /debts 200 in 2740ms
+ GET /debts 200 in 2740ms
+ ○ Compiling /invoices ...
+ ✓ Compiled /invoices in 3.8s (1377 modules)
+ GET /invoices 200 in 11578ms
+ GET /invoices 200 in 11740ms
+ GET /settings 200 in 4613ms
+ GET /settings 200 in 4617ms
+ GET / 200 in 314ms
+ GET /login 200 in 456ms
+ GET /login 200 in 509ms
+ GET /reports 200 in 11325ms
+ GET /reports 200 in 10558ms
+ GET /login 200 in 5227ms
+ GET /reports?from_date=2026-04-12&to_date=2026-04-12 200 in 8989ms
+ GET /pos 200 in 2684ms
+ ○ Compiling /api/sales ...
+ ✓ Compiled /api/sales in 1769ms (1364 modules)
+ ✓ Compiled (1370 modules)
+ GET /login 200 in 4657ms
+ GET /reports 200 in 3706ms
+ GET /login 200 in 320ms
+ GET /reports 200 in 3291ms
+ GET /login 200 in 297ms
+ GET /reports 200 in 3750ms
+ ✓ Compiled in 1675ms (2340 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 6.7s (1350 modules)
+ GET / 200 in 13898ms
+ GET / 200 in 14618ms
+ GET / 200 in 3304ms
+ GET / 200 in 3421ms
+ GET / 200 in 4094ms
+ GET / 200 in 6751ms
+ GET /login 200 in 10729ms
+ GET /login 200 in 9136ms
+ GET /pos 200 in 28976ms
+ GET /pos 200 in 14539ms
+ GET /reports 200 in 14356ms
+ GET /reports 200 in 14821ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 27.4s (1358 modules)
+ GET /notifications 200 in 41529ms
+ GET /notifications 200 in 39203ms
+ GET /debts 200 in 8452ms
+ GET /debts 200 in 8513ms
+ ○ Compiling /invoices ...
+ ✓ Compiled /invoices in 11.8s (1366 modules)
+ GET /invoices 200 in 18137ms
+ GET /invoices 200 in 18141ms
+ ○ Compiling /settings ...
+ ✓ Compiled /settings in 4.8s (1375 modules)
+ GET /settings 200 in 9344ms
+ GET /settings 200 in 9369ms
+ GET /login 200 in 1070ms
+ GET /login 200 in 657ms
+ GET /pos 200 in 11527ms
+ GET /reports 200 in 11879ms
+ ○ Compiling /api/pos/accounts ...
+ ✓ Compiled /api/pos/accounts in 1858ms (1370 modules)
+ ✓ Compiled (1376 modules)
+ GET /api/sales 405 in 4666ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+021f44 200 in 6023ms
+ GET /api/pos/accounts 200 in 6476ms
+ GET /api/pos/products?page=0 200 in 6685ms
+ GET /reports?from_date=2026-04-12&to_date=2026-04-12 200 in 9557ms
+ POST /api/sales 200 in 1620ms
+ GET /api/pos/accounts 200 in 1527ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+021f44 200 in 1575ms
+ GET /invoices 200 in 9146ms
+ GET /reports?report_tab=overview&from_date=2026-04-12&to_date=2026-04-12&compare_from_date=2026-04-12&compare_to_date=2026-04-12&created_by=&status=&pos_terminal_code=&group_by=week&dimension=account 200 in 8815ms
+ GET /invoices/95ebf3be-4910-4a8f-a8ee-932a1691a3e4 200 in 2994ms
+ GET /login 200 in 727ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 1887ms (1363 modules)
+ POST /api/returns 200 in 3773ms
+ ○ Compiling /debts ...
+ ✓ Compiled /debts in 4.1s (1371 modules)
+ GET /invoices/95ebf3be-4910-4a8f-a8ee-932a1691a3e4 200 in 5340ms
+ GET /debts 200 in 19418ms
+ GET /reports 200 in 16722ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 5.5s (1375 modules)
+ GET /reports?from_date=2026-04-12&to_date=2026-04-12 200 in 9810ms
+ POST /api/payments/debt 200 in 7351ms
+ GET /debts 200 in 1068ms
+ GET /login 200 in 1400ms
+ GET /reports 200 in 7280ms
+ GET /reports?report_tab=overview&from_date=2026-04-12&to_date=2026-04-12&compare_from_date=2026-04-12&compare_to_date=2026-04-12&created_by=&status=&pos_terminal_code=&group_by=week&dimension=account 200 in 5388ms
+ GET /login 200 in 540ms
+ GET /pos 200 in 2466ms
+ GET /api/sales 405 in 438ms
+ GET /api/pos/products?page=0 200 in 6040ms
+ GET /api/pos/accounts 200 in 6040ms
+ GET /reports 200 in 11848ms
+ GET /reports 200 in 11629ms
+ ○ Compiling /settings ...
+ ✓ Compiled /settings in 2.3s (1372 modules)
+ GET /settings 200 in 27034ms
+ GET /reports?from_date=2026-04-12&to_date=2026-04-12 200 in 26896ms
+ ○ Compiling /api/health/balance-check ...
+ ✓ Compiled /api/health/balance-check in 2.1s (1370 modules)
+ POST /api/health/balance-check 200 in 3648ms
+ ○ Compiling /api/reconciliation ...
+ ✓ Compiled /api/reconciliation in 1905ms (1374 modules)
+ POST /api/reconciliation 200 in 3889ms
+ ○ Compiling /api/snapshots ...
+ GET /reports?report_tab=overview&from_date=2026-04-12&to_date=2026-04-12&compare_from_date=2026-04-12&compare_to_date=2026-04-12&created_by=&status=&pos_terminal_code=&group_by=week&dimension=account 200 in 9677ms
+ ✓ Compiled /api/snapshots in 8.8s (1378 modules)
+ POST /api/snapshots 200 in 10520ms
+ GET /login 200 in 872ms
+ GET /pos 200 in 2522ms
+ GET /api/sales 405 in 267ms
+ GET /api/pos/products?page=0 200 in 1120ms
+ GET /api/pos/accounts 200 in 1165ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+021f44 200 in 879ms
+ POST /api/sales 200 in 713ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+021f44 200 in 884ms
+ ○ Compiling /invoices ...
+ GET /api/pos/accounts 200 in 1357ms
+ ✓ Compiled /invoices in 1558ms (1365 modules)
+ GET /invoices 200 in 4956ms
+ ○ Compiling /invoices/[id] ...
+ ✓ Compiled /invoices/[id] in 1372ms (1386 modules)
+ GET /invoices/7b6a397c-bafb-46a2-810c-19eb0a17144e 200 in 4310ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 1555ms (1382 modules)
+ POST /api/returns 200 in 2771ms
+ ○ Compiling /debts ...
+ ✓ Compiled /debts in 2.2s (1390 modules)
+ GET /invoices/7b6a397c-bafb-46a2-810c-19eb0a17144e 200 in 4825ms
+ GET /debts 200 in 6701ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 1531ms (893 modules)
+ POST /api/payments/debt 200 in 2953ms
+ GET /debts 200 in 452ms
+ GET /login 200 in 752ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 1470ms (1388 modules)
+ GET /reports 200 in 8005ms
+ GET /pos 200 in 5724ms
+ GET /api/sales 405 in 361ms
+ GET /api/pos/products?page=0 200 in 1326ms
+ GET /api/pos/accounts 200 in 2287ms
+ GET /reports 200 in 4515ms
+ GET /settings 200 in 3773ms
+ ○ Compiling /api/health/balance-check ...
+ ✓ Compiled /api/health/balance-check in 1763ms (1382 modules)
+ POST /api/health/balance-check 200 in 3323ms
+ ○ Compiling /api/reconciliation ...
+ ✓ Compiled /api/reconciliation in 1276ms (1386 modules)
+ POST /api/reconciliation 200 in 2299ms
+ ○ Compiling /api/snapshots ...
+ ✓ Compiled /api/snapshots in 1342ms (1390 modules)
+ POST /api/snapshots 200 in 2261ms
+ GET /login 200 in 690ms
+ GET /pos 200 in 7731ms
+ GET /api/sales 405 in 324ms
+ GET /api/pos/accounts 200 in 1083ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+021f44 200 in 758ms
+ GET /api/pos/products?page=0 200 in 1393ms
+ POST /api/sales 200 in 838ms
+ GET /api/pos/accounts 200 in 1535ms
+ GET /api/pos/products?page=0&q=PX05+Fast+Charger+021f44 200 in 1653ms
+ GET /invoices 200 in 2117ms
+ GET /invoices/f3e9fc53-a585-4e5d-89b7-790c8d5c080a 200 in 1953ms
+ ○ Compiling /api/returns ...
+ ✓ Compiled /api/returns in 2.3s (1390 modules)
+ POST /api/returns 200 in 3710ms
+ GET /invoices/f3e9fc53-a585-4e5d-89b7-790c8d5c080a 200 in 4117ms
+ GET /debts 200 in 4224ms
+ ○ Compiling /api/payments/debt ...
+ ✓ Compiled /api/payments/debt in 1543ms (1394 modules)
+ POST /api/payments/debt 200 in 3188ms
+ GET /debts 200 in 929ms
+ GET /login 200 in 750ms
+ GET /reports 200 in 7722ms
+ GET /pos 200 in 1821ms
+ GET /api/sales 405 in 245ms
+ GET /api/pos/accounts 200 in 1377ms
+ GET /api/pos/products?page=0 200 in 1404ms
+ GET /reports 200 in 4227ms
+ GET /settings 200 in 3598ms
+ POST /api/health/balance-check 200 in 1070ms
+ POST /api/reconciliation 200 in 779ms
+ POST /api/snapshots 200 in 923ms
+ GET /login 200 in 321ms
+ GET /reports 200 in 4994ms
+ GET /pos 200 in 2398ms
+ GET /api/sales 405 in 245ms
+ GET /api/pos/products?page=0 200 in 1130ms
+ GET /api/pos/accounts 200 in 1554ms
+ GET /settings 200 in 2731ms
+ ○ Compiling /api/inventory/counts/complete ...
+ ✓ Compiled /api/inventory/counts/complete in 1537ms (1382 modules)
+ POST /api/inventory/counts/complete 200 in 2972ms
+ ○ Compiling / ...
+ ✓ Compiled / in 3.2s (1384 modules)
+ GET / 200 in 4600ms
+ GET / 200 in 599ms
+ GET / 200 in 863ms
+ GET /login 200 in 1049ms
+ GET /pos 200 in 2087ms
+ GET /reports 200 in 1761ms
+ ○ Compiling /notifications ...
+ ✓ Compiled /notifications in 4.3s (1384 modules)
+ GET /notifications 200 in 12674ms
+ GET /debts 200 in 1260ms
+ ○ Compiling /invoices ...
+ ✓ Compiled /invoices in 2.8s (1377 modules)
+ GET /invoices 200 in 6175ms
+ GET /settings 200 in 1467ms
+ GET / 200 in 523ms
+ GET /login 200 in 458ms
+ GET /reports 200 in 7882ms
+ GET /login 200 in 362ms
+ GET /pos 200 in 1638ms
+ ○ Compiling /api/sales ...
+ ✓ Compiled /api/sales in 2.3s (1382 modules)
+ ✓ Compiled (1388 modules)
+ GET /login 200 in 3643ms
+ GET /reports 200 in 3197ms
+ GET /login 200 in 459ms
+ GET /reports 200 in 3720ms
+ GET /login 200 in 365ms
+ GET /reports 200 in 3461ms
+ GET / 200 in 1367ms
+ GET / 200 in 613ms
+ GET / 200 in 747ms
+ GET /login 200 in 891ms
+ GET /pos 200 in 1709ms
+ GET /reports 200 in 1022ms
+ GET /notifications 200 in 1086ms
+ GET /debts 200 in 1008ms
+ GET /invoices 200 in 1094ms
+ GET / 200 in 693ms
+ GET /settings 200 in 2223ms
+ GET / 200 in 813ms
+ GET / 200 in 1407ms
+ GET /login 200 in 3376ms
+ GET /login 200 in 3174ms
+ GET /login 200 in 3184ms
+ GET /login 200 in 4247ms
+ GET /login 200 in 4284ms
+ GET /pos 200 in 4337ms
+ GET /reports 200 in 12871ms
+ GET /notifications 200 in 21961ms
+ GET /pos 200 in 6615ms
+ GET /pos 200 in 6648ms
+ GET /reports 200 in 16922ms
+ GET /pos 200 in 3675ms
+ GET / 200 in 11883ms
+ GET / 200 in 10472ms
+ GET /debts 200 in 29721ms
+ GET /pos 200 in 30681ms
+ GET /pos 200 in 30819ms
+ GET /pos 200 in 23287ms
+ GET /reports 200 in 34726ms
+ GET /invoices 200 in 9151ms
+ GET / 200 in 7181ms
+ GET /settings 200 in 13440ms
+ GET /api/sales 405 in 2251ms
+ GET /login 200 in 7119ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+633031 200 in 4190ms
+ GET /api/pos/accounts 200 in 5590ms
+ GET /api/pos/products?page=0 200 in 5766ms
+ GET /login 200 in 3630ms
+ GET /api/sales 405 in 2665ms
+ GET /api/pos/accounts 200 in 4766ms
+ GET /api/pos/products?page=0 200 in 5126ms
+ GET /pos 200 in 7358ms
+ POST /api/sales 200 in 1666ms
+ GET /reports 200 in 3703ms
+ GET /api/pos/products?page=0&q=PX06+Device+Flow+Product+633031 200 in 3135ms
+ GET /api/pos/accounts 200 in 3172ms
+ GET /invoices 200 in 8402ms
+ GET /login 200 in 2930ms
+ GET /notifications 200 in 6815ms
+ GET /debts 200 in 1599ms
+ GET /invoices 200 in 3380ms
+ GET /settings 200 in 6293ms
+ GET /pos 200 in 11141ms
+ GET /reports 200 in 23339ms
+ GET /invoices/6b74fc78-8a98-4e90-a508-8680df996abd 200 in 28448ms
+ GET /login 200 in 9050ms
+ GET /login 200 in 9084ms
+ GET /reports 200 in 18564ms
+ POST /api/sales 400 in 4261ms
+ POST /api/sales 200 in 4354ms
+ GET / 200 in 2871ms
+ GET /api/sales 405 in 1252ms
+ GET /api/pos/accounts 200 in 6363ms
+ POST /api/sales 200 in 4019ms
+ GET /api/pos/products?page=0 200 in 7429ms
+ POST /api/sales 200 in 5378ms
+ GET /reports 200 in 14857ms
+ GET /pos 200 in 14873ms
+ GET /reports?from_date=2026-04-12&to_date=2026-04-12 200 in 32472ms
+ GET / 200 in 10593ms
+ GET / 200 in 14668ms
+ GET /pos 200 in 34772ms
+ GET /notifications?q=AAAPX13E2E363725&limit=12 200 in 36570ms
+ GET /login 200 in 6063ms
+ GET /api/sales 405 in 1683ms
+ GET /api/pos/products?page=0 200 in 10836ms
+ GET /debts 200 in 10823ms
+ GET /api/pos/accounts 200 in 10850ms
+ GET /login 200 in 10921ms
+ GET /login 200 in 10948ms
+ GET /reports 200 in 11240ms
+ GET /reports 200 in 7106ms
+ GET /login 200 in 1272ms
+ GET /login 200 in 4059ms
+ GET /login 200 in 3595ms
+ GET /reports 200 in 62359ms
+ ✓ Compiled in 120.5s (2345 modules)
+ GET /pos 200 in 115724ms
+ ○ Compiling /products ...
+ ✓ Compiled /products in 42s (1849 modules)
+ GET /login 200 in 9206ms
+ GET / 200 in 10041ms
+ ○ Compiling /reports ...
+ ✓ Compiled /reports in 10.5s (1348 modules)
+ GET /reports 200 in 19252ms
+ GET / 200 in 2844ms
+ GET /reports 200 in 20236ms
+ GET / 200 in 742ms
+ GET /login 200 in 690ms
+ ○ Compiling /api/health ...
+ ✓ Compiled /api/health in 5.3s (2341 modules)
+ GET /api/health 200 in 6940ms
+ ○ Compiling /manifest.webmanifest ...
+ ✓ Compiled /manifest.webmanifest in 4.8s (1348 modules)
+ GET /manifest.webmanifest 200 in 7813ms
+ GET /reports 200 in 16419ms
+ ○ Compiling /products ...
+ ✓ Compiled /products in 3.2s (1357 modules)
+ ✓ Compiled (1366 modules)
+ GET /products 200 in 7722ms
+ GET /settings 200 in 11049ms
+ GET /login 200 in 2960ms
+ GET /pos 200 in 1439ms
+ GET /reports 200 in 933ms
+ GET /reports 200 in 6430ms
+ GET /settings 200 in 739ms
+ ○ Compiling /debts ...
+ ✓ Compiled /portability in 1996ms (1374 modules)
+ ✓ Compiled in 1825ms (1001 modules)
+ GET /debts 200 in 6422ms
+ GET /portability 200 in 7492ms
+ GET /invoices 200 in 648ms
+ GET / 200 in 342ms
+ ✓ Compiled in 7s (2302 modules)
+ GET / 200 in 11946ms
+ GET / 200 in 4028ms
+ GET / 200 in 8956ms
+ GET /login 200 in 8054ms
+ ○ Compiling /pos ...
+ ✓ Compiled /pos in 9.5s (1339 modules)
+ GET /pos 200 in 24008ms
+ GET /reports 200 in 5475ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 10.2s (2345 modules)
+ GET /notifications 404 in 15635ms
+ ○ Compiling /debts ...
+ ✓ Compiled /debts in 6.7s (1348 modules)

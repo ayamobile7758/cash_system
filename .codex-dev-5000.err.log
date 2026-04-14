@@ -1,0 +1,57 @@
+
+
+Retrying 1/3...
+
+
+Retrying 1/3...
+ ⚠ Cross origin request detected from 127.0.0.1 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+ ⨯ ./components/pos/product-grid-item.tsx
+Error: 
+
+Caused by:
+    0: Failed to read source code from C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\product-grid-item.tsx
+    1: The system cannot find the file specified. (os error 2)
+
+Import trace for requested module:
+./components/pos/product-grid-item.tsx
+./components/pos/pos-workspace.tsx
+ ⨯ ./components/pos/pos-workspace.tsx
+Error:   [31mx[0m Expected '</', got 'jsx text (
+  [31m|[0m
+  [31m|[0m       )'
+      ,-[[36;1;4mC:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx[0m:2371:1]
+ [2m2368[0m |                 </button>
+ [2m2369[0m |               ) : null}
+ [2m2370[0m |             </footer>
+ [2m2371[0m | [35;1m,[0m[35;1m-[0m[35;1m>[0m       </div>
+ [2m2372[0m | [35;1m|[0m   
+ [2m2373[0m | [35;1m`[0m[35;1m-[0m[35;1m>[0m       {false && isMobileViewport && items.length > 0 && panelState !== "success" && (
+ [2m2374[0m |             <>
+ [2m2375[0m |               {activeMobileTab === "products" && (
+ [2m2375[0m |                 <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur-md border-t border-slate-200 z-40 pb-safe shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
+      `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/pos/pos-workspace.tsx
+ ⨯ ./components/pos/pos-workspace.tsx
+Error:   [31mx[0m Unterminated regexp literal
+      ,-[[36;1;4mC:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx[0m:2025:1]
+ [2m2022[0m |                     </div>
+ [2m2023[0m |                   ) : null}
+ [2m2024[0m |                 </div>
+ [2m2025[0m |               </React.Fragment>
+      : [35;1m               ^^^^^^^^^^^^^^^^[0m
+ [2m2026[0m |             ) : null}
+ [2m2027[0m |           </SectionCard>
+ [2m2028[0m |         </aside>
+      `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/pos/pos-workspace.tsx

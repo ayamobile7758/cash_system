@@ -1,0 +1,31 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - complementary "التنقل داخل مساحات التشغيل" [ref=e3]:
+      - link "Aya" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: Aya
+      - navigation "التنقل داخل مساحات التشغيل"
+      - link "تسجيل الدخول" [ref=e8] [cursor=pointer]:
+        - /url: /
+    - generic [ref=e9]:
+      - banner [ref=e10]:
+        - heading "مساحات التشغيل" [level=1] [ref=e14]
+        - generic [ref=e15]:
+          - button "بحث" [ref=e16] [cursor=pointer]:
+            - img [ref=e17]
+          - generic "سجل الدخول للوصول إلى مساحات التشغيل المناسبة." [ref=e20]:
+            - generic [ref=e21]: سا
+            - generic [ref=e22]:
+              - strong [ref=e23]: زائر
+              - generic [ref=e24]: سجل الدخول للوصول إلى مساحات التشغيل المناسبة.
+      - main [ref=e25]:
+        - generic [ref=e26]:
+          - generic [ref=e28]:
+            - paragraph [ref=e29]: يتطلب تسجيل الدخول
+            - heading "يلزم تسجيل الدخول لفتح نقطة البيع" [level=1] [ref=e30]
+          - generic [ref=e32]:
+            - heading "نقطة البيع متاحة بعد تسجيل الدخول" [level=2] [ref=e33]
+            - paragraph [ref=e34]: سجّل الدخول بحساب مخصص للبيع حتى تتمكن من إدارة السلة وتأكيد العملية.
+            - link "العودة إلى الصفحة الرئيسية" [ref=e35] [cursor=pointer]:
+              - /url: /
+  - region "Notifications alt+T"

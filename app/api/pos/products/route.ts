@@ -23,11 +23,25 @@ const PRODUCT_COLUMNS = [
   "created_by"
 ].join(", ");
 
+const SEARCH_PRODUCT_COLUMNS = [
+  "id",
+  "name",
+  "category",
+  "sku",
+  "description",
+  "sale_price",
+  "stock_quantity",
+  "min_stock_level",
+  "track_stock",
+  "is_quick_add",
+  "is_active"
+].join(", ");
+
 const PAGE_SIZE = 150;
 
 type ProductsResponseData = {
   items: PosProduct[];
-  totalCount: number;
+  totalCount: number | null;
   hasMore: boolean;
 };
 
@@ -59,12 +73,14 @@ export async function GET(request: Request) {
     const category = (url.searchParams.get("category") ?? "all").trim();
     const page = toPositiveInteger(url.searchParams.get("page"), 0, 100);
 
+    const shouldSkipCount = search.length > 0;
+    const selectOptions = shouldSkipCount ? undefined : { count: "exact" as const };
+    const selectColumns = shouldSkipCount ? SEARCH_PRODUCT_COLUMNS : PRODUCT_COLUMNS;
+
     let query = authorization.supabase
       .from("products")
-      .select(PRODUCT_COLUMNS, { count: "exact" })
-      .eq("is_active", true)
-      .order("is_quick_add", { ascending: false })
-      .order("name", { ascending: true });
+      .select(selectColumns, selectOptions)
+      .eq("is_active", true);
 
     if (category && category !== "all") {
       query = query.eq("category", category);
@@ -72,7 +88,14 @@ export async function GET(request: Request) {
 
     if (search.length > 0) {
       const pattern = `%${search}%`;
-      query = query.or(`name.ilike.${pattern},sku.ilike.${pattern}`);
+      const shouldSearchSku =
+        !search.includes(" ") && (/[0-9]/.test(search) || search.includes("-") || search.includes("_"));
+
+      query = shouldSearchSku
+        ? query.or(`name.ilike.${pattern},sku.ilike.${pattern}`)
+        : query.ilike("name", pattern);
+    } else {
+      query = query.order("is_quick_add", { ascending: false }).order("name", { ascending: true });
     }
 
     const { data, error, count } = await query.range(
@@ -85,7 +108,7 @@ export async function GET(request: Request) {
     }
 
     const items = ((data ?? []) as unknown) as PosProduct[];
-    const totalCount = typeof count === "number" ? count : items.length;
+    const totalCount = shouldSkipCount ? null : typeof count === "number" ? count : items.length;
 
     return NextResponse.json<StandardEnvelope<ProductsResponseData>>(
       {
@@ -93,7 +116,9 @@ export async function GET(request: Request) {
         data: {
           items,
           totalCount,
-          hasMore: (page + 1) * PAGE_SIZE < totalCount
+          hasMore: shouldSkipCount
+            ? items.length === PAGE_SIZE
+            : (page + 1) * PAGE_SIZE < (totalCount ?? items.length)
         }
       },
       { status: 200 }

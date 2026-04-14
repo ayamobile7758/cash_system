@@ -1,0 +1,1376 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - navigation "التنقل السريع" [ref=e1844]:
+      - link "البيع" [ref=e1845] [cursor=pointer]:
+        - /url: /pos
+        - img [ref=e1847]
+        - generic [ref=e1851]: البيع
+      - link "المنتجات" [ref=e1852] [cursor=pointer]:
+        - /url: /products
+        - img [ref=e1854]
+        - generic [ref=e1858]: المنتجات
+      - link "الفواتير" [ref=e1859] [cursor=pointer]:
+        - /url: /invoices
+        - img [ref=e1861]
+        - generic [ref=e1863]: الفواتير
+      - link "الجرد" [ref=e1864] [cursor=pointer]:
+        - /url: /inventory
+        - img [ref=e1866]
+        - generic [ref=e1872]: الجرد
+      - button "القائمة" [ref=e1873] [cursor=pointer]:
+        - img [ref=e1875]
+        - generic [ref=e1876]: القائمة
+    - generic [ref=e100]:
+      - banner [ref=e101]:
+        - generic [ref=e102]:
+          - button "فتح القائمة" [ref=e1877] [cursor=pointer]:
+            - img [ref=e1878]
+          - heading "نقطة البيع" [level=1] [ref=e105]
+        - generic [ref=e106]:
+          - button "بحث" [ref=e107] [cursor=pointer]:
+            - img [ref=e108]
+          - link "الإشعارات (2928)" [ref=e111] [cursor=pointer]:
+            - /url: /notifications
+            - img [ref=e112]
+            - generic [ref=e115]: "2928"
+          - generic "Ahmad Admin" [ref=e116]:
+            - generic [ref=e117]: AA
+      - main [ref=e121]:
+        - generic [ref=e123]:
+          - generic [ref=e124]:
+            - generic [ref=e125]:
+              - heading "نقطة البيع" [level=1] [ref=e126]
+              - text: الصندوق
+            - generic [ref=e127]:
+              - button "بيع جديد" [ref=e128] [cursor=pointer]:
+                - img [ref=e129]
+                - text: بيع جديد
+              - button "معلقة٠" [ref=e130] [cursor=pointer]
+          - navigation "تبويبات نقطة البيع" [ref=e1879]:
+            - button "المنتجات" [pressed] [ref=e1880] [cursor=pointer]:
+              - generic [ref=e1881]: المنتجات
+            - button "السلة ٠ • ‏٠٫٠٠٠ د.أ.‏" [ref=e1882] [cursor=pointer]:
+              - generic [ref=e1883]: السلة
+              - strong [ref=e1884]: ٠ • ‏٠٫٠٠٠ د.أ.‏
+          - generic [ref=e135]:
+            - generic [ref=e136]:
+              - generic [ref=e137]:
+                - generic [ref=e138]:
+                  - img [ref=e139]
+                  - searchbox [ref=e142]
+                - button "تحديث المنتجات" [ref=e143] [cursor=pointer]:
+                  - img [ref=e144]
+                - generic [ref=e149]:
+                  - button "سلال معلقة" [ref=e150] [cursor=pointer]
+                  - button "بيع جديد" [ref=e151] [cursor=pointer]:
+                    - img [ref=e152]
+                    - text: بيع جديد
+                - generic [ref=e153]:
+                  - button "عرض مدمج" [active] [ref=e154] [cursor=pointer]:
+                    - img [ref=e155]
+                  - button "عرض بالصور" [ref=e156] [cursor=pointer]:
+                    - img [ref=e157]
+              - generic [ref=e161]:
+                - button "الكل" [pressed] [ref=e162] [cursor=pointer]
+                - button "أجهزة" [ref=e163] [cursor=pointer]
+                - button "إكسسوارات" [ref=e164] [cursor=pointer]
+                - button "شرائح" [ref=e165] [cursor=pointer]
+                - button "خدمات صيانة" [ref=e166] [cursor=pointer]
+                - button "خدمات عامة" [ref=e167] [cursor=pointer]
+            - generic [ref=e223]:
+              - generic [ref=e224]:
+                - generic "CODEX QA POS 20260326205006" [ref=e225] [cursor=pointer]:
+                  - generic [ref=e226]:
+                    - img [ref=e228]
+                    - generic [ref=e230]:
+                      - generic [ref=e231]: CODEX QA POS 20260326205006
+                      - generic [ref=e1885]: QA-POS-26205006
+                    - generic [ref=e232]:
+                      - generic [ref=e233]: ‏١٠٫٠٠٠ د.أ.‏
+                      - generic [ref=e234]: نفد
+                  - generic [ref=e236]: نفد
+                - generic "DBG-1775036714242-A" [ref=e237] [cursor=pointer]:
+                  - generic [ref=e238]:
+                    - img [ref=e240]
+                    - generic [ref=e243]: DBG-1775036714242-A
+                    - generic [ref=e244]:
+                      - generic [ref=e245]: ‏٣٠٫٠٠٠ د.أ.‏
+                      - generic [ref=e246]: ١٠ متوفر
+                - generic "DBG-1775036714242-B" [ref=e247] [cursor=pointer]:
+                  - generic [ref=e248]:
+                    - img [ref=e250]
+                    - generic [ref=e253]: DBG-1775036714242-B
+                    - generic [ref=e254]:
+                      - generic [ref=e255]: ‏٤٠٫٠٠٠ د.أ.‏
+                      - generic [ref=e256]: ١٠ متوفر
+                - generic "DBG-1775036769059-A" [ref=e257] [cursor=pointer]:
+                  - generic [ref=e258]:
+                    - img [ref=e260]
+                    - generic [ref=e263]: DBG-1775036769059-A
+                    - generic [ref=e264]:
+                      - generic [ref=e265]: ‏٣٠٫٠٠٠ د.أ.‏
+                      - generic [ref=e266]: ١٢ متوفر
+                - generic "DBG-1775036769059-B" [ref=e267] [cursor=pointer]:
+                  - generic [ref=e268]:
+                    - img [ref=e270]
+                    - generic [ref=e273]: DBG-1775036769059-B
+                    - generic [ref=e274]:
+                      - generic [ref=e275]: ‏٤٠٫٠٠٠ د.أ.‏
+                      - generic [ref=e276]: ١٢ متوفر
+                - generic "POSCHK-1775050103309-01" [ref=e277] [cursor=pointer]:
+                  - generic [ref=e278]:
+                    - img [ref=e280]
+                    - generic [ref=e282]:
+                      - generic [ref=e283]: POSCHK-1775050103309-01
+                      - generic [ref=e1886]: POSCHK-1775050103309-1
+                    - generic [ref=e284]:
+                      - generic [ref=e285]: ‏١٠٫٠٠٠ د.أ.‏
+                      - generic [ref=e286]: ٢٥ متوفر
+                - generic "POSCHK-1775050103309-02" [ref=e287] [cursor=pointer]:
+                  - generic [ref=e288]:
+                    - img [ref=e290]
+                    - generic [ref=e292]:
+                      - generic [ref=e293]: POSCHK-1775050103309-02
+                      - generic [ref=e1887]: POSCHK-1775050103309-2
+                    - generic [ref=e294]:
+                      - generic [ref=e295]: ‏١١٫٠٠٠ د.أ.‏
+                      - generic [ref=e296]: ٢٥ متوفر
+                - generic "POSCHK-1775050103309-03" [ref=e297] [cursor=pointer]:
+                  - generic [ref=e298]:
+                    - img [ref=e300]
+                    - generic [ref=e302]:
+                      - generic [ref=e303]: POSCHK-1775050103309-03
+                      - generic [ref=e1888]: POSCHK-1775050103309-3
+                    - generic [ref=e304]:
+                      - generic [ref=e305]: ‏١٢٫٠٠٠ د.أ.‏
+                      - generic [ref=e306]: ٢٥ متوفر
+                - generic "POSCHK-1775050103309-04" [ref=e307] [cursor=pointer]:
+                  - generic [ref=e308]:
+                    - img [ref=e310]
+                    - generic [ref=e312]:
+                      - generic [ref=e313]: POSCHK-1775050103309-04
+                      - generic [ref=e1889]: POSCHK-1775050103309-4
+                    - generic [ref=e314]:
+                      - generic [ref=e315]: ‏١٣٫٠٠٠ د.أ.‏
+                      - generic [ref=e316]: ٢٥ متوفر
+                - generic "POSCHK-1775050103309-05" [ref=e317] [cursor=pointer]:
+                  - generic [ref=e318]:
+                    - img [ref=e320]
+                    - generic [ref=e322]:
+                      - generic [ref=e323]: POSCHK-1775050103309-05
+                      - generic [ref=e1890]: POSCHK-1775050103309-5
+                    - generic [ref=e324]:
+                      - generic [ref=e325]: ‏١٤٫٠٠٠ د.أ.‏
+                      - generic [ref=e326]: ٢٥ متوفر
+                - generic "POSCHK-1775050103309-06" [ref=e327] [cursor=pointer]:
+                  - generic [ref=e328]:
+                    - img [ref=e330]
+                    - generic [ref=e332]:
+                      - generic [ref=e333]: POSCHK-1775050103309-06
+                      - generic [ref=e1891]: POSCHK-1775050103309-6
+                    - generic [ref=e334]:
+                      - generic [ref=e335]: ‏١٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e336]: ٢٥ متوفر
+                - generic "POSCHK-1775050103309-07" [ref=e337] [cursor=pointer]:
+                  - generic [ref=e338]:
+                    - img [ref=e340]
+                    - generic [ref=e342]:
+                      - generic [ref=e343]: POSCHK-1775050103309-07
+                      - generic [ref=e1892]: POSCHK-1775050103309-7
+                    - generic [ref=e344]:
+                      - generic [ref=e345]: ‏١٦٫٠٠٠ د.أ.‏
+                      - generic [ref=e346]: ٢٥ متوفر
+                - generic "POSCHK-1775050103309-08" [ref=e347] [cursor=pointer]:
+                  - generic [ref=e348]:
+                    - img [ref=e350]
+                    - generic [ref=e352]:
+                      - generic [ref=e353]: POSCHK-1775050103309-08
+                      - generic [ref=e1893]: POSCHK-1775050103309-8
+                    - generic [ref=e354]:
+                      - generic [ref=e355]: ‏١٧٫٠٠٠ د.أ.‏
+                      - generic [ref=e356]: ٢٥ متوفر
+                - generic "POSCHK-1775050302713-01" [ref=e357] [cursor=pointer]:
+                  - generic [ref=e358]:
+                    - img [ref=e360]
+                    - generic [ref=e362]:
+                      - generic [ref=e363]: POSCHK-1775050302713-01
+                      - generic [ref=e1894]: POSCHK-1775050302713-1
+                    - generic [ref=e364]:
+                      - generic [ref=e365]: ‏١٠٫٠٠٠ د.أ.‏
+                      - generic [ref=e366]: ٢٥ متوفر
+                - generic "POSCHK-1775050302713-02" [ref=e367] [cursor=pointer]:
+                  - generic [ref=e368]:
+                    - img [ref=e370]
+                    - generic [ref=e372]:
+                      - generic [ref=e373]: POSCHK-1775050302713-02
+                      - generic [ref=e1895]: POSCHK-1775050302713-2
+                    - generic [ref=e374]:
+                      - generic [ref=e375]: ‏١١٫٠٠٠ د.أ.‏
+                      - generic [ref=e376]: ٢٥ متوفر
+                - generic "POSCHK-1775050302713-03" [ref=e377] [cursor=pointer]:
+                  - generic [ref=e378]:
+                    - img [ref=e380]
+                    - generic [ref=e382]:
+                      - generic [ref=e383]: POSCHK-1775050302713-03
+                      - generic [ref=e1896]: POSCHK-1775050302713-3
+                    - generic [ref=e384]:
+                      - generic [ref=e385]: ‏١٢٫٠٠٠ د.أ.‏
+                      - generic [ref=e386]: ٢٥ متوفر
+                - generic "POSCHK-1775050302713-04" [ref=e387] [cursor=pointer]:
+                  - generic [ref=e388]:
+                    - img [ref=e390]
+                    - generic [ref=e392]:
+                      - generic [ref=e393]: POSCHK-1775050302713-04
+                      - generic [ref=e1897]: POSCHK-1775050302713-4
+                    - generic [ref=e394]:
+                      - generic [ref=e395]: ‏١٣٫٠٠٠ د.أ.‏
+                      - generic [ref=e396]: ٢٥ متوفر
+                - generic "POSCHK-1775050302713-05" [ref=e397] [cursor=pointer]:
+                  - generic [ref=e398]:
+                    - img [ref=e400]
+                    - generic [ref=e402]:
+                      - generic [ref=e403]: POSCHK-1775050302713-05
+                      - generic [ref=e1898]: POSCHK-1775050302713-5
+                    - generic [ref=e404]:
+                      - generic [ref=e405]: ‏١٤٫٠٠٠ د.أ.‏
+                      - generic [ref=e406]: ٢٥ متوفر
+                - generic "POSCHK-1775050302713-06" [ref=e407] [cursor=pointer]:
+                  - generic [ref=e408]:
+                    - img [ref=e410]
+                    - generic [ref=e412]:
+                      - generic [ref=e413]: POSCHK-1775050302713-06
+                      - generic [ref=e1899]: POSCHK-1775050302713-6
+                    - generic [ref=e414]:
+                      - generic [ref=e415]: ‏١٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e416]: ٢٥ متوفر
+                - generic "POSCHK-1775050302713-07" [ref=e417] [cursor=pointer]:
+                  - generic [ref=e418]:
+                    - img [ref=e420]
+                    - generic [ref=e422]:
+                      - generic [ref=e423]: POSCHK-1775050302713-07
+                      - generic [ref=e1900]: POSCHK-1775050302713-7
+                    - generic [ref=e424]:
+                      - generic [ref=e425]: ‏١٦٫٠٠٠ د.أ.‏
+                      - generic [ref=e426]: ٢٥ متوفر
+                - generic "POSCHK-1775050302713-08" [ref=e427] [cursor=pointer]:
+                  - generic [ref=e428]:
+                    - img [ref=e430]
+                    - generic [ref=e432]:
+                      - generic [ref=e433]: POSCHK-1775050302713-08
+                      - generic [ref=e1901]: POSCHK-1775050302713-8
+                    - generic [ref=e434]:
+                      - generic [ref=e435]: ‏١٧٫٠٠٠ د.أ.‏
+                      - generic [ref=e436]: ٢٥ متوفر
+                - generic "POSCHK-1775050430421-01" [ref=e437] [cursor=pointer]:
+                  - generic [ref=e438]:
+                    - img [ref=e440]
+                    - generic [ref=e442]:
+                      - generic [ref=e443]: POSCHK-1775050430421-01
+                      - generic [ref=e1902]: POSCHK-1775050430421-1
+                    - generic [ref=e444]:
+                      - generic [ref=e445]: ‏١٠٫٠٠٠ د.أ.‏
+                      - generic [ref=e446]: ٢٥ متوفر
+                - generic "POSCHK-1775050430421-02" [ref=e447] [cursor=pointer]:
+                  - generic [ref=e448]:
+                    - img [ref=e450]
+                    - generic [ref=e452]:
+                      - generic [ref=e453]: POSCHK-1775050430421-02
+                      - generic [ref=e1903]: POSCHK-1775050430421-2
+                    - generic [ref=e454]:
+                      - generic [ref=e455]: ‏١١٫٠٠٠ د.أ.‏
+                      - generic [ref=e456]: ٢٥ متوفر
+                - generic "POSCHK-1775050430421-03" [ref=e457] [cursor=pointer]:
+                  - generic [ref=e458]:
+                    - img [ref=e460]
+                    - generic [ref=e462]:
+                      - generic [ref=e463]: POSCHK-1775050430421-03
+                      - generic [ref=e1904]: POSCHK-1775050430421-3
+                    - generic [ref=e464]:
+                      - generic [ref=e465]: ‏١٢٫٠٠٠ د.أ.‏
+                      - generic [ref=e466]: ٢٥ متوفر
+                - generic "POSCHK-1775050430421-04" [ref=e467] [cursor=pointer]:
+                  - generic [ref=e468]:
+                    - img [ref=e470]
+                    - generic [ref=e472]:
+                      - generic [ref=e473]: POSCHK-1775050430421-04
+                      - generic [ref=e1905]: POSCHK-1775050430421-4
+                    - generic [ref=e474]:
+                      - generic [ref=e475]: ‏١٣٫٠٠٠ د.أ.‏
+                      - generic [ref=e476]: ٢٥ متوفر
+                - generic "POSCHK-1775050430421-05" [ref=e477] [cursor=pointer]:
+                  - generic [ref=e478]:
+                    - img [ref=e480]
+                    - generic [ref=e482]:
+                      - generic [ref=e483]: POSCHK-1775050430421-05
+                      - generic [ref=e1906]: POSCHK-1775050430421-5
+                    - generic [ref=e484]:
+                      - generic [ref=e485]: ‏١٤٫٠٠٠ د.أ.‏
+                      - generic [ref=e486]: ٢٥ متوفر
+                - generic "POSCHK-1775050430421-06" [ref=e487] [cursor=pointer]:
+                  - generic [ref=e488]:
+                    - img [ref=e490]
+                    - generic [ref=e492]:
+                      - generic [ref=e493]: POSCHK-1775050430421-06
+                      - generic [ref=e1907]: POSCHK-1775050430421-6
+                    - generic [ref=e494]:
+                      - generic [ref=e495]: ‏١٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e496]: ٢٥ متوفر
+                - generic "POSCHK-1775050430421-07" [ref=e497] [cursor=pointer]:
+                  - generic [ref=e498]:
+                    - img [ref=e500]
+                    - generic [ref=e502]:
+                      - generic [ref=e503]: POSCHK-1775050430421-07
+                      - generic [ref=e1908]: POSCHK-1775050430421-7
+                    - generic [ref=e504]:
+                      - generic [ref=e505]: ‏١٦٫٠٠٠ د.أ.‏
+                      - generic [ref=e506]: ٢٥ متوفر
+                - generic "POSCHK-1775050430421-08" [ref=e507] [cursor=pointer]:
+                  - generic [ref=e508]:
+                    - img [ref=e510]
+                    - generic [ref=e512]:
+                      - generic [ref=e513]: POSCHK-1775050430421-08
+                      - generic [ref=e1909]: POSCHK-1775050430421-8
+                    - generic [ref=e514]:
+                      - generic [ref=e515]: ‏١٧٫٠٠٠ د.أ.‏
+                      - generic [ref=e516]: ٢٥ متوفر
+                - generic "POSCHK-1775056834655-01" [ref=e517] [cursor=pointer]:
+                  - generic [ref=e518]:
+                    - img [ref=e520]
+                    - generic [ref=e522]:
+                      - generic [ref=e523]: POSCHK-1775056834655-01
+                      - generic [ref=e1910]: POSCHK-1775056834655-1
+                    - generic [ref=e524]:
+                      - generic [ref=e525]: ‏١٠٫٠٠٠ د.أ.‏
+                      - generic [ref=e526]: ٢٥ متوفر
+                - generic "POSCHK-1775056834655-02" [ref=e527] [cursor=pointer]:
+                  - generic [ref=e528]:
+                    - img [ref=e530]
+                    - generic [ref=e532]:
+                      - generic [ref=e533]: POSCHK-1775056834655-02
+                      - generic [ref=e1911]: POSCHK-1775056834655-2
+                    - generic [ref=e534]:
+                      - generic [ref=e535]: ‏١١٫٠٠٠ د.أ.‏
+                      - generic [ref=e536]: ٢٥ متوفر
+                - generic "POSCHK-1775056834655-03" [ref=e537] [cursor=pointer]:
+                  - generic [ref=e538]:
+                    - img [ref=e540]
+                    - generic [ref=e542]:
+                      - generic [ref=e543]: POSCHK-1775056834655-03
+                      - generic [ref=e1912]: POSCHK-1775056834655-3
+                    - generic [ref=e544]:
+                      - generic [ref=e545]: ‏١٢٫٠٠٠ د.أ.‏
+                      - generic [ref=e546]: ٢٥ متوفر
+                - generic "POSCHK-1775056834655-04" [ref=e547] [cursor=pointer]:
+                  - generic [ref=e548]:
+                    - img [ref=e550]
+                    - generic [ref=e552]:
+                      - generic [ref=e553]: POSCHK-1775056834655-04
+                      - generic [ref=e1913]: POSCHK-1775056834655-4
+                    - generic [ref=e554]:
+                      - generic [ref=e555]: ‏١٣٫٠٠٠ د.أ.‏
+                      - generic [ref=e556]: ٢٥ متوفر
+                - generic "POSCHK-1775056834655-05" [ref=e557] [cursor=pointer]:
+                  - generic [ref=e558]:
+                    - img [ref=e560]
+                    - generic [ref=e562]:
+                      - generic [ref=e563]: POSCHK-1775056834655-05
+                      - generic [ref=e1914]: POSCHK-1775056834655-5
+                    - generic [ref=e564]:
+                      - generic [ref=e565]: ‏١٤٫٠٠٠ د.أ.‏
+                      - generic [ref=e566]: ٢٥ متوفر
+                - generic "POSCHK-1775056834655-06" [ref=e567] [cursor=pointer]:
+                  - generic [ref=e568]:
+                    - img [ref=e570]
+                    - generic [ref=e572]:
+                      - generic [ref=e573]: POSCHK-1775056834655-06
+                      - generic [ref=e1915]: POSCHK-1775056834655-6
+                    - generic [ref=e574]:
+                      - generic [ref=e575]: ‏١٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e576]: ٢٥ متوفر
+                - generic "POSCHK-1775056834655-07" [ref=e577] [cursor=pointer]:
+                  - generic [ref=e578]:
+                    - img [ref=e580]
+                    - generic [ref=e582]:
+                      - generic [ref=e583]: POSCHK-1775056834655-07
+                      - generic [ref=e1916]: POSCHK-1775056834655-7
+                    - generic [ref=e584]:
+                      - generic [ref=e585]: ‏١٦٫٠٠٠ د.أ.‏
+                      - generic [ref=e586]: ٢٥ متوفر
+                - generic "POSCHK-1775056834655-08" [ref=e587] [cursor=pointer]:
+                  - generic [ref=e588]:
+                    - img [ref=e590]
+                    - generic [ref=e592]:
+                      - generic [ref=e593]: POSCHK-1775056834655-08
+                      - generic [ref=e1917]: POSCHK-1775056834655-8
+                    - generic [ref=e594]:
+                      - generic [ref=e595]: ‏١٧٫٠٠٠ د.أ.‏
+                      - generic [ref=e596]: ٢٥ متوفر
+                - generic "POSCHK-1775057171831-01" [ref=e597] [cursor=pointer]:
+                  - generic [ref=e598]:
+                    - img [ref=e600]
+                    - generic [ref=e602]:
+                      - generic [ref=e603]: POSCHK-1775057171831-01
+                      - generic [ref=e1918]: POSCHK-1775057171831-1
+                    - generic [ref=e604]:
+                      - generic [ref=e605]: ‏١٠٫٠٠٠ د.أ.‏
+                      - generic [ref=e606]: ٢٥ متوفر
+                - generic "POSCHK-1775057171831-02" [ref=e607] [cursor=pointer]:
+                  - generic [ref=e608]:
+                    - img [ref=e610]
+                    - generic [ref=e612]:
+                      - generic [ref=e613]: POSCHK-1775057171831-02
+                      - generic [ref=e1919]: POSCHK-1775057171831-2
+                    - generic [ref=e614]:
+                      - generic [ref=e615]: ‏١١٫٠٠٠ د.أ.‏
+                      - generic [ref=e616]: ٢٥ متوفر
+                - generic "POSCHK-1775057171831-03" [ref=e617] [cursor=pointer]:
+                  - generic [ref=e618]:
+                    - img [ref=e620]
+                    - generic [ref=e622]:
+                      - generic [ref=e623]: POSCHK-1775057171831-03
+                      - generic [ref=e1920]: POSCHK-1775057171831-3
+                    - generic [ref=e624]:
+                      - generic [ref=e625]: ‏١٢٫٠٠٠ د.أ.‏
+                      - generic [ref=e626]: ٢٥ متوفر
+                - generic "POSCHK-1775057171831-04" [ref=e627] [cursor=pointer]:
+                  - generic [ref=e628]:
+                    - img [ref=e630]
+                    - generic [ref=e632]:
+                      - generic [ref=e633]: POSCHK-1775057171831-04
+                      - generic [ref=e1921]: POSCHK-1775057171831-4
+                    - generic [ref=e634]:
+                      - generic [ref=e635]: ‏١٣٫٠٠٠ د.أ.‏
+                      - generic [ref=e636]: ٢٥ متوفر
+                - generic "POSCHK-1775057171831-05" [ref=e637] [cursor=pointer]:
+                  - generic [ref=e638]:
+                    - img [ref=e640]
+                    - generic [ref=e642]:
+                      - generic [ref=e643]: POSCHK-1775057171831-05
+                      - generic [ref=e1922]: POSCHK-1775057171831-5
+                    - generic [ref=e644]:
+                      - generic [ref=e645]: ‏١٤٫٠٠٠ د.أ.‏
+                      - generic [ref=e646]: ٢٥ متوفر
+                - generic "POSCHK-1775057171831-06" [ref=e647] [cursor=pointer]:
+                  - generic [ref=e648]:
+                    - img [ref=e650]
+                    - generic [ref=e652]:
+                      - generic [ref=e653]: POSCHK-1775057171831-06
+                      - generic [ref=e1923]: POSCHK-1775057171831-6
+                    - generic [ref=e654]:
+                      - generic [ref=e655]: ‏١٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e656]: ٢٥ متوفر
+                - generic "POSCHK-1775057171831-07" [ref=e657] [cursor=pointer]:
+                  - generic [ref=e658]:
+                    - img [ref=e660]
+                    - generic [ref=e662]:
+                      - generic [ref=e663]: POSCHK-1775057171831-07
+                      - generic [ref=e1924]: POSCHK-1775057171831-7
+                    - generic [ref=e664]:
+                      - generic [ref=e665]: ‏١٦٫٠٠٠ د.أ.‏
+                      - generic [ref=e666]: ٢٥ متوفر
+                - generic "POSCHK-1775057171831-08" [ref=e667] [cursor=pointer]:
+                  - generic [ref=e668]:
+                    - img [ref=e670]
+                    - generic [ref=e672]:
+                      - generic [ref=e673]: POSCHK-1775057171831-08
+                      - generic [ref=e1925]: POSCHK-1775057171831-8
+                    - generic [ref=e674]:
+                      - generic [ref=e675]: ‏١٧٫٠٠٠ د.أ.‏
+                      - generic [ref=e676]: ٢٥ متوفر
+                - generic "POSCHK-1775057725125-01" [ref=e677] [cursor=pointer]:
+                  - generic [ref=e678]:
+                    - img [ref=e680]
+                    - generic [ref=e682]:
+                      - generic [ref=e683]: POSCHK-1775057725125-01
+                      - generic [ref=e1926]: POSCHK-1775057725125-1
+                    - generic [ref=e684]:
+                      - generic [ref=e685]: ‏١٠٫٠٠٠ د.أ.‏
+                      - generic [ref=e686]: ٢٥ متوفر
+                - generic "POSCHK-1775057725125-02" [ref=e687] [cursor=pointer]:
+                  - generic [ref=e688]:
+                    - img [ref=e690]
+                    - generic [ref=e692]:
+                      - generic [ref=e693]: POSCHK-1775057725125-02
+                      - generic [ref=e1927]: POSCHK-1775057725125-2
+                    - generic [ref=e694]:
+                      - generic [ref=e695]: ‏١١٫٠٠٠ د.أ.‏
+                      - generic [ref=e696]: ٢٥ متوفر
+                - generic "POSCHK-1775057725125-03" [ref=e697] [cursor=pointer]:
+                  - generic [ref=e698]:
+                    - img [ref=e700]
+                    - generic [ref=e702]:
+                      - generic [ref=e703]: POSCHK-1775057725125-03
+                      - generic [ref=e1928]: POSCHK-1775057725125-3
+                    - generic [ref=e704]:
+                      - generic [ref=e705]: ‏١٢٫٠٠٠ د.أ.‏
+                      - generic [ref=e706]: ٢٥ متوفر
+                - generic "POSCHK-1775057725125-04" [ref=e707] [cursor=pointer]:
+                  - generic [ref=e708]:
+                    - img [ref=e710]
+                    - generic [ref=e712]:
+                      - generic [ref=e713]: POSCHK-1775057725125-04
+                      - generic [ref=e1929]: POSCHK-1775057725125-4
+                    - generic [ref=e714]:
+                      - generic [ref=e715]: ‏١٣٫٠٠٠ د.أ.‏
+                      - generic [ref=e716]: ٢٥ متوفر
+                - generic "POSCHK-1775057725125-05" [ref=e717] [cursor=pointer]:
+                  - generic [ref=e718]:
+                    - img [ref=e720]
+                    - generic [ref=e722]:
+                      - generic [ref=e723]: POSCHK-1775057725125-05
+                      - generic [ref=e1930]: POSCHK-1775057725125-5
+                    - generic [ref=e724]:
+                      - generic [ref=e725]: ‏١٤٫٠٠٠ د.أ.‏
+                      - generic [ref=e726]: ٢٥ متوفر
+                - generic "POSCHK-1775057725125-06" [ref=e727] [cursor=pointer]:
+                  - generic [ref=e728]:
+                    - img [ref=e730]
+                    - generic [ref=e732]:
+                      - generic [ref=e733]: POSCHK-1775057725125-06
+                      - generic [ref=e1931]: POSCHK-1775057725125-6
+                    - generic [ref=e734]:
+                      - generic [ref=e735]: ‏١٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e736]: ٢٥ متوفر
+                - generic "POSCHK-1775057725125-07" [ref=e737] [cursor=pointer]:
+                  - generic [ref=e738]:
+                    - img [ref=e740]
+                    - generic [ref=e742]:
+                      - generic [ref=e743]: POSCHK-1775057725125-07
+                      - generic [ref=e1932]: POSCHK-1775057725125-7
+                    - generic [ref=e744]:
+                      - generic [ref=e745]: ‏١٦٫٠٠٠ د.أ.‏
+                      - generic [ref=e746]: ٢٥ متوفر
+                - generic "POSCHK-1775057725125-08" [ref=e747] [cursor=pointer]:
+                  - generic [ref=e748]:
+                    - img [ref=e750]
+                    - generic [ref=e752]:
+                      - generic [ref=e753]: POSCHK-1775057725125-08
+                      - generic [ref=e1933]: POSCHK-1775057725125-8
+                    - generic [ref=e754]:
+                      - generic [ref=e755]: ‏١٧٫٠٠٠ د.أ.‏
+                      - generic [ref=e756]: ٢٥ متوفر
+                - generic "POSCHK-1775057860235-01" [ref=e757] [cursor=pointer]:
+                  - generic [ref=e758]:
+                    - img [ref=e760]
+                    - generic [ref=e762]:
+                      - generic [ref=e763]: POSCHK-1775057860235-01
+                      - generic [ref=e1934]: POSCHK-1775057860235-1
+                    - generic [ref=e764]:
+                      - generic [ref=e765]: ‏١٠٫٠٠٠ د.أ.‏
+                      - generic [ref=e766]: ٢٥ متوفر
+                - generic "POSCHK-1775057860235-02" [ref=e767] [cursor=pointer]:
+                  - generic [ref=e768]:
+                    - img [ref=e770]
+                    - generic [ref=e772]:
+                      - generic [ref=e773]: POSCHK-1775057860235-02
+                      - generic [ref=e1935]: POSCHK-1775057860235-2
+                    - generic [ref=e774]:
+                      - generic [ref=e775]: ‏١١٫٠٠٠ د.أ.‏
+                      - generic [ref=e776]: ٢٥ متوفر
+                - generic "POSCHK-1775057860235-03" [ref=e777] [cursor=pointer]:
+                  - generic [ref=e778]:
+                    - img [ref=e780]
+                    - generic [ref=e782]:
+                      - generic [ref=e783]: POSCHK-1775057860235-03
+                      - generic [ref=e1936]: POSCHK-1775057860235-3
+                    - generic [ref=e784]:
+                      - generic [ref=e785]: ‏١٢٫٠٠٠ د.أ.‏
+                      - generic [ref=e786]: ٢٥ متوفر
+                - generic "POSCHK-1775057860235-04" [ref=e787] [cursor=pointer]:
+                  - generic [ref=e788]:
+                    - img [ref=e790]
+                    - generic [ref=e792]:
+                      - generic [ref=e793]: POSCHK-1775057860235-04
+                      - generic [ref=e1937]: POSCHK-1775057860235-4
+                    - generic [ref=e794]:
+                      - generic [ref=e795]: ‏١٣٫٠٠٠ د.أ.‏
+                      - generic [ref=e796]: ٢٥ متوفر
+                - generic "POSCHK-1775057860235-05" [ref=e797] [cursor=pointer]:
+                  - generic [ref=e798]:
+                    - img [ref=e800]
+                    - generic [ref=e802]:
+                      - generic [ref=e803]: POSCHK-1775057860235-05
+                      - generic [ref=e1938]: POSCHK-1775057860235-5
+                    - generic [ref=e804]:
+                      - generic [ref=e805]: ‏١٤٫٠٠٠ د.أ.‏
+                      - generic [ref=e806]: ٢٥ متوفر
+                - generic "POSCHK-1775057860235-06" [ref=e807] [cursor=pointer]:
+                  - generic [ref=e808]:
+                    - img [ref=e810]
+                    - generic [ref=e812]:
+                      - generic [ref=e813]: POSCHK-1775057860235-06
+                      - generic [ref=e1939]: POSCHK-1775057860235-6
+                    - generic [ref=e814]:
+                      - generic [ref=e815]: ‏١٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e816]: ٢٥ متوفر
+                - generic "POSCHK-1775057860235-07" [ref=e817] [cursor=pointer]:
+                  - generic [ref=e818]:
+                    - img [ref=e820]
+                    - generic [ref=e822]:
+                      - generic [ref=e823]: POSCHK-1775057860235-07
+                      - generic [ref=e1940]: POSCHK-1775057860235-7
+                    - generic [ref=e824]:
+                      - generic [ref=e825]: ‏١٦٫٠٠٠ د.أ.‏
+                      - generic [ref=e826]: ٢٥ متوفر
+                - generic "POSCHK-1775057860235-08" [ref=e827] [cursor=pointer]:
+                  - generic [ref=e828]:
+                    - img [ref=e830]
+                    - generic [ref=e832]:
+                      - generic [ref=e833]: POSCHK-1775057860235-08
+                      - generic [ref=e1941]: POSCHK-1775057860235-8
+                    - generic [ref=e834]:
+                      - generic [ref=e835]: ‏١٧٫٠٠٠ د.أ.‏
+                      - generic [ref=e836]: ٢٥ متوفر
+                - generic "POSCHK-1775058012537-01" [ref=e837] [cursor=pointer]:
+                  - generic [ref=e838]:
+                    - img [ref=e840]
+                    - generic [ref=e842]:
+                      - generic [ref=e843]: POSCHK-1775058012537-01
+                      - generic [ref=e1942]: POSCHK-1775058012537-1
+                    - generic [ref=e844]:
+                      - generic [ref=e845]: ‏١٠٫٠٠٠ د.أ.‏
+                      - generic [ref=e846]: ٢٥ متوفر
+                - generic "POSCHK-1775058012537-02" [ref=e847] [cursor=pointer]:
+                  - generic [ref=e848]:
+                    - img [ref=e850]
+                    - generic [ref=e852]:
+                      - generic [ref=e853]: POSCHK-1775058012537-02
+                      - generic [ref=e1943]: POSCHK-1775058012537-2
+                    - generic [ref=e854]:
+                      - generic [ref=e855]: ‏١١٫٠٠٠ د.أ.‏
+                      - generic [ref=e856]: ٢٥ متوفر
+                - generic "POSCHK-1775058012537-03" [ref=e857] [cursor=pointer]:
+                  - generic [ref=e858]:
+                    - img [ref=e860]
+                    - generic [ref=e862]:
+                      - generic [ref=e863]: POSCHK-1775058012537-03
+                      - generic [ref=e1944]: POSCHK-1775058012537-3
+                    - generic [ref=e864]:
+                      - generic [ref=e865]: ‏١٢٫٠٠٠ د.أ.‏
+                      - generic [ref=e866]: ٢٥ متوفر
+                - generic "POSCHK-1775058012537-04" [ref=e867] [cursor=pointer]:
+                  - generic [ref=e868]:
+                    - img [ref=e870]
+                    - generic [ref=e872]:
+                      - generic [ref=e873]: POSCHK-1775058012537-04
+                      - generic [ref=e1945]: POSCHK-1775058012537-4
+                    - generic [ref=e874]:
+                      - generic [ref=e875]: ‏١٣٫٠٠٠ د.أ.‏
+                      - generic [ref=e876]: ٢٥ متوفر
+                - generic "POSCHK-1775058012537-05" [ref=e877] [cursor=pointer]:
+                  - generic [ref=e878]:
+                    - img [ref=e880]
+                    - generic [ref=e882]:
+                      - generic [ref=e883]: POSCHK-1775058012537-05
+                      - generic [ref=e1946]: POSCHK-1775058012537-5
+                    - generic [ref=e884]:
+                      - generic [ref=e885]: ‏١٤٫٠٠٠ د.أ.‏
+                      - generic [ref=e886]: ٢٥ متوفر
+                - generic "POSCHK-1775058012537-06" [ref=e887] [cursor=pointer]:
+                  - generic [ref=e888]:
+                    - img [ref=e890]
+                    - generic [ref=e892]:
+                      - generic [ref=e893]: POSCHK-1775058012537-06
+                      - generic [ref=e1947]: POSCHK-1775058012537-6
+                    - generic [ref=e894]:
+                      - generic [ref=e895]: ‏١٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e896]: ٢٥ متوفر
+                - generic "POSCHK-1775058012537-07" [ref=e897] [cursor=pointer]:
+                  - generic [ref=e898]:
+                    - img [ref=e900]
+                    - generic [ref=e902]:
+                      - generic [ref=e903]: POSCHK-1775058012537-07
+                      - generic [ref=e1948]: POSCHK-1775058012537-7
+                    - generic [ref=e904]:
+                      - generic [ref=e905]: ‏١٦٫٠٠٠ د.أ.‏
+                      - generic [ref=e906]: ٢٥ متوفر
+                - generic "POSCHK-1775058012537-08" [ref=e907] [cursor=pointer]:
+                  - generic [ref=e908]:
+                    - img [ref=e910]
+                    - generic [ref=e912]:
+                      - generic [ref=e913]: POSCHK-1775058012537-08
+                      - generic [ref=e1949]: POSCHK-1775058012537-8
+                    - generic [ref=e914]:
+                      - generic [ref=e915]: ‏١٧٫٠٠٠ د.أ.‏
+                      - generic [ref=e916]: ٢٥ متوفر
+                - generic "POSCHK-1775058260965-01" [ref=e917] [cursor=pointer]:
+                  - generic [ref=e918]:
+                    - img [ref=e920]
+                    - generic [ref=e922]:
+                      - generic [ref=e923]: POSCHK-1775058260965-01
+                      - generic [ref=e1950]: POSCHK-1775058260965-1
+                    - generic [ref=e924]:
+                      - generic [ref=e925]: ‏١٠٫٠٠٠ د.أ.‏
+                      - generic [ref=e926]: ٢٥ متوفر
+                - generic "POSCHK-1775058260965-02" [ref=e927] [cursor=pointer]:
+                  - generic [ref=e928]:
+                    - img [ref=e930]
+                    - generic [ref=e932]:
+                      - generic [ref=e933]: POSCHK-1775058260965-02
+                      - generic [ref=e1951]: POSCHK-1775058260965-2
+                    - generic [ref=e934]:
+                      - generic [ref=e935]: ‏١١٫٠٠٠ د.أ.‏
+                      - generic [ref=e936]: ٢٥ متوفر
+                - generic "POSCHK-1775058260965-03" [ref=e937] [cursor=pointer]:
+                  - generic [ref=e938]:
+                    - img [ref=e940]
+                    - generic [ref=e942]:
+                      - generic [ref=e943]: POSCHK-1775058260965-03
+                      - generic [ref=e1952]: POSCHK-1775058260965-3
+                    - generic [ref=e944]:
+                      - generic [ref=e945]: ‏١٢٫٠٠٠ د.أ.‏
+                      - generic [ref=e946]: ٢٥ متوفر
+                - generic "POSCHK-1775058260965-04" [ref=e947] [cursor=pointer]:
+                  - generic [ref=e948]:
+                    - img [ref=e950]
+                    - generic [ref=e952]:
+                      - generic [ref=e953]: POSCHK-1775058260965-04
+                      - generic [ref=e1953]: POSCHK-1775058260965-4
+                    - generic [ref=e954]:
+                      - generic [ref=e955]: ‏١٣٫٠٠٠ د.أ.‏
+                      - generic [ref=e956]: ٢٥ متوفر
+                - generic "POSCHK-1775058260965-05" [ref=e957] [cursor=pointer]:
+                  - generic [ref=e958]:
+                    - img [ref=e960]
+                    - generic [ref=e962]:
+                      - generic [ref=e963]: POSCHK-1775058260965-05
+                      - generic [ref=e1954]: POSCHK-1775058260965-5
+                    - generic [ref=e964]:
+                      - generic [ref=e965]: ‏١٤٫٠٠٠ د.أ.‏
+                      - generic [ref=e966]: ٢٥ متوفر
+                - generic "POSCHK-1775058260965-06" [ref=e967] [cursor=pointer]:
+                  - generic [ref=e968]:
+                    - img [ref=e970]
+                    - generic [ref=e972]:
+                      - generic [ref=e973]: POSCHK-1775058260965-06
+                      - generic [ref=e1955]: POSCHK-1775058260965-6
+                    - generic [ref=e974]:
+                      - generic [ref=e975]: ‏١٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e976]: ٢٥ متوفر
+                - generic "POSCHK-1775058260965-07" [ref=e977] [cursor=pointer]:
+                  - generic [ref=e978]:
+                    - img [ref=e980]
+                    - generic [ref=e982]:
+                      - generic [ref=e983]: POSCHK-1775058260965-07
+                      - generic [ref=e1956]: POSCHK-1775058260965-7
+                    - generic [ref=e984]:
+                      - generic [ref=e985]: ‏١٦٫٠٠٠ د.أ.‏
+                      - generic [ref=e986]: ٢٥ متوفر
+                - generic "POSCHK-1775058260965-08" [ref=e987] [cursor=pointer]:
+                  - generic [ref=e988]:
+                    - img [ref=e990]
+                    - generic [ref=e992]:
+                      - generic [ref=e993]: POSCHK-1775058260965-08
+                      - generic [ref=e1957]: POSCHK-1775058260965-8
+                    - generic [ref=e994]:
+                      - generic [ref=e995]: ‏١٧٫٠٠٠ د.أ.‏
+                      - generic [ref=e996]: ٢٥ متوفر
+                - generic "POSCHK-1775058518043-01" [ref=e997] [cursor=pointer]:
+                  - generic [ref=e998]:
+                    - img [ref=e1000]
+                    - generic [ref=e1002]:
+                      - generic [ref=e1003]: POSCHK-1775058518043-01
+                      - generic [ref=e1958]: POSCHK-1775058518043-1
+                    - generic [ref=e1004]:
+                      - generic [ref=e1005]: ‏١٠٫٠٠٠ د.أ.‏
+                      - generic [ref=e1006]: ٢٥ متوفر
+                - generic "POSCHK-1775058518043-02" [ref=e1007] [cursor=pointer]:
+                  - generic [ref=e1008]:
+                    - img [ref=e1010]
+                    - generic [ref=e1012]:
+                      - generic [ref=e1013]: POSCHK-1775058518043-02
+                      - generic [ref=e1959]: POSCHK-1775058518043-2
+                    - generic [ref=e1014]:
+                      - generic [ref=e1015]: ‏١١٫٠٠٠ د.أ.‏
+                      - generic [ref=e1016]: ٢٥ متوفر
+                - generic "POSCHK-1775058518043-03" [ref=e1017] [cursor=pointer]:
+                  - generic [ref=e1018]:
+                    - img [ref=e1020]
+                    - generic [ref=e1022]:
+                      - generic [ref=e1023]: POSCHK-1775058518043-03
+                      - generic [ref=e1960]: POSCHK-1775058518043-3
+                    - generic [ref=e1024]:
+                      - generic [ref=e1025]: ‏١٢٫٠٠٠ د.أ.‏
+                      - generic [ref=e1026]: ٢٥ متوفر
+                - generic "POSCHK-1775058518043-04" [ref=e1027] [cursor=pointer]:
+                  - generic [ref=e1028]:
+                    - img [ref=e1030]
+                    - generic [ref=e1032]:
+                      - generic [ref=e1033]: POSCHK-1775058518043-04
+                      - generic [ref=e1961]: POSCHK-1775058518043-4
+                    - generic [ref=e1034]:
+                      - generic [ref=e1035]: ‏١٣٫٠٠٠ د.أ.‏
+                      - generic [ref=e1036]: ٢٥ متوفر
+                - generic "POSCHK-1775058518043-05" [ref=e1037] [cursor=pointer]:
+                  - generic [ref=e1038]:
+                    - img [ref=e1040]
+                    - generic [ref=e1042]:
+                      - generic [ref=e1043]: POSCHK-1775058518043-05
+                      - generic [ref=e1962]: POSCHK-1775058518043-5
+                    - generic [ref=e1044]:
+                      - generic [ref=e1045]: ‏١٤٫٠٠٠ د.أ.‏
+                      - generic [ref=e1046]: ٢٥ متوفر
+                - generic "POSCHK-1775058518043-06" [ref=e1047] [cursor=pointer]:
+                  - generic [ref=e1048]:
+                    - img [ref=e1050]
+                    - generic [ref=e1052]:
+                      - generic [ref=e1053]: POSCHK-1775058518043-06
+                      - generic [ref=e1963]: POSCHK-1775058518043-6
+                    - generic [ref=e1054]:
+                      - generic [ref=e1055]: ‏١٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1056]: ٢٥ متوفر
+                - generic "POSCHK-1775058518043-07" [ref=e1057] [cursor=pointer]:
+                  - generic [ref=e1058]:
+                    - img [ref=e1060]
+                    - generic [ref=e1062]:
+                      - generic [ref=e1063]: POSCHK-1775058518043-07
+                      - generic [ref=e1964]: POSCHK-1775058518043-7
+                    - generic [ref=e1064]:
+                      - generic [ref=e1065]: ‏١٦٫٠٠٠ د.أ.‏
+                      - generic [ref=e1066]: ٢٥ متوفر
+                - generic "POSCHK-1775058518043-08" [ref=e1067] [cursor=pointer]:
+                  - generic [ref=e1068]:
+                    - img [ref=e1070]
+                    - generic [ref=e1072]:
+                      - generic [ref=e1073]: POSCHK-1775058518043-08
+                      - generic [ref=e1965]: POSCHK-1775058518043-8
+                    - generic [ref=e1074]:
+                      - generic [ref=e1075]: ‏١٧٫٠٠٠ د.أ.‏
+                      - generic [ref=e1076]: ٢٥ متوفر
+                - generic "POSCHK-1775058788002-01" [ref=e1077] [cursor=pointer]:
+                  - generic [ref=e1078]:
+                    - img [ref=e1080]
+                    - generic [ref=e1082]:
+                      - generic [ref=e1083]: POSCHK-1775058788002-01
+                      - generic [ref=e1966]: POSCHK-1775058788002-1
+                    - generic [ref=e1084]:
+                      - generic [ref=e1085]: ‏١٠٫٠٠٠ د.أ.‏
+                      - generic [ref=e1086]: ٢٥ متوفر
+                - generic "POSCHK-1775058788002-02" [ref=e1087] [cursor=pointer]:
+                  - generic [ref=e1088]:
+                    - img [ref=e1090]
+                    - generic [ref=e1092]:
+                      - generic [ref=e1093]: POSCHK-1775058788002-02
+                      - generic [ref=e1967]: POSCHK-1775058788002-2
+                    - generic [ref=e1094]:
+                      - generic [ref=e1095]: ‏١١٫٠٠٠ د.أ.‏
+                      - generic [ref=e1096]: ٢٥ متوفر
+                - generic "POSCHK-1775058788002-03" [ref=e1097] [cursor=pointer]:
+                  - generic [ref=e1098]:
+                    - img [ref=e1100]
+                    - generic [ref=e1102]:
+                      - generic [ref=e1103]: POSCHK-1775058788002-03
+                      - generic [ref=e1968]: POSCHK-1775058788002-3
+                    - generic [ref=e1104]:
+                      - generic [ref=e1105]: ‏١٢٫٠٠٠ د.أ.‏
+                      - generic [ref=e1106]: ٢٥ متوفر
+                - generic "POSCHK-1775058788002-04" [ref=e1107] [cursor=pointer]:
+                  - generic [ref=e1108]:
+                    - img [ref=e1110]
+                    - generic [ref=e1112]:
+                      - generic [ref=e1113]: POSCHK-1775058788002-04
+                      - generic [ref=e1969]: POSCHK-1775058788002-4
+                    - generic [ref=e1114]:
+                      - generic [ref=e1115]: ‏١٣٫٠٠٠ د.أ.‏
+                      - generic [ref=e1116]: ٢٥ متوفر
+                - generic "POSCHK-1775058788002-05" [ref=e1117] [cursor=pointer]:
+                  - generic [ref=e1118]:
+                    - img [ref=e1120]
+                    - generic [ref=e1122]:
+                      - generic [ref=e1123]: POSCHK-1775058788002-05
+                      - generic [ref=e1970]: POSCHK-1775058788002-5
+                    - generic [ref=e1124]:
+                      - generic [ref=e1125]: ‏١٤٫٠٠٠ د.أ.‏
+                      - generic [ref=e1126]: ٢٥ متوفر
+                - generic "POSCHK-1775058788002-06" [ref=e1127] [cursor=pointer]:
+                  - generic [ref=e1128]:
+                    - img [ref=e1130]
+                    - generic [ref=e1132]:
+                      - generic [ref=e1133]: POSCHK-1775058788002-06
+                      - generic [ref=e1971]: POSCHK-1775058788002-6
+                    - generic [ref=e1134]:
+                      - generic [ref=e1135]: ‏١٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1136]: ٢٥ متوفر
+                - generic "POSCHK-1775058788002-07" [ref=e1137] [cursor=pointer]:
+                  - generic [ref=e1138]:
+                    - img [ref=e1140]
+                    - generic [ref=e1142]:
+                      - generic [ref=e1143]: POSCHK-1775058788002-07
+                      - generic [ref=e1972]: POSCHK-1775058788002-7
+                    - generic [ref=e1144]:
+                      - generic [ref=e1145]: ‏١٦٫٠٠٠ د.أ.‏
+                      - generic [ref=e1146]: ٢٥ متوفر
+                - generic "POSCHK-1775058788002-08" [ref=e1147] [cursor=pointer]:
+                  - generic [ref=e1148]:
+                    - img [ref=e1150]
+                    - generic [ref=e1152]:
+                      - generic [ref=e1153]: POSCHK-1775058788002-08
+                      - generic [ref=e1973]: POSCHK-1775058788002-8
+                    - generic [ref=e1154]:
+                      - generic [ref=e1155]: ‏١٧٫٠٠٠ د.أ.‏
+                      - generic [ref=e1156]: ٢٥ متوفر
+                - generic "POSCHK-1775058992875-01" [ref=e1157] [cursor=pointer]:
+                  - generic [ref=e1158]:
+                    - img [ref=e1160]
+                    - generic [ref=e1162]:
+                      - generic [ref=e1163]: POSCHK-1775058992875-01
+                      - generic [ref=e1974]: POSCHK-1775058992875-1
+                    - generic [ref=e1164]:
+                      - generic [ref=e1165]: ‏١٠٫٠٠٠ د.أ.‏
+                      - generic [ref=e1166]: ٢٥ متوفر
+                - generic "POSCHK-1775058992875-02" [ref=e1167] [cursor=pointer]:
+                  - generic [ref=e1168]:
+                    - img [ref=e1170]
+                    - generic [ref=e1172]:
+                      - generic [ref=e1173]: POSCHK-1775058992875-02
+                      - generic [ref=e1975]: POSCHK-1775058992875-2
+                    - generic [ref=e1174]:
+                      - generic [ref=e1175]: ‏١١٫٠٠٠ د.أ.‏
+                      - generic [ref=e1176]: ٢٥ متوفر
+                - generic "POSCHK-1775058992875-03" [ref=e1177] [cursor=pointer]:
+                  - generic [ref=e1178]:
+                    - img [ref=e1180]
+                    - generic [ref=e1182]:
+                      - generic [ref=e1183]: POSCHK-1775058992875-03
+                      - generic [ref=e1976]: POSCHK-1775058992875-3
+                    - generic [ref=e1184]:
+                      - generic [ref=e1185]: ‏١٢٫٠٠٠ د.أ.‏
+                      - generic [ref=e1186]: ٢٥ متوفر
+                - generic "POSCHK-1775058992875-04" [ref=e1187] [cursor=pointer]:
+                  - generic [ref=e1188]:
+                    - img [ref=e1190]
+                    - generic [ref=e1192]:
+                      - generic [ref=e1193]: POSCHK-1775058992875-04
+                      - generic [ref=e1977]: POSCHK-1775058992875-4
+                    - generic [ref=e1194]:
+                      - generic [ref=e1195]: ‏١٣٫٠٠٠ د.أ.‏
+                      - generic [ref=e1196]: ٢٥ متوفر
+                - generic "POSCHK-1775058992875-05" [ref=e1197] [cursor=pointer]:
+                  - generic [ref=e1198]:
+                    - img [ref=e1200]
+                    - generic [ref=e1202]:
+                      - generic [ref=e1203]: POSCHK-1775058992875-05
+                      - generic [ref=e1978]: POSCHK-1775058992875-5
+                    - generic [ref=e1204]:
+                      - generic [ref=e1205]: ‏١٤٫٠٠٠ د.أ.‏
+                      - generic [ref=e1206]: ٢٥ متوفر
+                - generic "POSCHK-1775058992875-06" [ref=e1207] [cursor=pointer]:
+                  - generic [ref=e1208]:
+                    - img [ref=e1210]
+                    - generic [ref=e1212]:
+                      - generic [ref=e1213]: POSCHK-1775058992875-06
+                      - generic [ref=e1979]: POSCHK-1775058992875-6
+                    - generic [ref=e1214]:
+                      - generic [ref=e1215]: ‏١٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1216]: ٢٥ متوفر
+                - generic "POSCHK-1775058992875-07" [ref=e1217] [cursor=pointer]:
+                  - generic [ref=e1218]:
+                    - img [ref=e1220]
+                    - generic [ref=e1222]:
+                      - generic [ref=e1223]: POSCHK-1775058992875-07
+                      - generic [ref=e1980]: POSCHK-1775058992875-7
+                    - generic [ref=e1224]:
+                      - generic [ref=e1225]: ‏١٦٫٠٠٠ د.أ.‏
+                      - generic [ref=e1226]: ٢٥ متوفر
+                - generic "POSCHK-1775058992875-08" [ref=e1227] [cursor=pointer]:
+                  - generic [ref=e1228]:
+                    - img [ref=e1230]
+                    - generic [ref=e1232]:
+                      - generic [ref=e1233]: POSCHK-1775058992875-08
+                      - generic [ref=e1981]: POSCHK-1775058992875-8
+                    - generic [ref=e1234]:
+                      - generic [ref=e1235]: ‏١٧٫٠٠٠ د.أ.‏
+                      - generic [ref=e1236]: ٢٥ متوفر
+                - generic "POSCHK-1775059217856-01" [ref=e1237] [cursor=pointer]:
+                  - generic [ref=e1238]:
+                    - img [ref=e1240]
+                    - generic [ref=e1242]:
+                      - generic [ref=e1243]: POSCHK-1775059217856-01
+                      - generic [ref=e1982]: POSCHK-1775059217856-1
+                    - generic [ref=e1244]:
+                      - generic [ref=e1245]: ‏١٠٫٠٠٠ د.أ.‏
+                      - generic [ref=e1246]: ٢٥ متوفر
+                - generic "POSCHK-1775059217856-02" [ref=e1247] [cursor=pointer]:
+                  - generic [ref=e1248]:
+                    - img [ref=e1250]
+                    - generic [ref=e1252]:
+                      - generic [ref=e1253]: POSCHK-1775059217856-02
+                      - generic [ref=e1983]: POSCHK-1775059217856-2
+                    - generic [ref=e1254]:
+                      - generic [ref=e1255]: ‏١١٫٠٠٠ د.أ.‏
+                      - generic [ref=e1256]: ٢٥ متوفر
+                - generic "POSCHK-1775059217856-03" [ref=e1257] [cursor=pointer]:
+                  - generic [ref=e1258]:
+                    - img [ref=e1260]
+                    - generic [ref=e1262]:
+                      - generic [ref=e1263]: POSCHK-1775059217856-03
+                      - generic [ref=e1984]: POSCHK-1775059217856-3
+                    - generic [ref=e1264]:
+                      - generic [ref=e1265]: ‏١٢٫٠٠٠ د.أ.‏
+                      - generic [ref=e1266]: ٢٥ متوفر
+                - generic "POSCHK-1775059217856-04" [ref=e1267] [cursor=pointer]:
+                  - generic [ref=e1268]:
+                    - img [ref=e1270]
+                    - generic [ref=e1272]:
+                      - generic [ref=e1273]: POSCHK-1775059217856-04
+                      - generic [ref=e1985]: POSCHK-1775059217856-4
+                    - generic [ref=e1274]:
+                      - generic [ref=e1275]: ‏١٣٫٠٠٠ د.أ.‏
+                      - generic [ref=e1276]: ٢٥ متوفر
+                - generic "POSCHK-1775059217856-05" [ref=e1277] [cursor=pointer]:
+                  - generic [ref=e1278]:
+                    - img [ref=e1280]
+                    - generic [ref=e1282]:
+                      - generic [ref=e1283]: POSCHK-1775059217856-05
+                      - generic [ref=e1986]: POSCHK-1775059217856-5
+                    - generic [ref=e1284]:
+                      - generic [ref=e1285]: ‏١٤٫٠٠٠ د.أ.‏
+                      - generic [ref=e1286]: ٢٥ متوفر
+                - generic "POSCHK-1775059217856-06" [ref=e1287] [cursor=pointer]:
+                  - generic [ref=e1288]:
+                    - img [ref=e1290]
+                    - generic [ref=e1292]:
+                      - generic [ref=e1293]: POSCHK-1775059217856-06
+                      - generic [ref=e1987]: POSCHK-1775059217856-6
+                    - generic [ref=e1294]:
+                      - generic [ref=e1295]: ‏١٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1296]: ٢٥ متوفر
+                - generic "POSCHK-1775059217856-07" [ref=e1297] [cursor=pointer]:
+                  - generic [ref=e1298]:
+                    - img [ref=e1300]
+                    - generic [ref=e1302]:
+                      - generic [ref=e1303]: POSCHK-1775059217856-07
+                      - generic [ref=e1988]: POSCHK-1775059217856-7
+                    - generic [ref=e1304]:
+                      - generic [ref=e1305]: ‏١٦٫٠٠٠ د.أ.‏
+                      - generic [ref=e1306]: ٢٥ متوفر
+                - generic "POSCHK-1775059217856-08" [ref=e1307] [cursor=pointer]:
+                  - generic [ref=e1308]:
+                    - img [ref=e1310]
+                    - generic [ref=e1312]:
+                      - generic [ref=e1313]: POSCHK-1775059217856-08
+                      - generic [ref=e1989]: POSCHK-1775059217856-8
+                    - generic [ref=e1314]:
+                      - generic [ref=e1315]: ‏١٧٫٠٠٠ د.أ.‏
+                      - generic [ref=e1316]: ٢٥ متوفر
+                - generic "POSCHK-1775059442710-01" [ref=e1317] [cursor=pointer]:
+                  - generic [ref=e1318]:
+                    - img [ref=e1320]
+                    - generic [ref=e1322]:
+                      - generic [ref=e1323]: POSCHK-1775059442710-01
+                      - generic [ref=e1990]: POSCHK-1775059442710-1
+                    - generic [ref=e1324]:
+                      - generic [ref=e1325]: ‏١٠٫٠٠٠ د.أ.‏
+                      - generic [ref=e1326]: ٢٥ متوفر
+                - generic "POSCHK-1775059442710-02" [ref=e1327] [cursor=pointer]:
+                  - generic [ref=e1328]:
+                    - img [ref=e1330]
+                    - generic [ref=e1332]:
+                      - generic [ref=e1333]: POSCHK-1775059442710-02
+                      - generic [ref=e1991]: POSCHK-1775059442710-2
+                    - generic [ref=e1334]:
+                      - generic [ref=e1335]: ‏١١٫٠٠٠ د.أ.‏
+                      - generic [ref=e1336]: ٢٥ متوفر
+                - generic "POSCHK-1775059442710-03" [ref=e1337] [cursor=pointer]:
+                  - generic [ref=e1338]:
+                    - img [ref=e1340]
+                    - generic [ref=e1342]:
+                      - generic [ref=e1343]: POSCHK-1775059442710-03
+                      - generic [ref=e1992]: POSCHK-1775059442710-3
+                    - generic [ref=e1344]:
+                      - generic [ref=e1345]: ‏١٢٫٠٠٠ د.أ.‏
+                      - generic [ref=e1346]: ٢٥ متوفر
+                - generic "POSCHK-1775059442710-04" [ref=e1347] [cursor=pointer]:
+                  - generic [ref=e1348]:
+                    - img [ref=e1350]
+                    - generic [ref=e1352]:
+                      - generic [ref=e1353]: POSCHK-1775059442710-04
+                      - generic [ref=e1993]: POSCHK-1775059442710-4
+                    - generic [ref=e1354]:
+                      - generic [ref=e1355]: ‏١٣٫٠٠٠ د.أ.‏
+                      - generic [ref=e1356]: ٢٥ متوفر
+                - generic "POSCHK-1775059442710-05" [ref=e1357] [cursor=pointer]:
+                  - generic [ref=e1358]:
+                    - img [ref=e1360]
+                    - generic [ref=e1362]:
+                      - generic [ref=e1363]: POSCHK-1775059442710-05
+                      - generic [ref=e1994]: POSCHK-1775059442710-5
+                    - generic [ref=e1364]:
+                      - generic [ref=e1365]: ‏١٤٫٠٠٠ د.أ.‏
+                      - generic [ref=e1366]: ٢٥ متوفر
+                - generic "POSCHK-1775059442710-06" [ref=e1367] [cursor=pointer]:
+                  - generic [ref=e1368]:
+                    - img [ref=e1370]
+                    - generic [ref=e1372]:
+                      - generic [ref=e1373]: POSCHK-1775059442710-06
+                      - generic [ref=e1995]: POSCHK-1775059442710-6
+                    - generic [ref=e1374]:
+                      - generic [ref=e1375]: ‏١٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1376]: ٢٥ متوفر
+                - generic "POSCHK-1775059442710-07" [ref=e1377] [cursor=pointer]:
+                  - generic [ref=e1378]:
+                    - img [ref=e1380]
+                    - generic [ref=e1382]:
+                      - generic [ref=e1383]: POSCHK-1775059442710-07
+                      - generic [ref=e1996]: POSCHK-1775059442710-7
+                    - generic [ref=e1384]:
+                      - generic [ref=e1385]: ‏١٦٫٠٠٠ د.أ.‏
+                      - generic [ref=e1386]: ٢٥ متوفر
+                - generic "POSCHK-1775059442710-08" [ref=e1387] [cursor=pointer]:
+                  - generic [ref=e1388]:
+                    - img [ref=e1390]
+                    - generic [ref=e1392]:
+                      - generic [ref=e1393]: POSCHK-1775059442710-08
+                      - generic [ref=e1997]: POSCHK-1775059442710-8
+                    - generic [ref=e1394]:
+                      - generic [ref=e1395]: ‏١٧٫٠٠٠ د.أ.‏
+                      - generic [ref=e1396]: ٢٥ متوفر
+                - generic "PROBE-1774999314059" [ref=e1397] [cursor=pointer]:
+                  - generic [ref=e1398]:
+                    - img [ref=e1400]
+                    - generic [ref=e1403]: PROBE-1774999314059
+                    - generic [ref=e1404]:
+                      - generic [ref=e1405]: ‏١٠٫٠٠٠ د.أ.‏
+                      - generic [ref=e1406]: ٥ متوفر
+                - generic "PX05 Fast Charger" [ref=e1407] [cursor=pointer]:
+                  - generic [ref=e1408]:
+                    - img [ref=e1410]
+                    - generic [ref=e1413]: PX05 Fast Charger
+                    - generic [ref=e1414]:
+                      - generic [ref=e1415]: ‏٤٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1416]: ٤٠ متوفر
+                - generic "PX05 Fast Charger" [ref=e1417] [cursor=pointer]:
+                  - generic [ref=e1418]:
+                    - img [ref=e1420]
+                    - generic [ref=e1423]: PX05 Fast Charger
+                    - generic [ref=e1424]:
+                      - generic [ref=e1425]: ‏٤٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1426]: ٤٠ متوفر
+                - generic "PX05 Fast Charger" [ref=e1427] [cursor=pointer]:
+                  - generic [ref=e1428]:
+                    - img [ref=e1430]
+                    - generic [ref=e1433]: PX05 Fast Charger
+                    - generic [ref=e1434]:
+                      - generic [ref=e1435]: ‏٤٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1436]: ٤٠ متوفر
+                - generic "PX05 Fast Charger" [ref=e1437] [cursor=pointer]:
+                  - generic [ref=e1438]:
+                    - img [ref=e1440]
+                    - generic [ref=e1443]: PX05 Fast Charger
+                    - generic [ref=e1444]:
+                      - generic [ref=e1445]: ‏٤٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1446]: ٤٠ متوفر
+                - generic "PX05 Fast Charger" [ref=e1447] [cursor=pointer]:
+                  - generic [ref=e1448]:
+                    - img [ref=e1450]
+                    - generic [ref=e1453]: PX05 Fast Charger
+                    - generic [ref=e1454]:
+                      - generic [ref=e1455]: ‏٤٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1456]: ٤٠ متوفر
+                - generic "PX05 Fast Charger" [ref=e1457] [cursor=pointer]:
+                  - generic [ref=e1458]:
+                    - img [ref=e1460]
+                    - generic [ref=e1463]: PX05 Fast Charger
+                    - generic [ref=e1464]:
+                      - generic [ref=e1465]: ‏٤٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1466]: ٤٠ متوفر
+                - generic "PX05 Fast Charger" [ref=e1467] [cursor=pointer]:
+                  - generic [ref=e1468]:
+                    - img [ref=e1470]
+                    - generic [ref=e1473]: PX05 Fast Charger
+                    - generic [ref=e1474]:
+                      - generic [ref=e1475]: ‏٤٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1476]: ٤٠ متوفر
+                - generic "PX05 Fast Charger" [ref=e1477] [cursor=pointer]:
+                  - generic [ref=e1478]:
+                    - img [ref=e1480]
+                    - generic [ref=e1483]: PX05 Fast Charger
+                    - generic [ref=e1484]:
+                      - generic [ref=e1485]: ‏٤٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1486]: ٤٠ متوفر
+                - generic "PX05 Fast Charger 074ff3" [ref=e1487] [cursor=pointer]:
+                  - generic [ref=e1488]:
+                    - img [ref=e1490]
+                    - generic [ref=e1493]: PX05 Fast Charger 074ff3
+                    - generic [ref=e1494]:
+                      - generic [ref=e1495]: ‏٤٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1496]: ٤٠ متوفر
+                - generic "PX05 Fast Charger 11a54d" [ref=e1497] [cursor=pointer]:
+                  - generic [ref=e1498]:
+                    - img [ref=e1500]
+                    - generic [ref=e1503]: PX05 Fast Charger 11a54d
+                    - generic [ref=e1504]:
+                      - generic [ref=e1505]: ‏٤٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1506]: ٤٠ متوفر
+                - generic "PX05 Fast Charger 150e6c" [ref=e1507] [cursor=pointer]:
+                  - generic [ref=e1508]:
+                    - img [ref=e1510]
+                    - generic [ref=e1513]: PX05 Fast Charger 150e6c
+                    - generic [ref=e1514]:
+                      - generic [ref=e1515]: ‏٤٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1516]: ٤٠ متوفر
+                - generic "PX05 Fast Charger 209b12" [ref=e1517] [cursor=pointer]:
+                  - generic [ref=e1518]:
+                    - img [ref=e1520]
+                    - generic [ref=e1523]: PX05 Fast Charger 209b12
+                    - generic [ref=e1524]:
+                      - generic [ref=e1525]: ‏٤٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1526]: ٤٠ متوفر
+                - generic "PX05 Fast Charger 377fed" [ref=e1527] [cursor=pointer]:
+                  - generic [ref=e1528]:
+                    - img [ref=e1530]
+                    - generic [ref=e1533]: PX05 Fast Charger 377fed
+                    - generic [ref=e1534]:
+                      - generic [ref=e1535]: ‏٤٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1536]: ٤٠ متوفر
+                - generic "PX05 Fast Charger 902e9b" [ref=e1537] [cursor=pointer]:
+                  - generic [ref=e1538]:
+                    - img [ref=e1540]
+                    - generic [ref=e1543]: PX05 Fast Charger 902e9b
+                    - generic [ref=e1544]:
+                      - generic [ref=e1545]: ‏٤٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1546]: ٣٩ متوفر
+                - generic "PX05 Fast Charger a4be34" [ref=e1547] [cursor=pointer]:
+                  - generic [ref=e1548]:
+                    - img [ref=e1550]
+                    - generic [ref=e1553]: PX05 Fast Charger a4be34
+                    - generic [ref=e1554]:
+                      - generic [ref=e1555]: ‏٤٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1556]: ٤٠ متوفر
+                - generic "PX05 Fast Charger b5b312" [ref=e1557] [cursor=pointer]:
+                  - generic [ref=e1558]:
+                    - img [ref=e1560]
+                    - generic [ref=e1563]: PX05 Fast Charger b5b312
+                    - generic [ref=e1564]:
+                      - generic [ref=e1565]: ‏٤٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1566]: ٣٩ متوفر
+                - generic "PX05 Fast Charger c59021" [ref=e1567] [cursor=pointer]:
+                  - generic [ref=e1568]:
+                    - img [ref=e1570]
+                    - generic [ref=e1573]: PX05 Fast Charger c59021
+                    - generic [ref=e1574]:
+                      - generic [ref=e1575]: ‏٤٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1576]: ٤٠ متوفر
+                - generic "PX05 Fast Charger cdca10" [ref=e1577] [cursor=pointer]:
+                  - generic [ref=e1578]:
+                    - img [ref=e1580]
+                    - generic [ref=e1583]: PX05 Fast Charger cdca10
+                    - generic [ref=e1584]:
+                      - generic [ref=e1585]: ‏٤٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1586]: ٤٠ متوفر
+                - generic "PX05 Fast Charger d415b8" [ref=e1587] [cursor=pointer]:
+                  - generic [ref=e1588]:
+                    - img [ref=e1590]
+                    - generic [ref=e1593]: PX05 Fast Charger d415b8
+                    - generic [ref=e1594]:
+                      - generic [ref=e1595]: ‏٤٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1596]: ٤٠ متوفر
+                - generic "PX05 Fast Charger deab9b" [ref=e1597] [cursor=pointer]:
+                  - generic [ref=e1598]:
+                    - img [ref=e1600]
+                    - generic [ref=e1603]: PX05 Fast Charger deab9b
+                    - generic [ref=e1604]:
+                      - generic [ref=e1605]: ‏٤٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1606]: ٤٠ متوفر
+                - generic "PX05 Fast Charger e07f51" [ref=e1607] [cursor=pointer]:
+                  - generic [ref=e1608]:
+                    - img [ref=e1610]
+                    - generic [ref=e1613]: PX05 Fast Charger e07f51
+                    - generic [ref=e1614]:
+                      - generic [ref=e1615]: ‏٤٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1616]: ٤٠ متوفر
+                - generic "PX05 Fast Charger e1fc68" [ref=e1617] [cursor=pointer]:
+                  - generic [ref=e1618]:
+                    - img [ref=e1620]
+                    - generic [ref=e1623]: PX05 Fast Charger e1fc68
+                    - generic [ref=e1624]:
+                      - generic [ref=e1625]: ‏٤٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1626]: ٤٠ متوفر
+                - generic "PX05 Fast Charger efc12d" [ref=e1627] [cursor=pointer]:
+                  - generic [ref=e1628]:
+                    - img [ref=e1630]
+                    - generic [ref=e1633]: PX05 Fast Charger efc12d
+                    - generic [ref=e1634]:
+                      - generic [ref=e1635]: ‏٤٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1636]: ٤٠ متوفر
+                - generic "PX06 06F89EAA Forged Price Product" [ref=e1637] [cursor=pointer]:
+                  - generic [ref=e1638]:
+                    - img [ref=e1640]
+                    - generic [ref=e1643]: PX06 06F89EAA Forged Price Product
+                    - generic [ref=e1644]:
+                      - generic [ref=e1645]: ‏٤٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1646]: ٤٠ متوفر
+                - generic "PX06 06F89EAA Lock Product A" [ref=e1647] [cursor=pointer]:
+                  - generic [ref=e1648]:
+                    - img [ref=e1650]
+                    - generic [ref=e1653]: PX06 06F89EAA Lock Product A
+                    - generic [ref=e1654]:
+                      - generic [ref=e1655]: ‏٣٠٫٠٠٠ د.أ.‏
+                      - generic [ref=e1656]: ١٢ متوفر
+                - generic "PX06 06F89EAA Lock Product B" [ref=e1657] [cursor=pointer]:
+                  - generic [ref=e1658]:
+                    - img [ref=e1660]
+                    - generic [ref=e1663]: PX06 06F89EAA Lock Product B
+                    - generic [ref=e1664]:
+                      - generic [ref=e1665]: ‏٥٠٫٠٠٠ د.أ.‏
+                      - generic [ref=e1666]: ١٢ متوفر
+                - generic "PX06 06F89EAA Single Stock Headset" [ref=e1667] [cursor=pointer]:
+                  - generic [ref=e1668]:
+                    - img [ref=e1670]
+                    - generic [ref=e1673]: PX06 06F89EAA Single Stock Headset
+                    - generic [ref=e1674]:
+                      - generic [ref=e1675]: ‏٧٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1676]:
+                        - img [ref=e1677]
+                        - text: ١ فقط
+                - generic "PX06 3AB72297 Forged Price Product" [ref=e1679] [cursor=pointer]:
+                  - generic [ref=e1680]:
+                    - img [ref=e1682]
+                    - generic [ref=e1685]: PX06 3AB72297 Forged Price Product
+                    - generic [ref=e1686]:
+                      - generic [ref=e1687]: ‏٤٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1688]: ٣٩ متوفر
+                - generic "PX06 3AB72297 Lock Product A" [ref=e1689] [cursor=pointer]:
+                  - generic [ref=e1690]:
+                    - img [ref=e1692]
+                    - generic [ref=e1695]: PX06 3AB72297 Lock Product A
+                    - generic [ref=e1696]:
+                      - generic [ref=e1697]: ‏٣٠٫٠٠٠ د.أ.‏
+                      - generic [ref=e1698]: ١٠ متوفر
+                - generic "PX06 3AB72297 Lock Product B" [ref=e1699] [cursor=pointer]:
+                  - generic [ref=e1700]:
+                    - img [ref=e1702]
+                    - generic [ref=e1705]: PX06 3AB72297 Lock Product B
+                    - generic [ref=e1706]:
+                      - generic [ref=e1707]: ‏٥٠٫٠٠٠ د.أ.‏
+                      - generic [ref=e1708]: ١٠ متوفر
+                - generic "PX06 3AB72297 Single Stock Headset" [ref=e1709] [cursor=pointer]:
+                  - generic [ref=e1710]:
+                    - img [ref=e1712]
+                    - generic [ref=e1715]: PX06 3AB72297 Single Stock Headset
+                    - generic [ref=e1716]:
+                      - generic [ref=e1717]: ‏٧٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1718]: نفد
+                  - generic [ref=e1720]: نفد
+                - generic "PX06 3F1AF2B5 Forged Price Product" [ref=e1721] [cursor=pointer]:
+                  - generic [ref=e1722]:
+                    - img [ref=e1724]
+                    - generic [ref=e1727]: PX06 3F1AF2B5 Forged Price Product
+                    - generic [ref=e1728]:
+                      - generic [ref=e1729]: ‏٤٥٫٠٠٠ د.أ.‏
+                      - generic [ref=e1730]: ٣٩ متوفر
+              - button "تحميل المزيد" [ref=e1732] [cursor=pointer]
+          - generic [ref=e203]:
+            - generic [ref=e204]:
+              - img [ref=e205]
+              - strong [ref=e212]: POS-01
+            - generic [ref=e213]:
+              - img [ref=e214]
+              - generic [ref=e217]: بحث بالباركود
+            - generic [ref=e218]:
+              - img [ref=e219]
+              - generic [ref=e222]: 10:47 AM
+  - region "Notifications alt+T"
+  - button "Open Next.js Dev Tools" [ref=e1839] [cursor=pointer]:
+    - img [ref=e1840]
+  - alert [ref=e1843]

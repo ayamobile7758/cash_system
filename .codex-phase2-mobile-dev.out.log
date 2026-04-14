@@ -1,0 +1,120 @@
+
+> aya-mobile-runtime-skeleton@0.1.0 dev
+> next dev -p 5000 -H 0.0.0.0
+
+   ▲ Next.js 15.5.14
+   - Local:        http://localhost:5000
+   - Network:      http://0.0.0.0:5000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 4.8s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 1474ms (115 modules)
+ ○ Compiling /login ...
+ ✓ Compiled /login in 14.4s (963 modules)
+ GET /login 200 in 16916ms
+ ○ Compiling /pos ...
+ ✓ Compiled /pos in 4.1s (1252 modules)
+ GET /pos 200 in 6898ms
+ ○ Compiling /api/pos/accounts ...
+ ✓ Compiled /api/pos/accounts in 1503ms (1240 modules)
+ GET /api/pos/accounts 200 in 3209ms
+ GET /api/pos/products?page=0 200 in 3418ms
+ GET /api/pos/products?page=0&q=DBG+Product+ccaa5b 200 in 3203ms
+ GET /login 200 in 1023ms
+ GET /pos 200 in 1459ms
+ GET /api/pos/accounts 200 in 875ms
+ GET /api/pos/products?page=0&q=DBG+Product+dedef5 200 in 701ms
+ GET /api/pos/products?page=0 200 in 982ms
+ GET /api/pos/products?page=0 200 in 736ms
+ GET /api/pos/products?page=0&q=DBG+Product+dedef5 200 in 785ms
+ ✓ Compiled in 1202ms (1240 modules)
+ ✓ Compiled in 962ms (1240 modules)
+ ✓ Compiled in 917ms (1240 modules)
+ ✓ Compiled in 1325ms (1233 modules)
+ GET /login 200 in 1070ms
+ GET /pos 200 in 2800ms
+ ○ Compiling /api/pos/accounts ...
+ ✓ Compiled /api/pos/accounts in 776ms (770 modules)
+ ✓ Compiled (772 modules)
+ GET /login 200 in 1422ms
+ GET /pos 200 in 1493ms
+ GET /login 200 in 201ms
+ GET /pos 200 in 1300ms
+ GET /login 200 in 262ms
+ GET /pos 200 in 1471ms
+ GET /login 200 in 243ms
+ GET /login 200 in 398ms
+ GET /pos 200 in 3301ms
+ GET /api/pos/accounts 200 in 1333ms
+ GET /api/pos/products?page=0 200 in 1480ms
+ ✓ Compiled in 2.4s (1240 modules)
+ GET /login 200 in 1011ms
+ GET /pos 200 in 2209ms
+ ✓ Compiled in 1641ms (1233 modules)
+ GET /login 200 in 1242ms
+ GET /pos 200 in 1641ms
+ ✓ Compiled in 1230ms (1233 modules)
+ GET /login 200 in 996ms
+ GET /pos 200 in 2177ms
+ ✓ Compiled in 1111ms (1243 modules)
+ ✓ Compiled in 866ms (1233 modules)
+ GET /login 200 in 1119ms
+ GET /pos 200 in 1882ms
+ GET /login 200 in 263ms
+ GET /pos 200 in 1746ms
+ ○ Compiling /api/pos/accounts ...
+ ✓ Compiled /api/pos/accounts in 1038ms (770 modules)
+ ✓ Compiled (772 modules)
+ GET /login 200 in 1656ms
+ GET /pos 200 in 1425ms
+ GET /api/pos/products?page=0 200 in 1224ms
+ GET /api/pos/products?page=0 200 in 772ms
+ GET /api/pos/accounts 200 in 1335ms
+ GET /api/pos/products?page=0&q=DBG+Product+43e449 200 in 1096ms
+ GET /api/pos/products?page=0&q=DBG+Product+43e449 200 in 980ms
+ GET /login 200 in 331ms
+ GET /pos 200 in 1515ms
+ GET /api/pos/products?page=0 200 in 960ms
+ GET /api/pos/accounts 200 in 1029ms
+ GET /api/pos/products?page=0&q=DBG+Product+1e459b 200 in 849ms
+ GET /api/pos/products?page=0 200 in 776ms
+ GET /api/pos/products?page=0&q=DBG+Product+1e459b 200 in 711ms
+ GET /pos 200 in 355ms
+ ✓ Compiled in 4.8s (1247 modules)
+ ✓ Compiled in 2s (1233 modules)
+ ✓ Compiled in 1397ms (1233 modules)
+ ✓ Compiled in 1425ms (1233 modules)
+ ✓ Compiled in 3.4s (1233 modules)
+ ✓ Compiled in 3.4s (1233 modules)
+ ✓ Compiled in 6.2s (1233 modules)
+ ✓ Compiled in 3.1s (1208 modules)
+ ✓ Compiled in 3.1s (1235 modules)
+ ✓ Compiled in 3.8s (1235 modules)
+ ✓ Compiled in 2.3s (1235 modules)
+ ✓ Compiled in 3.2s (1235 modules)
+ ✓ Compiled in 3s (1235 modules)
+ ✓ Compiled in 2s (1235 modules)
+ ✓ Compiled in 1446ms (1235 modules)
+ ✓ Compiled in 1975ms (1235 modules)
+ ✓ Compiled in 1972ms (1235 modules)
+ ✓ Compiled in 1425ms (1235 modules)
+ ✓ Compiled in 4.3s (1237 modules)
+ ✓ Compiled in 2.5s (1237 modules)
+ ✓ Compiled in 2.8s (1237 modules)
+ ✓ Compiled in 2.2s (1237 modules)
+ ✓ Compiled in 1543ms (1237 modules)
+ ✓ Compiled in 3.8s (1237 modules)
+ ✓ Compiled in 2.7s (1237 modules)
+ ✓ Compiled in 1962ms (1239 modules)
+ ✓ Compiled in 2.3s (1239 modules)
+ ✓ Compiled in 1607ms (1235 modules)
+ ✓ Compiled in 1901ms (1239 modules)
+ ✓ Compiled in 1225ms (1249 modules)
+ ✓ Compiled in 2.5s (1253 modules)
+ ✓ Compiled in 108.5s (1253 modules)
+ ✓ Compiled in 5.6s (1253 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 8.3s (1241 modules)
+ ○ Compiling /_error ...

@@ -1,0 +1,1410 @@
+[    2420ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:25630
+[  590480ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[  592244ms] [LOG] [Fast Refresh] done in 1765ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[  596966ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[  597975ms] [LOG] [Fast Refresh] done in 1009ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[  602079ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[  604307ms] [LOG] [Fast Refresh] done in 2229ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[  606474ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[  607981ms] [LOG] [Fast Refresh] done in 1508ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[  612633ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[  613714ms] [LOG] [Fast Refresh] done in 1081ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[  627852ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:25630
+[  711777ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[  714758ms] [LOG] [Fast Refresh] done in 2982ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[  726059ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:25630
+[  845858ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[  847750ms] [LOG] [Fast Refresh] done in 1892ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[  860492ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:25630
+[  908132ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[  909463ms] [LOG] [Fast Refresh] done in 1331ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[  924369ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:25630
+[  965091ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:25630
+[ 2089978ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[ 2092823ms] [LOG] [Fast Refresh] done in 2844ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[ 2096238ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[ 2097693ms] [LOG] [Fast Refresh] done in 1455ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[ 2099245ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[ 2101795ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[ 2102272ms] [LOG] [Fast Refresh] done in 477ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[ 2104746ms] [LOG] [Fast Refresh] done in 2951ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[ 2134779ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[ 2138029ms] [LOG] [Fast Refresh] done in 3249ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[ 2157100ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[ 2159435ms] [LOG] [Fast Refresh] done in 2335ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[ 2161461ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[ 2162864ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expected '</', got 'div'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:2192:1]
+ 2189 │                       `تاكيد البيع • ${formatCurrency(netTotal)}`
+ 2190 │                     )}
+ 2191 │                   </button>
+ 2192 │                 </div>
+      ·                   ───
+ 2193 │               </>
+ 2194 │             ) : null}
+ 2194 │           </SectionCard>
+      ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/pos/pos-workspace.tsx
+./app/(dashboard)/pos/page.tsx @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[ 2162907ms] [LOG] {file: Object} @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[ 2164184ms] [LOG] [Fast Refresh] done in 2723ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[ 2164869ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1497:1]
+ 1494 │                 ) : null}
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+      ·                       ─
+ 1498 │                   ) : null}
+ 1499 │ 
+ 1500 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+ 1498 │                   ) : null}
+      ·                   ─
+ 1499 │ 
+ 1500 │                   <button
+ 1500 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/pos/pos-workspace.tsx
+./app/(dashboard)/pos/page.tsx @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[ 2164874ms] [LOG] {file: Object} @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[ 2267441ms] [LOG] [Fast Refresh] done in 105980ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[ 2267957ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1497:1]
+ 1494 │                 ) : null}
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+      ·                       ─
+ 1498 │                   ) : null}
+ 1499 │ 
+ 1500 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+ 1498 │                   ) : null}
+      ·                   ─
+ 1499 │ 
+ 1500 │                   <button
+ 1500 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/pos/pos-workspace.tsx
+./app/(dashboard)/pos/page.tsx @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[ 2267962ms] [LOG] {file: Object} @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[ 2271829ms] [LOG] [Fast Refresh] done in 110369ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[ 2272484ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1497:1]
+ 1494 │                 ) : null}
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+      ·                       ─
+ 1498 │                   ) : null}
+ 1499 │ 
+ 1500 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+ 1498 │                   ) : null}
+      ·                   ─
+ 1499 │ 
+ 1500 │                   <button
+ 1500 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/pos/pos-workspace.tsx
+./app/(dashboard)/pos/page.tsx @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[ 2272488ms] [LOG] {file: Object} @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[ 2332383ms] [LOG] [Fast Refresh] done in 170922ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[ 2332917ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1497:1]
+ 1494 │                 ) : null}
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+      ·                       ─
+ 1498 │                   ) : null}
+ 1499 │ 
+ 1500 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+ 1498 │                   ) : null}
+      ·                   ─
+ 1499 │ 
+ 1500 │                   <button
+ 1500 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/pos/pos-workspace.tsx
+./app/(dashboard)/pos/page.tsx @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[ 2332923ms] [LOG] {file: Object} @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[ 2371282ms] [LOG] [Fast Refresh] done in 209821ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[ 2371972ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1497:1]
+ 1494 │                 ) : null}
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+      ·                       ─
+ 1498 │                   ) : null}
+ 1499 │ 
+ 1500 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+ 1498 │                   ) : null}
+      ·                   ─
+ 1499 │ 
+ 1500 │                   <button
+ 1500 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/pos/pos-workspace.tsx
+./app/(dashboard)/pos/page.tsx @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[ 2371976ms] [LOG] {file: Object} @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[ 2421864ms] [LOG] [Fast Refresh] done in 260403ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[ 2422656ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1497:1]
+ 1494 │                 ) : null}
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+      ·                       ─
+ 1498 │                   ) : null}
+ 1499 │ 
+ 1500 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+ 1498 │                   ) : null}
+      ·                   ─
+ 1499 │ 
+ 1500 │                   <button
+ 1500 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/pos/pos-workspace.tsx
+./app/(dashboard)/pos/page.tsx @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[ 2422660ms] [LOG] {file: Object} @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[ 2466382ms] [LOG] [Fast Refresh] done in 304921ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[ 2467098ms] [LOG] [Fast Refresh] done in 305638ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[ 2467679ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1497:1]
+ 1494 │                 ) : null}
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+      ·                       ─
+ 1498 │                   ) : null}
+ 1499 │ 
+ 1500 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+ 1498 │                   ) : null}
+      ·                   ─
+ 1499 │ 
+ 1500 │                   <button
+ 1500 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/pos/pos-workspace.tsx
+./app/(dashboard)/pos/page.tsx @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[ 2467685ms] [LOG] {file: Object} @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[ 2484653ms] [LOG] [Fast Refresh] done in 323192ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[ 2487028ms] [LOG] [Fast Refresh] done in 325568ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[ 2488163ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1497:1]
+ 1494 │                 ) : null}
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+      ·                       ─
+ 1498 │                   ) : null}
+ 1499 │ 
+ 1500 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+ 1498 │                   ) : null}
+      ·                   ─
+ 1499 │ 
+ 1500 │                   <button
+ 1500 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/pos/pos-workspace.tsx
+./app/(dashboard)/pos/page.tsx @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/next-devtools/userspace/app/errors/intercept-console-error.js:56
+[ 2488168ms] [LOG] {file: Object} @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[ 2488862ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:5000/pos?_rsc=1eez9:0
+[ 2489044ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:5000/pos?_rsc=1eez9:0
+[ 2489173ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:5000/pos?_rsc=1eez9:0
+[ 2489429ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:5000/pos:0
+[ 2490939ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///(pages-dir-browser)/./node_modules/react-dom/cjs/react-dom.development.js:29834
+[ 2491299ms] ModuleBuildError: Module build failed (from ./node_modules/next/dist/build/webpack/loaders/next-swc-loader.js):
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1497:1]
+ 1494 │                 ) : null}
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+      ·                       ─
+ 1498 │                   ) : null}
+ 1499 │ 
+ 1500 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+ 1498 │                   ) : null}
+      ·                   ─
+ 1499 │ 
+ 1500 │                   <button
+ 1500 │                     type="button"
+      ╰────
+
+
+Caused by:
+    Syntax Error
+    at processResult (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\webpack\bundle5.js:29:407086)
+    at <unknown> (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\webpack\bundle5.js:29:408881)
+    at <unknown> (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:8645)
+    at <unknown> (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:5019)
+    at r.callback (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:4039)
+[ 2491600ms] [LOG] [HMR] connected @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:45
+[ 2491605ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1497:1]
+ 1494 │                 ) : null}
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+      ·                       ─
+ 1498 │                   ) : null}
+ 1499 │ 
+ 1500 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+ 1498 │                   ) : null}
+      ·                   ─
+ 1499 │ 
+ 1500 │                   <button
+ 1500 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2491638ms] [LOG] {file: Object} @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[ 2491756ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1497:1]
+ 1494 │                 ) : null}
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+      ·                       ─
+ 1498 │                   ) : null}
+ 1499 │ 
+ 1500 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+ 1498 │                   ) : null}
+      ·                   ─
+ 1499 │ 
+ 1500 │                   <button
+ 1500 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2492466ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1497:1]
+ 1494 │                 ) : null}
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+      ·                       ─
+ 1498 │                   ) : null}
+ 1499 │ 
+ 1500 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+ 1498 │                   ) : null}
+      ·                   ─
+ 1499 │ 
+ 1500 │                   <button
+ 1500 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2493939ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:206
+[ 2494001ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5000/_next/static/webpack/c9bafe32b7c00073.webpack.hot-update.json:0
+[ 2494002ms] [WARNING] [Fast Refresh] performing full reload because your application had an unrecoverable error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:347
+[ 2494810ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1497:1]
+ 1494 │                 ) : null}
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+      ·                       ─
+ 1498 │                   ) : null}
+ 1499 │ 
+ 1500 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+ 1498 │                   ) : null}
+      ·                   ─
+ 1499 │ 
+ 1500 │                   <button
+ 1500 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/pos/pos-workspace.tsx
+./app/(dashboard)/pos/page.tsx @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2494815ms] [LOG] {file: Object} @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[ 2494902ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5000/_next/static/webpack/c9bafe32b7c00073.webpack.hot-update.json:0
+[ 2494902ms] [WARNING] [Fast Refresh] performing full reload because your application had an unrecoverable error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:347
+[ 2495700ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5000/_next/static/webpack/c9bafe32b7c00073.webpack.hot-update.json:0
+[ 2495700ms] [WARNING] [Fast Refresh] performing full reload because your application had an unrecoverable error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:347
+[ 2496422ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1497:1]
+ 1494 │                 ) : null}
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+      ·                       ─
+ 1498 │                   ) : null}
+ 1499 │ 
+ 1500 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+ 1498 │                   ) : null}
+      ·                   ─
+ 1499 │ 
+ 1500 │                   <button
+ 1500 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/pos/pos-workspace.tsx
+./app/(dashboard)/pos/page.tsx @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2496776ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:5000/pos:0
+[ 2497870ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///(pages-dir-browser)/./node_modules/react-dom/cjs/react-dom.development.js:29834
+[ 2497967ms] ModuleBuildError: Module build failed (from ./node_modules/next/dist/build/webpack/loaders/next-swc-loader.js):
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1497:1]
+ 1494 │                 ) : null}
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+      ·                       ─
+ 1498 │                   ) : null}
+ 1499 │ 
+ 1500 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+ 1498 │                   ) : null}
+      ·                   ─
+ 1499 │ 
+ 1500 │                   <button
+ 1500 │                     type="button"
+      ╰────
+
+
+Caused by:
+    Syntax Error
+    at processResult (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\webpack\bundle5.js:29:407086)
+    at <unknown> (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\webpack\bundle5.js:29:408881)
+    at <unknown> (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:8645)
+    at <unknown> (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:5019)
+    at r.callback (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:4039)
+[ 2498242ms] [LOG] [HMR] connected @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:45
+[ 2498244ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1497:1]
+ 1494 │                 ) : null}
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+      ·                       ─
+ 1498 │                   ) : null}
+ 1499 │ 
+ 1500 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+ 1498 │                   ) : null}
+      ·                   ─
+ 1499 │ 
+ 1500 │                   <button
+ 1500 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2498256ms] [LOG] {file: Object} @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[ 2498323ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1497:1]
+ 1494 │                 ) : null}
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+      ·                       ─
+ 1498 │                   ) : null}
+ 1499 │ 
+ 1500 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+ 1498 │                   ) : null}
+      ·                   ─
+ 1499 │ 
+ 1500 │                   <button
+ 1500 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2498384ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1497:1]
+ 1494 │                 ) : null}
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+      ·                       ─
+ 1498 │                   ) : null}
+ 1499 │ 
+ 1500 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │ 
+ 1496 │                 <div className="cart-success-overlay__actions actions-row">
+ 1497 │                     </>
+ 1498 │                   ) : null}
+      ·                   ─
+ 1499 │ 
+ 1500 │                   <button
+ 1500 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2571851ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5000/_next/static/webpack/c9bafe32b7c00073.webpack.hot-update.json:0
+[ 2571852ms] [WARNING] [Fast Refresh] performing full reload because your application had an unrecoverable error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:347
+[ 2572600ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │                 ) : null}
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+      ·                       ─
+ 1499 │                   ) : null}
+ 1500 │ 
+ 1501 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1499:1]
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+ 1499 │                   ) : null}
+      ·                   ─
+ 1500 │ 
+ 1501 │                   <button
+ 1501 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/pos/pos-workspace.tsx
+./app/(dashboard)/pos/page.tsx @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2572603ms] [LOG] {file: Object} @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[ 2572747ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:5000/pos:0
+[ 2573953ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///(pages-dir-browser)/./node_modules/react-dom/cjs/react-dom.development.js:29834
+[ 2574098ms] ModuleBuildError: Module build failed (from ./node_modules/next/dist/build/webpack/loaders/next-swc-loader.js):
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │                 ) : null}
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+      ·                       ─
+ 1499 │                   ) : null}
+ 1500 │ 
+ 1501 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1499:1]
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+ 1499 │                   ) : null}
+      ·                   ─
+ 1500 │ 
+ 1501 │                   <button
+ 1501 │                     type="button"
+      ╰────
+
+
+Caused by:
+    Syntax Error
+    at processResult (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\webpack\bundle5.js:29:407086)
+    at <unknown> (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\webpack\bundle5.js:29:408881)
+    at <unknown> (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:8645)
+    at <unknown> (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:5019)
+    at r.callback (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:4039)
+[ 2574335ms] [LOG] [HMR] connected @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:45
+[ 2574337ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │                 ) : null}
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+      ·                       ─
+ 1499 │                   ) : null}
+ 1500 │ 
+ 1501 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1499:1]
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+ 1499 │                   ) : null}
+      ·                   ─
+ 1500 │ 
+ 1501 │                   <button
+ 1501 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2574349ms] [LOG] {file: Object} @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[ 2574383ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │                 ) : null}
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+      ·                       ─
+ 1499 │                   ) : null}
+ 1500 │ 
+ 1501 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1499:1]
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+ 1499 │                   ) : null}
+      ·                   ─
+ 1500 │ 
+ 1501 │                   <button
+ 1501 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2574413ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │                 ) : null}
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+      ·                       ─
+ 1499 │                   ) : null}
+ 1500 │ 
+ 1501 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1499:1]
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+ 1499 │                   ) : null}
+      ·                   ─
+ 1500 │ 
+ 1501 │                   <button
+ 1501 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2577230ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5000/_next/static/webpack/c9bafe32b7c00073.webpack.hot-update.json:0
+[ 2577231ms] [WARNING] [Fast Refresh] performing full reload because your application had an unrecoverable error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:347
+[ 2578306ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │                 ) : null}
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+      ·                       ─
+ 1499 │                   ) : null}
+ 1500 │ 
+ 1501 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1499:1]
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+ 1499 │                   ) : null}
+      ·                   ─
+ 1500 │ 
+ 1501 │                   <button
+ 1501 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/pos/pos-workspace.tsx
+./app/(dashboard)/pos/page.tsx @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2578308ms] [LOG] {file: Object} @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[ 2579704ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │                 ) : null}
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+      ·                       ─
+ 1499 │                   ) : null}
+ 1500 │ 
+ 1501 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1499:1]
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+ 1499 │                   ) : null}
+      ·                   ─
+ 1500 │ 
+ 1501 │                   <button
+ 1501 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/pos/pos-workspace.tsx
+./app/(dashboard)/pos/page.tsx @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2580000ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:5000/pos:0
+[ 2581447ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///(pages-dir-browser)/./node_modules/react-dom/cjs/react-dom.development.js:29834
+[ 2581582ms] ModuleBuildError: Module build failed (from ./node_modules/next/dist/build/webpack/loaders/next-swc-loader.js):
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │                 ) : null}
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+      ·                       ─
+ 1499 │                   ) : null}
+ 1500 │ 
+ 1501 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1499:1]
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+ 1499 │                   ) : null}
+      ·                   ─
+ 1500 │ 
+ 1501 │                   <button
+ 1501 │                     type="button"
+      ╰────
+
+
+Caused by:
+    Syntax Error
+    at processResult (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\webpack\bundle5.js:29:407086)
+    at <unknown> (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\webpack\bundle5.js:29:408881)
+    at <unknown> (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:8645)
+    at <unknown> (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:5019)
+    at r.callback (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:4039)
+[ 2581811ms] [LOG] [HMR] connected @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:45
+[ 2581813ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │                 ) : null}
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+      ·                       ─
+ 1499 │                   ) : null}
+ 1500 │ 
+ 1501 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1499:1]
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+ 1499 │                   ) : null}
+      ·                   ─
+ 1500 │ 
+ 1501 │                   <button
+ 1501 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2581824ms] [LOG] {file: Object} @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[ 2581906ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │                 ) : null}
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+      ·                       ─
+ 1499 │                   ) : null}
+ 1500 │ 
+ 1501 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1499:1]
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+ 1499 │                   ) : null}
+      ·                   ─
+ 1500 │ 
+ 1501 │                   <button
+ 1501 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2581923ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │                 ) : null}
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+      ·                       ─
+ 1499 │                   ) : null}
+ 1500 │ 
+ 1501 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1499:1]
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+ 1499 │                   ) : null}
+      ·                   ─
+ 1500 │ 
+ 1501 │                   <button
+ 1501 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2584407ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:206
+[ 2584454ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5000/_next/static/webpack/c9bafe32b7c00073.webpack.hot-update.json:0
+[ 2584454ms] [WARNING] [Fast Refresh] performing full reload because your application had an unrecoverable error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:347
+[ 2585536ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │                 ) : null}
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+      ·                       ─
+ 1499 │                   ) : null}
+ 1500 │ 
+ 1501 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1499:1]
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+ 1499 │                   ) : null}
+      ·                   ─
+ 1500 │ 
+ 1501 │                   <button
+ 1501 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/pos/pos-workspace.tsx
+./app/(dashboard)/pos/page.tsx @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2585539ms] [LOG] {file: Object} @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[ 2585881ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5000/_next/static/webpack/c9bafe32b7c00073.webpack.hot-update.json:0
+[ 2585882ms] [WARNING] [Fast Refresh] performing full reload because your application had an unrecoverable error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:347
+[ 2587285ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5000/_next/static/webpack/c9bafe32b7c00073.webpack.hot-update.json:0
+[ 2587285ms] [WARNING] [Fast Refresh] performing full reload because your application had an unrecoverable error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:347
+[ 2588203ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │                 ) : null}
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+      ·                       ─
+ 1499 │                   ) : null}
+ 1500 │ 
+ 1501 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1499:1]
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+ 1499 │                   ) : null}
+      ·                   ─
+ 1500 │ 
+ 1501 │                   <button
+ 1501 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/pos/pos-workspace.tsx
+./app/(dashboard)/pos/page.tsx @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2588695ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:5000/pos:0
+[ 2590003ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///(pages-dir-browser)/./node_modules/react-dom/cjs/react-dom.development.js:29834
+[ 2590083ms] ModuleBuildError: Module build failed (from ./node_modules/next/dist/build/webpack/loaders/next-swc-loader.js):
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │                 ) : null}
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+      ·                       ─
+ 1499 │                   ) : null}
+ 1500 │ 
+ 1501 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1499:1]
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+ 1499 │                   ) : null}
+      ·                   ─
+ 1500 │ 
+ 1501 │                   <button
+ 1501 │                     type="button"
+      ╰────
+
+
+Caused by:
+    Syntax Error
+    at processResult (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\webpack\bundle5.js:29:407086)
+    at <unknown> (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\webpack\bundle5.js:29:408881)
+    at <unknown> (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:8645)
+    at <unknown> (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:5019)
+    at r.callback (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:4039)
+[ 2590379ms] [LOG] [HMR] connected @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:45
+[ 2590381ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │                 ) : null}
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+      ·                       ─
+ 1499 │                   ) : null}
+ 1500 │ 
+ 1501 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1499:1]
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+ 1499 │                   ) : null}
+      ·                   ─
+ 1500 │ 
+ 1501 │                   <button
+ 1501 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2590389ms] [LOG] {file: Object} @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[ 2684415ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expression expected
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1498:1]
+ 1495 │                 ) : null}
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+      ·                       ─
+ 1499 │                   ) : null}
+ 1500 │ 
+ 1501 │                   <button
+      ╰────
+  × Expected '</', got ')'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:1499:1]
+ 1496 │ 
+ 1497 │                 <div className="cart-success-overlay__actions actions-row">
+ 1498 │                     </>
+ 1499 │                   ) : null}
+      ·                   ─
+ 1500 │ 
+ 1501 │                   <button
+ 1501 │                     type="button"
+      ╰────
+
+Caused by:
+    Syntax Error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2709235ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5000/_next/static/webpack/c9bafe32b7c00073.webpack.hot-update.json:0
+[ 2709235ms] [WARNING] [Fast Refresh] performing full reload because your application had an unrecoverable error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:347
+[ 2709695ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expected '</', got 'SectionCard'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:2284:1]
+ 2281 │                     </div>
+ 2282 │                   ) : null}
+ 2283 │                 </div>
+ 2284 │           </SectionCard>
+      ·             ───────────
+ 2285 │         </aside>
+ 2286 │       </div>
+ 2286 │ 
+      ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/pos/pos-workspace.tsx
+./app/(dashboard)/pos/page.tsx @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2709697ms] [LOG] {file: Object} @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[ 2710207ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expected '</', got 'SectionCard'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:2284:1]
+ 2281 │                     </div>
+ 2282 │                   ) : null}
+ 2283 │                 </div>
+ 2284 │           </SectionCard>
+      ·             ───────────
+ 2285 │         </aside>
+ 2286 │       </div>
+ 2286 │ 
+      ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/pos/pos-workspace.tsx
+./app/(dashboard)/pos/page.tsx @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2710287ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:5000/pos:0
+[ 2710797ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///(pages-dir-browser)/./node_modules/react-dom/cjs/react-dom.development.js:29834
+[ 2710861ms] ModuleBuildError: Module build failed (from ./node_modules/next/dist/build/webpack/loaders/next-swc-loader.js):
+Error:   × Expected '</', got 'SectionCard'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:2284:1]
+ 2281 │                     </div>
+ 2282 │                   ) : null}
+ 2283 │                 </div>
+ 2284 │           </SectionCard>
+      ·             ───────────
+ 2285 │         </aside>
+ 2286 │       </div>
+ 2286 │ 
+      ╰────
+
+
+Caused by:
+    Syntax Error
+    at processResult (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\webpack\bundle5.js:29:407086)
+    at <unknown> (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\webpack\bundle5.js:29:408881)
+    at <unknown> (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:8645)
+    at <unknown> (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:5019)
+    at r.callback (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:4039)
+[ 2711151ms] [LOG] [HMR] connected @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:45
+[ 2711153ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expected '</', got 'SectionCard'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:2284:1]
+ 2281 │                     </div>
+ 2282 │                   ) : null}
+ 2283 │                 </div>
+ 2284 │           </SectionCard>
+      ·             ───────────
+ 2285 │         </aside>
+ 2286 │       </div>
+ 2286 │ 
+      ╰────
+
+Caused by:
+    Syntax Error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2711161ms] [LOG] {file: Object} @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[ 2711185ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expected '</', got 'SectionCard'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:2284:1]
+ 2281 │                     </div>
+ 2282 │                   ) : null}
+ 2283 │                 </div>
+ 2284 │           </SectionCard>
+      ·             ───────────
+ 2285 │         </aside>
+ 2286 │       </div>
+ 2286 │ 
+      ╰────
+
+Caused by:
+    Syntax Error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2711197ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Expected '</', got 'SectionCard'
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:2284:1]
+ 2281 │                     </div>
+ 2282 │                   ) : null}
+ 2283 │                 </div>
+ 2284 │           </SectionCard>
+      ·             ───────────
+ 2285 │         </aside>
+ 2286 │       </div>
+ 2286 │ 
+      ╰────
+
+Caused by:
+    Syntax Error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2712197ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5000/_next/static/webpack/c9bafe32b7c00073.webpack.hot-update.json:0
+[ 2712197ms] [WARNING] [Fast Refresh] performing full reload because your application had an unrecoverable error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:347
+[ 2712849ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Unterminated regexp literal
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:2285:1]
+ 2282 │                   ) : null}
+ 2283 │                 </div>
+ 2284 │               </>
+ 2285 │           </SectionCard>
+      ·            ─────────────
+ 2286 │         </aside>
+ 2287 │       </div>
+ 2287 │ 
+      ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/pos/pos-workspace.tsx
+./app/(dashboard)/pos/page.tsx @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2712851ms] [LOG] {file: Object} @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[ 2713284ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Unterminated regexp literal
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:2285:1]
+ 2282 │                   ) : null}
+ 2283 │                 </div>
+ 2284 │               </>
+ 2285 │           </SectionCard>
+      ·            ─────────────
+ 2286 │         </aside>
+ 2287 │       </div>
+ 2287 │ 
+      ╰────
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/pos/pos-workspace.tsx
+./app/(dashboard)/pos/page.tsx @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2713368ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:5000/pos:0
+[ 2713961ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///(pages-dir-browser)/./node_modules/react-dom/cjs/react-dom.development.js:29834
+[ 2714042ms] ModuleBuildError: Module build failed (from ./node_modules/next/dist/build/webpack/loaders/next-swc-loader.js):
+Error:   × Unterminated regexp literal
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:2285:1]
+ 2282 │                   ) : null}
+ 2283 │                 </div>
+ 2284 │               </>
+ 2285 │           </SectionCard>
+      ·            ─────────────
+ 2286 │         </aside>
+ 2287 │       </div>
+ 2287 │ 
+      ╰────
+
+
+Caused by:
+    Syntax Error
+    at processResult (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\webpack\bundle5.js:29:407086)
+    at <unknown> (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\webpack\bundle5.js:29:408881)
+    at <unknown> (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:8645)
+    at <unknown> (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:5019)
+    at r.callback (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:4039)
+[ 2714308ms] [LOG] [HMR] connected @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:45
+[ 2714309ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Unterminated regexp literal
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:2285:1]
+ 2282 │                   ) : null}
+ 2283 │                 </div>
+ 2284 │               </>
+ 2285 │           </SectionCard>
+      ·            ─────────────
+ 2286 │         </aside>
+ 2287 │       </div>
+ 2287 │ 
+      ╰────
+
+Caused by:
+    Syntax Error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2714317ms] [LOG] {file: Object} @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[ 2714340ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Unterminated regexp literal
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:2285:1]
+ 2282 │                   ) : null}
+ 2283 │                 </div>
+ 2284 │               </>
+ 2285 │           </SectionCard>
+      ·            ─────────────
+ 2286 │         </aside>
+ 2287 │       </div>
+ 2287 │ 
+      ╰────
+
+Caused by:
+    Syntax Error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2714388ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Unterminated regexp literal
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:2285:1]
+ 2282 │                   ) : null}
+ 2283 │                 </div>
+ 2284 │               </>
+ 2285 │           </SectionCard>
+      ·            ─────────────
+ 2286 │         </aside>
+ 2287 │       </div>
+ 2287 │ 
+      ╰────
+
+Caused by:
+    Syntax Error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 2927464ms] [ERROR] ./components/pos/pos-workspace.tsx
+Error:   × Unterminated regexp literal
+      ╭─[C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\pos-workspace.tsx:2285:1]
+ 2282 │                   ) : null}
+ 2283 │                 </div>
+ 2284 │               </>
+ 2285 │           </SectionCard>
+      ·            ─────────────
+ 2286 │         </aside>
+ 2287 │       </div>
+ 2287 │ 
+      ╰────
+
+Caused by:
+    Syntax Error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 3077152ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5000/_next/static/webpack/c9bafe32b7c00073.webpack.hot-update.json:0
+[ 3077153ms] [WARNING] [Fast Refresh] performing full reload because your application had an unrecoverable error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:347
+[ 3077423ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:206
+[ 3090589ms] [ERROR] ./components/pos/product-thumbnail-art.tsx
+Error: 
+
+Caused by:
+    0: Failed to read source code from C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\product-thumbnail-art.tsx
+    1: The system cannot find the file specified. (os error 2)
+
+Import trace for requested module:
+./components/pos/product-thumbnail-art.tsx
+./components/pos/product-grid-item.tsx
+./components/pos/pos-workspace.tsx @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 3090592ms] [LOG] {file: Object} @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[ 3091732ms] [ERROR] ./components/pos/product-thumbnail-art.tsx
+Error: 
+
+Caused by:
+    0: Failed to read source code from C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\product-thumbnail-art.tsx
+    1: The system cannot find the file specified. (os error 2)
+
+Import trace for requested module:
+./components/pos/product-thumbnail-art.tsx
+./components/pos/product-grid-item.tsx
+./components/pos/pos-workspace.tsx @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 3092186ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:5000/pos:0
+[ 3094676ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///(pages-dir-browser)/./node_modules/react-dom/cjs/react-dom.development.js:29834
+[ 3094803ms] ModuleBuildError: Module build failed (from ./node_modules/next/dist/build/webpack/loaders/next-swc-loader.js):
+Error: 
+
+Caused by:
+    0: Failed to read source code from C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\product-thumbnail-art.tsx
+    1: The system cannot find the file specified. (os error 2)
+    at processResult (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\webpack\bundle5.js:29:407086)
+    at <unknown> (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\webpack\bundle5.js:29:408881)
+    at <unknown> (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:8645)
+    at <unknown> (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:5019)
+    at r.callback (file://C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\node_modules\next\dist\compiled\loader-runner\LoaderRunner.js:1:4039)
+[ 3095280ms] [LOG] [HMR] connected @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/websocket.js:45
+[ 3095289ms] [ERROR] ./components/pos/product-thumbnail-art.tsx
+Error: 
+
+Caused by:
+    0: Failed to read source code from C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\product-thumbnail-art.tsx
+    1: The system cannot find the file specified. (os error 2) @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 3095303ms] [LOG] {file: Object} @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[ 3095512ms] [ERROR] ./components/pos/product-thumbnail-art.tsx
+Error: 
+
+Caused by:
+    0: Failed to read source code from C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\product-thumbnail-art.tsx
+    1: The system cannot find the file specified. (os error 2) @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 3095900ms] [ERROR] ./components/pos/product-thumbnail-art.tsx
+Error: 
+
+Caused by:
+    0: Failed to read source code from C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\product-thumbnail-art.tsx
+    1: The system cannot find the file specified. (os error 2) @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 3099189ms] [ERROR] ./components/pos/product-thumbnail-art.tsx
+Error: 
+
+Caused by:
+    0: Failed to read source code from C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\components\pos\product-thumbnail-art.tsx
+    1: The system cannot find the file specified. (os error 2)
+
+Import trace for requested module:
+./components/pos/product-thumbnail-art.tsx
+./components/pos/product-grid-item.tsx
+./components/pos/pos-workspace.tsx @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.js:76
+[ 3099190ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:206
+[ 3099191ms] [LOG] {file: Object} @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/compiled/next-devtools/index.js:1630
+[ 3101126ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5000/_next/static/webpack/c9bafe32b7c00073.webpack.hot-update.json:0
+[ 3101127ms] [WARNING] [Fast Refresh] performing full reload because your application had an unrecoverable error @ webpack-internal:///(pages-dir-browser)/./node_modules/next/dist/client/dev/hot-reloader/pages/hot-reloader-pages.js:347
+[ 3118460ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom-client.development.js:25630
+[ 3157135ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[ 3161789ms] [LOG] [Fast Refresh] done in 4654ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[ 3187843ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[ 3190341ms] [LOG] [Fast Refresh] done in 2498ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13
+[ 3192220ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/hot-reloader/app/hot-reloader-app.js:196
+[ 3198289ms] [LOG] [Fast Refresh] done in 6069ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/dev/report-hmr-latency.js:13

@@ -1,0 +1,44 @@
+- generic [ref=e1]:
+  - main [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]:
+        - img [ref=e6]
+        - generic [ref=e10]:
+          - heading "تسجيل الدخول" [level=1] [ref=e11]
+          - paragraph [ref=e12]: ادخل بالحساب للوصول مباشرة إلى مساحة العمل المناسبة.
+      - generic [ref=e13]:
+        - generic [ref=e14]:
+          - generic [ref=e15]: البريد الإلكتروني
+          - generic [ref=e16]:
+            - img [ref=e17]
+            - textbox "البريد الإلكتروني" [active] [ref=e20]
+        - generic [ref=e21]:
+          - generic [ref=e22]: كلمة المرور
+          - generic [ref=e23]:
+            - img [ref=e24]
+            - textbox "كلمة المرور إظهار كلمة المرور" [ref=e27]
+            - button "إظهار كلمة المرور" [ref=e28] [cursor=pointer]:
+              - img [ref=e29]
+        - generic [ref=e32]:
+          - checkbox "تذكّر البريد على هذا الجهاز" [checked] [ref=e33]
+          - generic [ref=e34]: تذكّر البريد على هذا الجهاز
+        - button "تسجيل الدخول" [ref=e36] [cursor=pointer]
+    - region "وصول سريع وتثبيت" [ref=e39]:
+      - link "نقطة البيع المباشرة سجّل الدخول وانتقل مباشرة إلى شاشة البيع لبدء عملية بيع جديدة. الانتقال للبيع" [ref=e40] [cursor=pointer]:
+        - /url: /pos
+        - heading "نقطة البيع المباشرة" [level=2] [ref=e41]:
+          - generic [ref=e42]:
+            - img [ref=e43]
+            - generic [ref=e47]: نقطة البيع المباشرة
+        - paragraph [ref=e48]: سجّل الدخول وانتقل مباشرة إلى شاشة البيع لبدء عملية بيع جديدة.
+        - generic [ref=e49]:
+          - text: الانتقال للبيع
+          - img [ref=e50]
+      - region "تثبيت النظام على جهازك" [ref=e52]:
+        - generic [ref=e53]:
+          - heading "تثبيت النظام على جهازك" [level=2] [ref=e54]
+          - paragraph [ref=e55]: النظام يعمل كتطبيق ويب على جميع الأجهزة، مع توفر التثبيت الاختياري.
+        - generic [ref=e56]:
+          - button "تثبيت Aya Mobile" [disabled]
+          - paragraph [ref=e57]: جارٍ التحقق من دعم التثبيت على هذا الجهاز.
+  - region "Notifications alt+T"

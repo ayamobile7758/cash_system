@@ -14,7 +14,7 @@ type UseProductsOptions = {
 
 type ProductsResponseData = {
   items: PosProduct[];
-  totalCount: number;
+  totalCount: number | null;
   hasMore: boolean;
 };
 
@@ -119,8 +119,9 @@ export function useProducts({ searchQuery = "", category = "all" }: UseProductsO
         const nextCount = loadingMore ? loadedCountRef.current + nextProducts.length : nextProducts.length;
         loadedCountRef.current = nextCount;
 
+        const reportedTotal = data?.totalCount;
         setProducts((current) => (page === 0 ? nextProducts : [...current, ...nextProducts]));
-        setTotalCount(data?.totalCount ?? nextCount);
+        setTotalCount(typeof reportedTotal === "number" ? reportedTotal : null);
         setHasMore(data?.hasMore ?? nextProducts.length === PAGE_SIZE);
         setErrorMessage(null);
       }

@@ -1,0 +1,9 @@
+ ⚠ Cross origin request detected from 127.0.0.1 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+ ⨯ TypeError: __webpack_modules__[moduleId] is not a function
+    at __webpack_exec__ (C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\server\app\page.js:378:39)
+    at <unknown> (C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\server\app\page.js:379:274)
+    at <unknown> (C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\server\app\page.js:379:47)
+    at Object.<anonymous> (C:\Users\Qaysk\OneDrive\Desktop\Aya Mobile\.next\server\app\page.js:382:3) {
+  page: '/'
+}
