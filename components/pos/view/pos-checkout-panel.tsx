@@ -1,5 +1,6 @@
 import * as React from "react";
 import { ChevronDown, Loader2, Plus, X, type LucideIcon } from "lucide-react";
+import { PaymentAmountConfirmation } from "@/components/pos/view/payment-amount-confirmation";
 import type { PosAccount, SplitPayment } from "@/lib/pos/types";
 import { formatCompactNumber, formatCurrency } from "@/lib/utils/formatters";
 
@@ -11,6 +12,7 @@ type CustomerSearchResult = {
 };
 
 type SectionId = "customer" | "discount" | "split" | "debt" | "notes";
+type PaymentStep = "method-select" | "amount-confirmation";
 
 type PosCheckoutPanelProps = {
   accounts: PosAccount[];
@@ -42,7 +44,7 @@ type PosCheckoutPanelProps = {
   onAmountReceivedChange: (value: string) => void;
   onClearCartRequest: () => void;
   onClearCustomerSelection: () => void;
-  onConfirmSale: () => void;
+  onConfirmSale: (amountPaid?: number | null) => void;
   onCustomerSearchInputChange: (value: string) => void;
   onHeldCartsToggle: () => void;
   onHoldCart: () => void;
@@ -230,6 +232,9 @@ export function PosCheckoutPanel({
   terminalCodeLocked,
   totalDiscount
 }: PosCheckoutPanelProps) {
+  const [paymentStep, setPaymentStep] = React.useState<PaymentStep>(() =>
+    selectedAccountId ? "amount-confirmation" : "method-select"
+  );
   const [openSections, setOpenSections] = React.useState<Record<SectionId, boolean>>(() =>
     buildInitialOpenSections({
       canCreateDebt,
@@ -254,6 +259,12 @@ export function PosCheckoutPanel({
   React.useEffect(() => {
     manuallyClosedSectionsRef.current = manuallyClosedSections;
   }, [manuallyClosedSections]);
+
+  React.useEffect(() => {
+    if (!selectedAccountId) {
+      setPaymentStep("method-select");
+    }
+  }, [selectedAccountId]);
 
   const setSectionOpen = React.useCallback(
     (
@@ -361,6 +372,21 @@ export function PosCheckoutPanel({
       : terminalCodeLocked || posTerminalCode.trim().toUpperCase() !== DEFAULT_TERMINAL_CODE
         ? posTerminalCode
         : null;
+  const selectedAccountName = selectedAccount?.name?.trim() || "حساب";
+
+  const handlePaymentAccountSelection = React.useCallback(
+    (accountId: string) => {
+      onPaymentAccountSelect(accountId);
+      onAmountReceivedChange("");
+      setPaymentStep("amount-confirmation");
+    },
+    [onAmountReceivedChange, onPaymentAccountSelect]
+  );
+
+  const handleAmountConfirmationCancel = React.useCallback(() => {
+    onAmountReceivedChange("");
+    setPaymentStep("method-select");
+  }, [onAmountReceivedChange]);
 
   return (
     <div className="pos-unified-checkout">
@@ -406,7 +432,7 @@ export function PosCheckoutPanel({
                       ? "chip chip--active pos-payment-chip is-selected"
                       : "chip pos-payment-chip"
                   }
-                  onClick={() => onPaymentAccountSelect(account.id)}
+                  onClick={() => handlePaymentAccountSelection(account.id)}
                   disabled={isProcessing}
                 >
                   <Icon size={16} />
@@ -418,38 +444,46 @@ export function PosCheckoutPanel({
         </div>
       ) : null}
 
-      {!isSplitMode && selectedAccount?.type === "cash" ? (
-        <label className="stack-field">
-          <span className="field-label">المبلغ المستلم</span>
-          <input
-            className="field-input"
-            type="number"
-            inputMode="decimal"
-            min={0}
-            step="0.001"
-            value={amountReceived ?? ""}
-            onChange={(event) => onAmountReceivedChange(event.target.value)}
-            placeholder="0.000"
-            disabled={isProcessing}
+      {!isSplitMode && selectedAccount ? (
+        paymentStep === "amount-confirmation" ? (
+          <PaymentAmountConfirmation
+            amountPaid={amountReceived}
+            isProcessing={isProcessing || isSubmitting}
+            selectedAccountName={selectedAccountName}
+            totalAmount={netTotal}
+            onAmountPaidChange={onAmountReceivedChange}
+            onCancel={handleAmountConfirmationCancel}
+            onConfirm={(amountPaid) => onConfirmSale(amountPaid)}
           />
-        </label>
+        ) : (
+          <div className="pos-remaining-balance validation-tone--warning">
+            <strong>اختر أو راجع طريقة الدفع ثم أدخل المبلغ</strong>
+          </div>
+        )
       ) : null}
 
-      <div className={`pos-remaining-balance ${remainingBalanceToneClass}`}>
-        {remainingToSettle > 0 ? (
-          <strong>المتبقي للسداد: {formatCurrency(remainingToSettle)}</strong>
-        ) : changeToReturn !== null ? (
-          <strong>الباقي للعميل: {formatCurrency(changeToReturn)}</strong>
-        ) : (
-          <strong>تم تسديد المبلغ</strong>
-        )}
-      </div>
+      {isSplitMode ? (
+        <div className={`pos-remaining-balance ${remainingBalanceToneClass}`}>
+          {remainingToSettle > 0 ? (
+            <strong>المتبقي للسداد: {formatCurrency(remainingToSettle)}</strong>
+          ) : changeToReturn !== null ? (
+            <strong>الباقي للعميل: {formatCurrency(changeToReturn)}</strong>
+          ) : (
+            <strong>تم تسديد المبلغ</strong>
+          )}
+        </div>
+      ) : null}
 
       <div className="actions-row">
         <button
           type="button"
           className="secondary-button"
           onClick={(event) => {
+            if (!isSplitMode && paymentStep === "amount-confirmation") {
+              setPaymentStep("method-select");
+              return;
+            }
+
             const paymentSurface = event.currentTarget
               .closest(".pos-unified-checkout")
               ?.querySelector<HTMLElement>(".pos-payment-chip-row, .pos-split-payments");
@@ -512,31 +546,33 @@ export function PosCheckoutPanel({
         </button>
       </div>
 
-      <div className="pos-checkout-primary-action">
-        <button
-          type="button"
-          className={
-            canCreateDebt
-              ? "primary-button btn btn--warning transaction-checkout-button"
-              : "primary-button btn btn--primary transaction-checkout-button"
-          }
-          aria-label="إتمام البيع"
-          disabled={isProcessing || isSubmitting || !canCompleteSale || isOffline}
-          onClick={onConfirmSale}
-          title="Ctrl+Enter"
-        >
-          {isProcessing || isSubmitting ? (
-            <>
-              <Loader2 className="spin" size={16} />
-              جارٍ التنفيذ...
-            </>
-          ) : canCreateDebt ? (
-            `تسجيل دين • ${formatCurrency(netTotal)}`
-          ) : (
-            `تأكيد البيع • ${formatCurrency(netTotal)}`
-          )}
-        </button>
-      </div>
+      {isSplitMode ? (
+        <div className="pos-checkout-primary-action">
+          <button
+            type="button"
+            className={
+              canCreateDebt
+                ? "primary-button btn btn--warning transaction-checkout-button"
+                : "primary-button btn btn--primary transaction-checkout-button"
+            }
+            aria-label="إتمام البيع"
+            disabled={isProcessing || isSubmitting || !canCompleteSale || isOffline}
+            onClick={() => onConfirmSale()}
+            title="Ctrl+Enter"
+          >
+            {isProcessing || isSubmitting ? (
+              <>
+                <Loader2 className="spin" size={16} />
+                جارٍ التنفيذ...
+              </>
+            ) : canCreateDebt ? (
+              `تسجيل دين • ${formatCurrency(netTotal)}`
+            ) : (
+              `تأكيد البيع • ${formatCurrency(netTotal)}`
+            )}
+          </button>
+        </div>
+      ) : null}
 
       <div className="pos-checkout-sections">
         <CheckoutSection

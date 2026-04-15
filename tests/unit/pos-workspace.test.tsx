@@ -1,5 +1,5 @@
 import React from "react";
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { PosWorkspace } from "@/components/pos/pos-workspace";
 import { usePosCartStore } from "@/stores/pos-cart";
 
@@ -179,7 +179,7 @@ describe("PosWorkspace", () => {
     expect(globalThis.fetch).not.toHaveBeenCalled();
   }, 30000);
 
-  it("applies validation tone classes to the live settlement state", async () => {
+  it("requires explicit amount confirmation before completing overlay payment", async () => {
     render(<PosWorkspace maxDiscountPercentage={null} />);
 
     const quickAddButton = screen.getAllByRole("button", { name: /شاحن سريع/i })[0];
@@ -191,32 +191,21 @@ describe("PosWorkspace", () => {
 
     fireEvent.click(await screen.findByRole("button", { name: "خيارات دفع أخرى" }));
 
-    await waitFor(() => {
-      const indicator = screen
-        .getByText(/المتبقي للسداد:/)
-        .closest(".pos-remaining-balance");
-      expect(indicator).toHaveClass("validation-tone--error");
-    });
+    const amountInput = await screen.findByLabelText("المبلغ المدفوع");
+    const confirmPaymentButton = screen.getByRole("button", { name: "تأكيد الدفع" });
 
-    await act(async () => {
-      usePosCartStore.getState().setSelectedCustomer("customer-1", "عميل اختبار");
-    });
+    fireEvent.change(amountInput, { target: { value: "80" } });
 
     await waitFor(() => {
-      const indicator = screen
-        .getByText(/المتبقي للسداد:/)
-        .closest(".pos-remaining-balance");
-      expect(indicator).toHaveClass("validation-tone--warning");
+      expect(screen.getByText("يجب الدفع كامل المبلغ")).toBeVisible();
+      expect(confirmPaymentButton).toBeDisabled();
     });
 
-    const receivedInput = await screen.findByLabelText("المبلغ المستلم");
-    fireEvent.change(receivedInput, { target: { value: "100" } });
+    fireEvent.change(amountInput, { target: { value: "100" } });
 
     await waitFor(() => {
-      const indicator = screen
-        .getByText("تم تسديد المبلغ")
-        .closest(".pos-remaining-balance");
-      expect(indicator).toHaveClass("validation-tone--success");
+      expect(screen.getByLabelText("الباقي")).toHaveTextContent(/الباقي:/);
+      expect(confirmPaymentButton).toBeEnabled();
     });
   }, 30000);
 

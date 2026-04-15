@@ -1738,10 +1738,12 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
       onClearCartRequest={() => setIsClearCartDialogOpen(true)}
       onClearCustomerSelection={clearCustomerSelection}
       onClose={returnToActiveCartSurface}
-      onConfirmSale={() => {
+      onConfirmSale={(amountPaid) => {
         setIsSmartSubmitting(false);
         startSubmission(() => {
-          void submitSale();
+          void submitSale({
+            amountReceived: typeof amountPaid === "number" ? amountPaid : undefined
+          });
         });
       }}
       onCustomerSearchInputChange={(value) => {
