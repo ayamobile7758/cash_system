@@ -1,6 +1,6 @@
 import * as React from "react";
-import { GripHorizontal, Loader2, Minus, Plus, Trash2 } from "lucide-react";
-import type { PosCartItem } from "@/lib/pos/types";
+import { GripHorizontal, Loader2, Minus, Plus, Trash2, type LucideIcon } from "lucide-react";
+import type { PosAccount, PosCartItem } from "@/lib/pos/types";
 import { formatCompactNumber, formatCurrency } from "@/lib/utils/formatters";
 import type { HeldCart } from "@/stores/pos-cart";
 
@@ -10,11 +10,13 @@ type LastTouchedCartLine = {
 };
 
 type PosCartRailProps = {
+  accounts?: PosAccount[];
   canHoldCart: boolean;
   cartHydrated: boolean;
   cartOverviewLabel: string;
   customerSummaryLabel: string;
   effectiveMaxDiscount: number;
+  getAccountIcon?: (type: string) => LucideIcon;
   getHeldCartAge: (heldAt: string) => string;
   heldCarts: HeldCart[];
   isHeldCartsOpen: boolean;
@@ -31,10 +33,12 @@ type PosCartRailProps = {
   onNewSale: () => void;
   onOpenCheckout: () => void;
   onOpenPaymentOptions?: () => void;
+  onPaymentAccountSelect?: (accountId: string) => void;
   onRemoveItem: (item: PosCartItem) => void;
   onRestoreHeldCart: (cartId: string) => void;
   onSmartPaymentSubmit?: () => void;
   onToggleHeldCarts: () => void;
+  selectedAccountId?: string | null;
   smartPaymentActionLabel?: string;
   smartPaymentAriaLabel?: string;
   smartPaymentErrorMessage?: string | null;
@@ -43,11 +47,13 @@ type PosCartRailProps = {
 };
 
 export function PosCartRail({
+  accounts,
   canHoldCart,
   cartHydrated,
   cartOverviewLabel,
   customerSummaryLabel,
   effectiveMaxDiscount,
+  getAccountIcon,
   getHeldCartAge,
   heldCarts,
   isHeldCartsOpen,
@@ -64,10 +70,12 @@ export function PosCartRail({
   onNewSale,
   onOpenCheckout,
   onOpenPaymentOptions,
+  onPaymentAccountSelect,
   onRemoveItem,
   onRestoreHeldCart,
   onSmartPaymentSubmit,
   onToggleHeldCarts,
+  selectedAccountId = null,
   smartPaymentActionLabel,
   smartPaymentAriaLabel,
   smartPaymentErrorMessage = null,
@@ -311,6 +319,31 @@ export function PosCartRail({
             {smartPaymentErrorMessage ? (
               <div className="pos-cart-rail__smart-error" role="alert">
                 {smartPaymentErrorMessage}
+              </div>
+            ) : null}
+
+            {accounts && accounts.length > 0 && getAccountIcon && onPaymentAccountSelect ? (
+              <div className="chip-row pos-cart-rail__payment-chips">
+                {accounts.map((account) => {
+                  const Icon = getAccountIcon(account.type);
+                  const isSelected = account.id === selectedAccountId;
+                  return (
+                    <button
+                      key={account.id}
+                      type="button"
+                      className={
+                        isSelected
+                          ? "chip chip--active pos-payment-chip is-selected"
+                          : "chip pos-payment-chip"
+                      }
+                      onClick={() => onPaymentAccountSelect(account.id)}
+                      disabled={smartPaymentSubmitting}
+                    >
+                      <Icon size={16} />
+                      {account.name?.trim() || "حساب"}
+                    </button>
+                  );
+                })}
               </div>
             ) : null}
 

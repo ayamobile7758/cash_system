@@ -191,7 +191,7 @@ describe("PosWorkspace", () => {
 
     fireEvent.click(await screen.findByRole("button", { name: "خيارات دفع أخرى" }));
 
-    const amountInput = await screen.findByLabelText("المبلغ المدفوع");
+    const amountInput = await screen.findByLabelText("المبلغ المستلم");
     const confirmPaymentButton = screen.getByRole("button", { name: "تأكيد الدفع" });
 
     fireEvent.change(amountInput, { target: { value: "80" } });

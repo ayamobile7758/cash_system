@@ -255,16 +255,23 @@ export function PosCheckoutPanel({
   const debtSectionRef = React.useRef<HTMLDetailsElement | null>(null);
   const notesSectionRef = React.useRef<HTMLDetailsElement | null>(null);
   const previousSelectedCustomerId = React.useRef<string | null>(selectedCustomerId);
+  const previousSelectedAccountId = React.useRef<string | null>(selectedAccountId);
 
   React.useEffect(() => {
     manuallyClosedSectionsRef.current = manuallyClosedSections;
   }, [manuallyClosedSections]);
 
   React.useEffect(() => {
+    const accountIdChanged = previousSelectedAccountId.current !== selectedAccountId;
+
     if (!selectedAccountId) {
       setPaymentStep("method-select");
+    } else if (!isSplitMode && accountIdChanged) {
+      setPaymentStep("amount-confirmation");
     }
-  }, [selectedAccountId]);
+
+    previousSelectedAccountId.current = selectedAccountId;
+  }, [isSplitMode, selectedAccountId]);
 
   const setSectionOpen = React.useCallback(
     (

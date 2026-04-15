@@ -41,7 +41,7 @@ export function PaymentAmountConfirmation({
       </div>
 
       <label className="stack-field">
-        <span className="field-label">كم دفع الزبون؟</span>
+        <span className="field-label">المبلغ المستلم</span>
         <input
           ref={inputRef}
           className="field-input"
@@ -53,7 +53,7 @@ export function PaymentAmountConfirmation({
           onChange={(event) => onAmountPaidChange(event.target.value)}
           placeholder="0.00"
           disabled={isProcessing}
-          aria-label="المبلغ المدفوع"
+          aria-label="المبلغ المستلم"
         />
       </label>
 

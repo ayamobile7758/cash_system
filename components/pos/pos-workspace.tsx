@@ -1873,11 +1873,13 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     ) : null;
 
   const cartRailProps = {
+    accounts,
     canHoldCart,
     cartHydrated,
     cartOverviewLabel,
     customerSummaryLabel,
     effectiveMaxDiscount,
+    getAccountIcon,
     getHeldCartAge,
     heldCarts,
     isHeldCartsOpen,
@@ -1893,10 +1895,15 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
     onNewSale: handleTopbarNewSale,
     onOpenCheckout: openPaymentOverlay,
     onOpenPaymentOptions: openPaymentOverlay,
+    onPaymentAccountSelect: (accountId: string) => {
+      clearSubmissionFeedback();
+      setSelectedAccountId(accountId);
+    },
     onRemoveItem: handleCartLineRemove,
     onRestoreHeldCart: handleRestoreHeldCart,
     onSmartPaymentSubmit: handleSmartPaymentSubmit,
     onToggleHeldCarts: () => setIsHeldCartsOpen((currentValue) => !currentValue),
+    selectedAccountId,
     smartPaymentActionLabel,
     smartPaymentAriaLabel,
     smartPaymentErrorMessage,
@@ -2012,8 +2019,6 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
           setIsClearCartDialogOpen(false);
         }}
       />
-      </section>
-
       <PosSettingsModal
         open={isSettingsOpen}
         displaySize={posSettings.displaySize}
@@ -2023,6 +2028,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
         onClose={() => setIsSettingsOpen(false)}
         triggerRef={settingsTriggerRef}
       />
+      </section>
     </>
   );
 }

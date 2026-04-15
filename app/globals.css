@@ -7847,7 +7847,7 @@ h3 {
 
 .pos-cart-card__title {
   margin: 0;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
   color: var(--color-text-primary);
 }
@@ -7868,7 +7868,7 @@ h3 {
 
 .pos-cart-card__summary {
   margin: 0;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--color-text-secondary);
 }
 
@@ -7889,15 +7889,15 @@ h3 {
 
 .pos-cart-card__body {
   display: grid;
-  gap: var(--sp-3);
+  gap: var(--sp-2);
   min-height: 0;
 }
 
 .pos-cart-card__table-head {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto auto;
-  gap: var(--sp-3);
-  padding: 0 var(--sp-2);
+  gap: var(--sp-2);
+  padding: 0 var(--sp-1);
   color: var(--color-text-secondary);
   font-size: 12px;
   font-weight: 700;
@@ -7911,7 +7911,7 @@ h3 {
 .cart-line-list {
   display: grid;
   max-height: min(65vh, 56rem);
-  gap: var(--sp-2);
+  gap: var(--sp-1);
   overflow: auto;
   padding-inline-end: 0;
 }
@@ -7920,7 +7920,7 @@ h3 {
   display: grid;
   gap: var(--sp-2);
   margin: 0;
-  padding: var(--sp-3);
+  padding: var(--sp-2);
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   background: var(--color-bg-surface);
@@ -7931,7 +7931,7 @@ h3 {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: var(--sp-3);
+  gap: var(--sp-2);
 }
 
 .cart-line-card__copy {
@@ -7941,23 +7941,23 @@ h3 {
 }
 
 .cart-line-card__copy strong {
-  font-size: 15px;
+  font-size: 13px;
 }
 
 .cart-line-card__copy p {
   margin: 0;
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .cart-line-card__header-side {
   display: grid;
   justify-items: end;
-  gap: var(--sp-2);
+  gap: var(--sp-1);
   flex-shrink: 0;
 }
 
 .cart-line-card__line-total {
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .cart-line-card__remove {
@@ -7975,7 +7975,7 @@ h3 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--sp-3);
+  gap: var(--sp-2);
 }
 
 .cart-line-card__quantity {
@@ -7990,10 +7990,10 @@ h3 {
 }
 
 .cart-line-card__quantity-button {
-  min-width: 48px;
-  width: 48px;
-  min-height: 48px;
-  height: 48px;
+  min-width: 44px;
+  width: 44px;
+  min-height: 44px;
+  height: 44px;
   padding: 0;
   border-color: var(--color-bg-muted);
   border-radius: var(--radius-pill);
@@ -8013,7 +8013,7 @@ h3 {
   text-align: center;
   color: var(--color-text-primary);
   font-family: var(--font-numeric);
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
@@ -8021,25 +8021,25 @@ h3 {
 .cart-line-card__discount {
   display: grid;
   gap: var(--sp-1);
-  min-width: 132px;
+  min-width: 120px;
 }
 
 .cart-line-card__discount span {
   color: var(--color-text-secondary);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
 }
 
 .cart-line-card__discount input {
   width: 100%;
   min-height: var(--input-height);
-  padding: 0 var(--sp-3);
+  padding: 0 var(--sp-2);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background: var(--color-bg-surface);
   color: var(--color-text-primary);
   font-family: inherit;
-  font-size: 14px;
+  font-size: 13px;
   outline: none;
 }
 
@@ -9342,21 +9342,38 @@ h3 {
 }
 
 .pos-settings-scope .pos-cart-card__title {
-  font-size: var(--pos-title-size);
+  font-size: calc(16px * var(--pos-font-scale));
 }
 
 .pos-settings-scope .pos-cart-card__summary,
-.pos-settings-scope .cart-line-card__copy,
-.pos-settings-scope .cart-line-card__line-total,
 .pos-settings-scope .cart-line-card__quantity-value,
 .pos-settings-scope .cart-line-card__discount input {
-  font-size: var(--pos-body-size);
+  font-size: calc(13px * var(--pos-font-scale));
+}
+
+.pos-settings-scope .cart-line-card__copy strong,
+.pos-settings-scope .cart-line-card__line-total {
+  font-size: calc(13px * var(--pos-font-scale));
+}
+
+.pos-settings-scope .cart-line-card__copy p,
+.pos-settings-scope .cart-line-card__discount span {
+  font-size: calc(11px * var(--pos-font-scale));
 }
 
 .pos-settings-scope .cart-line-card {
-  gap: calc(var(--sp-2) * var(--pos-density-scale));
-  padding: var(--pos-settings-surface-padding);
+  gap: max(var(--sp-1), calc(var(--sp-2) * var(--pos-density-scale)));
+  padding: max(var(--sp-2), calc(var(--sp-2) * var(--pos-density-scale)));
   border-radius: calc(var(--radius-lg) * var(--pos-radius-scale));
+}
+
+.pos-settings-scope .cart-line-card__controls {
+  gap: max(var(--sp-1), calc(var(--sp-2) * var(--pos-density-scale)));
+}
+
+.pos-settings-scope .cart-line-card__quantity-button,
+.pos-settings-scope .cart-line-card__discount input {
+  min-block-size: max(44px, calc(44px * var(--pos-density-scale)));
 }
 
 .pos-settings-scope .transaction-toolbar__search {
@@ -9598,6 +9615,19 @@ h3 {
   color: var(--color-danger);
   font-size: 13px;
   line-height: 1.5;
+}
+
+.pos-cart-rail__payment-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+.pos-cart-rail__payment-chips .pos-payment-chip {
+  min-block-size: 44px;
+  flex: 1 1 0;
+  justify-content: center;
+  font-size: 13px;
 }
 
 .pos-cart-rail__smart-button {
