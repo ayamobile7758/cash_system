@@ -410,7 +410,7 @@ export function PosCheckoutPanel({
                   disabled={isProcessing}
                 >
                   <Icon size={16} />
-                  {getAccountChipLabel(account)}
+                  {account.name?.trim() || "حساب"}
                 </button>
               );
             })}
@@ -657,7 +657,7 @@ export function PosCheckoutPanel({
                           disabled={isProcessing}
                         >
                           <SelectedAccountIcon size={16} />
-                          {getAccountChipLabel(selectedAccount)}
+                          {selectedAccount.name?.trim() || "حساب"}
                         </button>
                       );
                     })()
@@ -695,7 +695,7 @@ export function PosCheckoutPanel({
                         disabled={isProcessing}
                       >
                         <Icon size={16} />
-                        {getAccountChipLabel(account)}
+                        {account.name?.trim() || "حساب"}
                       </button>
                     );
                   })}
@@ -721,7 +721,7 @@ export function PosCheckoutPanel({
                           disabled={isProcessing}
                         >
                           <Icon size={16} />
-                          {getAccountChipLabel(account)}
+                          {account.name?.trim() || "حساب"}
                         </button>
                       );
                     })}

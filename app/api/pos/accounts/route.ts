@@ -36,6 +36,7 @@ export async function GET() {
       .from("accounts")
       .select(ACCOUNT_COLUMNS)
       .eq("is_active", true)
+      .eq("module_scope", "core")
       .order("display_order", { ascending: true })
       .order("name", { ascending: true });
 

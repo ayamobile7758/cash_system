@@ -1509,7 +1509,7 @@ export function PosWorkspace({ maxDiscountPercentage }: PosWorkspaceProps) {
 
 
   const smartPaymentActionLabel = selectedAccount
-    ? `دفع ${getAccountChipLabel(selectedAccount)}`
+    ? `دفع ${selectedAccount.type === "cash" ? "كاش" : selectedAccount.name?.trim() || "حساب"}`
     : "دفع";
   const smartPaymentAriaLabel = `${smartPaymentActionLabel} — الإجمالي ${formatCurrency(netTotal)}`;
   const canUseSmartPayment =
