@@ -5,6 +5,15 @@
 - Primary users: `pos_staff` (cashier), `admin`
 - This file supplements `AGENTS.md`; it adds repo-specific AI safety rules and must not duplicate standing agent rules already defined there
 
+## Supabase Connection (Permanent)
+- Project ref: `ycgbzwvrgpnovfrwyohq`
+- Project name: `aya-mobile`
+- Region: Central EU (Frankfurt)
+- DB URL (for migrations & CLI): `postgresql://postgres.ycgbzwvrgpnovfrwyohq:6BFHUwVTzuQzkv3K@aws-1-eu-central-1.pooler.supabase.com:5432/postgres`
+- Push migrations: `supabase db push --db-url "postgresql://postgres.ycgbzwvrgpnovfrwyohq:6BFHUwVTzuQzkv3K@aws-1-eu-central-1.pooler.supabase.com:5432/postgres"`
+- Run SQL query: `supabase db execute --db-url "postgresql://postgres.ycgbzwvrgpnovfrwyohq:6BFHUwVTzuQzkv3K@aws-1-eu-central-1.pooler.supabase.com:5432/postgres" --file <file.sql>`
+- Any Agent that needs to apply migrations or query the DB MUST use this DB URL directly — no manual steps, no dashboard.
+
 ## Architectural Source of Truth
 The architectural and product-level decisions for this project live in the **AYA package**:
 `تصميم جديد/AYA_00 → AYA_09` (10 files).
