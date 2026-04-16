@@ -8176,8 +8176,6 @@ h3 {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--sp-2);
-  overflow-y: auto;
-  overscroll-behavior: contain;
   padding-inline-end: var(--sp-1);
 }
 
@@ -8856,7 +8854,6 @@ h3 {
 }
 
 .pos-workspace .cart-line-list {
-  min-height: 0;
   max-height: none;
 }
 
@@ -9408,11 +9405,7 @@ h3 {
   flex: 1 1 0;
 }
 .pos-cart-card__body {
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
-  min-height: 0;
-  flex: 1 1 0;
-  overflow: hidden;
+  display: contents;
 }
 .pos-checkout-panel {
   flex-shrink: 0;
@@ -9944,14 +9937,10 @@ h3 {
   margin: 0;
 }
 
-.pos-cart-rail .pos-cart-card__body,
-.pos-cart-rail-layout .pos-cart-card__body {
-  overflow: hidden;
-}
-
 .pos-cart-rail .cart-line-list,
 .pos-cart-rail-layout .cart-line-list {
   max-height: none;
+  overflow: visible;
   padding-inline-end: var(--sp-1);
 }
 
