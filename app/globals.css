@@ -8181,9 +8181,9 @@ h3 {
 
 .cart-line-card {
   display: grid;
-  gap: var(--sp-2);
+  gap: var(--sp-1);
   margin: 0;
-  padding: var(--sp-2);
+  padding: var(--sp-2) var(--sp-2) var(--sp-1);
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   background: var(--color-bg-surface);
@@ -8243,20 +8243,20 @@ h3 {
 
 .cart-line-card__quantity {
   display: inline-grid;
-  grid-template-columns: var(--sp-8) minmax(calc(var(--sp-12) * 0.75), auto) var(--sp-8);
+  grid-template-columns: 36px minmax(28px, auto) 36px;
   align-items: center;
-  gap: var(--sp-2);
-  padding: var(--sp-1);
+  gap: var(--sp-1);
+  padding: 2px;
   background: transparent;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
 }
 
 .cart-line-card__quantity-button {
-  min-width: 44px;
-  width: 44px;
-  min-height: 44px;
-  height: 44px;
+  min-width: 36px;
+  width: 36px;
+  min-height: 36px;
+  height: 36px;
   padding: 0;
   border-color: var(--color-bg-muted);
   border-radius: var(--radius-pill);
@@ -8272,19 +8272,19 @@ h3 {
 }
 
 .cart-line-card__quantity-value {
-  min-width: calc(var(--sp-12) * 0.75);
+  min-width: 28px;
   text-align: center;
   color: var(--color-text-primary);
   font-family: var(--font-numeric);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
 .cart-line-card__discount {
   display: grid;
-  gap: var(--sp-1);
-  min-width: 120px;
+  gap: 2px;
+  min-width: 90px;
 }
 
 .cart-line-card__discount span {
@@ -8295,14 +8295,14 @@ h3 {
 
 .cart-line-card__discount input {
   width: 100%;
-  min-height: var(--input-height);
+  min-height: 32px;
   padding: 0 var(--sp-2);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background: var(--color-bg-surface);
   color: var(--color-text-primary);
   font-family: inherit;
-  font-size: 13px;
+  font-size: 12px;
   outline: none;
 }
 
@@ -8562,6 +8562,27 @@ h3 {
 
   .pos-payment-chip {
     flex-basis: 100%;
+  }
+
+  /* Touch targets: restore 44px minimum on phone/tablet */
+  .cart-line-card__quantity-button {
+    min-width: 44px;
+    width: 44px;
+    min-height: 44px;
+    height: 44px;
+  }
+
+  .cart-line-card__quantity {
+    grid-template-columns: 44px minmax(28px, auto) 44px;
+  }
+
+  .cart-line-card__discount input {
+    min-height: 40px;
+  }
+
+  .cart-line-card {
+    gap: var(--sp-2);
+    padding: var(--sp-2);
   }
 }
 
