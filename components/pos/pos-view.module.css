@@ -16,6 +16,15 @@
   background: var(--color-bg-base);
 }
 
+/* Cart aside must fill layout height so rail scroll works */
+.layout > aside {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
 .productsPane {
   display: grid;
   min-height: 0;

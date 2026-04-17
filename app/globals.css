@@ -9455,27 +9455,26 @@ h3 {
   min-block-size: 0;
 }
 
-.pos-cart-rail-shell,
-.pos-cart-review-shell {
-  min-block-size: 0;
-}
-
 .pos-cart-rail-shell {
   display: none;
-  block-size: 100%;
+  flex: 1 1 0;
+  min-block-size: 0;
+  overflow: hidden;
 }
 
 .pos-cart-review-shell {
-  display: block;
-  block-size: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-block-size: 0;
+  overflow: hidden;
 }
 
 .pos-cart-rail {
   display: none;
   grid-template-rows: auto minmax(0, 1fr) auto;
-  block-size: 100%;
+  flex: 1 1 0;
   min-block-size: 0;
-  max-block-size: 100dvh;
   background: var(--color-bg-base);
   border-inline-start: 1px solid var(--color-border);
   box-shadow: none;
@@ -9976,7 +9975,8 @@ h3 {
   }
 
   .pos-workspace .pos-cart-sheet:not(.pos-mobile-cart-access) {
-    display: block !important;
+    display: flex !important;
+    flex-direction: column !important;
     padding: 0;
     border-inline-start: 0;
     background: var(--color-bg-base);
@@ -9984,7 +9984,8 @@ h3 {
   }
 
   .pos-cart-rail-shell {
-    display: block;
+    display: flex;
+    flex-direction: column;
   }
 
   .pos-cart-rail {
