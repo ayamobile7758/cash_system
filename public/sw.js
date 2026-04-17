@@ -1,16 +1,11 @@
 const buildId = new URL(self.location.href).searchParams.get("build") || "dev";
 const cachePrefix = "aya-mobile";
 const staticCacheName = `${cachePrefix}-static-${buildId}`;
-const publicPageCacheName = `${cachePrefix}-public-pages-${buildId}`;
-const publicNavigationPaths = new Set(["/", "/login", "/unsupported-device"]);
+const pageCacheName = `${cachePrefix}-pages-${buildId}`;
 const precacheUrls = ["/", "/login", "/unsupported-device", "/aya-icon-192.png", "/aya-icon-512.png"];
 
 function isSensitivePath(pathname) {
   return pathname.startsWith("/api/") || pathname.startsWith("/auth/") || pathname.startsWith("/supabase/");
-}
-
-function isPublicNavigation(pathname) {
-  return publicNavigationPaths.has(pathname);
 }
 
 async function cacheFirst(request) {
@@ -31,7 +26,7 @@ async function cacheFirst(request) {
 }
 
 async function networkFirstPage(request) {
-  const cache = await caches.open(publicPageCacheName);
+  const cache = await caches.open(pageCacheName);
 
   try {
     const response = await fetch(request);
@@ -48,7 +43,7 @@ async function networkFirstPage(request) {
       return cached;
     }
 
-    throw new Error("Offline and no cached public page is available.");
+    throw new Error("Offline and no cached page is available.");
   }
 }
 
@@ -69,7 +64,7 @@ self.addEventListener("activate", (event) => {
 
       await Promise.all(
         keys
-          .filter((key) => key.startsWith(cachePrefix) && key !== staticCacheName && key !== publicPageCacheName)
+          .filter((key) => key.startsWith(cachePrefix) && key !== staticCacheName && key !== pageCacheName)
           .map((key) => caches.delete(key))
       );
 
@@ -102,10 +97,11 @@ self.addEventListener("fetch", (event) => {
   }
 
   if (request.mode === "navigate") {
-    if (isPublicNavigation(url.pathname)) {
-      event.respondWith(networkFirstPage(request));
+    if (isSensitivePath(url.pathname)) {
+      return;
     }
 
+    event.respondWith(networkFirstPage(request));
     return;
   }
 

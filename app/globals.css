@@ -6369,6 +6369,93 @@ h3 {
   width: 100%;
 }
 
+/* Route-specific loading skeletons */
+
+.pos-loading,
+.reports-loading,
+.invoices-loading,
+.products-loading,
+.inventory-loading {
+  display: grid;
+  gap: var(--sp-4);
+  padding: var(--sp-4);
+  min-height: 60vh;
+}
+
+.pos-loading__toolbar,
+.reports-loading__header,
+.invoices-loading__header,
+.products-loading__header,
+.inventory-loading__header {
+  display: grid;
+  gap: var(--sp-2);
+}
+
+.pos-loading__grid,
+.products-loading__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--sp-3);
+}
+
+.pos-loading__tile,
+.products-loading__tile {
+  min-height: 120px;
+  border-radius: var(--radius-lg);
+}
+
+.reports-loading__kpi-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--sp-3);
+}
+
+.reports-loading__kpi {
+  min-height: 80px;
+  border-radius: var(--radius-lg);
+}
+
+.reports-loading__chart {
+  min-height: 240px;
+  border-radius: var(--radius-lg);
+}
+
+.invoices-loading__list {
+  display: grid;
+  gap: var(--sp-2);
+}
+
+.invoices-loading__row {
+  min-height: 64px;
+  border-radius: var(--radius-md);
+}
+
+.inventory-loading__tabs {
+  display: flex;
+  gap: var(--sp-2);
+}
+
+.inventory-loading__tabs .skeleton-line {
+  width: 80px;
+}
+
+.inventory-loading__panel {
+  min-height: 200px;
+  border-radius: var(--radius-lg);
+}
+
+@media (max-width: 767px) {
+  .pos-loading__grid,
+  .products-loading__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sp-2);
+  }
+
+  .reports-loading__kpi-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @keyframes shimmer {
   0% {
     background-position: 200% 0;
