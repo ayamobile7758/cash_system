@@ -4968,11 +4968,34 @@ h3 {
     grid-template-columns: 1fr;
   }
 
+  .notifications-page,
+  .notifications-page .page-header,
+  .notifications-page .page-header__content,
+  .notifications-page__sections,
+  .notifications-page__tab-panel,
+  .notifications-page__sidebar,
+  .notifications-page .operational-content,
+  .notifications-page .operational-sidebar {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .notifications-page__search,
+  .notifications-page__inbox {
+    grid-template-columns: minmax(0, 1fr);
+    overflow-x: clip;
+  }
+
   .notifications-page__tabs,
   .debts-page__tabs {
     flex-wrap: nowrap;
     overflow-x: auto;
     padding-bottom: var(--sp-1);
+  }
+
+  .notifications-page__tabs {
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
   }
 
   .notifications-page__tab,
@@ -7488,6 +7511,26 @@ h3 {
 @media (max-width: 767px) {
   .pos-layout {
     grid-template-columns: 1fr;
+  }
+
+  .dashboard-shell--pos .dashboard-topbar {
+    height: 56px;
+    min-height: 56px;
+    max-height: 56px;
+    flex-wrap: nowrap;
+    align-items: center;
+    padding: 0 var(--sp-3);
+    gap: var(--sp-2);
+  }
+
+  .dashboard-shell--pos .dashboard-topbar__context {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--sp-2);
+  }
+
+  .dashboard-shell--pos .dashboard-header-title {
+    display: none;
   }
 
   .pos-topbar {
