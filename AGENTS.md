@@ -4251,90 +4251,1508 @@ Types:
 - RESULT:
   POS صار amount-based على مستوى الواجهة والعقد الأمامي والـ permissions والعرض التقاريري، مع طبقة توافق backend تمنع كسر RPC الحالي إلى أن تُستبدل دوال SQL legacy بالكامل.
 
-═══ EXECUTION_RESULT — 2026-04-15-POS-TRIPLE-SEQUENCE ═══
+---
 
-STEP1_PRE_FLIGHT:
-- `git status --porcelain` output:
-  ` M app/(dashboard)/access.ts`
-  ` M app/globals.css`
-  ` M components/auth/login-form.tsx`
-  ` M components/dashboard/dashboard-shell.tsx`
-  ` M components/dashboard/reports-advanced-charts.tsx`
-  ` M components/dashboard/reports-overview.tsx`
-  ` M tests/e2e/helpers/local-runtime.ts`
-  ` M tests/e2e/px11-reports.spec.ts`
-  ` M tests/e2e/px16-navigation-ia.spec.ts`
-  ` M tests/e2e/px24-analytical-config.spec.ts`
-  ` M tests/unit/login-form.test.tsx`
-  `?? QUICK_FIX_CHECKLIST.md`
-  `?? VERCEL_INTEGRATION_AUDIT.md`
-  `?? VERCEL_SYNC_GUIDE.md`
-  `?? app/auth/`
-- Confirmation that the expected 9-path set matches: no.
-- Expected Step 1 dirty set was:
-  `M AGENTS.md`
-  `M app/globals.css`
-  `M components/pos/pos-workspace.tsx`
-  `M components/pos/toolbar.tsx`
-  `M components/pos/view/product-selection-view.tsx`
-  `?? components/pos/pos-settings-button.tsx`
-  `?? components/pos/pos-settings-modal.tsx`
-  `?? hooks/use-pos-settings.ts`
-  `?? stores/pos-settings.ts`
-- Delta vs expected:
-  - Required POS settings files are absent from the current status.
-  - Unexpected modified files exist in auth, access, reports, tests, and shell.
-  - Unexpected untracked files exist outside the allowlist of safe scratch/log paths.
-- Any unexpected entries: present; see list above.
+# ════════════════════════════════════════════════════════════════════════
+# TASK — 2026-04-17-UI-ARCHITECTURE-REFACTOR
+# ════════════════════════════════════════════════════════════════════════
 
-STEP1_BLOCKERS:
-- The working tree does not satisfy the mandatory Step 1 pre-flight contract, so Step 1 cannot stage or commit safely.
-- Current dirty files include non-Step-1 changes under reports, auth, access, and tests.
-- The greenfield POS settings file set that Step 1 is supposed to capture is not present in the current status.
-- Per task instructions, execution stopped here. No staging, no commit, and no verification commands were run.
+```
+TASK_ID        : 2026-04-17-UI-ARCHITECTURE-REFACTOR
+TASK_TYPE      : refactor (system-level UI architecture overhaul)
+PROJECT        : Aya Mobile
+ROUTED_TO      : Codex
+ROUTING_REASON : Every change is CSS / component structure / layout
+                 logic. Requires test protection, systematic grepping,
+                 and sequential execution across shared primitives
+                 and 7 page workspaces.
+DEPENDS_ON     : None. Runs on current main.
+EXECUTION_MODE : Sequential phases. Each phase must fully complete
+                 (including tsc + vitest verify) before the next
+                 starts. Commit after each phase. Do NOT push.
+                 Do NOT use --no-verify. Do NOT amend.
+```
 
-STEP1_COMMIT:
-- n/a
+## CONTEXT — WHY THIS TASK EXISTS
 
-STEP1_VERIFY:
-- n/a
+The system has a structural UI architecture problem, not cosmetic issues.
+The root causes are:
 
-STEP1_FAILURE:
-- blocked at pre-flight; Step 1 did not start because the working tree did not match the required file set.
+1. **Dual page headers** — shell topbar shows `pageContext.title` AND
+   pages render their own `PageHeader` with a second `<h1>`. CSS hides
+   parts of PageHeader via `.dashboard-shell .page-header .eyebrow` and
+   `.dashboard-shell .page-header__description { display: none }` with
+   special exceptions for reports. Result: two incomplete headers instead
+   of one correct header.
 
-STEP2_PRE_FLIGHT:
-- n/a; Step 2 is gated on a successful Step 1 commit and clean base.
+2. **Undifferentiated primitives** — `SectionCard` serves as filter
+   container, result card, summary card, form card, empty state, and
+   detail panel. `badge`, `status-pill`, `product-pill`, `status-badge`,
+   and `chip-button` are visually near-identical. Users cannot distinguish
+   "navigation control" from "status indicator" from "data content".
 
-STEP2_DIFFS:
-- n/a
+3. **Override-driven CSS** — `globals.css` (10,009 lines) has grown into
+   page-specific overrides, shell mode exceptions, repeated primitive
+   definitions, and ownership hacks (e.g. `display: contents` for POS).
+   New pages fix problems by adding overrides, not improving the system.
 
-STEP2_VERIFY:
-- n/a
+4. **Layer accumulation** — Pages stack shell header + page header +
+   tabs + chips + filter toggle + filter panel + active filter pills +
+   sort controls + summary strip + cards + content. The result feels
+   like a "keyboard" of controls, not a workspace.
 
-STEP2_COMMIT:
-- n/a
+5. **Job mixing** — Products mixes browse + management. Settings is a
+   mini-application. Inventory has tabs + accordions + sheets (three
+   navigation models in one page).
 
-STEP2_FAILURE:
-- n/a
+6. **Stacked sticky/fixed surfaces** — topbar sticky + filters sticky +
+   bottom bar + bottom sheets = accumulated chrome layers.
 
-STEP3_PRE_FLIGHT:
-- n/a; Step 3 is gated on a successful Step 2 completion.
+## REFERENCE MODEL — POS WORKSPACE
 
-STEP3_DIFFS:
-- n/a
+`components/pos/pos-workspace.tsx` is the approved reference. Study it.
 
-STEP3_VERIFY:
-- n/a
+POS does these things right:
+- Builds its own header (`pos-mobile-header`) — no PageHeader, no
+  shell title duplication
+- Same IA on mobile and desktop — only layout changes
+- One navigation model (`panelState`) — no tabs+accordions+sheets
+- No sticky surfaces beyond shell — `pos-status-bar` is part of surface
+- Search + category chips only — no filter slab, no advanced panel
+- Clean surface separation: products / cart / checkout / success
 
-STEP3_COMMIT:
-- n/a
+Every decision below follows the POS pattern.
 
-STEP3_FAILURE:
-- n/a
+## PRODUCT DECISIONS (all confirmed by owner)
 
-SELF_REVIEW:
-- H-rules check across all three steps: no implementation work was performed because Step 1 failed pre-flight.
-- Did the fast cash rail button stay untouched? yes
-- Did you push? no
-- Did you touch AGENTS.md yourself? no; only this EXECUTION_RESULT block was appended as explicitly allowed
+| # | Decision | Answer |
+|---|----------|--------|
+| 1 | Page header ownership | Each page owns its header. Shell topbar is navigation-only (menu + search + notifications + user chip). Shell topbar `<h1>` removed. |
+| 2 | Products browse vs manage | Admin controls (create/edit form) move to a drawer/modal. Browse surface stays clean. |
+| 3 | Settings structure | Single page, single navigation model (tabs only). Remove dual desktop/mobile IA. |
+| 4 | Inventory navigation | Tabs only. Remove accordions. Each tab has a simple surface with no secondary navigation. |
+| 5 | Filters placement | Search + sort always visible. Advanced filters behind a button/drawer. Never a sticky slab. |
+| 6 | Reports hero charts | One hero chart only. User chooses trend OR breakdown. Breakdown in a tab below. |
+| 7 | Mobile IA | Same IA as desktop always. Only layout/presentation changes. |
+| 8 | Sticky surfaces | Shell topbar only. No other element may be sticky/fixed outside shell. Remove `position: sticky` from `.invoices-page__filters`, `operational-sidebar--sticky`, and any page-level sticky. |
+
+## DESIGN INTENT — PROFESSIONAL AND ELEGANT
+
+This is NOT about removing features or making pages empty. The goal is:
+
+- **Instant clarity** — the user knows what they're looking at and what
+  to do within the first 2 seconds of landing on any page.
+- **Visual grammar** — navigation controls, filter controls, status
+  indicators, data surfaces, and utility surfaces must look DISTINCT
+  from each other. Not all pills and chips.
+- **Breathing room** — content needs space. A wall of controls is not
+  professional; a well-organized workspace with clear zones IS.
+- **Consistent rhythm** — every page follows the same visual rhythm:
+  context band → primary workspace → secondary detail. No exceptions.
+- **Warmth and polish** — subtle gradients, gentle shadows, refined
+  spacing. Not flat/cold/corporate. The current warm neutral palette
+  is correct — use it consistently.
+
+## ANTI-HALLUCINATION RULES FOR THIS TASK
+
+Read AYA 06 H-rules before any diff. Additionally:
+
+- **H-R1**: Do NOT remove any feature. Every feature that exists today
+  must still be accessible after refactor. Moving it to a drawer/modal
+  is fine. Removing it is not.
+- **H-R2**: Do NOT change any visible Arabic string. If a string needs
+  to move from one component to another, copy it exactly.
+- **H-R3**: Do NOT rename CSS classes that appear in `tests/e2e/`.
+  Grep EVERY class before renaming. Add new classes alongside old ones
+  if needed, never silently drop old ones.
+- **H-R4**: Do NOT change payment/cart/customer/debt/held-carts logic.
+  POS workspace (`pos-workspace.tsx` and its direct children under
+  `components/pos/view/`) is READ-ONLY for this task.
+  NOTE: `components/pos/products-browser.tsx` is the Products page
+  component, NOT a POS workspace child — it IS in scope for Phase 3A.
+- **H-R5**: Do NOT change API routes or database schema.
+- **H-R6**: Do NOT change any test file. Tests are the verification
+  target, not the modification target.
+- **H-R7**: After EACH phase, run `npx tsc --noEmit --pretty false`
+  and `npx vitest run`. Both must pass before proceeding.
+
+## EXECUTION PLAN — 4 PHASES
+
+═══ PHASE 1 — SYSTEM FOUNDATION ═══════════════════════════════════════
+
+This phase fixes the shared system so all pages benefit.
+
+### 1A. Shell topbar becomes navigation-only
+
+FILE: `components/dashboard/dashboard-shell.tsx`
+
+- Remove `pageContext.title` display from topbar. Remove `<h1>` from
+  the `dashboard-header-title` div. The topbar keeps ONLY: menu button,
+  search toggle, notifications link, user chip.
+- Remove `getPageContext()` function and `pageContext` variable ONLY
+  after grepping the entire file for every reference. If `pageContext`
+  is used anywhere else (e.g. breadcrumbs, aria-labels, popover), keep
+  the function but remove only the topbar `<h1>` display. Do NOT
+  delete code you haven't verified is unused.
+- Remove the `dashboard-header-title` div and its CSS.
+
+FILE: `app/globals.css`
+
+- Remove `.dashboard-shell .page-header .eyebrow` and
+  `.dashboard-shell .page-header__description { display: none }` rules.
+- Remove `.dashboard-layout--reports .page-header__description` and
+  `.dashboard-shell--reports .page-header__description` override rules.
+- These rules existed to hide parts of PageHeader because shell was
+  showing the title. Since shell no longer shows titles, PageHeader
+  should display fully on every page.
+
+### 1B. Primitive visual families — distinct grammar
+
+FILE: `app/globals.css`
+
+Create CLEAR visual distinction between these families. Do NOT change
+component code — only CSS. The goal is that a user can instantly tell
+"this is a navigation tab" vs "this is a status badge" vs "this is a
+filter chip" just by looking at it.
+
+**Navigation controls** (tabs, section nav):
+- Prominent, taller, with a clear active state (bottom border accent
+  or filled background). These guide WHERE you are.
+- Apply to: `.inventory-page__tab`, `.maintenance-page__tab`,
+  `.debts-page__tab`, `.invoice-page__sections .chip-button`,
+  report detail tabs.
+
+**Filter controls** (chips, toggles, sort):
+- Smaller, lighter, pill-shaped. Interactive feel (hover lift).
+  These modify WHAT you see.
+- Apply to: `.chip-button` when used as filter, sort chips,
+  `.invoices-page__active-filter`, category chips.
+
+**Status indicators** (badges, pills, alerts):
+- Non-interactive, subtle background tint matching semantic color.
+  These show STATE.
+- Apply to: `.status-badge`, `.status-pill`, `.product-pill`,
+  `.badge`. Make them clearly non-interactive (no hover, no cursor
+  pointer, no transform).
+
+**Data surfaces** (KPI cards, result rows, detail cards):
+- Warm surface with gentle shadow, clear content hierarchy.
+  These are the CONTENT.
+- Apply to: `.section-card`, `.operational-page__meta-card`,
+  `.result-card`, `.operational-list-card`.
+
+**Utility surfaces** (empty state, hint, banner):
+- Muted background, no shadow, supportive role.
+- Apply to: `.section-card--inset`, `.section-card--flat`,
+  empty state containers.
+
+Key visual differentiators to use:
+- Navigation: taller (48px), flat background, strong active indicator
+- Filters: shorter (36px), pill border, subtle lift on hover
+- Status: no min-height, background tint, no border, small font
+- Data: white surface, 1px border, gentle shadow
+- Utility: muted background, no border, no shadow
+
+### 1C. Remove all page-level sticky (except shell)
+
+FILE: `app/globals.css`
+
+- Remove `position: sticky` from `.invoices-page__filters`
+- Remove `position: sticky` from `.operational-sidebar--sticky`
+- Grep for any other `position: sticky` or `position: fixed` that is
+  NOT inside shell or POS scope. Remove them.
+- Keep shell topbar sticky. Keep POS-internal stickies (POS is
+  read-only but its CSS must not break).
+
+### 1D. Verify
+
+- `npx tsc --noEmit --pretty false` → 0 errors
+- `npx vitest run` → all pass
+- Commit: `refactor(system): shell navigation-only, primitive families, remove page-level sticky`
+
+═══ PHASE 2 — PAGE REFACTORS (Reports, Invoices, Settings) ═══════════
+
+These are the most exposed pages.
+
+### 2A. Reports — clean analytical layout
+
+FILE: `components/dashboard/reports-overview.tsx`
+
+Current problems:
+- PageHeader + command bar + advanced panel + summary grid + hero chart
+  + signals grid + detail tabs + detail panels = too many layers
+- Chart competition: trend + breakdown in same hero
+
+Changes:
+- Keep PageHeader (now it displays fully since shell override removed).
+- Move advanced filters into a collapsible drawer/panel that opens from
+  a button click — NOT always visible. The command bar stays as a
+  compact strip with: date range display, group-by selector, and
+  "فلاتر متقدمة" button.
+- Summary grid (KPI cards): keep maximum 4 cards visible.
+- Hero chart area: show ONLY the trend chart by default. Add a tab
+  strip below the hero: "الاتجاه" | "التوزيع" to let the user switch.
+  Do NOT show both simultaneously.
+- Signals grid → move BELOW the hero chart area, not competing with it.
+- Detail tabs remain as-is — they are below-fold secondary content.
+
+FILE: `components/dashboard/reports-advanced-charts.tsx`
+- Add a `view` prop: `"trend"` | `"breakdown"` (default: `"trend"`).
+  Show only the selected view, not both. Keep backward compatibility:
+  if no `view` prop is passed, show trend only (safe default).
+  Update ALL call sites in `reports-overview.tsx` to pass the prop
+  based on the user's tab selection.
+
+### 2B. Invoices — clean listing layout
+
+FILE: `components/dashboard/invoices-workspace.tsx`
+
+Current problems:
+- Sort chips + filters toggle + expandable filter panel + active filter
+  chips + search bar = control slab before content
+- `.invoices-page__filters` is sticky — already removed in Phase 1C
+
+Changes:
+- Top of page: PageHeader (full, no longer hidden).
+- Below header: compact bar with search input + sort dropdown + filter
+  button. All in one row, compact.
+- Filter panel opens from the filter button as a non-sticky panel or
+  drawer — NOT always present in the page flow.
+- Active filters show as small dismissible pills INSIDE the compact bar
+  or just below it, not as a separate section.
+- Invoice list starts immediately after the compact bar.
+- Result: search + sort always visible, filters behind button, content
+  first.
+
+### 2C. Settings — single navigation model
+
+FILE: `components/dashboard/settings-ops.tsx`
+
+Current problems:
+- Desktop: side navigator + detail panels
+- Mobile: separate accordion model
+- Result: two IAs for the same content
+
+Changes:
+- Use tabs as the ONLY navigation (same as inventory pattern).
+- Tab strip at the top: الصلاحيات | السياسات | اللقطة اليومية | سلامة الأرصدة
+- Same tab strip on mobile and desktop. On mobile the tabs scroll
+  horizontally (same as inventory tabs).
+- Remove the side navigator (`settings-navigator`) for desktop.
+- Remove the accordion model for mobile.
+- Each tab panel renders its full content directly.
+- PageHeader stays at top with full display.
+
+### 2D. Verify
+
+- `npx tsc --noEmit --pretty false` → 0 errors
+- `npx vitest run` → all pass
+- Commit: `refactor(pages): reports single hero, invoices clean listing, settings unified tabs`
+
+═══ PHASE 3 — PAGE REFACTORS (Products, Inventory) ════════════════════
+
+### 3A. Products — separate browse from management
+
+FILE: `components/pos/products-browser.tsx`
+
+Current problems:
+- Admin sees create/edit form + search + filter + grid all together
+- Two jobs in one surface
+
+Changes:
+- Admin form (create product, edit product) moves into a modal/dialog.
+  Add a "إضافة منتج" button that opens the modal. The edit action on
+  each product card also opens the modal with pre-filled data.
+- The browse surface stays clean: PageHeader + search bar + category
+  chips + product grid.
+- Quick-add products remain in the grid (they are browse content).
+- The modal reuses the existing form JSX — move it, don't rewrite it.
+
+### 3B. Inventory — tabs only, no nested navigation
+
+FILE: `components/dashboard/inventory-workspace.tsx`
+
+Current problems:
+- Top tabs + accordion inside history + list/detail split inside active
+  + mobile bottom sheet = 3 navigation models
+
+Changes:
+- Keep the 4 tabs: بدء الجرد | الجرد المفتوح | التسوية | آخر النتائج
+- Remove accordion in history tab. Show history list directly as flat
+  cards. If there are reconciliations AND completed counts, use a
+  simple sub-heading separator — NOT an accordion.
+- Active count tab: keep the list/detail pattern but on mobile use the
+  existing `MobileBottomSheet` as the detail view (this is acceptable
+  because it's a detail overlay, not a navigation system).
+- Remove any secondary navigation inside tab panels.
+
+### 3C. Verify
+
+- `npx tsc --noEmit --pretty false` → 0 errors
+- `npx vitest run` → all pass
+- Commit: `refactor(pages): products modal for admin, inventory tabs-only`
+
+═══ PHASE 4 — CSS CLEANUP AND FINAL POLISH ════════════════════════════
+
+### 4A. Remove dead CSS
+
+After Phases 1-3, some CSS rules will be orphaned:
+- `.dashboard-header-title` and children (removed in Phase 1A)
+- `.operational-sidebar--sticky` (removed in Phase 1C)
+- Settings navigator classes if they exist
+- Inventory accordion classes if they were page-specific
+- Any `.dashboard-shell--reports .page-header` override rules
+
+Grep each class across the ENTIRE codebase before removing. Only
+remove if zero references remain outside `globals.css` itself.
+
+### 4B. Consistent page rhythm
+
+Verify every page now follows the same visual rhythm:
+
+1. **Context band** — PageHeader with title + optional description + optional actions
+2. **Primary workspace** — the main content area (list, grid, chart, form)
+3. **Secondary detail** — below-fold tabs, drill-down panels, related content
+
+Check these pages and fix any that break the rhythm:
+- `/reports` — context → KPI → hero → signals → detail tabs
+- `/invoices` — context → compact bar → list
+- `/settings` — context → tab strip → tab content
+- `/products` — context → search bar + chips → grid
+- `/inventory` — context → tab strip → tab content
+- `/debts` — context → tabs → tab content
+- `/notifications` — context → tabs → tab content
+- `/expenses` — context → sections → content
+- `/suppliers` — context → sections → content
+- `/operations` — context → sections → content
+- `/maintenance` — context → tabs → tab content
+
+### 4C. Spacing and polish pass
+
+FILE: `app/globals.css`
+
+- Ensure consistent spacing between page sections: `var(--sp-6)` gap
+  between major zones (context band, workspace, secondary).
+- Ensure consistent card padding: `var(--sp-6)` for data surfaces,
+  `var(--sp-4)` for utility surfaces.
+- Ensure section headings have consistent size and weight.
+- Review that the warm neutral palette is applied consistently — no
+  cold grays, no stark whites without the subtle warm tint.
+
+### 4D. Final verify
+
+- `npx tsc --noEmit --pretty false` → 0 errors
+- `npx vitest run` → all pass
+- `npm run build` → success (FULL BUILD CHECK)
+- Commit: `refactor(css): cleanup dead rules, consistent page rhythm and polish`
+
+## ADDITIONAL PROBLEMS DISCOVERED (FIX IN THE APPROPRIATE PHASE)
+
+1. **`display: contents` hack** — search for `display: contents` in
+   globals.css. If it's used to break layout ownership (e.g.
+   `.workspace-stack.transaction-page`), evaluate if it's still needed
+   after Phase 1. If the shell changes make it unnecessary, remove it.
+   If still needed, document why with a CSS comment.
+
+2. **Duplicated tab styles** — `.inventory-page__tab`,
+   `.maintenance-page__tab`, `.debts-page__tab` are all nearly identical
+   in CSS. After Phase 1B establishes navigation control styling, these
+   should inherit from a shared class. Refactor to use a single
+   `.nav-tab` class or equivalent. Update component JSX to use the
+   shared class.
+
+3. **Horizontal scroll pills** — multiple pages use
+   `flex-wrap: nowrap; overflow-x: auto` for tabs/chips on mobile. This
+   is acceptable for tabs (5 items max), but if filter chips exceed 5,
+   they should wrap instead of scroll. Review and fix.
+
+## FILES IN SCOPE (exhaustive list)
+
+### System files (Phase 1):
+- `app/globals.css`
+- `components/dashboard/dashboard-shell.tsx`
+
+### Page files (Phases 2-3):
+- `components/dashboard/reports-overview.tsx`
+- `components/dashboard/reports-advanced-charts.tsx`
+- `components/dashboard/invoices-workspace.tsx`
+- `components/dashboard/settings-ops.tsx`
+- `components/pos/products-browser.tsx`
+- `components/dashboard/inventory-workspace.tsx`
+
+### Read-only reference (DO NOT MODIFY):
+- `components/pos/pos-workspace.tsx` — reference model
+- All files under `tests/e2e/` — verification target
+- All files under `tests/unit/` — verification target
+- All API route files
+- Database schema / migrations
+
+## DO_NOT_TOUCH
+
+- `components/pos/pos-workspace.tsx` and POS view sub-components
+  (`components/pos/view/**`). NOTE: `products-browser.tsx` is NOT
+  a POS view component — it is in scope for Phase 3A.
+- All API routes (`app/api/**`)
+- All test files (`tests/**`)
+- Database schema and migrations
+- `app/(dashboard)/layout.tsx` (navigation inventory)
+- Login page and auth components
+- The AYA package files
+
+## ESCALATE_IF
+
+- Any test fails after a phase and the fix is not obvious
+- A CSS class removal would break an e2e test
+- A component restructure would change accessible names (aria-labels,
+  role attributes, heading text)
+- The `display: contents` hack cannot be safely removed and the
+  alternative is unclear
+- Any phase requires changing an API route or database query
+
+## DONE_IF
+
+All 4 of these are true:
+1. `npx tsc --noEmit --pretty false` → 0 errors
+2. `npx vitest run` → all tests pass (same count as before, no skips)
+3. `npm run build` → success
+4. Every page follows the rhythm: context band → primary workspace →
+   secondary detail. No dual headers, no sticky filter slabs, no
+   nested navigation models, no visually identical control families.
+
+═══ END_OF_TASK_SPEC ═══
+
+---
+
+# ════════════════════════════════════════════════════════════════════════
+# TASK — 2026-04-17-MOBILE-HARDENING
+# ════════════════════════════════════════════════════════════════════════
+
+```
+TASK_ID        : 2026-04-17-MOBILE-HARDENING
+TASK_TYPE      : fix (mobile UX hardening — touch, typography, overflow, layers)
+PROJECT        : Aya Mobile
+ROUTED_TO      : Codex
+ROUTING_REASON : All changes are CSS layout + minor component wiring.
+                 Requires test protection, systematic CSS audit, and
+                 sequential execution. Zero API/DB changes.
+DEPENDS_ON     : 2026-04-17-UI-ARCHITECTURE-REFACTOR (completed)
+EXECUTION_MODE : Sequential phases. Each phase must fully complete
+                 (including tsc + vitest verify) before the next
+                 starts. Commit after each phase. Do NOT push.
+                 Do NOT use --no-verify. Do NOT amend.
+```
+
+## CONTEXT — WHY THIS TASK EXISTS
+
+The UI architecture refactor (previous task) fixed structural problems:
+dual headers, undifferentiated primitives, override CSS, job mixing,
+nested navigation. But a 375x812 mobile audit revealed 5 critical
+problems that the refactor did not address:
+
+1. **Notifications page breaks horizontally** — content overflows to
+   the left on 375px because `operational-layout--split` and
+   `operational-layout--wide` still use 2-column grids without
+   `min-width: 0` on child nodes.
+
+2. **Touch targets too small** — topbar buttons ~36px, login password
+   toggle ~32px, checkboxes ~13-16px. Apple HIG and WCAG require 44px.
+
+3. **POS header bloated on mobile** — reaches 105px due to
+   `flex-wrap: wrap` + `height: auto`. Should be 56px max.
+
+4. **Typography too small** — operational text at 14px, bottom bar
+   labels at 10px. iOS zooms inputs below 16px.
+
+5. **Bottom bar loses active state** — pages like /reports, /settings,
+   /notifications have no active indicator because they are not in
+   `PRIMARY_BOTTOM_NAV_HREFS`.
+
+### THE OVERFLOW LAYER PROBLEM — READ THIS CAREFULLY
+
+The cart had 5 nested `overflow: hidden` layers that killed scrolling.
+Sonnet fixed it by replacing them with `minmax(0, 1fr)` + `min-height: 0`.
+But the SAME anti-pattern exists elsewhere in `globals.css`:
+
+```
+Line 7094:  .dashboard-layout--pos { overflow: hidden }
+Line 7116:    .dashboard-shell--pos .dashboard-content { overflow: hidden }
+Line 7129:  .dashboard-shell--pos .dashboard-content { overflow: hidden }
+Line 7154:  .pos-layout { overflow: hidden }
+Line 7170:  .pos-products { overflow: hidden }
+Line 8516:  .pos-workspace { overflow: hidden }
+Line 8529:  .pos-workspace__frame { overflow: hidden }
+Line 8537:  .pos-workspace__stage { overflow: hidden }
+Line 8569:  .pos-workspace .pos-layout { overflow: hidden }
+```
+
+That is **9 layers of overflow: hidden** in the POS viewport chain alone.
+The cart fix addressed the cart branch, but the products branch still has
+stacked overflow. And the dashboard shell itself has `overflow: hidden`
+in `.dashboard-shell--pos .dashboard-content`.
+
+**THE RULE**: `overflow: hidden` is ONLY acceptable for:
+- Text truncation (with `text-overflow: ellipsis`)
+- A single outermost viewport boundary (e.g. `html` or `100dvh` shell)
+- Explicit clip needs (border-radius clipping on images/cards)
+
+Every other `overflow: hidden` must be replaced with the correct
+containment: `min-width: 0` + `min-height: 0` on grid/flex children,
+or `overflow-y: auto` if the element actually needs to scroll.
+
+## ANTI-HALLUCINATION RULES
+
+Read AYA 06 H-rules before any diff. Additionally:
+
+- **H-R1**: Do NOT remove any feature. Every feature accessible today
+  must remain accessible after these fixes.
+- **H-R2**: Do NOT change any visible Arabic string.
+- **H-R3**: Do NOT rename CSS classes that appear in `tests/e2e/`.
+  Grep EVERY class before renaming. Add new classes alongside if needed.
+- **H-R4**: Do NOT change payment/cart/customer/debt logic.
+  `pos-workspace.tsx` and `components/pos/view/**` are READ-ONLY.
+- **H-R5**: Do NOT change API routes or database schema.
+- **H-R6**: Do NOT change any test file.
+- **H-R7**: After EACH phase, run `npx tsc --noEmit --pretty false`
+  and `npx vitest run`. Both must pass before proceeding.
+- **H-R8**: When replacing `overflow: hidden`, verify the parent-child
+  relationship first. If the parent is `display: grid`, replace with
+  `min-width: 0; min-height: 0` on the child. If the parent is
+  `display: flex`, replace with `min-width: 0; min-height: 0; flex: 1 1 0`.
+  If the element actually needs scrolling, use `overflow-y: auto`.
+  NEVER just delete `overflow: hidden` without adding containment.
+
+## EXECUTION PLAN — 4 PHASES
+
+═══ PHASE 1 — MOBILE FOUNDATION LAYER ════════════════════════════════
+
+This phase creates a unified mobile baseline that protects ALL pages
+automatically — current and future. Instead of fixing each page
+separately, we fix the system once.
+
+### 1A. Mobile foundation CSS block
+
+FILE: `app/globals.css`
+
+Add a single organized block at the END of the existing
+`@media (max-width: 767px)` section (after all current mobile rules).
+This block establishes system-wide mobile guarantees:
+
+```css
+/* ═══ MOBILE FOUNDATION — system-wide guarantees ═══ */
+
+/* A. Touch targets — every interactive element meets 44px minimum */
+@media (max-width: 767px) {
+  .icon-button,
+  .dashboard-menu-toggle,
+  .dashboard-topbar__notifications,
+  .dashboard-topbar__actions .icon-button,
+  .password-toggle,
+  [role="tab"],
+  .chip-button,
+  .notifications-page__tab,
+  .nav-tab {
+    min-block-size: 44px;
+    min-inline-size: 44px;
+  }
+
+  /* B. Input zoom prevention — iOS zooms below 16px */
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: max(16px, 1em);
+  }
+
+  /* C. Checkbox/radio touch areas */
+  input[type="checkbox"],
+  input[type="radio"] {
+    inline-size: 20px;
+    block-size: 20px;
+  }
+
+  .stack-checkbox,
+  .remember-me {
+    min-block-size: 44px;
+    gap: var(--sp-3);
+  }
+
+  /* D. Bottom bar label legibility */
+  .dashboard-bottom-bar__label {
+    font-size: 11px;
+    line-height: 1.3;
+  }
+
+  /* E. Overflow containment — no page breaks horizontally */
+  .workspace-stack,
+  .operational-layout,
+  .operational-content,
+  .operational-sidebar,
+  .transaction-page,
+  [class$="-page"],
+  [class*="-page "],
+  [class*="-page__tab-panel"] {
+    min-width: 0;
+    max-width: 100vw;
+  }
+
+  /* F. Text size adjust for system font scaling */
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  /* G. Scroll margin for inputs — keeps focused field visible above keyboard */
+  .stack-field,
+  .workspace-search,
+  .action-row {
+    scroll-margin-block-start: calc(var(--topbar-height, 56px) + 16px);
+    scroll-margin-block-end: 96px;
+  }
+
+  /* H. Safe area top — iPhone notch / Dynamic Island protection */
+  .dashboard-topbar {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  /* I. Focused input scroll into view — prevents keyboard occlusion */
+  input:focus,
+  textarea:focus,
+  select:focus {
+    scroll-margin-block-end: 40vh;
+  }
+}
+```
+
+Also add the `--safe-area-top` CSS variable alongside `--safe-area-bottom`
+in the `:root` block (currently at line ~35 of globals.css):
+
+```css
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-top: env(safe-area-inset-top, 0px);
+```
+
+Then update the topbar rule to use it:
+```css
+  .dashboard-topbar {
+    padding-top: var(--safe-area-top);
+  }
+```
+
+IMPORTANT: Do NOT duplicate rules that already exist in the file.
+Before adding each rule, grep the file for the selector. If the
+selector already has a mobile rule, UPDATE the existing rule rather
+than adding a new one. For example, `.dashboard-bottom-bar__label`
+already has `font-size: 10px` — change it to `11px` in place.
+
+### 1B. Verify
+
+- `npx tsc --noEmit --pretty false` → 0 errors
+- `npx vitest run` → all pass
+- Commit: `fix(mobile): add mobile foundation layer — touch targets, typography, overflow containment`
+
+═══ PHASE 2 — OVERFLOW LAYER AUDIT ═══════════════════════════════════
+
+This phase systematically fixes the overflow anti-pattern everywhere,
+not just in the cart (which was already fixed).
+
+### 2A. Audit every `overflow: hidden` in globals.css
+
+Run this audit process for EVERY `overflow: hidden` in `app/globals.css`:
+
+1. Read the rule and its selector
+2. Classify it into one of these categories:
+   - **TEXT TRUNCATION**: Selector also has `text-overflow: ellipsis`
+     → KEEP (this is correct usage)
+   - **VIEWPORT BOUNDARY**: Selector is on a `100dvh`/`100vh`/`100%`
+     outermost shell element (e.g. `.dashboard-layout--pos`)
+     → KEEP exactly ONE such rule at the outermost level. Replace
+     any inner duplicates with `min-height: 0; min-width: 0`.
+   - **INNER CONTAINER**: Selector is on a grid/flex child inside an
+     already-contained parent → REPLACE with `min-height: 0; min-width: 0`
+   - **CARD/IMAGE CLIP**: Selector is on a card with `border-radius`
+     to clip content → KEEP (legitimate clip)
+3. Apply the fix
+
+Here is the expected audit result for the POS chain. Verify each one:
+
+| Line | Selector | Category | Action |
+|------|----------|----------|--------|
+| 7094 | `.dashboard-layout--pos` | VIEWPORT BOUNDARY | KEEP — this is the outermost 100dvh shell |
+| 7116 | `.dashboard-shell--pos .dashboard-content` (1024+) | INNER | REPLACE with `min-height: 0; min-width: 0` |
+| 7129 | `.dashboard-shell--pos .dashboard-content` (all) | INNER | REPLACE with `min-height: 0; min-width: 0` |
+| 7154 | `.pos-layout` | INNER | REPLACE with `min-height: 0; min-width: 0` |
+| 7170 | `.pos-products` | INNER | REPLACE with `min-height: 0; min-width: 0` |
+| 8516 | `.pos-workspace` | INNER (duplicate of 7094) | REPLACE with `min-height: 0` |
+| 8529 | `.pos-workspace__frame` | INNER | REPLACE with `min-height: 0` |
+| 8537 | `.pos-workspace__stage` | INNER | REPLACE with `min-height: 0` |
+| 8569 | `.pos-workspace .pos-layout` | INNER | REPLACE with `min-height: 0; min-width: 0` |
+| 8590 | `.pos-workspace .pos-product-card` | CARD CLIP | KEEP — border-radius clipping |
+| 9446 | `.pos-cart-rail` | INNER | REPLACE with `min-height: 0` |
+
+Also audit ALL non-POS overflow: hidden rules (lines 191, 2428, 3032,
+3238, 7481, 7832, 7899, 8773, 8794, 9351, 9698). Apply the same
+classification. If uncertain about any rule, add a CSS comment
+explaining why it is kept:
+`/* overflow: hidden — kept for border-radius clip on card corners */`
+
+### 2B. Verify no visual regression
+
+After replacing overflow: hidden with containment:
+- The POS products grid must still scroll
+- The POS cart items must still scroll
+- No horizontal overflow on any page at 375px
+- Cards with border-radius must still clip their content
+
+### 2C. Verify
+
+- `npx tsc --noEmit --pretty false` → 0 errors
+- `npx vitest run` → all pass
+- Commit: `fix(css): systematic overflow:hidden audit — replace inner layers with min-size containment`
+
+═══ PHASE 3 — NOTIFICATIONS + POS HEADER ═════════════════════════════
+
+### 3A. Fix notifications horizontal overflow
+
+FILE: `app/globals.css`
+
+The notifications page uses `operational-layout--split` (for inbox) and
+`operational-layout--wide` (for search), both of which are 2-column grids.
+There IS an existing mobile rule at line ~4932 that sets them to
+`grid-template-columns: 1fr`. But child elements inside still lack
+`min-width: 0`, causing overflow.
+
+Add these rules inside the existing `@media (max-width: 767px)` block:
+
+```css
+  .notifications-page,
+  .notifications-page .page-header,
+  .notifications-page .page-header__content,
+  .notifications-page__sections,
+  .notifications-page__tab-panel,
+  .notifications-page__sidebar,
+  .notifications-page .operational-content,
+  .notifications-page .operational-sidebar {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .notifications-page__search,
+  .notifications-page__inbox {
+    grid-template-columns: minmax(0, 1fr);
+    overflow-x: clip;
+  }
+
+  .notifications-page__tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+
+  .notifications-page__tab {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+```
+
+### 3B. Fix POS header on mobile
+
+FILE: `app/globals.css`
+
+The POS topbar on mobile reaches 105px because of `flex-wrap: wrap` and
+`height: auto`. Fix by constraining it to 56px.
+
+Find the existing mobile POS topbar rules and update them:
+
+```css
+@media (max-width: 767px) {
+  .dashboard-shell--pos .dashboard-topbar {
+    height: 56px;
+    min-height: 56px;
+    max-height: 56px;
+    flex-wrap: nowrap;
+    align-items: center;
+    padding: 0 var(--sp-3);
+    gap: var(--sp-2);
+  }
+
+  .dashboard-shell--pos .dashboard-topbar__context {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--sp-2);
+  }
+
+  /* Hide the visually-hidden page title in POS to save space */
+  .dashboard-shell--pos .dashboard-header-title {
+    display: none;
+  }
+}
+```
+
+Do NOT add hide-on-scroll. The POS header must remain visible at all
+times because it contains search access and cart access. The correct
+solution is making it compact (56px), not hiding it.
+
+If the 56px constraint causes content to overflow the header, identify
+which element is too large and shrink IT — do not increase the header.
+The topbar should contain only: menu button + search toggle +
+notifications + user chip. Nothing else.
+
+### 3C. Verify
+
+- `npx tsc --noEmit --pretty false` → 0 errors
+- `npx vitest run` → all pass
+- Commit: `fix(mobile): notifications overflow + POS header 56px constraint`
+
+═══ PHASE 4 — BOTTOM BAR ACTIVE STATE ════════════════════════════════
+
+### 4A. Add parent-route grouping to bottom bar
+
+FILE: `components/dashboard/dashboard-shell.tsx`
+
+Current state: `PRIMARY_BOTTOM_NAV_HREFS` is `["/pos", "/products",
+"/invoices", "/inventory"]`. The bottom bar only shows active state when
+`pathname` exactly matches one of these 4 hrefs. Pages like `/reports`,
+`/settings`, `/notifications` have no active indicator.
+
+Replace `PRIMARY_BOTTOM_NAV_HREFS` and the active-matching logic:
+
+```typescript
+const BOTTOM_NAV_GROUPS: Record<string, string[]> = {
+  "/pos": ["/pos"],
+  "/products": ["/products", "/suppliers"],
+  "/invoices": ["/invoices", "/debts", "/expenses"],
+  "/inventory": ["/inventory", "/operations", "/maintenance"]
+};
+
+function getActiveBottomHref(pathname: string): string | null {
+  for (const [parentHref, childHrefs] of Object.entries(BOTTOM_NAV_GROUPS)) {
+    if (childHrefs.some((href) => pathname === href || pathname.startsWith(`${href}/`))) {
+      return parentHref;
+    }
+  }
+  return null;
+}
+```
+
+Then in the bottom bar rendering, replace:
+```typescript
+const isActive = isPathActive(pathname, item.href);
+```
+with:
+```typescript
+const activeBottomHref = getActiveBottomHref(pathname);
+const isActive = activeBottomHref === item.href;
+```
+
+NOTE: `/reports`, `/settings`, `/notifications`, `/portability` are
+NOT grouped under any bottom bar item. This is intentional — they are
+accessible via the hamburger "القائمة" menu. When the user is on these
+pages, NO bottom bar item will be active. This is correct because
+false grouping (e.g. putting /reports under /inventory) is more
+confusing than no active state.
+
+The 5th bottom bar slot is already the "القائمة" (menu) button. When
+the user is on a page not in BOTTOM_NAV_GROUPS, the menu button should
+get the active state. Add this logic:
+
+```typescript
+// For the menu button at the bottom
+const isMenuContextActive = activeBottomHref === null && !isPosPage;
+```
+
+Then apply `is-active` class to the menu button when `isMenuContextActive`
+is true.
+
+### 4B. Add non-color active indicator to bottom bar
+
+FILE: `app/globals.css`
+
+The current active state only changes color (accent). Add a small
+bar indicator so the active state doesn't rely on color alone:
+
+```css
+.dashboard-bottom-bar__item.is-active {
+  color: var(--color-accent);
+}
+
+.dashboard-bottom-bar__item.is-active .dashboard-bottom-bar__icon::after {
+  content: "";
+  display: block;
+  width: 20px;
+  height: 3px;
+  margin-top: 2px;
+  border-radius: 999px;
+  background: currentColor;
+}
+```
+
+Verify this doesn't break e2e tests by grepping for
+`dashboard-bottom-bar` in `tests/e2e/`.
+
+### 4C. Verify
+
+- `npx tsc --noEmit --pretty false` → 0 errors
+- `npx vitest run` → all pass
+- Commit: `fix(mobile): bottom bar parent-route grouping + non-color active indicator`
+
+═══ PHASE 5 — MOBILE POLISH (professional feel) ═════════════════════
+
+Phases 1-4 fix what's broken. Phase 5 makes mobile feel polished
+and intentional — like a designed product, not a shrunk desktop.
+
+### 5A. Bottom bar — premium feel
+
+FILE: `app/globals.css`
+
+The current bottom bar is flat: white background, 1px border-top, no
+depth. On mobile this is the most-seen UI surface. Give it presence:
+
+```css
+@media (max-width: 767px) {
+  .dashboard-bottom-bar {
+    border-top: none;
+    background:
+      linear-gradient(
+        0deg,
+        var(--color-bg-surface),
+        color-mix(in srgb, var(--color-bg-surface) 96%, var(--color-bg-base))
+      );
+    box-shadow:
+      0 -1px 0 color-mix(in srgb, var(--color-border) 60%, transparent),
+      0 -8px 24px rgba(24, 23, 21, 0.06);
+    padding-top: var(--sp-3);
+  }
+
+  .dashboard-bottom-bar__item {
+    gap: var(--sp-1);
+    padding: var(--sp-1) var(--sp-2);
+    border-radius: var(--radius-md);
+    transition: background-color 150ms ease, color 150ms ease;
+  }
+
+  .dashboard-bottom-bar__item.is-active {
+    background: color-mix(in srgb, var(--color-accent-light) 48%, transparent);
+  }
+}
+```
+
+### 5B. Topbar — breathing room on mobile
+
+FILE: `app/globals.css`
+
+The dashboard topbar on mobile feels cramped. Add subtle depth and
+better spacing:
+
+```css
+@media (max-width: 767px) {
+  .dashboard-topbar {
+    height: 56px;
+    min-height: 56px;
+    padding-inline: var(--sp-3);
+    gap: var(--sp-3);
+    border-bottom: none;
+    background:
+      linear-gradient(
+        180deg,
+        var(--color-bg-surface),
+        color-mix(in srgb, var(--color-bg-surface) 96%, var(--color-bg-base))
+      );
+    box-shadow: 0 1px 0 color-mix(in srgb, var(--color-border) 60%, transparent),
+                0 4px 12px rgba(24, 23, 21, 0.04);
+  }
+}
+```
+
+IMPORTANT: Do NOT apply this to POS topbar. POS topbar has its own
+rules in Phase 3B. Only target `.dashboard-topbar` without POS scope.
+
+### 5C. Page headers — proper mobile rhythm
+
+FILE: `app/globals.css`
+
+On mobile, PageHeader actions and meta badges crowd the title.
+Stack them vertically for clean rhythm:
+
+```css
+@media (max-width: 767px) {
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--sp-3);
+    margin-bottom: var(--sp-3);
+  }
+
+  .page-header__aside {
+    justify-items: stretch;
+  }
+
+  .page-header__actions {
+    justify-content: stretch;
+  }
+
+  .page-header__actions > * {
+    flex: 1 1 0;
+    justify-content: center;
+  }
+
+  .page-header__meta {
+    gap: var(--sp-2);
+  }
+
+  .page-header__copy h1,
+  .page-header__title {
+    font-size: 1.35rem;
+  }
+}
+```
+
+### 5D. Section cards — tighter padding on mobile
+
+FILE: `app/globals.css`
+
+Desktop cards use `var(--sp-6)` padding (24px). On mobile this wastes
+precious vertical space. Tighten to `var(--sp-4)` (16px):
+
+```css
+@media (max-width: 767px) {
+  .section-card,
+  .workspace-panel {
+    padding: var(--sp-4);
+    border-radius: var(--radius-md);
+  }
+
+  .section-card__header {
+    gap: var(--sp-2);
+    margin-bottom: var(--sp-3);
+  }
+}
+```
+
+### 5E. Content spacing — unified vertical rhythm
+
+FILE: `app/globals.css`
+
+Ensure consistent gaps between page sections on mobile:
+
+```css
+@media (max-width: 767px) {
+  .dashboard-content {
+    gap: var(--sp-3);
+  }
+
+  .operational-page,
+  .analytical-page,
+  .transaction-page,
+  .workspace-stack {
+    gap: var(--sp-3);
+  }
+}
+```
+
+### 5F. Smooth transitions on interactive elements
+
+FILE: `app/globals.css`
+
+Add subtle transitions to make the UI feel responsive and alive.
+These are small touches that separate amateur from professional:
+
+```css
+@media (max-width: 767px) {
+  .primary-button,
+  .secondary-button {
+    transition:
+      background-color 150ms ease,
+      border-color 150ms ease,
+      transform 100ms ease,
+      box-shadow 150ms ease;
+  }
+
+  .primary-button:active,
+  .secondary-button:active {
+    transform: scale(0.97);
+  }
+
+  .operational-list-card,
+  .notification-feed-card,
+  .result-card {
+    transition:
+      background-color 150ms ease,
+      box-shadow 150ms ease;
+  }
+}
+```
+
+### 5G. Verify
+
+- `npx tsc --noEmit --pretty false` → 0 errors
+- `npx vitest run` → all pass
+- `npm run build` → success (FULL BUILD CHECK)
+- Commit: `refactor(mobile): polish — bottom bar depth, topbar breathing room, card tightening, button feel`
+
+═══ PHASE 6 — PWA HARDENING (app-like experience) ═══════════════════
+
+This phase closes the gap between "responsive website" and "installed
+web app that feels native". Currently the system has a service worker,
+manifest, and one loading skeleton — but it's missing route-specific
+loading, app-shell caching, and some PWA best practices.
+
+### 6A. Route-specific loading skeletons
+
+Currently only `app/(dashboard)/loading.tsx` exists. When navigating
+between dashboard routes, Next.js shows this generic skeleton for ALL
+pages. On a native app, each screen has its own loading shape.
+
+Create lightweight loading files for the heaviest routes. Each file
+must match the page's actual layout shape so the user sees a meaningful
+skeleton, not a generic card grid.
+
+FILE: `app/(dashboard)/pos/loading.tsx`
+```tsx
+export default function PosLoading() {
+  return (
+    <div className="pos-loading" aria-busy="true" aria-label="جارٍ تحميل نقطة البيع">
+      <div className="pos-loading__toolbar">
+        <div className="skeleton-line skeleton-line--lg" />
+        <div className="skeleton-line skeleton-line--sm" />
+      </div>
+      <div className="pos-loading__grid">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div key={i} className="skeleton-card pos-loading__tile" />
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+FILE: `app/(dashboard)/reports/loading.tsx`
+```tsx
+export default function ReportsLoading() {
+  return (
+    <div className="reports-loading" aria-busy="true" aria-label="جارٍ تحميل التقارير">
+      <div className="reports-loading__header">
+        <div className="skeleton-line skeleton-line--xl" />
+        <div className="skeleton-line skeleton-line--sm" />
+      </div>
+      <div className="reports-loading__kpi-row">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="skeleton-card reports-loading__kpi" />
+        ))}
+      </div>
+      <div className="skeleton-card reports-loading__chart" />
+    </div>
+  );
+}
+```
+
+FILE: `app/(dashboard)/invoices/loading.tsx`
+```tsx
+export default function InvoicesLoading() {
+  return (
+    <div className="invoices-loading" aria-busy="true" aria-label="جارٍ تحميل الفواتير">
+      <div className="invoices-loading__header">
+        <div className="skeleton-line skeleton-line--xl" />
+      </div>
+      <div className="invoices-loading__list">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div key={i} className="skeleton-card invoices-loading__row" />
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+FILE: `app/(dashboard)/products/loading.tsx`
+```tsx
+export default function ProductsLoading() {
+  return (
+    <div className="products-loading" aria-busy="true" aria-label="جارٍ تحميل المنتجات">
+      <div className="products-loading__header">
+        <div className="skeleton-line skeleton-line--xl" />
+        <div className="skeleton-line skeleton-line--sm" />
+      </div>
+      <div className="products-loading__grid">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="skeleton-card products-loading__tile" />
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+FILE: `app/(dashboard)/inventory/loading.tsx`
+```tsx
+export default function InventoryLoading() {
+  return (
+    <div className="inventory-loading" aria-busy="true" aria-label="جارٍ تحميل المخزون">
+      <div className="inventory-loading__header">
+        <div className="skeleton-line skeleton-line--xl" />
+      </div>
+      <div className="inventory-loading__tabs">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="skeleton-line skeleton-line--sm" />
+        ))}
+      </div>
+      <div className="skeleton-card inventory-loading__panel" />
+    </div>
+  );
+}
+```
+
+### 6B. Loading skeleton CSS
+
+FILE: `app/globals.css`
+
+Add CSS for the route-specific loading skeletons. Use the existing
+`.skeleton-line` and `.skeleton-card` base classes. The new rules
+only define layout shape:
+
+```css
+/* ═══ Route-specific loading skeletons ═══ */
+
+.pos-loading,
+.reports-loading,
+.invoices-loading,
+.products-loading,
+.inventory-loading {
+  display: grid;
+  gap: var(--sp-4);
+  padding: var(--sp-4);
+  min-height: 60vh;
+}
+
+.pos-loading__toolbar,
+.reports-loading__header,
+.invoices-loading__header,
+.products-loading__header,
+.inventory-loading__header {
+  display: grid;
+  gap: var(--sp-2);
+}
+
+.pos-loading__grid,
+.products-loading__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--sp-3);
+}
+
+.pos-loading__tile,
+.products-loading__tile {
+  min-height: 120px;
+  border-radius: var(--radius-lg);
+}
+
+.reports-loading__kpi-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--sp-3);
+}
+
+.reports-loading__kpi {
+  min-height: 80px;
+  border-radius: var(--radius-lg);
+}
+
+.reports-loading__chart {
+  min-height: 240px;
+  border-radius: var(--radius-lg);
+}
+
+.invoices-loading__list {
+  display: grid;
+  gap: var(--sp-2);
+}
+
+.invoices-loading__row {
+  min-height: 64px;
+  border-radius: var(--radius-md);
+}
+
+.inventory-loading__tabs {
+  display: flex;
+  gap: var(--sp-2);
+}
+
+.inventory-loading__tabs .skeleton-line {
+  width: 80px;
+}
+
+.inventory-loading__panel {
+  min-height: 200px;
+  border-radius: var(--radius-lg);
+}
+
+@media (max-width: 767px) {
+  .pos-loading__grid,
+  .products-loading__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--sp-2);
+  }
+
+  .reports-loading__kpi-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+```
+
+### 6C. Enhance Service Worker — app-shell caching
+
+FILE: `public/sw.js`
+
+Current state: The SW only caches 3 public pages (`/`, `/login`,
+`/unsupported-device`) and static assets. Dashboard pages are NOT
+cached at all — `request.mode === "navigate"` returns early for
+non-public pages.
+
+The fix: Add a **network-first with offline fallback** strategy for
+ALL navigation requests (not just public ones). This means:
+- Try network first (always fresh)
+- If network fails, serve cached version
+- On success, update cache for next offline access
+
+Update the fetch handler in `sw.js`:
+
+Replace the current navigation block:
+```javascript
+  if (request.mode === "navigate") {
+    if (isPublicNavigation(url.pathname)) {
+      event.respondWith(networkFirstPage(request));
+    }
+
+    return;
+  }
+```
+
+With:
+```javascript
+  if (request.mode === "navigate") {
+    if (isSensitivePath(url.pathname)) {
+      return;
+    }
+
+    event.respondWith(networkFirstPage(request));
+    return;
+  }
+```
+
+Also rename `publicPageCacheName` to `pageCacheName` (since it now
+caches all pages, not just public ones):
+```javascript
+const pageCacheName = `${cachePrefix}-pages-${buildId}`;
+```
+
+And update all references to `publicPageCacheName` → `pageCacheName`.
+
+Remove the `isPublicNavigation` function and `publicNavigationPaths`
+set since they are no longer needed.
+
+IMPORTANT: Keep the `isSensitivePath` check — API and auth routes
+must NEVER be cached.
+
+### 6D. Manifest theme color alignment
+
+FILE: `app/manifest.ts`
+
+Current state: `theme_color: "#0f172a"` and `background_color: "#0f172a"`
+(dark navy). But the app is light-only with warm neutrals. This causes
+a dark flash when launching the PWA.
+
+Update to match the actual UI:
+```typescript
+background_color: "#FAFAF9",
+theme_color: "#FAFAF9",
+```
+
+Use the value of `--color-bg-base` from the CSS tokens. If the current
+token value is different from `#FAFAF9`, use the actual value.
+
+Also update `app/layout.tsx` viewport `themeColor` to match:
+```typescript
+themeColor: "#FAFAF9"
+```
+
+### 6E. Verify
+
+- `npx tsc --noEmit --pretty false` → 0 errors
+- `npx vitest run` → all pass
+- `npm run build` → success (FULL BUILD CHECK)
+- Verify: each route-specific loading file exists and matches its
+  page layout shape
+- Verify: `sw.js` caches dashboard navigation requests
+- Commit: `feat(pwa): route loading skeletons, app-shell caching, theme color alignment`
+
+## FILES IN SCOPE (exhaustive list)
+
+### CSS (Phases 1-3, 5, 6B):
+- `app/globals.css`
+
+### Component (Phase 4):
+- `components/dashboard/dashboard-shell.tsx`
+
+### New files (Phase 6A):
+- `app/(dashboard)/pos/loading.tsx`
+- `app/(dashboard)/reports/loading.tsx`
+- `app/(dashboard)/invoices/loading.tsx`
+- `app/(dashboard)/products/loading.tsx`
+- `app/(dashboard)/inventory/loading.tsx`
+
+### PWA files (Phase 6C-6D):
+- `public/sw.js`
+- `app/manifest.ts`
+- `app/layout.tsx` (ONLY the `themeColor` value in viewport export)
+
+### Read-only reference (DO NOT MODIFY):
+- `components/pos/pos-workspace.tsx` — reference model
+- `components/pos/view/**` — POS view sub-components
+- All files under `tests/e2e/` — verification target
+- All files under `tests/unit/` — verification target
+- All API route files (except reading to verify sensitive paths)
+- Database schema / migrations
+
+## DO_NOT_TOUCH
+
+- `components/pos/pos-workspace.tsx` and `components/pos/view/**`
+- All API routes (`app/api/**`)
+- All test files (`tests/**`)
+- Database schema and migrations
+- `app/(dashboard)/layout.tsx` (navigation inventory)
+- Login page and auth components (except CSS sizing)
+- The AYA package files
+- `components/runtime/service-worker-registration.tsx` (do NOT change
+  the registration logic, only the sw.js file itself)
+
+## ESCALATE_IF
+
+- Any test fails after a phase and the fix is not obvious
+- A CSS class removal would break an e2e test
+- An `overflow: hidden` removal causes visible content clipping
+  that was intentional (card corners, image masks)
+- The POS products grid stops scrolling after overflow changes
+- The 56px POS header constraint causes elements to be cut off
+  and you cannot fit them by shrinking
+- The bottom bar active logic changes break `isPathActive` usage
+  elsewhere in the shell (desktop nav, breadcrumbs, etc.)
+- The SW app-shell caching causes stale pages or cache-related bugs
+- A loading skeleton breaks an e2e test assertion on page structure
+
+## DONE_IF
+
+All 8 of these are true:
+1. `npx tsc --noEmit --pretty false` → 0 errors
+2. `npx vitest run` → all tests pass (same count as before, no skips)
+3. `npm run build` → success
+4. On 375px viewport: no horizontal overflow on any page, all
+   interactive elements ≥44px touch target, all inputs ≥16px font
+5. Zero `overflow: hidden` on inner containers — only on the
+   outermost viewport shell and text truncation selectors
+6. Bottom bar and topbar have subtle depth (shadow/gradient), cards
+   use tighter mobile padding, buttons have active-press feedback
+7. Each heavy route has its own loading skeleton matching page shape
+8. SW caches all navigation requests (network-first), manifest and
+   viewport theme colors match the light UI palette
+
+═══ END_OF_TASK_SPEC ═══
 
