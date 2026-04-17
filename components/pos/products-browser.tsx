@@ -1,7 +1,15 @@
 "use client";
 
 import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
-import { PackageSearch, PencilLine, Plus, RefreshCcw, Save, Trash2 } from "lucide-react";
+import {
+  PackageSearch,
+  PencilLine,
+  Plus,
+  RefreshCcw,
+  Save,
+  Trash2,
+  X
+} from "lucide-react";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/ui/page-header";
 import { SectionCard } from "@/components/ui/section-card";
@@ -10,7 +18,10 @@ import { useProducts } from "@/hooks/use-products";
 import { getSafeArabicErrorMessage } from "@/lib/error-messages";
 import type { PosProduct, StandardEnvelope } from "@/lib/pos/types";
 import { formatCompactNumber, formatCurrency } from "@/lib/utils/formatters";
-import { PRODUCT_CATEGORY_VALUES, type ProductCategory } from "@/lib/validations/products";
+import {
+  PRODUCT_CATEGORY_VALUES,
+  type ProductCategory
+} from "@/lib/validations/products";
 
 type ProductsBrowserProps = {
   role?: "admin" | "pos_staff";
@@ -111,6 +122,7 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [isSaving, setIsSaving] = useState(false);
+  const [isProductEditorOpen, setIsProductEditorOpen] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
   const [productForm, setProductForm] = useState<ProductFormState>(
     createEmptyProductForm(PRODUCT_CATEGORY_VALUES[0])
@@ -118,11 +130,20 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
   const [formError, setFormError] = useState<string | null>(null);
   const deferredQuery = useDeferredValue(searchQuery);
   const normalizedQuery = normalizeArabic(deferredQuery);
-  const { products, isLoading, isLoadingMore, isOffline, errorMessage, hasMore, totalCount, loadMore, refresh } =
-    useProducts({
-      searchQuery: "",
-      category: activeCategory
-    });
+  const {
+    products,
+    isLoading,
+    isLoadingMore,
+    isOffline,
+    errorMessage,
+    hasMore,
+    totalCount,
+    loadMore,
+    refresh
+  } = useProducts({
+    searchQuery: "",
+    category: activeCategory
+  });
 
   useEffect(() => {
     const handle = window.setTimeout(() => {
@@ -179,7 +200,9 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
       .filter((product) => {
         const normalizedName = normalizeArabic(product.name);
         const normalizedSku = product.sku?.toLowerCase().trim() ?? "";
-        const normalizedDescription = product.description ? normalizeArabic(product.description) : "";
+        const normalizedDescription = product.description
+          ? normalizeArabic(product.description)
+          : "";
 
         return (
           normalizedSku === query ||
@@ -213,22 +236,40 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
   );
   const quickAddCount = quickAddProducts.length;
   const lowStockCount = products.filter(
-    (product) => product.track_stock && product.stock_quantity > 0 && product.stock_quantity <= 5
+    (product) =>
+      product.track_stock && product.stock_quantity > 0 && product.stock_quantity <= 5
   ).length;
   const selectedProduct = selectedProductId
-    ? products.find((product) => product.id === selectedProductId) ?? null
+    ? (products.find((product) => product.id === selectedProductId) ?? null)
     : null;
 
   function clearFormState() {
     setSelectedProductId(null);
-    setProductForm(createEmptyProductForm(categoryOptions[0] ?? PRODUCT_CATEGORY_VALUES[0]));
+    setProductForm(
+      createEmptyProductForm(categoryOptions[0] ?? PRODUCT_CATEGORY_VALUES[0])
+    );
     setFormError(null);
+  }
+
+  function openProductCreator() {
+    clearFormState();
+    setIsProductEditorOpen(true);
+  }
+
+  function closeProductEditor() {
+    if (isSaving) {
+      return;
+    }
+
+    setIsProductEditorOpen(false);
+    clearFormState();
   }
 
   function openProductForEdit(product: PosProduct) {
     setSelectedProductId(product.id);
     setProductForm(productFormFromProduct(product));
     setFormError(null);
+    setIsProductEditorOpen(true);
   }
 
   async function submitProductForm() {
@@ -250,12 +291,20 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
       return;
     }
 
-    if (Number.isNaN(stockQuantity) || !Number.isInteger(stockQuantity) || stockQuantity < 0) {
+    if (
+      Number.isNaN(stockQuantity) ||
+      !Number.isInteger(stockQuantity) ||
+      stockQuantity < 0
+    ) {
       setFormError("الكمية يجب أن تكون عددًا صحيحًا غير سالب.");
       return;
     }
 
-    if (Number.isNaN(minStockLevel) || !Number.isInteger(minStockLevel) || minStockLevel < 0) {
+    if (
+      Number.isNaN(minStockLevel) ||
+      !Number.isInteger(minStockLevel) ||
+      minStockLevel < 0
+    ) {
       setFormError("حد التنبيه يجب أن يكون عددًا صحيحًا غير سالب.");
       return;
     }
@@ -268,7 +317,9 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
     setIsSaving(true);
 
     try {
-      const endpoint = selectedProductId ? `/api/products/${selectedProductId}` : "/api/products";
+      const endpoint = selectedProductId
+        ? `/api/products/${selectedProductId}`
+        : "/api/products";
       const response = await fetch(endpoint, {
         method: selectedProductId ? "PATCH" : "POST",
         headers: {
@@ -298,9 +349,12 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
       }
 
       toast.success(
-        selectedProductId ? `تم تحديث المنتج ${envelope.data.name} بنجاح.` : `تم إنشاء المنتج ${envelope.data.name} بنجاح.`
+        selectedProductId
+          ? `تم تحديث المنتج ${envelope.data.name} بنجاح.`
+          : `تم إنشاء المنتج ${envelope.data.name} بنجاح.`
       );
       refresh();
+      setIsProductEditorOpen(false);
       clearFormState();
     } catch (error) {
       const message = getSafeArabicErrorMessage(error, "تعذر حفظ المنتج.");
@@ -335,6 +389,7 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
 
       toast.success(`تم تعطيل المنتج ${envelope.data.name}.`);
       if (selectedProductId === product.id) {
+        setIsProductEditorOpen(false);
         clearFormState();
       }
       refresh();
@@ -367,9 +422,13 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
         actions={
           <div className="transaction-action-cluster">
             {isAdmin ? (
-              <button type="button" className="primary-button" onClick={clearFormState}>
+              <button
+                type="button"
+                className="primary-button"
+                onClick={openProductCreator}
+              >
                 <Plus size={16} />
-                منتج جديد
+                إضافة منتج
               </button>
             ) : null}
             <button type="button" className="secondary-button" onClick={refresh}>
@@ -380,191 +439,278 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
         }
       />
 
-      {isAdmin ? (
-        <SectionCard
-          title={selectedProduct ? `تعديل: ${selectedProduct.name}` : "منتج جديد"}
-          tone="accent"
-          className="operational-card product-admin-card"
-        >
-          {formError ? <StatusBanner variant="danger" title="تعذر حفظ المنتج" message={formError} /> : null}
-
-          <form
-            className="product-admin-form"
-            onSubmit={(event) => {
-              event.preventDefault();
-              void submitProductForm();
-            }}
+      {isAdmin && isProductEditorOpen ? (
+        <div className="dialog-backdrop" role="presentation" onClick={closeProductEditor}>
+          <div
+            className="catalog-page__editor-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="catalog-product-editor-title"
+            onClick={(event) => event.stopPropagation()}
           >
-            <div className="product-admin-form__grid">
-              <label className="stack-field">
-                <span>اسم المنتج</span>
-                <input
-                  className="field-input"
-                  type="text"
-                  maxLength={200}
-                  value={productForm.name}
-                  onChange={(event) => setProductForm((current) => ({ ...current, name: event.target.value }))}
-                  placeholder="اسم المنتج"
-                  disabled={isSaving}
-                />
-              </label>
+            <button
+              type="button"
+              className="icon-button catalog-page__editor-close"
+              aria-label="إغلاق نافذة المنتج"
+              disabled={isSaving}
+              onClick={closeProductEditor}
+            >
+              <X size={18} />
+            </button>
 
-              <label className="stack-field">
-                <span>التصنيف</span>
-                <select
-                  className="field-input"
-                  value={productForm.category}
-                  onChange={(event) =>
-                    setProductForm((current) => ({ ...current, category: event.target.value as ProductCategory }))
-                  }
-                  disabled={isSaving}
-                >
-                  {categoryOptions.map((category) => (
-                    <option key={category} value={category}>
-                      {getCategoryLabel(category)}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <label className="stack-field">
-                <span>SKU</span>
-                <input
-                  className="field-input"
-                  type="text"
-                  maxLength={50}
-                  value={productForm.sku}
-                  onChange={(event) => setProductForm((current) => ({ ...current, sku: event.target.value }))}
-                  placeholder="رمز المنتج"
-                  disabled={isSaving}
-                />
-              </label>
-
-              <label className="stack-field product-admin-form__field--wide">
-                <span>الوصف</span>
-                <textarea
-                  className="field-input"
-                  rows={3}
-                  maxLength={1000}
-                  value={productForm.description}
-                  onChange={(event) => setProductForm((current) => ({ ...current, description: event.target.value }))}
-                  placeholder="وصف اختياري للمنتج"
-                  disabled={isSaving}
-                />
-              </label>
-
-              <label className="stack-field">
-                <span>سعر البيع</span>
-                <input
-                  className="field-input"
-                  type="number"
-                  min={0}
-                  step="0.001"
-                  value={productForm.sale_price}
-                  onChange={(event) => setProductForm((current) => ({ ...current, sale_price: event.target.value }))}
-                  placeholder="0.000"
-                  disabled={isSaving}
-                />
-              </label>
-
-              <label className="stack-field">
-                <span>سعر التكلفة</span>
-                <input
-                  className="field-input"
-                  type="number"
-                  min={0}
-                  step="0.001"
-                  value={productForm.cost_price}
-                  onChange={(event) => setProductForm((current) => ({ ...current, cost_price: event.target.value }))}
-                  placeholder="0.000"
-                  disabled={isSaving}
-                />
-              </label>
-
-              <label className="stack-field">
-                <span>الكمية</span>
-                <input
-                  className="field-input"
-                  type="number"
-                  min={0}
-                  step={1}
-                  value={productForm.stock_quantity}
-                  onChange={(event) => setProductForm((current) => ({ ...current, stock_quantity: event.target.value }))}
-                  placeholder="0"
-                  disabled={isSaving}
-                />
-              </label>
-
-              <label className="stack-field">
-                <span>حد التنبيه</span>
-                <input
-                  className="field-input"
-                  type="number"
-                  min={0}
-                  step={1}
-                  value={productForm.min_stock_level}
-                  onChange={(event) => setProductForm((current) => ({ ...current, min_stock_level: event.target.value }))}
-                  placeholder="0"
-                  disabled={isSaving}
-                />
-              </label>
-
-              <label className="stack-checkbox">
-                <input
-                  className="field-input"
-                  type="checkbox"
-                  checked={productForm.track_stock}
-                  onChange={(event) => setProductForm((current) => ({ ...current, track_stock: event.target.checked }))}
-                  disabled={isSaving}
-                />
-                <span>يتتبع المخزون</span>
-              </label>
-
-              <label className="stack-checkbox">
-                <input
-                  className="field-input"
-                  type="checkbox"
-                  checked={productForm.is_quick_add}
-                  onChange={(event) => setProductForm((current) => ({ ...current, is_quick_add: event.target.checked }))}
-                  disabled={isSaving}
-                />
-                <span>إضافة سريعة</span>
-              </label>
-            </div>
-
-            <div className="product-admin-form__actions">
-              <div className="product-admin-form__status">
-                <span className="status-pill badge badge--neutral">
-                  {selectedProduct ? "وضع التعديل" : "وضع الإنشاء"}
-                </span>
+            <SectionCard
+              tone="accent"
+              className="operational-card product-admin-card catalog-page__editor-card"
+            >
+              <div className="catalog-page__editor-intro">
+                <h2 id="catalog-product-editor-title">
+                  {selectedProduct ? `تعديل: ${selectedProduct.name}` : "منتج جديد"}
+                </h2>
+                <p>
+                  أكمل بيانات المنتج داخل النافذة ثم احفظ التغييرات دون مزاحمة مساحة
+                  التصفح.
+                </p>
               </div>
 
-              <div className="transaction-action-cluster">
-                {selectedProduct ? (
-                  <button
-                    type="button"
-                    className="secondary-button"
-                    onClick={clearFormState}
-                    disabled={isSaving}
-                  >
-                    إلغاء التعديل
-                  </button>
-                ) : null}
-                <button type="submit" className="primary-button" disabled={isSaving}>
-                  <Save size={16} />
-                  {isSaving ? "جارٍ الحفظ..." : selectedProduct ? "حفظ التعديلات" : "إنشاء المنتج"}
-                </button>
-              </div>
-            </div>
-          </form>
-        </SectionCard>
+              {formError ? (
+                <StatusBanner
+                  variant="danger"
+                  title="تعذر حفظ المنتج"
+                  message={formError}
+                />
+              ) : null}
+
+              <form
+                className="product-admin-form"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  void submitProductForm();
+                }}
+              >
+                <div className="product-admin-form__grid">
+                  <label className="stack-field">
+                    <span>اسم المنتج</span>
+                    <input
+                      className="field-input"
+                      type="text"
+                      maxLength={200}
+                      value={productForm.name}
+                      onChange={(event) =>
+                        setProductForm((current) => ({
+                          ...current,
+                          name: event.target.value
+                        }))
+                      }
+                      placeholder="اسم المنتج"
+                      disabled={isSaving}
+                    />
+                  </label>
+
+                  <label className="stack-field">
+                    <span>التصنيف</span>
+                    <select
+                      className="field-input"
+                      value={productForm.category}
+                      onChange={(event) =>
+                        setProductForm((current) => ({
+                          ...current,
+                          category: event.target.value as ProductCategory
+                        }))
+                      }
+                      disabled={isSaving}
+                    >
+                      {categoryOptions.map((category) => (
+                        <option key={category} value={category}>
+                          {getCategoryLabel(category)}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+
+                  <label className="stack-field">
+                    <span>SKU</span>
+                    <input
+                      className="field-input"
+                      type="text"
+                      maxLength={50}
+                      value={productForm.sku}
+                      onChange={(event) =>
+                        setProductForm((current) => ({
+                          ...current,
+                          sku: event.target.value
+                        }))
+                      }
+                      placeholder="رمز المنتج"
+                      disabled={isSaving}
+                    />
+                  </label>
+
+                  <label className="stack-field product-admin-form__field--wide">
+                    <span>الوصف</span>
+                    <textarea
+                      className="field-input"
+                      rows={3}
+                      maxLength={1000}
+                      value={productForm.description}
+                      onChange={(event) =>
+                        setProductForm((current) => ({
+                          ...current,
+                          description: event.target.value
+                        }))
+                      }
+                      placeholder="وصف اختياري للمنتج"
+                      disabled={isSaving}
+                    />
+                  </label>
+
+                  <label className="stack-field">
+                    <span>سعر البيع</span>
+                    <input
+                      className="field-input"
+                      type="number"
+                      min={0}
+                      step="0.001"
+                      value={productForm.sale_price}
+                      onChange={(event) =>
+                        setProductForm((current) => ({
+                          ...current,
+                          sale_price: event.target.value
+                        }))
+                      }
+                      placeholder="0.000"
+                      disabled={isSaving}
+                    />
+                  </label>
+
+                  <label className="stack-field">
+                    <span>سعر التكلفة</span>
+                    <input
+                      className="field-input"
+                      type="number"
+                      min={0}
+                      step="0.001"
+                      value={productForm.cost_price}
+                      onChange={(event) =>
+                        setProductForm((current) => ({
+                          ...current,
+                          cost_price: event.target.value
+                        }))
+                      }
+                      placeholder="0.000"
+                      disabled={isSaving}
+                    />
+                  </label>
+
+                  <label className="stack-field">
+                    <span>الكمية</span>
+                    <input
+                      className="field-input"
+                      type="number"
+                      min={0}
+                      step={1}
+                      value={productForm.stock_quantity}
+                      onChange={(event) =>
+                        setProductForm((current) => ({
+                          ...current,
+                          stock_quantity: event.target.value
+                        }))
+                      }
+                      placeholder="0"
+                      disabled={isSaving}
+                    />
+                  </label>
+
+                  <label className="stack-field">
+                    <span>حد التنبيه</span>
+                    <input
+                      className="field-input"
+                      type="number"
+                      min={0}
+                      step={1}
+                      value={productForm.min_stock_level}
+                      onChange={(event) =>
+                        setProductForm((current) => ({
+                          ...current,
+                          min_stock_level: event.target.value
+                        }))
+                      }
+                      placeholder="0"
+                      disabled={isSaving}
+                    />
+                  </label>
+
+                  <label className="stack-checkbox">
+                    <input
+                      className="field-input"
+                      type="checkbox"
+                      checked={productForm.track_stock}
+                      onChange={(event) =>
+                        setProductForm((current) => ({
+                          ...current,
+                          track_stock: event.target.checked
+                        }))
+                      }
+                      disabled={isSaving}
+                    />
+                    <span>يتتبع المخزون</span>
+                  </label>
+
+                  <label className="stack-checkbox">
+                    <input
+                      className="field-input"
+                      type="checkbox"
+                      checked={productForm.is_quick_add}
+                      onChange={(event) =>
+                        setProductForm((current) => ({
+                          ...current,
+                          is_quick_add: event.target.checked
+                        }))
+                      }
+                      disabled={isSaving}
+                    />
+                    <span>إضافة سريعة</span>
+                  </label>
+                </div>
+
+                <div className="product-admin-form__actions">
+                  <div className="product-admin-form__status">
+                    <span className="status-pill badge badge--neutral">
+                      {selectedProduct ? "وضع التعديل" : "وضع الإنشاء"}
+                    </span>
+                  </div>
+
+                  <div className="transaction-action-cluster">
+                    {selectedProduct ? (
+                      <button
+                        type="button"
+                        className="secondary-button"
+                        onClick={closeProductEditor}
+                        disabled={isSaving}
+                      >
+                        إلغاء التعديل
+                      </button>
+                    ) : null}
+                    <button type="submit" className="primary-button" disabled={isSaving}>
+                      <Save size={16} />
+                      {isSaving
+                        ? "جارٍ الحفظ..."
+                        : selectedProduct
+                          ? "حفظ التعديلات"
+                          : "إنشاء المنتج"}
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </SectionCard>
+          </div>
+        </div>
       ) : null}
 
-      <section className="operational-layout operational-layout--wide">
+      <div className="catalog-page__browse">
         <SectionCard
           title="بحث وتصفية"
           tone="accent"
-          className="operational-sidebar operational-sidebar--sticky catalog-page__filters"
+          className="catalog-page__filters"
           actions={
             searchInput.trim() || activeCategory !== "all" ? (
               <button
@@ -597,7 +743,10 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
             />
           </label>
 
-          <div className="chip-row catalog-page__filters-row" aria-label="تصنيفات المنتجات">
+          <div
+            className="chip-row catalog-page__filters-row"
+            aria-label="تصنيفات المنتجات"
+          >
             {categories.map((category) => (
               <button
                 key={category}
@@ -624,7 +773,9 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
                   <article key={product.id} className="catalog-quick-add__card">
                     <div className="catalog-quick-add__copy">
                       <h3>{product.name}</h3>
-                      <p>{product.sku ? <bdi dir="ltr">{product.sku}</bdi> : "بدون SKU"}</p>
+                      <p>
+                        {product.sku ? <bdi dir="ltr">{product.sku}</bdi> : "بدون SKU"}
+                      </p>
                     </div>
                     <div className="catalog-quick-add__meta">
                       <strong>{formatCurrency(product.sale_price)}</strong>
@@ -644,7 +795,7 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
           ) : null}
         </SectionCard>
 
-        <div className="operational-content">
+        <div className="catalog-page__content">
           {isOffline ? (
             <StatusBanner
               variant="offline"
@@ -659,7 +810,10 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
             <SectionCard title="المنتجات" className="catalog-page__results">
               <div className="product-grid" aria-label="جارٍ تحميل المنتجات">
                 {Array.from({ length: 6 }).map((_, index) => (
-                  <article key={`product-skeleton-${index}`} className="product-card product-card--skeleton">
+                  <article
+                    key={`product-skeleton-${index}`}
+                    className="product-card product-card--skeleton"
+                  >
                     <div className="skeleton-line skeleton-line--sm" />
                     <div className="skeleton-line skeleton-line--lg" />
                     <div className="skeleton-line" />
@@ -680,40 +834,45 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
             <SectionCard title="المنتجات" className="catalog-page__results">
               <div className="empty-panel transaction-empty-panel">
                 <PackageSearch size={20} />
-              <h3 className="catalog-page__empty-title">
-                {searchInput.trim()
-                  ? `لا توجد نتائج تطابق "${searchInput.trim()}". جرّب SKU أو وصفاً أقصر.`
-                  : "ابدأ بالبحث أو بدّل التصنيف للعثور على المنتجات الأسرع استخداماً."}
-              </h3>
-              <button
-                type="button"
-                className="secondary-button"
-                onClick={() => {
-                  if (searchInput.trim() || activeCategory !== "all") {
-                    setSearchInput("");
-                    setSearchQuery("");
-                    setActiveCategory("all");
-                    return;
-                  }
+                <h3 className="catalog-page__empty-title">
+                  {searchInput.trim()
+                    ? `لا توجد نتائج تطابق "${searchInput.trim()}". جرّب SKU أو وصفاً أقصر.`
+                    : "ابدأ بالبحث أو بدّل التصنيف للعثور على المنتجات الأسرع استخداماً."}
+                </h3>
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={() => {
+                    if (searchInput.trim() || activeCategory !== "all") {
+                      setSearchInput("");
+                      setSearchQuery("");
+                      setActiveCategory("all");
+                      return;
+                    }
 
-                  if (isAdmin) {
-                    clearFormState();
-                    return;
-                  }
+                    if (isAdmin) {
+                      openProductCreator();
+                      return;
+                    }
 
-                  refresh();
-                }}
-              >
-                {searchInput.trim() || activeCategory !== "all"
-                  ? "مسح التصفية"
-                  : isAdmin
-                    ? "منتج جديد"
-                    : "إعادة المحاولة"}
-              </button>
+                    refresh();
+                  }}
+                >
+                  {searchInput.trim() || activeCategory !== "all"
+                    ? "مسح التصفية"
+                    : isAdmin
+                      ? "إضافة منتج"
+                      : "إعادة المحاولة"}
+                </button>
               </div>
               {hasMore ? (
                 <div className="transaction-action-cluster">
-                  <button type="button" className="secondary-button" onClick={loadMore} disabled={isLoadingMore}>
+                  <button
+                    type="button"
+                    className="secondary-button"
+                    onClick={loadMore}
+                    disabled={isLoadingMore}
+                  >
                     {isLoadingMore ? "جارٍ تحميل المزيد..." : "تحميل المزيد من المنتجات"}
                   </button>
                 </div>
@@ -761,10 +920,18 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
                     }
                   >
                     <div className="product-card__meta catalog-product-card__badges">
-                      <span className="product-pill">{getCategoryLabel(product.category)}</span>
-                      {product.is_quick_add ? <span className="product-pill product-pill--accent">سريع</span> : null}
+                      <span className="product-pill">
+                        {getCategoryLabel(product.category)}
+                      </span>
+                      {product.is_quick_add ? (
+                        <span className="product-pill product-pill--accent">سريع</span>
+                      ) : null}
                       <span
-                        className={product.track_stock && product.stock_quantity <= 5 ? "product-pill product-pill--warning" : "product-pill"}
+                        className={
+                          product.track_stock && product.stock_quantity <= 5
+                            ? "product-pill product-pill--warning"
+                            : "product-pill"
+                        }
                       >
                         {getStockLabel(product.track_stock, product.stock_quantity)}
                       </span>
@@ -827,19 +994,27 @@ export function ProductsBrowser({ role = "pos_staff" }: ProductsBrowserProps) {
               </div>
               <div className="transaction-action-cluster catalog-page__results-footer">
                 {hasMore ? (
-                  <button type="button" className="secondary-button" onClick={loadMore} disabled={isLoadingMore}>
+                  <button
+                    type="button"
+                    className="secondary-button"
+                    onClick={loadMore}
+                    disabled={isLoadingMore}
+                  >
                     {isLoadingMore ? "جارٍ تحميل المزيد..." : "تحميل المزيد"}
                   </button>
                 ) : null}
                 <span className="workspace-footnote">
                   {formatCompactNumber(products.length)}
-                  {totalCount !== null ? ` من ${formatCompactNumber(totalCount)}` : ""} منتج محمل
+                  {totalCount !== null
+                    ? ` من ${formatCompactNumber(totalCount)}`
+                    : ""}{" "}
+                  منتج محمل
                 </span>
               </div>
             </SectionCard>
           )}
         </div>
-      </section>
+      </div>
     </section>
   );
 }
