@@ -188,218 +188,219 @@ export function InvoicesWorkspace({ role, invoices }: InvoicesWorkspaceProps) {
       <SectionCard
         title="السجل"
         className="transaction-card invoice-page__card"
-        actions={
-          <div className="invoice-page__sort">
-            <span className="product-pill">
-              <ArrowUpDown size={14} />
-              ترتيب
-            </span>
-            <button
-              type="button"
-              className={sortMode === "newest" ? "chip-button is-selected" : "chip-button"}
-              onClick={() => setSortMode("newest")}
-            >
-              الأحدث
-            </button>
-            <button
-              type="button"
-              className={sortMode === "highest" ? "chip-button is-selected" : "chip-button"}
-              onClick={() => setSortMode("highest")}
-            >
-              الأعلى قيمة
-            </button>
-            <button
-              type="button"
-              className={sortMode === "due" ? "chip-button is-selected" : "chip-button"}
-              onClick={() => setSortMode("due")}
-            >
-              الأعلى دينًا
-            </button>
-          </div>
-        }
       >
-        <div className="invoices-page__filters">
-          <button
-            type="button"
-            className="secondary-button invoices-page__filters-toggle"
-            aria-expanded={isFiltersOpen}
-            aria-controls="invoices-filters-panel"
-            onClick={() => setIsFiltersOpen((current) => !current)}
-          >
-            <span className="invoices-page__filters-toggle-label">
-              <SlidersHorizontal size={16} />
-              فلاتر السجل
-            </span>
-            <span className="invoices-page__filters-toggle-copy">
-              {activeFilterCount > 0 ? `${activeFilterCount} مفعلة` : "مغلقة افتراضيًا"}
-            </span>
-          </button>
+        <div className="invoices-page__toolbar">
+          <div className="invoices-page__toolbar-main">
+            <label className="workspace-search transaction-toolbar__search">
+              <Search size={18} />
+              <input
+                className="field-input"
+                type="search"
+                placeholder="ابحث برقم الفاتورة أو العميل أو الجهاز"
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+              />
+            </label>
 
-          <div id="invoices-filters-panel" className="invoices-page__filters-panel" hidden={!isFiltersOpen}>
-            <div className="invoices-page__filter-group" role="group" aria-label="فلتر الحالة">
-              <span className="invoices-page__filter-label">الحالة</span>
-              <div className="chip-row invoices-page__filter-chips">
-                {[
-                  { key: "all", label: "الكل" },
-                  { key: "active", label: "نشطة" },
-                  { key: "returned", label: "مرتجعة" },
-                  { key: "cancelled", label: "ملغاة" }
-                ].map((option) => (
-                  <button
-                    key={option.key}
-                    type="button"
-                    className={statusFilter === option.key ? "chip-button is-selected" : "chip-button"}
-                    aria-pressed={statusFilter === option.key}
-                    onClick={() => setStatusFilter(option.key as InvoiceStatusFilter)}
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="invoices-page__filter-group" role="group" aria-label="فلتر التاريخ">
-              <span className="invoices-page__filter-label">التاريخ</span>
-              <div className="chip-row invoices-page__filter-chips">
-                {[
-                  { key: "all", label: "الكل" },
-                  { key: "7d", label: "7 أيام" },
-                  { key: "30d", label: "30 يومًا" },
-                  { key: "90d", label: "90 يومًا" },
-                  { key: "custom", label: "مخصص" }
-                ].map((option) => (
-                  <button
-                    key={option.key}
-                    type="button"
-                    className={dateRange === option.key ? "chip-button is-selected" : "chip-button"}
-                    aria-pressed={dateRange === option.key}
-                    onClick={() => setDateRange(option.key as InvoiceDateRange)}
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
-
-              {dateRange === "custom" ? (
-                <div className="invoices-page__date-range">
-                  <label className="stack-field">
-                    <span>من</span>
-                    <input type="date" value={customDateFrom} onChange={(event) => setCustomDateFrom(event.target.value)} />
-                  </label>
-                  <label className="stack-field">
-                    <span>إلى</span>
-                    <input type="date" value={customDateTo} onChange={(event) => setCustomDateTo(event.target.value)} />
-                  </label>
-                </div>
-              ) : null}
-            </div>
-
-            <div className="invoices-page__filter-group" role="group" aria-label="فلتر القيمة">
-              <label className="stack-checkbox invoices-page__amount-toggle">
-                <input
-                  className="field-input"
-                  type="checkbox"
-                  checked={isAmountFilterEnabled}
-                  onChange={(event) => {
-                    const nextValue = event.target.checked;
-                    setIsAmountFilterEnabled(nextValue);
-                    if (!nextValue) {
-                      setMinAmount("");
-                      setMaxAmount("");
-                    }
-                  }}
-                />
-                <span>تفعيل فلتر القيمة</span>
-              </label>
-
-              {isAmountFilterEnabled ? (
-                <div className="invoices-page__amount-grid">
-                  <label className="stack-field">
-                    <span>الحد الأدنى</span>
-                    <input
-                      type="number"
-                      min={0}
-                      step="0.001"
-                      value={minAmount}
-                      onChange={(event) => setMinAmount(event.target.value)}
-                      placeholder="0.000"
-                    />
-                  </label>
-                  <label className="stack-field">
-                    <span>الحد الأعلى</span>
-                    <input
-                      type="number"
-                      min={0}
-                      step="0.001"
-                      value={maxAmount}
-                      onChange={(event) => setMaxAmount(event.target.value)}
-                      placeholder="0.000"
-                    />
-                  </label>
-                </div>
-              ) : null}
-            </div>
-          </div>
-
-          {activeFilterCount > 0 ? (
-            <div className="invoices-page__active-filters" aria-label="الفلاتر النشطة">
-              {statusFilter !== "all" ? (
-                <button type="button" className="chip-button is-selected invoices-page__active-filter" onClick={() => setStatusFilter("all")}>
-                  الحالة: {statusFilter === "active" ? "نشطة" : statusFilter === "returned" ? "مرتجعة" : "ملغاة"}
-                  <X size={14} />
-                </button>
-              ) : null}
-
-              {dateRange !== "all" ? (
-                <button
-                  type="button"
-                  className="chip-button is-selected invoices-page__active-filter"
-                  onClick={() => {
-                    setDateRange("all");
-                    setCustomDateFrom("");
-                    setCustomDateTo("");
-                  }}
-                >
-                  {dateRange === "custom"
-                    ? `التاريخ: ${customDateFrom || "..." } → ${customDateTo || "..." }`
-                    : `التاريخ: ${dateRange}`}
-                  <X size={14} />
-                </button>
-              ) : null}
-
-              {hasAmountFilter ? (
-                <button
-                  type="button"
-                  className="chip-button is-selected invoices-page__active-filter"
-                  onClick={() => {
-                    setIsAmountFilterEnabled(false);
-                    setMinAmount("");
-                    setMaxAmount("");
-                  }}
-                >
-                  المبلغ: {minAmountValue !== null ? formatCurrency(minAmountValue) : "..." } - {maxAmountValue !== null ? formatCurrency(maxAmountValue) : "..."}
-                  <X size={14} />
-                </button>
-              ) : null}
-
-              <button type="button" className="secondary-button invoices-page__clear-filters" onClick={clearAllFilters}>
-                مسح كل الفلاتر
+            <div className="invoice-page__sort invoices-page__sort-controls" role="group" aria-label="ترتيب السجل">
+              <span className="product-pill invoices-page__sort-label">
+                <ArrowUpDown size={14} />
+                ترتيب
+              </span>
+              <button
+                type="button"
+                className={sortMode === "newest" ? "chip-button is-selected" : "chip-button"}
+                onClick={() => setSortMode("newest")}
+              >
+                الأحدث
+              </button>
+              <button
+                type="button"
+                className={sortMode === "highest" ? "chip-button is-selected" : "chip-button"}
+                onClick={() => setSortMode("highest")}
+              >
+                الأعلى قيمة
+              </button>
+              <button
+                type="button"
+                className={sortMode === "due" ? "chip-button is-selected" : "chip-button"}
+                onClick={() => setSortMode("due")}
+              >
+                الأعلى دينًا
               </button>
             </div>
-          ) : null}
-        </div>
 
-        <div className="workspace-toolbar transaction-toolbar invoice-page__toolbar">
-          <label className="workspace-search transaction-toolbar__search">
-            <Search size={18} />
-            <input
-              className="field-input"
-              type="search"
-              placeholder="ابحث برقم الفاتورة أو العميل أو الجهاز"
-              value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
-            />
-          </label>
+            <button
+              type="button"
+              className="secondary-button invoices-page__filters-toggle"
+              aria-expanded={isFiltersOpen}
+              aria-controls="invoices-filters-panel"
+              onClick={() => setIsFiltersOpen((current) => !current)}
+            >
+              <span className="invoices-page__filters-toggle-label">
+                <SlidersHorizontal size={16} />
+                فلاتر السجل
+              </span>
+              <span className="invoices-page__filters-toggle-copy">
+                {activeFilterCount > 0 ? `${activeFilterCount} مفعلة` : "مغلقة افتراضيًا"}
+              </span>
+            </button>
+          </div>
+
+          <div className="invoices-page__filters">
+            <div id="invoices-filters-panel" className="invoices-page__filters-panel" hidden={!isFiltersOpen}>
+              <div className="invoices-page__filter-group" role="group" aria-label="فلتر الحالة">
+                <span className="invoices-page__filter-label">الحالة</span>
+                <div className="chip-row invoices-page__filter-chips">
+                  {[
+                    { key: "all", label: "الكل" },
+                    { key: "active", label: "نشطة" },
+                    { key: "returned", label: "مرتجعة" },
+                    { key: "cancelled", label: "ملغاة" }
+                  ].map((option) => (
+                    <button
+                      key={option.key}
+                      type="button"
+                      className={statusFilter === option.key ? "chip-button is-selected" : "chip-button"}
+                      aria-pressed={statusFilter === option.key}
+                      onClick={() => setStatusFilter(option.key as InvoiceStatusFilter)}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="invoices-page__filter-group" role="group" aria-label="فلتر التاريخ">
+                <span className="invoices-page__filter-label">التاريخ</span>
+                <div className="chip-row invoices-page__filter-chips">
+                  {[
+                    { key: "all", label: "الكل" },
+                    { key: "7d", label: "7 أيام" },
+                    { key: "30d", label: "30 يومًا" },
+                    { key: "90d", label: "90 يومًا" },
+                    { key: "custom", label: "مخصص" }
+                  ].map((option) => (
+                    <button
+                      key={option.key}
+                      type="button"
+                      className={dateRange === option.key ? "chip-button is-selected" : "chip-button"}
+                      aria-pressed={dateRange === option.key}
+                      onClick={() => setDateRange(option.key as InvoiceDateRange)}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+
+                {dateRange === "custom" ? (
+                  <div className="invoices-page__date-range">
+                    <label className="stack-field">
+                      <span>من</span>
+                      <input type="date" value={customDateFrom} onChange={(event) => setCustomDateFrom(event.target.value)} />
+                    </label>
+                    <label className="stack-field">
+                      <span>إلى</span>
+                      <input type="date" value={customDateTo} onChange={(event) => setCustomDateTo(event.target.value)} />
+                    </label>
+                  </div>
+                ) : null}
+              </div>
+
+              <div className="invoices-page__filter-group" role="group" aria-label="فلتر القيمة">
+                <label className="stack-checkbox invoices-page__amount-toggle">
+                  <input
+                    className="field-input"
+                    type="checkbox"
+                    checked={isAmountFilterEnabled}
+                    onChange={(event) => {
+                      const nextValue = event.target.checked;
+                      setIsAmountFilterEnabled(nextValue);
+                      if (!nextValue) {
+                        setMinAmount("");
+                        setMaxAmount("");
+                      }
+                    }}
+                  />
+                  <span>تفعيل فلتر القيمة</span>
+                </label>
+
+                {isAmountFilterEnabled ? (
+                  <div className="invoices-page__amount-grid">
+                    <label className="stack-field">
+                      <span>الحد الأدنى</span>
+                      <input
+                        type="number"
+                        min={0}
+                        step="0.001"
+                        value={minAmount}
+                        onChange={(event) => setMinAmount(event.target.value)}
+                        placeholder="0.000"
+                      />
+                    </label>
+                    <label className="stack-field">
+                      <span>الحد الأعلى</span>
+                      <input
+                        type="number"
+                        min={0}
+                        step="0.001"
+                        value={maxAmount}
+                        onChange={(event) => setMaxAmount(event.target.value)}
+                        placeholder="0.000"
+                      />
+                    </label>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+
+            {activeFilterCount > 0 ? (
+              <div className="invoices-page__active-filters" aria-label="الفلاتر النشطة">
+                {statusFilter !== "all" ? (
+                  <button type="button" className="chip-button is-selected invoices-page__active-filter" onClick={() => setStatusFilter("all")}>
+                    الحالة: {statusFilter === "active" ? "نشطة" : statusFilter === "returned" ? "مرتجعة" : "ملغاة"}
+                    <X size={14} />
+                  </button>
+                ) : null}
+
+                {dateRange !== "all" ? (
+                  <button
+                    type="button"
+                    className="chip-button is-selected invoices-page__active-filter"
+                    onClick={() => {
+                      setDateRange("all");
+                      setCustomDateFrom("");
+                      setCustomDateTo("");
+                    }}
+                  >
+                    {dateRange === "custom"
+                      ? `التاريخ: ${customDateFrom || "..."} → ${customDateTo || "..."}`
+                      : `التاريخ: ${dateRange}`}
+                    <X size={14} />
+                  </button>
+                ) : null}
+
+                {hasAmountFilter ? (
+                  <button
+                    type="button"
+                    className="chip-button is-selected invoices-page__active-filter"
+                    onClick={() => {
+                      setIsAmountFilterEnabled(false);
+                      setMinAmount("");
+                      setMaxAmount("");
+                    }}
+                  >
+                    المبلغ: {minAmountValue !== null ? formatCurrency(minAmountValue) : "..."} - {maxAmountValue !== null ? formatCurrency(maxAmountValue) : "..."}
+                    <X size={14} />
+                  </button>
+                ) : null}
+
+                <button type="button" className="secondary-button invoices-page__clear-filters" onClick={clearAllFilters}>
+                  مسح كل الفلاتر
+                </button>
+              </div>
+            ) : null}
+          </div>
         </div>
 
         {visibleInvoices.length === 0 ? (

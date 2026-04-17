@@ -16,6 +16,7 @@ import { formatCurrency } from "@/lib/utils/formatters";
 type ReportsAdvancedChartsProps = {
   trend: AdvancedTrendPoint[];
   breakdown: AdvancedBreakdownEntry[];
+  view?: "trend" | "breakdown";
 };
 
 function formatTooltipValue(value: number | string | ReadonlyArray<number | string> | undefined) {
@@ -23,7 +24,11 @@ function formatTooltipValue(value: number | string | ReadonlyArray<number | stri
   return formatCurrency(Number.isFinite(normalized) ? normalized : 0);
 }
 
-export function ReportsAdvancedCharts({ trend, breakdown }: ReportsAdvancedChartsProps) {
+export function ReportsAdvancedCharts({
+  trend,
+  breakdown,
+  view = "trend"
+}: ReportsAdvancedChartsProps) {
   if (trend.length === 0 && breakdown.length === 0) {
     return (
       <div className="empty-panel">
@@ -34,52 +39,9 @@ export function ReportsAdvancedCharts({ trend, breakdown }: ReportsAdvancedChart
 
   const topBreakdown = breakdown.slice(0, 5);
 
-  return (
-    <div className="analytics-grid">
-      <article className="chart-card chart-card--primary">
-        <div className="section-heading">
-          <div>
-            <p className="eyebrow">الاتجاه</p>
-            <h3>المبيعات وصافي الربح</h3>
-          </div>
-        </div>
-
-        {trend.length > 0 ? (
-          <div className="chart-shell">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={trend} margin={{ top: 8, right: 8, bottom: 8, left: 8 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(24, 23, 21, 0.06)" />
-                <XAxis dataKey="bucket" tick={{ fontSize: 12 }} />
-                <YAxis tick={{ fontSize: 12 }} />
-                <Tooltip formatter={formatTooltipValue} />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="sales_total"
-                  name="إجمالي المبيعات"
-                  stroke="var(--color-accent)"
-                  strokeWidth={3}
-                  dot={{ r: 3 }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="net_profit"
-                  name="صافي الربح"
-                  stroke="var(--color-text-secondary)"
-                  strokeWidth={3}
-                  dot={{ r: 3 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        ) : (
-          <div className="empty-panel">
-            <p>لا توجد بيانات اتجاه ضمن الفترة الحالية.</p>
-          </div>
-        )}
-      </article>
-
-      <aside className="chart-card chart-card--secondary">
+  if (view === "breakdown") {
+    return (
+      <section className="chart-card chart-card--secondary reports-chart-card">
         <div className="section-heading">
           <div>
             <p className="eyebrow">التفكيك</p>
@@ -105,7 +67,52 @@ export function ReportsAdvancedCharts({ trend, breakdown }: ReportsAdvancedChart
             <p>لا توجد بيانات تفكيك ضمن الفترة الحالية.</p>
           </div>
         )}
-      </aside>
-    </div>
+      </section>
+    );
+  }
+
+  return (
+    <article className="chart-card chart-card--primary reports-chart-card">
+      <div className="section-heading">
+        <div>
+          <p className="eyebrow">الاتجاه</p>
+          <h3>المبيعات وصافي الربح</h3>
+        </div>
+      </div>
+
+      {trend.length > 0 ? (
+        <div className="chart-shell">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={trend} margin={{ top: 8, right: 8, bottom: 8, left: 8 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(24, 23, 21, 0.06)" />
+              <XAxis dataKey="bucket" tick={{ fontSize: 12 }} />
+              <YAxis tick={{ fontSize: 12 }} />
+              <Tooltip formatter={formatTooltipValue} />
+              <Legend />
+              <Line
+                type="monotone"
+                dataKey="sales_total"
+                name="إجمالي المبيعات"
+                stroke="var(--color-accent)"
+                strokeWidth={3}
+                dot={{ r: 3 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="net_profit"
+                name="صافي الربح"
+                stroke="var(--color-text-secondary)"
+                strokeWidth={3}
+                dot={{ r: 3 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      ) : (
+        <div className="empty-panel">
+          <p>لا توجد بيانات اتجاه ضمن الفترة الحالية.</p>
+        </div>
+      )}
+    </article>
   );
 }

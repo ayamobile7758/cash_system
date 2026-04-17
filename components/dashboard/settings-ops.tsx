@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useTransition, type KeyboardEvent } from "react";
-import { AlertTriangle, ChevronDown, Loader2, RefreshCcw } from "lucide-react";
+import { AlertTriangle, Loader2, RefreshCcw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { PermissionsPanel } from "@/components/dashboard/permissions-panel";
@@ -49,65 +49,38 @@ type SettingsOpsProps = {
 type SettingsSection = "permissions" | "policies" | "snapshot" | "integrity";
 type SettingsAction = "snapshot" | "balance-check";
 type SettingsConfirmAction = "snapshot" | null;
-type MobileAccordionState = Record<SettingsSection, boolean>;
 
 type SettingsSectionMeta = {
   key: SettingsSection;
   label: string;
   description: string;
-  group: "governance" | "oversight";
 };
 
 const SETTINGS_SECTIONS: SettingsSectionMeta[] = [
   {
     key: "permissions",
     label: "الصلاحيات",
-    description: "إدارة الحِزم والإسناد الدقيق للمستخدمين دون تغيير آلية العمل الحالية.",
-    group: "governance"
+    description: "إدارة الحِزم والإسناد الدقيق للمستخدمين دون تغيير آلية العمل الحالية."
   },
   {
     key: "policies",
     label: "السياسات",
-    description: "سياسات الطباعة والوصول من الأجهزة وملخّص الأدوات اليومية المتبقية في الإعدادات.",
-    group: "governance"
+    description: "سياسات الطباعة والوصول من الأجهزة وملخّص الأدوات اليومية المتبقية في الإعدادات."
   },
   {
     key: "snapshot",
     label: "اللقطة اليومية",
-    description: "حفظ لقطة نهاية اليوم ومراجعة آخر اللقطات المحفوظة من نفس مساحة الإدارة.",
-    group: "oversight"
+    description: "حفظ لقطة نهاية اليوم ومراجعة آخر اللقطات المحفوظة من نفس مساحة الإدارة."
   },
   {
     key: "integrity",
     label: "سلامة الأرصدة",
-    description: "فحص سلامة الأرصدة ومراجعة الفروقات قبل أي تدخل يدوي على الحسابات.",
-    group: "oversight"
+    description: "فحص سلامة الأرصدة ومراجعة الفروقات قبل أي تدخل يدوي على الحسابات."
   }
 ];
 
-const SETTINGS_GROUPS = [
-  { key: "governance", label: "الوصول والحوكمة" },
-  { key: "oversight", label: "الإشراف على النظام" }
-] as const;
-
 function getApiErrorMessage<T>(envelope: StandardEnvelope<T>) {
   return envelope.error?.message ?? "تعذر إتمام العملية.";
-}
-
-function createClosedAccordionState(): MobileAccordionState {
-  return {
-    permissions: false,
-    policies: false,
-    snapshot: false,
-    integrity: false
-  };
-}
-
-function createAccordionState(section: SettingsSection): MobileAccordionState {
-  return {
-    ...createClosedAccordionState(),
-    [section]: true
-  };
 }
 
 export function SettingsOps({ snapshots, permissionBundles, permissionUsers, activeAssignments }: SettingsOpsProps) {
@@ -116,7 +89,6 @@ export function SettingsOps({ snapshots, permissionBundles, permissionUsers, act
   const [snapshotResult, setSnapshotResult] = useState<SnapshotResponse | null>(null);
   const [balanceResult, setBalanceResult] = useState<BalanceCheckResponse | null>(null);
   const [activeSection, setActiveSection] = useState<SettingsSection>("snapshot");
-  const [mobileAccordions, setMobileAccordions] = useState<MobileAccordionState>(() => createAccordionState("snapshot"));
   const [actionErrorMessage, setActionErrorMessage] = useState<string | null>(null);
   const [retryAction, setRetryAction] = useState<SettingsAction | null>(null);
   const [confirmAction, setConfirmAction] = useState<SettingsConfirmAction>(null);
@@ -208,18 +180,6 @@ export function SettingsOps({ snapshots, permissionBundles, permissionUsers, act
 
   function activateSection(section: SettingsSection) {
     setActiveSection(section);
-    setMobileAccordions(createAccordionState(section));
-  }
-
-  function toggleAccordion(section: SettingsSection) {
-    setActiveSection(section);
-    setMobileAccordions((current) => {
-      if (current[section]) {
-        return createClosedAccordionState();
-      }
-
-      return createAccordionState(section);
-    });
   }
 
   function handleNavigatorKeyDown(
@@ -486,114 +446,53 @@ export function SettingsOps({ snapshots, permissionBundles, permissionUsers, act
         />
       ) : null}
 
-      <div className="settings-page__shell">
-        <nav
-          className="settings-page__navigator settings-page__sections"
-          aria-label="أقسام شاشة الإعدادات"
-        >
-          {SETTINGS_GROUPS.map((group) => (
-            <section key={group.key} className="settings-page__navigator-group">
-              <div className="settings-page__navigator-group-header">
-                <h2>{group.label}</h2>
-              </div>
+      <div className="operational-section-nav settings-page__sections settings-page__tabs" aria-label="أقسام شاشة الإعدادات">
+        {SETTINGS_SECTIONS.map((section) => (
+          <button
+            key={section.key}
+            ref={(node) => {
+              tabRefs.current[section.key] = node;
+            }}
+            type="button"
+            id={`settings-tab-${section.key}`}
+            aria-pressed={activeSection === section.key}
+            aria-controls={`settings-panel-${section.key}`}
+            className={`settings-page__tab ${activeSection === section.key ? "is-active chip-button is-selected" : "chip-button"}`}
+            onClick={() => activateSection(section.key)}
+            onKeyDown={(event) => handleNavigatorKeyDown(event, section.key)}
+          >
+            {section.label}
+          </button>
+        ))}
+      </div>
 
-              <div className="settings-page__navigator-list">
-                {SETTINGS_SECTIONS.filter((section) => section.group === group.key).map((section) => (
-                  <button
-                    key={section.key}
-                    ref={(node) => {
-                      tabRefs.current[section.key] = node;
-                    }}
-                    type="button"
-                    id={`settings-tab-${section.key}`}
-                    aria-pressed={activeSection === section.key}
-                    aria-controls={`settings-panel-${section.key}`}
-                    aria-labelledby={`settings-nav-title-${section.key}`}
-                    aria-describedby={`settings-nav-description-${section.key}`}
-                    className={`settings-page__navigator-item ${activeSection === section.key ? "is-selected" : ""}`}
-                    onClick={() => activateSection(section.key)}
-                    onKeyDown={(event) => handleNavigatorKeyDown(event, section.key)}
-                  >
-                    <span id={`settings-nav-title-${section.key}`} className="settings-page__navigator-item-title">
-                      {section.label}
-                    </span>
-                    <span
-                      id={`settings-nav-description-${section.key}`}
-                      className="settings-page__navigator-item-description"
-                    >
-                      {section.description}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </section>
-          ))}
-        </nav>
-
-        <div
-          className="settings-page__detail"
-          id={`settings-panel-${activeSection}`}
+      {SETTINGS_SECTIONS.map((section) => (
+        <section
+          key={section.key}
+          className="settings-page__tab-panel"
+          id={`settings-panel-${section.key}`}
           role="region"
-          aria-labelledby={`settings-tab-${activeSection}`}
+          aria-labelledby={`settings-tab-${section.key}`}
+          hidden={activeSection !== section.key}
         >
-          <section className="workspace-panel settings-page__detail-intro">
-            <div className="section-heading">
-              <div>
-                <h2>{SETTINGS_SECTIONS.find((section) => section.key === activeSection)?.label}</h2>
-                <p className="workspace-footnote">
-                  {SETTINGS_SECTIONS.find((section) => section.key === activeSection)?.description}
-                </p>
+          {activeSection === section.key ? (
+            <>
+              <section className="workspace-panel settings-page__detail-intro">
+                <div className="section-heading">
+                  <div>
+                    <h2>{section.label}</h2>
+                    <p className="workspace-footnote">{section.description}</p>
+                  </div>
+                </div>
+              </section>
+
+              <div className="settings-page__detail-body">
+                {renderSectionContent(section.key)}
               </div>
-            </div>
-          </section>
-
-          <div className="settings-page__detail-body">
-            {renderSectionContent(activeSection)}
-          </div>
-        </div>
-      </div>
-
-      <div className="settings-page__sections settings-page__accordion-list">
-        {SETTINGS_SECTIONS.map((section) => {
-          const isExpanded = mobileAccordions[section.key];
-
-          return (
-            <section key={section.key} className="settings-page__accordion">
-              <button
-                type="button"
-                className={`settings-page__accordion-header ${isExpanded ? "is-expanded" : ""}`}
-                aria-expanded={isExpanded}
-                aria-controls={`settings-accordion-panel-${section.key}`}
-                id={`settings-accordion-trigger-${section.key}`}
-                aria-labelledby={`settings-accordion-title-${section.key}`}
-                aria-describedby={`settings-accordion-description-${section.key}`}
-                onClick={() => toggleAccordion(section.key)}
-              >
-                <span className="settings-page__accordion-copy">
-                  <strong id={`settings-accordion-title-${section.key}`}>{section.label}</strong>
-                  <span id={`settings-accordion-description-${section.key}`}>{section.description}</span>
-                </span>
-                <ChevronDown
-                  size={18}
-                  aria-hidden="true"
-                  className={`settings-page__accordion-icon ${isExpanded ? "is-rotated" : ""}`}
-                />
-              </button>
-
-              <div
-                id={`settings-accordion-panel-${section.key}`}
-                role="region"
-                aria-labelledby={`settings-accordion-trigger-${section.key}`}
-                className="settings-page__accordion-content"
-                hidden={!isExpanded}
-                aria-hidden={!isExpanded}
-              >
-                {isExpanded ? renderSectionContent(section.key) : null}
-              </div>
-            </section>
-          );
-        })}
-      </div>
+            </>
+          ) : null}
+        </section>
+      ))}
 
       <ConfirmationDialog
         open={confirmAction === "snapshot"}

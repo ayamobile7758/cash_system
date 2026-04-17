@@ -19,6 +19,7 @@ type ReportsOverviewProps = {
 };
 
 type ReportDetailTab = "sales" | "finance" | "inventory" | "maintenance";
+type ReportHeroView = "trend" | "breakdown";
 
 const STATUS_LABELS: Record<string, string> = {
   active: "نشطة",
@@ -197,6 +198,7 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
   const filterSummary = buildFilterSummary(filters, users);
   const { advancedReport } = reportBaseline;
   const [activeTab, setActiveTab] = useState<ReportDetailTab>(() => normalizeReportTab(reportTabParam));
+  const [activeHeroView, setActiveHeroView] = useState<ReportHeroView>("trend");
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const tabRefs = useRef<Record<ReportDetailTab, HTMLButtonElement | null>>({
     sales: null,
@@ -758,15 +760,17 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
           <input type="hidden" name="report_tab" value={activeTab} />
 
           <div className="reports-page__command-row">
-            <label className="stack-field reports-page__quick-field">
-              <span>من تاريخ</span>
-              <input type="date" name="from_date" defaultValue={filters.fromDate} />
-            </label>
-
-            <label className="stack-field reports-page__quick-field">
-              <span>إلى تاريخ</span>
-              <input type="date" name="to_date" defaultValue={filters.toDate} />
-            </label>
+            <div className="reports-page__range-summary">
+              <span className="reports-page__range-summary-label">النطاق الحالي</span>
+              <strong className="reports-page__range-summary-value">
+                {formatDate(filters.fromDate)} → {formatDate(filters.toDate)}
+              </strong>
+              <span className="reports-page__range-summary-copy">
+                {filters.compareFromDate && filters.compareToDate
+                  ? `المقارنة: ${formatDate(filters.compareFromDate)} → ${formatDate(filters.compareToDate)}`
+                  : "بدون فترة مقارنة"}
+              </span>
+            </div>
 
             <label className="stack-field reports-page__quick-field">
               <span>التجميع</span>
@@ -778,12 +782,6 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
             </label>
 
             <div className="reports-page__command-actions">
-              <button type="submit" className="primary-button">
-                تطبيق الفلاتر
-              </button>
-              <Link href="/reports" className="secondary-button">
-                إعادة ضبط
-              </Link>
               <button
                 type="button"
                 className="secondary-button reports-page__filter-toggle"
@@ -811,6 +809,16 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
             aria-hidden={!showAdvancedFilters}
           >
             <div className="reports-page__advanced-grid">
+              <label className="stack-field">
+                <span>من تاريخ</span>
+                <input type="date" name="from_date" defaultValue={filters.fromDate} />
+              </label>
+
+              <label className="stack-field">
+                <span>إلى تاريخ</span>
+                <input type="date" name="to_date" defaultValue={filters.toDate} />
+              </label>
+
               <label className="stack-field">
                 <span>من تاريخ المقارنة</span>
                 <input type="date" name="compare_from_date" defaultValue={filters.compareFromDate ?? ""} />
@@ -867,6 +875,15 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
                 </select>
               </label>
             </div>
+
+            <div className="reports-page__advanced-actions">
+              <button type="submit" className="primary-button">
+                تطبيق الفلاتر
+              </button>
+              <Link href="/reports" className="secondary-button">
+                إعادة ضبط
+              </Link>
+            </div>
           </div>
         </form>
       </SectionCard>
@@ -908,7 +925,53 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
       </SectionCard>
 
       <SectionCard title="اتجاه الأداء" className="analytical-card reports-page__hero">
-        <ReportsAdvancedCharts trend={advancedReport.trend} breakdown={advancedReport.breakdown} />
+        <ReportsAdvancedCharts
+          trend={advancedReport.trend}
+          breakdown={advancedReport.breakdown}
+          view={activeHeroView}
+        />
+
+        <div className="reports-page__hero-switch">
+          <div className="reports-page__hero-switch-copy">
+            <h3>تفكيك البعد الحالي</h3>
+            <p>بدّل بين قراءة الاتجاه أو التوزيع داخل المساحة الرئيسية بدون عرض الرسمين معًا.</p>
+          </div>
+
+          <div
+            className="reports-page__hero-switch-actions"
+            role="tablist"
+            aria-label="التبديل بين الاتجاه والتوزيع"
+          >
+            <button
+              type="button"
+              role="tab"
+              className={
+                activeHeroView === "trend"
+                  ? "reports-page__hero-toggle is-active"
+                  : "reports-page__hero-toggle"
+              }
+              aria-selected={activeHeroView === "trend"}
+              tabIndex={activeHeroView === "trend" ? 0 : -1}
+              onClick={() => setActiveHeroView("trend")}
+            >
+              الاتجاه
+            </button>
+            <button
+              type="button"
+              role="tab"
+              className={
+                activeHeroView === "breakdown"
+                  ? "reports-page__hero-toggle is-active"
+                  : "reports-page__hero-toggle"
+              }
+              aria-selected={activeHeroView === "breakdown"}
+              tabIndex={activeHeroView === "breakdown" ? 0 : -1}
+              onClick={() => setActiveHeroView("breakdown")}
+            >
+              التوزيع
+            </button>
+          </div>
+        </div>
       </SectionCard>
 
       {renderSignalsGrid()}
