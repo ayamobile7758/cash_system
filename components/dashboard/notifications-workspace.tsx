@@ -1,7 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState, useTransition, type KeyboardEvent } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+  type KeyboardEvent
+} from "react";
 import { BellRing, Loader2, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -9,7 +16,11 @@ import { PageHeader } from "@/components/ui/page-header";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBanner } from "@/components/ui/status-banner";
 import type { NotificationFilters, NotificationItem } from "@/lib/api/notifications";
-import type { AlertsSummary, GlobalSearchBaseline, GlobalSearchItem } from "@/lib/api/search";
+import type {
+  AlertsSummary,
+  GlobalSearchBaseline,
+  GlobalSearchItem
+} from "@/lib/api/search";
 import type { StandardEnvelope } from "@/lib/pos/types";
 import { formatCompactNumber, formatDateTime } from "@/lib/utils/formatters";
 
@@ -139,9 +150,15 @@ export function NotificationsWorkspace({
 }: NotificationsWorkspaceProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [activeSection, setActiveSection] = useState<NotificationsSection>(searchBaseline.filters.q ? "search" : "inbox");
+  const [activeSection, setActiveSection] = useState<NotificationsSection>(
+    searchBaseline.filters.q ? "search" : "inbox"
+  );
   const [isInboxFiltersOpen, setIsInboxFiltersOpen] = useState(
-    () => filters.status === "unread" || Boolean(filters.type) || filters.page !== 1 || filters.pageSize !== 20
+    () =>
+      filters.status === "unread" ||
+      Boolean(filters.type) ||
+      filters.page !== 1 ||
+      filters.pageSize !== 20
   );
   const [actionErrorMessage, setActionErrorMessage] = useState<string | null>(null);
   const [retryAction, setRetryAction] = useState<NotificationsRetryAction | null>(null);
@@ -168,7 +185,11 @@ export function NotificationsWorkspace({
     setRetryNotificationId(null);
   }
 
-  function failAction(message: string, action: NotificationsRetryAction, notificationId?: string) {
+  function failAction(
+    message: string,
+    action: NotificationsRetryAction,
+    notificationId?: string
+  ) {
     setActionErrorMessage(message);
     setRetryAction(action);
     setRetryNotificationId(notificationId ?? null);
@@ -200,7 +221,11 @@ export function NotificationsWorkspace({
   function handleMarkSingle(notificationId: string) {
     clearActionFeedback();
     startTransition(() => {
-      void postRead({ notification_ids: [notificationId] }, "mark-single", notificationId);
+      void postRead(
+        { notification_ids: [notificationId] },
+        "mark-single",
+        notificationId
+      );
     });
   }
 
@@ -212,7 +237,12 @@ export function NotificationsWorkspace({
   }
 
   function handleWhatsAppSend(notification: NotificationItem) {
-    if (!notification.contact_phone || !notification.whatsapp_template_key || !notification.reference_type || !notification.reference_id) {
+    if (
+      !notification.contact_phone ||
+      !notification.whatsapp_template_key ||
+      !notification.reference_type ||
+      !notification.reference_id
+    ) {
       failAction("تعذر تجهيز محاولة الإرسال لهذا الإشعار.", "whatsapp", notification.id);
       return;
     }
@@ -233,7 +263,8 @@ export function NotificationsWorkspace({
           })
         });
 
-        const envelope = (await response.json()) as StandardEnvelope<SendWhatsAppResponse>;
+        const envelope =
+          (await response.json()) as StandardEnvelope<SendWhatsAppResponse>;
         if (!response.ok || !envelope.success || !envelope.data) {
           failAction(getApiErrorMessage(envelope), "whatsapp", notification.id);
           return;
@@ -257,7 +288,9 @@ export function NotificationsWorkspace({
         }
         break;
       case "whatsapp": {
-        const notification = notifications.find((item) => item.id === retryNotificationId);
+        const notification = notifications.find(
+          (item) => item.id === retryNotificationId
+        );
         if (notification) {
           handleWhatsAppSend(notification);
         }
@@ -269,9 +302,17 @@ export function NotificationsWorkspace({
   }
 
   const alertKeys = alertsSummary
-    ? (["low_stock", "overdue_debts", "reconciliation_drift", "maintenance_ready", "unread_notifications"] as const)
+    ? ([
+        "low_stock",
+        "overdue_debts",
+        "reconciliation_drift",
+        "maintenance_ready",
+        "unread_notifications"
+      ] as const)
     : [];
-  const visibleAlertKeys = alertsSummary ? alertKeys.filter((key) => alertsSummary[key] > 0) : [];
+  const visibleAlertKeys = alertsSummary
+    ? alertKeys.filter((key) => alertsSummary[key] > 0)
+    : [];
   const visibleTabs = useMemo(
     () => NOTIFICATION_TABS.filter((tab) => tab.key !== "alerts" || alertsSummary),
     [alertsSummary]
@@ -298,7 +339,10 @@ export function NotificationsWorkspace({
     return summary;
   }, [filters.page, filters.pageSize, filters.status, filters.type]);
 
-  function handleTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, currentTab: NotificationsSection) {
+  function handleTabKeyDown(
+    event: KeyboardEvent<HTMLButtonElement>,
+    currentTab: NotificationsSection
+  ) {
     const currentIndex = visibleTabs.findIndex((tab) => tab.key === currentTab);
     if (currentIndex === -1) {
       return;
@@ -346,9 +390,15 @@ export function NotificationsWorkspace({
         title="الإشعارات"
         meta={
           <>
-            <span className="status-pill badge badge--neutral">الدور: {getRoleLabel(role)}</span>
-            <span className="status-pill badge badge--neutral">غير المقروء: {formatCompactNumber(unreadCount)}</span>
-            <span className="status-pill badge badge--neutral">الإجمالي: {formatCompactNumber(totalCount)}</span>
+            <span className="status-pill badge badge--neutral">
+              الدور: {getRoleLabel(role)}
+            </span>
+            <span className="status-pill badge badge--neutral">
+              غير المقروء: {formatCompactNumber(unreadCount)}
+            </span>
+            <span className="status-pill badge badge--neutral">
+              الإجمالي: {formatCompactNumber(totalCount)}
+            </span>
           </>
         }
         actions={
@@ -356,15 +406,26 @@ export function NotificationsWorkspace({
             <Link href="/notifications" className="secondary-button">
               إعادة ضبط المركز
             </Link>
-            <button type="button" className="primary-button" disabled={isPending || unreadCount === 0} onClick={() => void handleMarkAll()}>
+            <button
+              type="button"
+              className="primary-button"
+              disabled={isPending || unreadCount === 0}
+              onClick={() => void handleMarkAll()}
+            >
               {isPending ? <Loader2 className="spin" size={16} /> : "تعليم الكل كمقروء"}
             </button>
           </div>
         }
       />
 
-      <div className="operational-section-nav notifications-page__sections" aria-label="أقسام مركز الإشعارات">
-        <div className="notifications-page__tabs" aria-label="تبويبات مركز الإشعارات">
+      <div
+        className="operational-section-nav notifications-page__sections"
+        aria-label="أقسام مركز الإشعارات"
+      >
+        <div
+          className="notifications-page__tabs nav-tabs"
+          aria-label="تبويبات مركز الإشعارات"
+        >
           {visibleTabs.map((tab) => (
             <button
               key={tab.key}
@@ -375,7 +436,7 @@ export function NotificationsWorkspace({
               id={`notifications-tab-${tab.key}`}
               aria-pressed={activeSection === tab.key}
               aria-controls={`notifications-panel-${tab.key}`}
-              className={`notifications-page__tab ${activeSection === tab.key ? "is-active" : ""}`}
+              className={`notifications-page__tab nav-tab ${activeSection === tab.key ? "is-active" : ""}`}
               onClick={() => setActiveSection(tab.key)}
               onKeyDown={(event) => handleTabKeyDown(event, tab.key)}
             >
@@ -405,8 +466,14 @@ export function NotificationsWorkspace({
         >
           {visibleAlertKeys.length > 0 ? (
             visibleAlertKeys.map((key) => (
-              <Link key={key} href={getAlertHref(key)} className="notifications-alert-chip">
-                <span className="notifications-alert-chip__label">{getAlertLabel(key)}</span>
+              <Link
+                key={key}
+                href={getAlertHref(key)}
+                className="notifications-alert-chip"
+              >
+                <span className="notifications-alert-chip__label">
+                  {getAlertLabel(key)}
+                </span>
                 <strong className="notifications-alert-chip__count">
                   {formatCompactNumber(alertsSummary[key])}
                 </strong>
@@ -443,16 +510,26 @@ export function NotificationsWorkspace({
 
             <label className="stack-field">
               <span>الاستعلام</span>
-              <input name="q" defaultValue={searchBaseline.filters.q} placeholder="اسم منتج، رقم فاتورة، عميل أو رقم صيانة" />
+              <input
+                name="q"
+                defaultValue={searchBaseline.filters.q}
+                placeholder="اسم منتج، رقم فاتورة، عميل أو رقم صيانة"
+              />
             </label>
 
             <label className="stack-field">
               <span>الكيان</span>
               <select name="entity" defaultValue={searchBaseline.filters.entity}>
                 <option value="all">الكل</option>
-                {searchBaseline.allowedEntities.includes("product") ? <option value="product">المنتجات</option> : null}
-                {searchBaseline.allowedEntities.includes("invoice") ? <option value="invoice">الفواتير</option> : null}
-                {searchBaseline.allowedEntities.includes("debt_customer") ? <option value="debt_customer">الديون</option> : null}
+                {searchBaseline.allowedEntities.includes("product") ? (
+                  <option value="product">المنتجات</option>
+                ) : null}
+                {searchBaseline.allowedEntities.includes("invoice") ? (
+                  <option value="invoice">الفواتير</option>
+                ) : null}
+                {searchBaseline.allowedEntities.includes("debt_customer") ? (
+                  <option value="debt_customer">الديون</option>
+                ) : null}
                 {searchBaseline.allowedEntities.includes("maintenance_job") ? (
                   <option value="maintenance_job">الصيانة</option>
                 ) : null}
@@ -461,7 +538,13 @@ export function NotificationsWorkspace({
 
             <label className="stack-field">
               <span>حد النتائج</span>
-              <input type="number" name="limit" min={1} max={20} defaultValue={String(searchBaseline.filters.limit)} />
+              <input
+                type="number"
+                name="limit"
+                min={1}
+                max={20}
+                defaultValue={String(searchBaseline.filters.limit)}
+              />
             </label>
 
             <div className="action-row action-row--end">
@@ -474,7 +557,11 @@ export function NotificationsWorkspace({
 
         <div className="operational-content">
           {searchBaseline.errorMessage ? (
-            <StatusBanner variant="danger" title="تعذر إتمام البحث" message={searchBaseline.errorMessage} />
+            <StatusBanner
+              variant="danger"
+              title="تعذر إتمام البحث"
+              message={searchBaseline.errorMessage}
+            />
           ) : searchBaseline.filters.q ? (
             <>
               <SectionCard title="نتائج البحث" tone="subtle">
@@ -483,7 +570,9 @@ export function NotificationsWorkspace({
                     <Search size={16} />
                     الاستعلام الحالي: {searchBaseline.filters.q}
                   </span>
-                  <span className="status-pill">حد النتائج: {searchBaseline.filters.limit}</span>
+                  <span className="status-pill">
+                    حد النتائج: {searchBaseline.filters.limit}
+                  </span>
                 </div>
               </SectionCard>
 
@@ -496,8 +585,12 @@ export function NotificationsWorkspace({
                           <article key={item.id} className="operational-list-card">
                             <div className="operational-list-card__header">
                               <div>
-                                <h3 className="operational-list-card__title">{item.label}</h3>
-                                <p className="operational-list-card__description">{item.secondary}</p>
+                                <h3 className="operational-list-card__title">
+                                  {item.label}
+                                </h3>
+                                <p className="operational-list-card__description">
+                                  {item.secondary}
+                                </p>
                               </div>
                               <div className="operational-list-card__meta">
                                 <span className="status-pill">{group.title}</span>
@@ -505,7 +598,10 @@ export function NotificationsWorkspace({
                             </div>
 
                             <div className="action-row">
-                              <Link href={getSearchResultHref(item)} className="secondary-button">
+                              <Link
+                                href={getSearchResultHref(item)}
+                                className="secondary-button"
+                              >
                                 فتح المسار
                               </Link>
                             </div>
@@ -548,7 +644,9 @@ export function NotificationsWorkspace({
           className="operational-sidebar operational-sidebar--sticky notifications-page__sidebar"
           actions={
             <span className="status-pill badge badge--neutral">
-              {inboxFilterSummary.length > 0 ? `${inboxFilterSummary.length} مفعّل` : "الكل"}
+              {inboxFilterSummary.length > 0
+                ? `${inboxFilterSummary.length} مفعّل`
+                : "الكل"}
             </span>
           }
         >
@@ -565,11 +663,19 @@ export function NotificationsWorkspace({
             </span>
           </button>
 
-          <div id="notifications-inbox-filters" className="notifications-page__filter-content" hidden={!isInboxFiltersOpen}>
+          <div
+            id="notifications-inbox-filters"
+            className="notifications-page__filter-content"
+            hidden={!isInboxFiltersOpen}
+          >
             <form className="workspace-stack" method="GET">
               <input type="hidden" name="q" value={searchBaseline.filters.q} />
               <input type="hidden" name="entity" value={searchBaseline.filters.entity} />
-              <input type="hidden" name="limit" value={String(searchBaseline.filters.limit)} />
+              <input
+                type="hidden"
+                name="limit"
+                value={String(searchBaseline.filters.limit)}
+              />
 
               <label className="stack-field">
                 <span>الحالة</span>
@@ -582,17 +688,32 @@ export function NotificationsWorkspace({
 
               <label className="stack-field">
                 <span>النوع</span>
-                <input name="type" defaultValue={filters.type ?? ""} placeholder="اختياري" />
+                <input
+                  name="type"
+                  defaultValue={filters.type ?? ""}
+                  placeholder="اختياري"
+                />
               </label>
 
               <label className="stack-field">
                 <span>رقم الصفحة</span>
-                <input type="number" min={1} name="page" defaultValue={String(filters.page)} />
+                <input
+                  type="number"
+                  min={1}
+                  name="page"
+                  defaultValue={String(filters.page)}
+                />
               </label>
 
               <label className="stack-field">
                 <span>حجم الصفحة</span>
-                <input type="number" min={1} max={100} name="page_size" defaultValue={String(filters.pageSize)} />
+                <input
+                  type="number"
+                  min={1}
+                  max={100}
+                  name="page_size"
+                  defaultValue={String(filters.pageSize)}
+                />
               </label>
 
               <div className="action-row action-row--end">
@@ -620,25 +741,49 @@ export function NotificationsWorkspace({
                   const referenceHref = getReferenceHref(notification);
 
                   return (
-                    <article key={notification.id} className="operational-list-card notification-feed-card">
+                    <article
+                      key={notification.id}
+                      className="operational-list-card notification-feed-card"
+                    >
                       <div className="operational-list-card__header notification-feed-card__header">
                         <div>
-                          <h3 className="operational-list-card__title">{notification.title}</h3>
-                          <p className="operational-list-card__description">{notification.body}</p>
+                          <h3 className="operational-list-card__title">
+                            {notification.title}
+                          </h3>
+                          <p className="operational-list-card__description">
+                            {notification.body}
+                          </p>
                         </div>
                         <div className="operational-list-card__meta">
-                          {!notification.is_read ? <span className="notification-feed-card__dot" aria-hidden="true" /> : null}
-                          <span className={notification.is_read ? "status-pill" : "status-pill status-pill--brand"}>
+                          {!notification.is_read ? (
+                            <span
+                              className="notification-feed-card__dot"
+                              aria-hidden="true"
+                            />
+                          ) : null}
+                          <span
+                            className={
+                              notification.is_read
+                                ? "status-pill"
+                                : "status-pill status-pill--brand"
+                            }
+                          >
                             {getNotificationStatusLabel(notification)}
                           </span>
-                          <span className="status-pill">{getNotificationTypeLabel(notification.type)}</span>
+                          <span className="status-pill">
+                            {getNotificationTypeLabel(notification.type)}
+                          </span>
                         </div>
                       </div>
 
                       <div className="operational-inline-summary notification-feed-card__summary">
-                        <span className="status-pill">{formatDateTime(notification.created_at)}</span>
+                        <span className="status-pill">
+                          {formatDateTime(notification.created_at)}
+                        </span>
                         {role === "admin" ? (
-                          <span className="status-pill">المستخدم: {notification.user_name ?? "غير معروف"}</span>
+                          <span className="status-pill">
+                            المستخدم: {notification.user_name ?? "غير معروف"}
+                          </span>
                         ) : null}
                       </div>
 
@@ -652,7 +797,9 @@ export function NotificationsWorkspace({
                           >
                             تعليم كمقروء
                           </button>
-                        ) : role === "admin" && notification.contact_phone && notification.whatsapp_template_key ? (
+                        ) : role === "admin" &&
+                          notification.contact_phone &&
+                          notification.whatsapp_template_key ? (
                           <button
                             type="button"
                             className="secondary-button"

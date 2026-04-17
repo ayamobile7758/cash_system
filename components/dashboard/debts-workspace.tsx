@@ -1,13 +1,24 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useTransition, type KeyboardEvent } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+  type KeyboardEvent
+} from "react";
 import { Loader2, ReceiptText, Search, Wallet } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/ui/page-header";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBanner } from "@/components/ui/status-banner";
-import type { AccountOption, DebtCustomerOption, DebtEntryOption } from "@/lib/api/dashboard";
+import type {
+  AccountOption,
+  DebtCustomerOption,
+  DebtEntryOption
+} from "@/lib/api/dashboard";
 import type { StandardEnvelope } from "@/lib/pos/types";
 import { formatCompactNumber, formatCurrency, formatDate } from "@/lib/utils/formatters";
 
@@ -39,7 +50,12 @@ function createUuid() {
   return crypto.randomUUID();
 }
 
-export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWorkspaceProps) {
+export function DebtsWorkspace({
+  role,
+  customers,
+  entries,
+  accounts
+}: DebtsWorkspaceProps) {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCustomerId, setSelectedCustomerId] = useState(customers[0]?.id ?? "");
@@ -79,8 +95,13 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
     filteredCustomers.find((customer) => customer.id === selectedCustomerId) ??
     customers.find((customer) => customer.id === selectedCustomerId) ??
     null;
-  const customerEntries = entries.filter((entry) => entry.debt_customer_id === selectedCustomerId);
-  const totalOutstanding = customerEntries.reduce((sum, entry) => sum + entry.remaining_amount, 0);
+  const customerEntries = entries.filter(
+    (entry) => entry.debt_customer_id === selectedCustomerId
+  );
+  const totalOutstanding = customerEntries.reduce(
+    (sum, entry) => sum + entry.remaining_amount,
+    0
+  );
 
   useEffect(() => {
     if (!manualKey) {
@@ -126,7 +147,10 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
 
         const envelope = (await response.json()) as StandardEnvelope<ManualDebtResponse>;
         if (!response.ok || !envelope.success || !envelope.data) {
-          failAction(envelope.error?.message ?? "تعذر تسجيل الدين اليدوي.", "manual-debt");
+          failAction(
+            envelope.error?.message ?? "تعذر تسجيل الدين اليدوي.",
+            "manual-debt"
+          );
           return;
         }
 
@@ -160,7 +184,10 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
 
         const envelope = (await response.json()) as StandardEnvelope<DebtPaymentResponse>;
         if (!response.ok || !envelope.success || !envelope.data) {
-          failAction(envelope.error?.message ?? "تعذر تسجيل تسديد الدين.", "debt-payment");
+          failAction(
+            envelope.error?.message ?? "تعذر تسجيل تسديد الدين.",
+            "debt-payment"
+          );
           return;
         }
 
@@ -189,7 +216,10 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
     }
   }
 
-  function handleTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, currentTab: DebtSection) {
+  function handleTabKeyDown(
+    event: KeyboardEvent<HTMLButtonElement>,
+    currentTab: DebtSection
+  ) {
     const tabs: DebtSection[] = ["payment", "history"];
     const currentIndex = tabs.findIndex((tab) => tab === currentTab);
     if (currentIndex === -1) {
@@ -258,19 +288,30 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
         actions={
           <div className="transaction-action-cluster">
             {role === "admin" ? (
-              <button type="button" className="ghost-button btn btn--ghost" onClick={openManualDebtPanel}>
+              <button
+                type="button"
+                className="ghost-button btn btn--ghost"
+                onClick={openManualDebtPanel}
+              >
                 دين يدوي
               </button>
             ) : null}
-            <button type="button" className="primary-button" onClick={() => setActiveSection("payment")}>
+            <button
+              type="button"
+              className="primary-button"
+              onClick={() => setActiveSection("payment")}
+            >
               التسديد
             </button>
           </div>
         }
       />
 
-      <div className="operational-section-nav debts-page__sections" aria-label="أقسام شاشة الديون">
-        <div className="debts-page__tabs" aria-label="تبويبات شاشة الديون">
+      <div
+        className="operational-section-nav debts-page__sections"
+        aria-label="أقسام شاشة الديون"
+      >
+        <div className="debts-page__tabs nav-tabs" aria-label="تبويبات شاشة الديون">
           <button
             ref={(node) => {
               tabRefs.current.payment = node;
@@ -279,7 +320,7 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
             id="debts-tab-payment"
             aria-pressed={activeSection === "payment"}
             aria-controls="debts-panel-payment"
-            className={`debts-page__tab ${activeSection === "payment" ? "is-active" : ""}`}
+            className={`debts-page__tab nav-tab ${activeSection === "payment" ? "is-active" : ""}`}
             onClick={() => setActiveSection("payment")}
             onKeyDown={(event) => handleTabKeyDown(event, "payment")}
           >
@@ -293,7 +334,7 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
             id="debts-tab-history"
             aria-pressed={activeSection === "history"}
             aria-controls="debts-panel-history"
-            className={`debts-page__tab ${activeSection === "history" ? "is-active" : ""}`}
+            className={`debts-page__tab nav-tab ${activeSection === "history" ? "is-active" : ""}`}
             onClick={() => setActiveSection("history")}
             onKeyDown={(event) => handleTabKeyDown(event, "history")}
           >
@@ -301,7 +342,11 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
           </button>
         </div>
         {role === "admin" ? (
-          <button type="button" className="chip-button debts-page__quick-action" onClick={openManualDebtPanel}>
+          <button
+            type="button"
+            className="chip-button debts-page__quick-action"
+            onClick={openManualDebtPanel}
+          >
             دين يدوي
           </button>
         ) : null}
@@ -345,7 +390,11 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
             <div className="empty-panel transaction-empty-panel">
               <Search size={20} />
               <h3>لا توجد نتائج مطابقة</h3>
-              <button type="button" className="secondary-button" onClick={() => setSearchTerm("")}>
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={() => setSearchTerm("")}
+              >
                 مسح البحث
               </button>
             </div>
@@ -437,7 +486,9 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                   >
                     <div className="debts-page__payment-card">
                       <div className="info-strip">
-                        <span>سدد المبلغ على كامل الرصيد أو اربطه بقيد محدد عند الحاجة.</span>
+                        <span>
+                          سدد المبلغ على كامل الرصيد أو اربطه بقيد محدد عند الحاجة.
+                        </span>
                       </div>
 
                       <div className="stack-form">
@@ -456,7 +507,11 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
 
                         <label className="stack-field">
                           <span>حساب الدفع</span>
-                          <select className="field-input" value={paymentAccountId} onChange={(event) => setPaymentAccountId(event.target.value)}>
+                          <select
+                            className="field-input"
+                            value={paymentAccountId}
+                            onChange={(event) => setPaymentAccountId(event.target.value)}
+                          >
                             {accounts.map((account) => (
                               <option key={account.id} value={account.id}>
                                 {account.name}
@@ -468,11 +523,16 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                         {customerEntries.length > 0 ? (
                           <label className="stack-field">
                             <span>قيد محدد (اختياري)</span>
-                            <select className="field-input" value={paymentEntryId} onChange={(event) => setPaymentEntryId(event.target.value)}>
+                            <select
+                              className="field-input"
+                              value={paymentEntryId}
+                              onChange={(event) => setPaymentEntryId(event.target.value)}
+                            >
                               <option value="">اتركه فارغًا لتفعيل FIFO</option>
                               {customerEntries.map((entry) => (
                                 <option key={entry.id} value={entry.id}>
-                                  {entry.entry_type} - {formatDate(entry.due_date)} - {formatCurrency(entry.remaining_amount)}
+                                  {entry.entry_type} - {formatDate(entry.due_date)} -{" "}
+                                  {formatCurrency(entry.remaining_amount)}
                                 </option>
                               ))}
                             </select>
@@ -496,7 +556,9 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                         </label>
 
                         <div className="info-strip">
-                          <span>بدون اختيار قيد، يوزع النظام السداد على الأقدم تلقائيًا.</span>
+                          <span>
+                            بدون اختيار قيد، يوزع النظام السداد على الأقدم تلقائيًا.
+                          </span>
                         </div>
 
                         <button
@@ -512,7 +574,11 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                           }
                           onClick={submitDebtPayment}
                         >
-                          {isPending ? <Loader2 className="spin" size={16} /> : <ReceiptText size={16} />}
+                          {isPending ? (
+                            <Loader2 className="spin" size={16} />
+                          ) : (
+                            <ReceiptText size={16} />
+                          )}
                           تأكيد التسديد
                         </button>
                       </div>
@@ -520,9 +586,15 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                       {paymentResult ? (
                         <div className="result-card">
                           <h3>{paymentResult.receipt_number}</h3>
-                          <p>الرصيد المتبقي: {formatCurrency(paymentResult.remaining_balance)}</p>
                           <p>
-                            التوزيعات: {paymentResult.allocations.map((entry) => formatCurrency(entry.allocated_amount)).join(" / ")}
+                            الرصيد المتبقي:{" "}
+                            {formatCurrency(paymentResult.remaining_balance)}
+                          </p>
+                          <p>
+                            التوزيعات:{" "}
+                            {paymentResult.allocations
+                              .map((entry) => formatCurrency(entry.allocated_amount))
+                              .join(" / ")}
                           </p>
                         </div>
                       ) : null}
@@ -531,7 +603,9 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                     {role === "admin" ? (
                       <div className="debts-page__payment-card">
                         <div className="info-strip">
-                          <span>سجل دينًا مباشرًا لهذا العميل عند الحاجة دون انتظار فاتورة.</span>
+                          <span>
+                            سجل دينًا مباشرًا لهذا العميل عند الحاجة دون انتظار فاتورة.
+                          </span>
                         </div>
 
                         <div className="stack-form">
@@ -556,7 +630,9 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                               rows={3}
                               maxLength={255}
                               value={manualDescription}
-                              onChange={(event) => setManualDescription(event.target.value)}
+                              onChange={(event) =>
+                                setManualDescription(event.target.value)
+                              }
                               placeholder="سبب الدين اليدوي"
                             />
                           </label>
@@ -568,10 +644,19 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                           <button
                             type="button"
                             className="primary-button"
-                            disabled={isPending || !selectedCustomerId || !manualAmount || !manualKey}
+                            disabled={
+                              isPending ||
+                              !selectedCustomerId ||
+                              !manualAmount ||
+                              !manualKey
+                            }
                             onClick={submitManualDebt}
                           >
-                            {isPending ? <Loader2 className="spin" size={16} /> : <Wallet size={16} />}
+                            {isPending ? (
+                              <Loader2 className="spin" size={16} />
+                            ) : (
+                              <Wallet size={16} />
+                            )}
                             حفظ الدين اليدوي
                           </button>
                         </div>
@@ -598,7 +683,9 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                       customerEntries.map((entry) => (
                         <article key={entry.id} className="list-card debt-entry-card">
                           <div className="list-card__header">
-                            <strong>{entry.entry_type === "manual" ? "دين يدوي" : "فاتورة دين"}</strong>
+                            <strong>
+                              {entry.entry_type === "manual" ? "دين يدوي" : "فاتورة دين"}
+                            </strong>
                             <span className="status-pill badge badge--warning">
                               {formatCurrency(entry.remaining_amount)}
                             </span>
@@ -619,7 +706,11 @@ export function DebtsWorkspace({ role, customers, entries, accounts }: DebtsWork
                         <button
                           type="button"
                           className="secondary-button"
-                          onClick={role === "admin" ? openManualDebtPanel : () => setActiveSection("payment")}
+                          onClick={
+                            role === "admin"
+                              ? openManualDebtPanel
+                              : () => setActiveSection("payment")
+                          }
                         >
                           {role === "admin" ? "دين يدوي" : "فتح التسديد"}
                         </button>

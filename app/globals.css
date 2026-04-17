@@ -364,7 +364,7 @@ code {
 
 .operational-page {
   display: grid;
-  gap: 1.25rem;
+  gap: var(--sp-6);
 }
 
 .operational-page__meta-grid {
@@ -1055,11 +1055,6 @@ code {
   border-radius: var(--radius-lg);
 }
 
-/* Ensure section container is properly sized */
-.transaction-page.workspace-stack + .pos-layout {
-  height: calc(100vh - var(--topbar-height));
-}
-
 .dialog-backdrop {
   position: fixed;
   inset: 0;
@@ -1705,7 +1700,7 @@ a:focus-visible {
 }
 
 .transaction-page {
-  gap: 1.25rem;
+  gap: var(--sp-6);
 }
 
 .transaction-page__meta {
@@ -2044,12 +2039,12 @@ a:focus-visible {
 
 .analytical-page {
   display: grid;
-  gap: var(--sp-5);
+  gap: var(--sp-6);
 }
 
 .configuration-page {
   display: grid;
-  gap: 1.25rem;
+  gap: var(--sp-6);
 }
 
 .analytical-page__meta-grid,
@@ -3623,11 +3618,6 @@ h3 {
   max-width: 62ch;
 }
 
-.dashboard-layout--reports .page-header,
-.dashboard-shell--reports .page-header {
-  margin-bottom: var(--sp-2);
-}
-
 .page-header__aside {
   display: grid;
   gap: var(--sp-3);
@@ -4202,11 +4192,10 @@ h3 {
 }
 
 .catalog-page__filters-row {
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   gap: var(--sp-2);
-  overflow-x: auto;
-  padding-bottom: var(--sp-1);
-  scrollbar-width: thin;
+  overflow: visible;
+  padding-bottom: 0;
 }
 
 .catalog-page__filters-row .chip {
@@ -4810,13 +4799,26 @@ h3 {
   margin: 0;
 }
 
-.debts-page__tabs {
+.nav-tabs,
+.debts-page__tabs,
+.inventory-page__tabs,
+.maintenance-page__tabs,
+.notifications-page__tabs,
+.reports-page__tabs,
+.settings-page__tabs {
   display: flex;
   flex-wrap: wrap;
   gap: var(--sp-2);
+  align-items: center;
 }
 
-.debts-page__tab {
+.nav-tab,
+.debts-page__tab,
+.inventory-page__tab,
+.maintenance-page__tab,
+.notifications-page__tab,
+.reports-page__tab,
+.settings-page__tab {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -4835,15 +4837,33 @@ h3 {
     transform 0.2s ease;
 }
 
+.nav-tab:hover,
+.nav-tab:focus-visible,
 .debts-page__tab:hover,
-.debts-page__tab:focus-visible {
+.debts-page__tab:focus-visible,
+.inventory-page__tab:hover,
+.inventory-page__tab:focus-visible,
+.maintenance-page__tab:hover,
+.maintenance-page__tab:focus-visible,
+.notifications-page__tab:hover,
+.notifications-page__tab:focus-visible,
+.reports-page__tab:hover,
+.reports-page__tab:focus-visible,
+.settings-page__tab:hover,
+.settings-page__tab:focus-visible {
   border-color: var(--color-accent-ring);
   background: color-mix(in srgb, var(--color-accent-light) 62%, var(--color-bg-surface));
   color: var(--color-text-primary);
   box-shadow: 0 12px 22px rgba(24, 23, 21, 0.06);
 }
 
-.debts-page__tab.is-active {
+.nav-tab.is-active,
+.debts-page__tab.is-active,
+.inventory-page__tab.is-active,
+.maintenance-page__tab.is-active,
+.notifications-page__tab.is-active,
+.reports-page__tab.is-active,
+.settings-page__tab.is-active {
   border-color: var(--color-accent-ring);
   background: color-mix(in srgb, var(--color-accent-light) 72%, var(--color-bg-surface));
   color: var(--color-text-primary);
@@ -5012,21 +5032,6 @@ h3 {
 .expenses-page,
 .suppliers-page {
   gap: var(--sp-6);
-}
-
-.inventory-page__sections,
-.expenses-page__sections,
-.suppliers-page__sections {
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  padding-bottom: var(--sp-1);
-  scrollbar-width: thin;
-}
-
-.inventory-page__sections .chip-button,
-.expenses-page__sections .chip-button,
-.suppliers-page__sections .chip-button {
-  flex: 0 0 auto;
 }
 
 .inventory-page__create-panel,
@@ -5224,54 +5229,6 @@ h3 {
   border-block-start: 1px solid var(--color-border);
 }
 
-.inventory-page__tabs,
-.maintenance-page__tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-2);
-  align-items: center;
-}
-
-.inventory-page__tab,
-.maintenance-page__tab {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 48px;
-  padding-inline: var(--sp-4);
-  border: 1px solid color-mix(in srgb, var(--color-border) 85%, transparent);
-  border-radius: var(--radius-md);
-  background: transparent;
-  color: var(--color-text-secondary);
-  font-weight: 700;
-  transition:
-    border-color 0.2s ease,
-    background-color 0.2s ease,
-    box-shadow 0.2s ease,
-    color 0.2s ease,
-    transform 0.2s ease;
-}
-
-.inventory-page__tab:hover,
-.inventory-page__tab:focus-visible,
-.maintenance-page__tab:hover,
-.maintenance-page__tab:focus-visible {
-  border-color: var(--color-accent-ring);
-  background: color-mix(in srgb, var(--color-accent-light) 62%, var(--color-bg-surface));
-  color: var(--color-text-primary);
-  box-shadow: 0 12px 22px rgba(24, 23, 21, 0.06);
-}
-
-.inventory-page__tab.is-active,
-.maintenance-page__tab.is-active {
-  border-color: var(--color-accent-ring);
-  background: color-mix(in srgb, var(--color-accent-light) 72%, var(--color-bg-surface));
-  color: var(--color-text-primary);
-  box-shadow:
-    inset 0 -3px 0 var(--color-accent),
-    0 12px 22px rgba(24, 23, 21, 0.08);
-}
-
 .inventory-page__tab-panel,
 .maintenance-page__tab-panel {
   display: grid;
@@ -5314,49 +5271,6 @@ h3 {
   display: flex;
   flex-wrap: wrap;
   gap: var(--sp-2) var(--sp-3);
-}
-
-.inventory-page__accordion {
-  display: grid;
-  gap: var(--sp-3);
-}
-
-.inventory-page__accordion-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sp-3);
-  width: 100%;
-  min-height: var(--btn-height);
-  padding: var(--sp-4);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
-  background: var(--color-bg-surface);
-  color: inherit;
-  text-align: start;
-}
-
-.inventory-page__accordion-header.is-expanded {
-  border-color: var(--color-accent-ring);
-  background: var(--color-accent-light);
-}
-
-.inventory-page__accordion-content {
-  display: grid;
-  gap: var(--sp-4);
-}
-
-.inventory-page__accordion-content[hidden] {
-  display: none;
-}
-
-.inventory-page__accordion-icon {
-  flex: 0 0 auto;
-  transition: transform 0.2s ease;
-}
-
-.inventory-page__accordion-icon.is-rotated {
-  transform: rotate(180deg);
 }
 
 .inventory-page__detail-sheet,
@@ -5586,21 +5500,6 @@ h3 {
   gap: var(--sp-6);
 }
 
-.reports-page__sections,
-.settings-page__sections,
-.notifications-page__sections {
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  padding-bottom: var(--sp-1);
-  scrollbar-width: thin;
-}
-
-.reports-page__sections .chip,
-.settings-page__sections .chip-button,
-.notifications-page__sections .chip-button {
-  flex: 0 0 auto;
-}
-
 .reports-page__filters .section-card__body,
 .settings-page__panel,
 .notifications-page__sidebar .section-card__body {
@@ -5615,41 +5514,6 @@ h3 {
 .notifications-page__sidebar {
   background: var(--color-bg-surface);
   border-color: var(--color-border);
-}
-
-.notifications-page__tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-2);
-}
-
-.notifications-page__tab {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: var(--btn-height);
-  padding-inline: var(--sp-4);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-pill);
-  background: var(--color-bg-surface);
-  color: inherit;
-  transition:
-    border-color 0.2s ease,
-    background-color 0.2s ease,
-    transform 0.2s ease;
-}
-
-.notifications-page__tab:hover,
-.notifications-page__tab:focus-visible {
-  border-color: var(--color-accent-ring);
-  background: var(--color-accent-light);
-  transform: translateY(-1px);
-}
-
-.notifications-page__tab.is-active {
-  border-color: var(--color-accent-ring);
-  background: var(--color-accent-light);
-  box-shadow: inset 0 0 0 1px var(--color-accent-ring);
 }
 
 .notifications-page__tab-panel {
@@ -5723,76 +5587,12 @@ h3 {
   gap: var(--sp-3);
 }
 
-.settings-page__shell {
-  display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-  gap: var(--sp-4);
-  align-items: start;
-}
-
-.settings-page__navigator.settings-page__sections {
-  display: grid;
-  gap: var(--sp-4);
-  overflow: visible;
-  padding-bottom: 0;
-}
-
-.settings-page__navigator-group {
-  display: grid;
-  gap: var(--sp-3);
-}
-
-.settings-page__navigator-group-header h2 {
-  margin: 0;
-  font-size: 0.95rem;
-}
-
-.settings-page__navigator-list {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--sp-3);
-}
-
-.settings-page__navigator-item {
-  display: grid;
-  gap: var(--sp-2);
-  min-height: 88px;
-  padding: var(--sp-4);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--color-bg-surface) 92%, transparent),
-    var(--color-bg-surface)
-  );
-  color: inherit;
-  text-align: start;
-  transition:
-    border-color 0.2s ease,
-    background-color 0.2s ease,
-    transform 0.2s ease;
-}
-
-.settings-page__navigator-item:hover,
-.settings-page__navigator-item:focus-visible {
-  border-color: var(--color-accent-ring);
-  background: var(--color-accent-light);
-  transform: translateY(-1px);
-}
-
-.settings-page__navigator-item:focus-visible,
-.settings-page__accordion-header:focus-visible,
-.inventory-page__tab:focus-visible,
-.inventory-page__accordion-header:focus-visible,
-.maintenance-page__tab:focus-visible,
+.nav-tab:focus-visible,
 .maintenance-page__queue-card:focus-visible,
 .suppliers-page__tab:focus-visible,
 .suppliers-page__accordion-header:focus-visible,
-.reports-page__tab:focus-visible,
 .reports-page__filter-collapse:focus-visible,
-.notifications-page__tab:focus-visible,
 .notifications-page__filter-collapse:focus-visible,
-.debts-page__tab:focus-visible,
 .invoices-page__filters-toggle:focus-visible,
 .invoices-page__active-filter:focus-visible,
 .catalog-page__category-chip:focus-visible,
@@ -5804,74 +5604,8 @@ h3 {
   outline-offset: 2px;
 }
 
-.settings-page__navigator-item.is-selected {
-  border-color: var(--color-accent-ring);
-  background: var(--color-accent-light);
-  box-shadow: inset 0 0 0 1px var(--color-accent-ring);
-}
-
-.settings-page__navigator-item-title {
-  font-size: 1rem;
-  line-height: 1.5;
-  font-weight: 700;
-}
-
-.settings-page__navigator-item-description,
-.settings-page__accordion-copy span {
-  color: var(--color-text-secondary);
-  font-size: 0.88rem;
-  line-height: 1.7;
-}
-
-.settings-page__detail {
-  display: grid;
-  gap: var(--sp-4);
-}
-
 .inventory-page__history-section {
   gap: var(--sp-4);
-}
-
-.settings-page__tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-2);
-}
-
-.settings-page__tab {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 48px;
-  padding-inline: var(--sp-4);
-  border: 1px solid color-mix(in srgb, var(--color-border) 85%, transparent);
-  border-radius: var(--radius-md);
-  background: transparent;
-  color: var(--color-text-secondary);
-  font-weight: 700;
-  transition:
-    border-color 0.2s ease,
-    background-color 0.2s ease,
-    box-shadow 0.2s ease,
-    color 0.2s ease,
-    transform 0.2s ease;
-}
-
-.settings-page__tab:hover,
-.settings-page__tab:focus-visible {
-  border-color: var(--color-accent-ring);
-  background: color-mix(in srgb, var(--color-accent-light) 62%, var(--color-bg-surface));
-  color: var(--color-text-primary);
-  box-shadow: 0 12px 22px rgba(24, 23, 21, 0.06);
-}
-
-.settings-page__tab.is-active {
-  border-color: var(--color-accent-ring);
-  background: color-mix(in srgb, var(--color-accent-light) 72%, var(--color-bg-surface));
-  color: var(--color-text-primary);
-  box-shadow:
-    inset 0 -3px 0 var(--color-accent),
-    0 12px 22px rgba(24, 23, 21, 0.08);
 }
 
 .settings-page__detail-intro {
@@ -5897,100 +5631,18 @@ h3 {
   display: none;
 }
 
-.settings-page__accordion-list.settings-page__sections {
-  display: none;
-  gap: var(--sp-3);
-  overflow: visible;
-  padding-bottom: 0;
-}
-
-.settings-page__accordion {
-  display: grid;
-  gap: var(--sp-3);
-}
-
-.settings-page__accordion-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sp-3);
-  width: 100%;
-  min-height: var(--btn-height);
-  padding: var(--sp-4);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
-  background: var(--color-bg-surface);
-  color: inherit;
-  text-align: start;
-}
-
-.settings-page__accordion-header.is-expanded {
-  border-color: var(--color-accent-ring);
-  background: var(--color-accent-light);
-}
-
-.settings-page__accordion-copy {
-  display: grid;
-  gap: var(--sp-1);
-}
-
-.settings-page__accordion-icon,
 .reports-page__filter-icon {
   flex: 0 0 auto;
   transition: transform 0.2s ease;
 }
 
-.settings-page__accordion-icon.is-rotated,
 .reports-page__filter-icon.is-rotated {
   transform: rotate(180deg);
 }
 
-.settings-page__accordion-content[hidden],
 .reports-page__filter-content[hidden],
 .reports-page__tab-panel[hidden] {
   display: none;
-}
-
-.reports-page__tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-2);
-}
-
-.reports-page__tab {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 48px;
-  padding-inline: var(--sp-4);
-  border: 1px solid color-mix(in srgb, var(--color-border) 85%, transparent);
-  border-radius: var(--radius-md);
-  background: transparent;
-  color: var(--color-text-secondary);
-  font-weight: 700;
-  transition:
-    border-color 0.2s ease,
-    background-color 0.2s ease,
-    box-shadow 0.2s ease,
-    color 0.2s ease,
-    transform 0.2s ease;
-}
-
-.reports-page__tab:hover,
-.reports-page__tab:focus-visible {
-  border-color: var(--color-accent-ring);
-  background: color-mix(in srgb, var(--color-accent-light) 62%, var(--color-bg-surface));
-  color: var(--color-text-primary);
-  box-shadow: 0 12px 22px rgba(24, 23, 21, 0.06);
-}
-
-.reports-page__tab.is-active {
-  border-color: var(--color-accent-ring);
-  background: color-mix(in srgb, var(--color-accent-light) 72%, var(--color-bg-surface));
-  color: var(--color-text-primary);
-  box-shadow:
-    inset 0 -3px 0 var(--color-accent),
-    0 12px 22px rgba(24, 23, 21, 0.08);
 }
 
 .reports-page__filter-block .section-card__body {
@@ -6433,20 +6085,12 @@ h3 {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .settings-page__navigator-item,
-  .settings-page__accordion-icon,
-  .settings-page__tab,
-  .inventory-page__tab,
-  .inventory-page__accordion-icon,
-  .maintenance-page__tab,
-  .suppliers-page__tab,
-  .suppliers-page__accordion-icon,
-  .reports-page__tab,
+  .nav-tab,
   .reports-page__hero-toggle,
   .reports-page__filter-icon,
-  .notifications-page__tab,
+  .suppliers-page__tab,
+  .suppliers-page__accordion-icon,
   .catalog-page__category-chip,
-  .debts-page__tab,
   .portability-page__tab,
   .portability-page__accordion-icon,
   .invoice-detail-page .invoice-page__history-icon {
@@ -6484,25 +6128,6 @@ h3 {
   .invoices-page__toolbar-main {
     grid-template-columns: 1fr;
   }
-
-  .settings-page__shell {
-    grid-template-columns: 1fr;
-  }
-
-  .settings-page__navigator.settings-page__sections {
-    gap: var(--sp-3);
-  }
-
-  .settings-page__navigator-list {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    padding-bottom: var(--sp-1);
-  }
-
-  .settings-page__navigator-item {
-    min-width: min(320px, 80vw);
-  }
 }
 
 @media (max-width: 767px) {
@@ -6520,34 +6145,27 @@ h3 {
     align-items: stretch;
   }
 
-  .settings-page__shell {
-    display: none;
-  }
-
-  .settings-page__accordion-list.settings-page__sections {
-    display: grid;
-  }
-
-  .reports-page__tabs {
+  .nav-tabs,
+  .invoice-detail-page .invoice-page__sections {
     flex-wrap: nowrap;
     overflow-x: auto;
     padding-bottom: var(--sp-1);
+    scrollbar-width: thin;
   }
 
-  .reports-page__tab {
+  .nav-tab,
+  .invoice-detail-page .invoice-page__sections .chip-button {
     flex: 0 0 auto;
     white-space: nowrap;
   }
 
-  .reports-page__hero-switch-actions,
-  .settings-page__tabs {
+  .reports-page__hero-switch-actions {
     flex-wrap: nowrap;
     overflow-x: auto;
     padding-bottom: var(--sp-1);
   }
 
-  .reports-page__hero-toggle,
-  .settings-page__tab {
+  .reports-page__hero-toggle {
     flex: 0 0 auto;
     white-space: nowrap;
   }
@@ -6573,21 +6191,6 @@ h3 {
   .reports-page__command-actions .secondary-button {
     width: 100%;
     justify-content: center;
-  }
-
-  .inventory-page__tabs,
-  .maintenance-page__tabs,
-  .invoice-detail-page .invoice-page__sections {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    padding-bottom: var(--sp-1);
-  }
-
-  .inventory-page__tab,
-  .maintenance-page__tab,
-  .invoice-detail-page .invoice-page__sections .chip-button {
-    flex: 0 0 auto;
-    white-space: nowrap;
   }
 
   .portability-page__tabs {
@@ -7876,15 +7479,6 @@ h3 {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-}
-
-/* POS layout ownership guard */
-.workspace-stack.transaction-page {
-  height: 100dvh;
-  overflow: hidden;
-  display: contents;
-  padding: 0;
-  gap: 0;
 }
 
 @media (max-width: 767px) {

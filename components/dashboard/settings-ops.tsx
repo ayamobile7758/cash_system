@@ -16,7 +16,12 @@ import type {
   SettingsSnapshot
 } from "@/lib/api/dashboard";
 import type { StandardEnvelope } from "@/lib/pos/types";
-import { formatCompactNumber, formatCurrency, formatDate, formatDateTime } from "@/lib/utils/formatters";
+import {
+  formatCompactNumber,
+  formatCurrency,
+  formatDate,
+  formatDateTime
+} from "@/lib/utils/formatters";
 
 type SnapshotResponse = {
   snapshot_id: string;
@@ -65,7 +70,8 @@ const SETTINGS_SECTIONS: SettingsSectionMeta[] = [
   {
     key: "policies",
     label: "السياسات",
-    description: "سياسات الطباعة والوصول من الأجهزة وملخّص الأدوات اليومية المتبقية في الإعدادات."
+    description:
+      "سياسات الطباعة والوصول من الأجهزة وملخّص الأدوات اليومية المتبقية في الإعدادات."
   },
   {
     key: "snapshot",
@@ -83,7 +89,12 @@ function getApiErrorMessage<T>(envelope: StandardEnvelope<T>) {
   return envelope.error?.message ?? "تعذر إتمام العملية.";
 }
 
-export function SettingsOps({ snapshots, permissionBundles, permissionUsers, activeAssignments }: SettingsOpsProps) {
+export function SettingsOps({
+  snapshots,
+  permissionBundles,
+  permissionUsers,
+  activeAssignments
+}: SettingsOpsProps) {
   const router = useRouter();
   const [snapshotNotes, setSnapshotNotes] = useState("");
   const [snapshotResult, setSnapshotResult] = useState<SnapshotResponse | null>(null);
@@ -148,7 +159,8 @@ export function SettingsOps({ snapshots, permissionBundles, permissionUsers, act
           method: "POST"
         });
 
-        const envelope = (await response.json()) as StandardEnvelope<BalanceCheckResponse>;
+        const envelope =
+          (await response.json()) as StandardEnvelope<BalanceCheckResponse>;
         if (!response.ok || !envelope.success || !envelope.data) {
           failAction(getApiErrorMessage(envelope), "balance-check");
           return;
@@ -186,7 +198,9 @@ export function SettingsOps({ snapshots, permissionBundles, permissionUsers, act
     event: KeyboardEvent<HTMLButtonElement>,
     currentSection: SettingsSection
   ) {
-    const currentIndex = SETTINGS_SECTIONS.findIndex((section) => section.key === currentSection);
+    const currentIndex = SETTINGS_SECTIONS.findIndex(
+      (section) => section.key === currentSection
+    );
 
     if (currentIndex === -1) {
       return;
@@ -208,7 +222,9 @@ export function SettingsOps({ snapshots, permissionBundles, permissionUsers, act
       case "ArrowLeft":
       case "ArrowUp":
         event.preventDefault();
-        focusSection((currentIndex - 1 + SETTINGS_SECTIONS.length) % SETTINGS_SECTIONS.length);
+        focusSection(
+          (currentIndex - 1 + SETTINGS_SECTIONS.length) % SETTINGS_SECTIONS.length
+        );
         break;
       case "Home":
         event.preventDefault();
@@ -263,7 +279,9 @@ export function SettingsOps({ snapshots, permissionBundles, permissionUsers, act
 
           {snapshotResult ? (
             <div className="result-card" role="status" aria-live="polite">
-              <h3>{snapshotResult.is_replay ? "تمت إعادة نفس اللقطة" : "تم حفظ اللقطة"}</h3>
+              <h3>
+                {snapshotResult.is_replay ? "تمت إعادة نفس اللقطة" : "تم حفظ اللقطة"}
+              </h3>
               <p>إجمالي المبيعات: {formatCurrency(snapshotResult.total_sales)}</p>
               <p>صافي المبيعات: {formatCurrency(snapshotResult.net_sales)}</p>
               <p>عدد الفواتير: {formatCompactNumber(snapshotResult.invoice_count)}</p>
@@ -280,7 +298,10 @@ export function SettingsOps({ snapshots, permissionBundles, permissionUsers, act
           <div className="stack-list settings-page__list">
             {snapshots.length > 0 ? (
               snapshots.map((snapshot) => (
-                <article key={snapshot.id} className="list-card settings-page__snapshot-card">
+                <article
+                  key={snapshot.id}
+                  className="list-card settings-page__snapshot-card"
+                >
                   <div className="list-card__header">
                     <strong>{formatDate(snapshot.snapshot_date)}</strong>
                     <span className="status-pill badge badge--neutral">
@@ -288,7 +309,9 @@ export function SettingsOps({ snapshots, permissionBundles, permissionUsers, act
                     </span>
                   </div>
                   <p>صافي المبيعات: {formatCurrency(snapshot.net_sales)}</p>
-                  <p className="workspace-footnote">آخر إنشاء: {formatDateTime(snapshot.created_at)}</p>
+                  <p className="workspace-footnote">
+                    آخر إنشاء: {formatDateTime(snapshot.created_at)}
+                  </p>
                 </article>
               ))
             ) : (
@@ -321,7 +344,8 @@ export function SettingsOps({ snapshots, permissionBundles, permissionUsers, act
           </div>
 
           <p className="workspace-footnote">
-            يفحص هذا الإجراء تطابق الأرصدة المسجلة مع القيود المالية قبل تنفيذ أي تسوية يدوية.
+            يفحص هذا الإجراء تطابق الأرصدة المسجلة مع القيود المالية قبل تنفيذ أي تسوية
+            يدوية.
           </p>
 
           <button
@@ -330,7 +354,11 @@ export function SettingsOps({ snapshots, permissionBundles, permissionUsers, act
             disabled={isPending}
             onClick={executeBalanceCheck}
           >
-            {isPending ? <Loader2 className="spin" size={16} /> : <RefreshCcw size={16} />}
+            {isPending ? (
+              <Loader2 className="spin" size={16} />
+            ) : (
+              <RefreshCcw size={16} />
+            )}
             إعادة الفحص
           </button>
 
@@ -338,7 +366,11 @@ export function SettingsOps({ snapshots, permissionBundles, permissionUsers, act
             <div className="stack-list" role="status" aria-live="polite">
               <article className="list-card">
                 <div className="list-card__header">
-                  <strong>{balanceResult.drift_count === 0 ? "الحالة: سليمة" : "الحالة: فروقات مكتشفة"}</strong>
+                  <strong>
+                    {balanceResult.drift_count === 0
+                      ? "الحالة: سليمة"
+                      : "الحالة: فروقات مكتشفة"}
+                  </strong>
                   <span>{formatCompactNumber(balanceResult.drift_count)} حسابات</span>
                 </div>
               </article>
@@ -363,10 +395,7 @@ export function SettingsOps({ snapshots, permissionBundles, permissionUsers, act
   function renderPoliciesSection() {
     return (
       <div className="configuration-summary-grid settings-page__policies">
-        <SectionCard
-          title="الطباعة"
-          className="configuration-card"
-        >
+        <SectionCard title="الطباعة" className="configuration-card">
           <p className="workspace-footnote">الطباعة المؤقتة خارج نطاق MVP الحالي.</p>
         </SectionCard>
 
@@ -380,10 +409,7 @@ export function SettingsOps({ snapshots, permissionBundles, permissionUsers, act
           </p>
         </SectionCard>
 
-        <SectionCard
-          title="الأدوات اليومية"
-          className="configuration-card"
-        >
+        <SectionCard title="الأدوات اليومية" className="configuration-card">
           <div className="operational-inline-summary">
             <span className="status-pill badge badge--neutral">اللقطة اليومية</span>
             <span className="status-pill badge badge--neutral">سلامة الأرصدة</span>
@@ -429,7 +455,11 @@ export function SettingsOps({ snapshots, permissionBundles, permissionUsers, act
           </>
         }
         actions={
-          <button type="button" className="primary-button" onClick={() => activateSection("snapshot")}>
+          <button
+            type="button"
+            className="primary-button"
+            onClick={() => activateSection("snapshot")}
+          >
             اللقطة اليومية
           </button>
         }
@@ -446,7 +476,10 @@ export function SettingsOps({ snapshots, permissionBundles, permissionUsers, act
         />
       ) : null}
 
-      <div className="operational-section-nav settings-page__sections settings-page__tabs" aria-label="أقسام شاشة الإعدادات">
+      <div
+        className="operational-section-nav settings-page__sections settings-page__tabs nav-tabs"
+        aria-label="أقسام شاشة الإعدادات"
+      >
         {SETTINGS_SECTIONS.map((section) => (
           <button
             key={section.key}
@@ -457,7 +490,7 @@ export function SettingsOps({ snapshots, permissionBundles, permissionUsers, act
             id={`settings-tab-${section.key}`}
             aria-pressed={activeSection === section.key}
             aria-controls={`settings-panel-${section.key}`}
-            className={`settings-page__tab ${activeSection === section.key ? "is-active chip-button is-selected" : "chip-button"}`}
+            className={`settings-page__tab nav-tab ${activeSection === section.key ? "is-active chip-button is-selected" : "chip-button"}`}
             onClick={() => activateSection(section.key)}
             onKeyDown={(event) => handleNavigatorKeyDown(event, section.key)}
           >

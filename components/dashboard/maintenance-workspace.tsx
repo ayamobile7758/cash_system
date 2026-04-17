@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useTransition, type KeyboardEvent } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+  type KeyboardEvent
+} from "react";
 import { Loader2, Search, ShieldCheck, Wrench } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -48,7 +55,11 @@ type JobDraftState = Record<
 
 type MaintenanceRetryAction =
   | { kind: "create" }
-  | { kind: "update"; jobId: string; nextStatus: "in_progress" | "ready" | "delivered" | "cancelled" };
+  | {
+      kind: "update";
+      jobId: string;
+      nextStatus: "in_progress" | "ready" | "delivered" | "cancelled";
+    };
 
 type MaintenanceSection = "overview" | "create" | "jobs";
 
@@ -110,8 +121,12 @@ export function MaintenanceWorkspace({
   const [issueDescription, setIssueDescription] = useState("");
   const [estimatedCost, setEstimatedCost] = useState("");
   const [notes, setNotes] = useState("");
-  const [createResult, setCreateResult] = useState<MaintenanceCreateResponse | null>(null);
-  const [updateResult, setUpdateResult] = useState<MaintenanceUpdateResponse | null>(null);
+  const [createResult, setCreateResult] = useState<MaintenanceCreateResponse | null>(
+    null
+  );
+  const [updateResult, setUpdateResult] = useState<MaintenanceUpdateResponse | null>(
+    null
+  );
   const [actionErrorMessage, setActionErrorMessage] = useState<string | null>(null);
   const [retryAction, setRetryAction] = useState<MaintenanceRetryAction | null>(null);
   const [confirmCancelJobId, setConfirmCancelJobId] = useState<string | null>(null);
@@ -152,7 +167,8 @@ export function MaintenanceWorkspace({
         if (!next[job.id]) {
           next[job.id] = {
             final_amount: job.final_amount != null ? String(job.final_amount) : "",
-            payment_account_id: job.payment_account_id ?? maintenanceAccounts[0]?.id ?? "",
+            payment_account_id:
+              job.payment_account_id ?? maintenanceAccounts[0]?.id ?? "",
             notes: job.notes ?? ""
           };
         }
@@ -248,7 +264,8 @@ export function MaintenanceWorkspace({
           })
         });
 
-        const envelope = (await response.json()) as StandardEnvelope<MaintenanceCreateResponse>;
+        const envelope =
+          (await response.json()) as StandardEnvelope<MaintenanceCreateResponse>;
         if (!response.ok || !envelope.success || !envelope.data) {
           failAction(getApiErrorMessage(envelope), { kind: "create" });
           return;
@@ -269,7 +286,10 @@ export function MaintenanceWorkspace({
     });
   }
 
-  async function handleUpdateJob(jobId: string, nextStatus: "in_progress" | "ready" | "delivered" | "cancelled") {
+  async function handleUpdateJob(
+    jobId: string,
+    nextStatus: "in_progress" | "ready" | "delivered" | "cancelled"
+  ) {
     const draft = jobDrafts[jobId] ?? {
       final_amount: "",
       payment_account_id: maintenanceAccountOptions[0]?.id ?? "",
@@ -290,7 +310,8 @@ export function MaintenanceWorkspace({
           })
         });
 
-        const envelope = (await response.json()) as StandardEnvelope<MaintenanceUpdateResponse>;
+        const envelope =
+          (await response.json()) as StandardEnvelope<MaintenanceUpdateResponse>;
         if (!response.ok || !envelope.success || !envelope.data) {
           failAction(getApiErrorMessage(envelope), { kind: "update", jobId, nextStatus });
           return;
@@ -301,7 +322,9 @@ export function MaintenanceWorkspace({
         if (nextStatus === "cancelled") {
           setConfirmCancelJobId(null);
         }
-        toast.success(`تم تحديث أمر الصيانة إلى "${getStatusLabel(envelope.data.status)}".`);
+        toast.success(
+          `تم تحديث أمر الصيانة إلى "${getStatusLabel(envelope.data.status)}".`
+        );
         router.refresh();
       })();
     });
@@ -327,7 +350,10 @@ export function MaintenanceWorkspace({
     }
   }
 
-  function handleTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, currentSection: MaintenanceSection) {
+  function handleTabKeyDown(
+    event: KeyboardEvent<HTMLButtonElement>,
+    currentSection: MaintenanceSection
+  ) {
     const currentIndex = MAINTENANCE_TABS.findIndex((tab) => tab.key === currentSection);
     if (currentIndex === -1) {
       return;
@@ -349,7 +375,9 @@ export function MaintenanceWorkspace({
       case "ArrowLeft":
       case "ArrowUp":
         event.preventDefault();
-        focusSection((currentIndex - 1 + MAINTENANCE_TABS.length) % MAINTENANCE_TABS.length);
+        focusSection(
+          (currentIndex - 1 + MAINTENANCE_TABS.length) % MAINTENANCE_TABS.length
+        );
         break;
       case "Home":
         event.preventDefault();
@@ -389,8 +417,10 @@ export function MaintenanceWorkspace({
     }
 
     const draft = jobDrafts[selectedJob.id] ?? {
-      final_amount: selectedJob.final_amount != null ? String(selectedJob.final_amount) : "",
-      payment_account_id: selectedJob.payment_account_id ?? maintenanceAccountOptions[0]?.id ?? "",
+      final_amount:
+        selectedJob.final_amount != null ? String(selectedJob.final_amount) : "",
+      payment_account_id:
+        selectedJob.payment_account_id ?? maintenanceAccountOptions[0]?.id ?? "",
       notes: selectedJob.notes ?? ""
     };
 
@@ -419,14 +449,20 @@ export function MaintenanceWorkspace({
         <article className="list-card maintenance-page__job-summary">
           <div className="list-card__header">
             <strong>العطل المبلغ عنه</strong>
-            <span className="status-pill badge badge--neutral">{getStatusLabel(selectedJob.status)}</span>
+            <span className="status-pill badge badge--neutral">
+              {getStatusLabel(selectedJob.status)}
+            </span>
           </div>
           <p>{selectedJob.issue_description}</p>
           {selectedJob.payment_account_name ? (
-            <p className="workspace-footnote">حساب الصيانة: {selectedJob.payment_account_name}</p>
+            <p className="workspace-footnote">
+              حساب الصيانة: {selectedJob.payment_account_name}
+            </p>
           ) : null}
           {selectedJob.delivered_at ? (
-            <p className="workspace-footnote">تم التسليم: {formatDate(selectedJob.delivered_at)}</p>
+            <p className="workspace-footnote">
+              تم التسليم: {formatDate(selectedJob.delivered_at)}
+            </p>
           ) : null}
         </article>
 
@@ -529,7 +565,9 @@ export function MaintenanceWorkspace({
           ) : null}
         </div>
 
-        {role === "admin" && selectedJob.status !== "delivered" && selectedJob.status !== "cancelled" ? (
+        {role === "admin" &&
+        selectedJob.status !== "delivered" &&
+        selectedJob.status !== "cancelled" ? (
           <div className="maintenance-page__job-danger">
             <button
               type="button"
@@ -560,7 +598,11 @@ export function MaintenanceWorkspace({
         title="الصيانة الأساسية"
         actions={
           <div className="transaction-action-cluster">
-            <button type="button" className="primary-button" onClick={() => activateSection("create")}>
+            <button
+              type="button"
+              className="primary-button"
+              onClick={() => activateSection("create")}
+            >
               طلب جديد
             </button>
           </div>
@@ -570,19 +612,28 @@ export function MaintenanceWorkspace({
       <div className="operational-page__meta-grid">
         <article className="operational-page__meta-card">
           <span className="operational-page__meta-label">أوامر مفتوحة</span>
-          <strong className="operational-page__meta-value">{formatCompactNumber(summary.open_count)}</strong>
+          <strong className="operational-page__meta-value">
+            {formatCompactNumber(summary.open_count)}
+          </strong>
         </article>
         <article className="operational-page__meta-card">
           <span className="operational-page__meta-label">جاهزة للتسليم</span>
-          <strong className="operational-page__meta-value">{formatCompactNumber(summary.ready_count)}</strong>
+          <strong className="operational-page__meta-value">
+            {formatCompactNumber(summary.ready_count)}
+          </strong>
         </article>
         <article className="operational-page__meta-card">
           <span className="operational-page__meta-label">إيراد الصيانة</span>
-          <strong className="operational-page__meta-value">{formatCurrency(summary.delivered_revenue)}</strong>
+          <strong className="operational-page__meta-value">
+            {formatCurrency(summary.delivered_revenue)}
+          </strong>
         </article>
       </div>
 
-      <div className="operational-section-nav maintenance-page__tabs" aria-label="أقسام شاشة الصيانة">
+      <div
+        className="operational-section-nav maintenance-page__tabs nav-tabs"
+        aria-label="أقسام شاشة الصيانة"
+      >
         {MAINTENANCE_TABS.map((tab) => (
           <button
             key={tab.key}
@@ -593,7 +644,7 @@ export function MaintenanceWorkspace({
             id={`maintenance-tab-${tab.key}`}
             aria-pressed={activeSection === tab.key}
             aria-controls={`maintenance-panel-${tab.key}`}
-            className={`maintenance-page__tab ${activeSection === tab.key ? "is-active chip-button is-selected" : "chip-button"}`}
+            className={`maintenance-page__tab nav-tab ${activeSection === tab.key ? "is-active chip-button is-selected" : "chip-button"}`}
             onClick={() => activateSection(tab.key)}
             onKeyDown={(event) => handleTabKeyDown(event, tab.key)}
           >
@@ -665,9 +716,13 @@ export function MaintenanceWorkspace({
                     <span>{getAccountTypeLabel(account.type)}</span>
                   </div>
                   {account.current_balance != null ? (
-                    <p className="workspace-footnote">الرصيد الحالي: {formatCurrency(account.current_balance)}</p>
+                    <p className="workspace-footnote">
+                      الرصيد الحالي: {formatCurrency(account.current_balance)}
+                    </p>
                   ) : (
-                    <p className="workspace-footnote">يتم إخفاء الرصيد بحسب الحزمة المسندة.</p>
+                    <p className="workspace-footnote">
+                      يتم إخفاء الرصيد بحسب الحزمة المسندة.
+                    </p>
                   )}
                 </article>
               ))}
@@ -705,22 +760,35 @@ export function MaintenanceWorkspace({
             <div className="stack-form">
               <label className="stack-field">
                 <span>اسم العميل</span>
-                <input value={customerName} onChange={(event) => setCustomerName(event.target.value)} />
+                <input
+                  value={customerName}
+                  onChange={(event) => setCustomerName(event.target.value)}
+                />
               </label>
 
               <label className="stack-field">
                 <span>هاتف العميل</span>
-                <input value={customerPhone} onChange={(event) => setCustomerPhone(event.target.value)} />
+                <input
+                  value={customerPhone}
+                  onChange={(event) => setCustomerPhone(event.target.value)}
+                />
               </label>
 
               <label className="stack-field">
                 <span>نوع الجهاز</span>
-                <input value={deviceType} onChange={(event) => setDeviceType(event.target.value)} />
+                <input
+                  value={deviceType}
+                  onChange={(event) => setDeviceType(event.target.value)}
+                />
               </label>
 
               <label className="stack-field">
                 <span>وصف العطل</span>
-                <textarea rows={3} value={issueDescription} onChange={(event) => setIssueDescription(event.target.value)} />
+                <textarea
+                  rows={3}
+                  value={issueDescription}
+                  onChange={(event) => setIssueDescription(event.target.value)}
+                />
               </label>
 
               <label className="stack-field">
@@ -736,13 +804,22 @@ export function MaintenanceWorkspace({
 
               <label className="stack-field">
                 <span>ملاحظات</span>
-                <textarea rows={3} value={notes} onChange={(event) => setNotes(event.target.value)} />
+                <textarea
+                  rows={3}
+                  value={notes}
+                  onChange={(event) => setNotes(event.target.value)}
+                />
               </label>
 
               <button
                 type="button"
                 className="primary-button"
-                disabled={isPending || !customerName.trim() || !deviceType.trim() || !issueDescription.trim()}
+                disabled={
+                  isPending ||
+                  !customerName.trim() ||
+                  !deviceType.trim() ||
+                  !issueDescription.trim()
+                }
                 onClick={() => void handleCreateJob()}
               >
                 {isPending ? <Loader2 className="spin" size={16} /> : "إنشاء أمر الصيانة"}
@@ -787,7 +864,11 @@ export function MaintenanceWorkspace({
                 onChange={(event) => setQueueSearch(event.target.value)}
               />
               {queueSearch ? (
-                <button type="button" className="ghost-button" onClick={() => setQueueSearch("")}>
+                <button
+                  type="button"
+                  className="ghost-button"
+                  onClick={() => setQueueSearch("")}
+                >
                   مسح
                 </button>
               ) : null}
@@ -797,7 +878,11 @@ export function MaintenanceWorkspace({
               <div className="empty-panel maintenance-page__queue-empty">
                 <Wrench size={20} />
                 <h3>لا توجد أوامر صيانة مسجلة حتى الآن</h3>
-                <button type="button" className="secondary-button" onClick={() => activateSection("create")}>
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={() => activateSection("create")}
+                >
                   طلب جديد
                 </button>
               </div>
@@ -805,7 +890,11 @@ export function MaintenanceWorkspace({
               <div className="empty-panel maintenance-page__queue-empty">
                 <Search size={20} />
                 <h3>لا توجد نتائج مطابقة</h3>
-                <button type="button" className="secondary-button" onClick={() => setQueueSearch("")}>
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={() => setQueueSearch("")}
+                >
                   مسح البحث
                 </button>
               </div>
@@ -824,7 +913,9 @@ export function MaintenanceWorkspace({
                   >
                     <div className="list-card__header">
                       <strong>{job.job_number}</strong>
-                      <span className="status-pill badge badge--neutral">{getStatusLabel(job.status)}</span>
+                      <span className="status-pill badge badge--neutral">
+                        {getStatusLabel(job.status)}
+                      </span>
                     </div>
                     <div className="maintenance-page__queue-meta">
                       <span>{job.customer_name}</span>
@@ -851,7 +942,11 @@ export function MaintenanceWorkspace({
           title={selectedJob?.job_number ?? "أوامر الصيانة"}
           description="راجع بيانات الطلب وحدّث الحالة أو التحصيل من هذه اللوحة."
           height="50vh"
-          content={<section className="maintenance-page__job-detail maintenance-page__job-detail-sheet">{renderJobDetail()}</section>}
+          content={
+            <section className="maintenance-page__job-detail maintenance-page__job-detail-sheet">
+              {renderJobDetail()}
+            </section>
+          }
           returnFocusRef={selectedJobTriggerRef}
         />
       </section>

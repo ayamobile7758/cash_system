@@ -609,7 +609,7 @@ export function InventoryWorkspace({
       ) : null}
 
       <div
-        className="operational-section-nav inventory-page__sections inventory-page__tabs"
+        className="operational-section-nav inventory-page__sections inventory-page__tabs nav-tabs"
         aria-label="أقسام شاشة الجرد"
       >
         {visibleTabs.map((tab) => (
@@ -622,7 +622,7 @@ export function InventoryWorkspace({
             id={`inventory-tab-${tab.key}`}
             aria-pressed={activeSection === tab.key}
             aria-controls={`inventory-panel-${tab.key}`}
-            className={`inventory-page__tab ${activeSection === tab.key ? "is-active chip-button is-selected" : "chip-button"}`}
+            className={`inventory-page__tab nav-tab ${activeSection === tab.key ? "is-active chip-button is-selected" : "chip-button"}`}
             onClick={() => activateSection(tab.key)}
             onKeyDown={(event) => handleTabKeyDown(event, tab.key)}
           >

@@ -9,7 +9,12 @@ import { PageHeader } from "@/components/ui/page-header";
 import { SectionCard } from "@/components/ui/section-card";
 import type { WorkspaceUserOption } from "@/lib/api/dashboard";
 import type { ReportBaseline, SalesHistoryFilters } from "@/lib/api/reports";
-import { formatCompactNumber, formatCurrency, formatDate, formatDateTime } from "@/lib/utils/formatters";
+import {
+  formatCompactNumber,
+  formatCurrency,
+  formatDate,
+  formatDateTime
+} from "@/lib/utils/formatters";
 
 type ReportsOverviewProps = {
   filters: SalesHistoryFilters;
@@ -111,10 +116,14 @@ function buildExportHref(filters: SalesHistoryFilters) {
 }
 
 function buildFilterSummary(filters: SalesHistoryFilters, users: WorkspaceUserOption[]) {
-  const chips = [`الفترة: ${formatDate(filters.fromDate)} → ${formatDate(filters.toDate)}`];
+  const chips = [
+    `الفترة: ${formatDate(filters.fromDate)} → ${formatDate(filters.toDate)}`
+  ];
 
   if (filters.compareFromDate && filters.compareToDate) {
-    chips.push(`المقارنة: ${formatDate(filters.compareFromDate)} → ${formatDate(filters.compareToDate)}`);
+    chips.push(
+      `المقارنة: ${formatDate(filters.compareFromDate)} → ${formatDate(filters.compareToDate)}`
+    );
   } else {
     chips.push("المقارنة: بدون فترة مقارنة");
   }
@@ -191,13 +200,20 @@ function getComparisonTone(value: number | null) {
   return "neutral";
 }
 
-export function ReportsOverview({ filters, users, terminals, reportBaseline }: ReportsOverviewProps) {
+export function ReportsOverview({
+  filters,
+  users,
+  terminals,
+  reportBaseline
+}: ReportsOverviewProps) {
   const searchParams = useSearchParams();
   const reportTabParam = searchParams.get("report_tab");
   const exportHref = buildExportHref(filters);
   const filterSummary = buildFilterSummary(filters, users);
   const { advancedReport } = reportBaseline;
-  const [activeTab, setActiveTab] = useState<ReportDetailTab>(() => normalizeReportTab(reportTabParam));
+  const [activeTab, setActiveTab] = useState<ReportDetailTab>(() =>
+    normalizeReportTab(reportTabParam)
+  );
   const [activeHeroView, setActiveHeroView] = useState<ReportHeroView>("trend");
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const tabRefs = useRef<Record<ReportDetailTab, HTMLButtonElement | null>>({
@@ -211,7 +227,10 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
     setActiveTab(normalizeReportTab(reportTabParam));
   }, [reportTabParam]);
 
-  function handleTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, currentTab: ReportDetailTab) {
+  function handleTabKeyDown(
+    event: KeyboardEvent<HTMLButtonElement>,
+    currentTab: ReportDetailTab
+  ) {
     const currentIndex = REPORT_DETAIL_TABS.findIndex((tab) => tab.key === currentTab);
     if (currentIndex === -1) {
       return;
@@ -233,7 +252,9 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
       case "ArrowLeft":
       case "ArrowUp":
         event.preventDefault();
-        focusTab((currentIndex - 1 + REPORT_DETAIL_TABS.length) % REPORT_DETAIL_TABS.length);
+        focusTab(
+          (currentIndex - 1 + REPORT_DETAIL_TABS.length) % REPORT_DETAIL_TABS.length
+        );
         break;
       case "Home":
         event.preventDefault();
@@ -299,7 +320,12 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
         value: formatCurrency(reportBaseline.maintenanceReport.delivered_revenue),
         hint: `${formatCompactNumber(reportBaseline.maintenanceReport.delivered_count)} أمرًا مسلّمًا`
       }
-    ] satisfies Array<{ key: ReportDetailTab; label: string; value: string; hint: string }>;
+    ] satisfies Array<{
+      key: ReportDetailTab;
+      label: string;
+      value: string;
+      hint: string;
+    }>;
 
     return (
       <SectionCard title="إشارات تحتاج متابعة" tone="subtle" className="analytical-card">
@@ -349,7 +375,8 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
                 ) : (
                   <tr>
                     <td colSpan={4} className="table-empty">
-                      لا توجد بيانات كافية للمقارنة ضمن الفلاتر الحالية. جرّب توسيع الفترة أو تغيير طريقة التجميع.
+                      لا توجد بيانات كافية للمقارنة ضمن الفلاتر الحالية. جرّب توسيع الفترة
+                      أو تغيير طريقة التجميع.
                     </td>
                   </tr>
                 )}
@@ -387,7 +414,9 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
                         <td>{invoice.created_by_name ?? "غير معروف"}</td>
                         <td>{invoice.pos_terminal_code ?? "غير محدد"}</td>
                         <td>
-                          <span className={`status-badge status-badge--${invoice.status}`}>
+                          <span
+                            className={`status-badge status-badge--${invoice.status}`}
+                          >
                             {getStatusLabel(invoice.status)}
                           </span>
                         </td>
@@ -397,7 +426,8 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
                   ) : (
                     <tr>
                       <td colSpan={6} className="table-empty">
-                        لا توجد فواتير مطابقة لهذه الفلاتر. جرّب تغيير التاريخ أو إزالة بعض القيود.
+                        لا توجد فواتير مطابقة لهذه الفلاتر. جرّب تغيير التاريخ أو إزالة
+                        بعض القيود.
                       </td>
                     </tr>
                   )}
@@ -408,21 +438,23 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
 
           <SectionCard title="آخر اللقطات" tone="subtle" className="analytical-card">
             <div className="stack-list">
-              {reportBaseline.snapshots.length > 0 ? (
-                reportBaseline.snapshots.map((snapshot) => (
-                  <article key={snapshot.id} className="list-card">
-                    <div className="list-card__header">
-                      <strong>{formatDate(snapshot.snapshot_date)}</strong>
-                      <span>{formatCompactNumber(snapshot.invoice_count)} فاتورة</span>
-                    </div>
-                    <p>صافي المبيعات: {formatCurrency(snapshot.net_sales)}</p>
-                    <p>صافي الربح: {formatCurrency(snapshot.net_profit)}</p>
-                    <p className="workspace-footnote">أُنشئت: {formatDateTime(snapshot.created_at)}</p>
-                  </article>
-                ))
-              ) : (
-                renderEmptyList("لا توجد لقطات محفوظة بعد. أنشئ لقطة يومية لتظهر نتائجها هنا.")
-              )}
+              {reportBaseline.snapshots.length > 0
+                ? reportBaseline.snapshots.map((snapshot) => (
+                    <article key={snapshot.id} className="list-card">
+                      <div className="list-card__header">
+                        <strong>{formatDate(snapshot.snapshot_date)}</strong>
+                        <span>{formatCompactNumber(snapshot.invoice_count)} فاتورة</span>
+                      </div>
+                      <p>صافي المبيعات: {formatCurrency(snapshot.net_sales)}</p>
+                      <p>صافي الربح: {formatCurrency(snapshot.net_profit)}</p>
+                      <p className="workspace-footnote">
+                        أُنشئت: {formatDateTime(snapshot.created_at)}
+                      </p>
+                    </article>
+                  ))
+                : renderEmptyList(
+                    "لا توجد لقطات محفوظة بعد. أنشئ لقطة يومية لتظهر نتائجها هنا."
+                  )}
             </div>
           </SectionCard>
         </section>
@@ -430,19 +462,19 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
         <SectionCard title="المرتجعات" className="analytical-card">
           <div className="analytical-shell analytical-shell--split">
             <div className="stack-list">
-              {reportBaseline.returnsReport.reasons.length > 0 ? (
-                reportBaseline.returnsReport.reasons.map((reason) => (
-                  <article key={reason.reason} className="list-card">
-                    <div className="list-card__header">
-                      <strong>{reason.reason}</strong>
-                      <span>{formatCompactNumber(reason.count)} مرة</span>
-                    </div>
-                    <p>إجمالي المرتجعات: {formatCurrency(reason.total_amount)}</p>
-                  </article>
-                ))
-              ) : (
-                renderEmptyList("لا توجد مرتجعات ضمن الفترة الحالية. ستظهر الأسباب والعمليات هنا عند تسجيل أول مرتجع.")
-              )}
+              {reportBaseline.returnsReport.reasons.length > 0
+                ? reportBaseline.returnsReport.reasons.map((reason) => (
+                    <article key={reason.reason} className="list-card">
+                      <div className="list-card__header">
+                        <strong>{reason.reason}</strong>
+                        <span>{formatCompactNumber(reason.count)} مرة</span>
+                      </div>
+                      <p>إجمالي المرتجعات: {formatCurrency(reason.total_amount)}</p>
+                    </article>
+                  ))
+                : renderEmptyList(
+                    "لا توجد مرتجعات ضمن الفترة الحالية. ستظهر الأسباب والعمليات هنا عند تسجيل أول مرتجع."
+                  )}
             </div>
 
             <div className="table-wrap">
@@ -489,44 +521,47 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
     return (
       <>
         <section className="analytical-shell analytical-shell--split">
-          <SectionCard eyebrow="الحسابات" title="الحسابات المالية" tone="subtle" className="analytical-card">
+          <SectionCard
+            eyebrow="الحسابات"
+            title="الحسابات المالية"
+            tone="subtle"
+            className="analytical-card"
+          >
             <div className="stack-list">
-              {reportBaseline.accountReport.accounts.length > 0 ? (
-                reportBaseline.accountReport.accounts.map((account) => (
-                  <article key={account.id} className="list-card">
-                    <div className="list-card__header">
-                      <strong>{account.name}</strong>
-                      <span>{account.type}</span>
-                    </div>
-                    <p>الرصيد: {formatCurrency(account.current_balance)}</p>
-                    <p className="workspace-footnote">النطاق: {account.module_scope}</p>
-                  </article>
-                ))
-              ) : (
-                renderEmptyList("لا توجد حسابات مالية معروضة ضمن هذه الفترة.")
-              )}
+              {reportBaseline.accountReport.accounts.length > 0
+                ? reportBaseline.accountReport.accounts.map((account) => (
+                    <article key={account.id} className="list-card">
+                      <div className="list-card__header">
+                        <strong>{account.name}</strong>
+                        <span>{account.type}</span>
+                      </div>
+                      <p>الرصيد: {formatCurrency(account.current_balance)}</p>
+                      <p className="workspace-footnote">النطاق: {account.module_scope}</p>
+                    </article>
+                  ))
+                : renderEmptyList("لا توجد حسابات مالية معروضة ضمن هذه الفترة.")}
             </div>
           </SectionCard>
 
           <SectionCard title="الديون الحالية" tone="subtle" className="analytical-card">
             <div className="stack-list">
-              {reportBaseline.debtReport.customers.length > 0 ? (
-                reportBaseline.debtReport.customers.map((customer) => (
-                  <article key={customer.id} className="list-card">
-                    <div className="list-card__header">
-                      <strong>{customer.name}</strong>
-                      <span>{customer.phone ?? "بدون هاتف"}</span>
-                    </div>
-                    <p>الرصيد الحالي: {formatCurrency(customer.current_balance)}</p>
-                    <p className="workspace-footnote">
-                      الحد: {formatCurrency(customer.credit_limit)} | أجل السداد:{" "}
-                      {customer.due_date_days != null ? `${customer.due_date_days} يومًا` : "غير محدد"}
-                    </p>
-                  </article>
-                ))
-              ) : (
-                renderEmptyList("لا توجد ديون حالية مسجلة ضمن الفترة المعروضة.")
-              )}
+              {reportBaseline.debtReport.customers.length > 0
+                ? reportBaseline.debtReport.customers.map((customer) => (
+                    <article key={customer.id} className="list-card">
+                      <div className="list-card__header">
+                        <strong>{customer.name}</strong>
+                        <span>{customer.phone ?? "بدون هاتف"}</span>
+                      </div>
+                      <p>الرصيد الحالي: {formatCurrency(customer.current_balance)}</p>
+                      <p className="workspace-footnote">
+                        الحد: {formatCurrency(customer.credit_limit)} | أجل السداد:{" "}
+                        {customer.due_date_days != null
+                          ? `${customer.due_date_days} يومًا`
+                          : "غير محدد"}
+                      </p>
+                    </article>
+                  ))
+                : renderEmptyList("لا توجد ديون حالية مسجلة ضمن الفترة المعروضة.")}
             </div>
           </SectionCard>
         </section>
@@ -534,25 +569,23 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
         <SectionCard title="حركة الحسابات" className="analytical-card">
           <div className="analytical-shell analytical-shell--split">
             <div className="stack-list">
-              {reportBaseline.accountMovementReport.summaries.length > 0 ? (
-                reportBaseline.accountMovementReport.summaries.map((summary) => (
-                  <article key={summary.account_id} className="list-card">
-                    <div className="list-card__header">
-                      <strong>{summary.account_name}</strong>
-                      <span>{formatCompactNumber(summary.movement_count)} حركة</span>
-                    </div>
-                    <p>الوارد: {formatCurrency(summary.income_total)}</p>
-                    <p>الصادر: {formatCurrency(summary.expense_total)}</p>
-                    <p className="workspace-footnote">
-                      زيادة: {formatCurrency(summary.adjustment_increase_total)} | خصم:{" "}
-                      {formatCurrency(summary.adjustment_decrease_total)} | الرصيد الحالي:{" "}
-                      {formatCurrency(summary.current_balance)}
-                    </p>
-                  </article>
-                ))
-              ) : (
-                renderEmptyList("لا توجد حركات حسابات ضمن الفترة الحالية.")
-              )}
+              {reportBaseline.accountMovementReport.summaries.length > 0
+                ? reportBaseline.accountMovementReport.summaries.map((summary) => (
+                    <article key={summary.account_id} className="list-card">
+                      <div className="list-card__header">
+                        <strong>{summary.account_name}</strong>
+                        <span>{formatCompactNumber(summary.movement_count)} حركة</span>
+                      </div>
+                      <p>الوارد: {formatCurrency(summary.income_total)}</p>
+                      <p>الصادر: {formatCurrency(summary.expense_total)}</p>
+                      <p className="workspace-footnote">
+                        زيادة: {formatCurrency(summary.adjustment_increase_total)} | خصم:{" "}
+                        {formatCurrency(summary.adjustment_decrease_total)} | الرصيد
+                        الحالي: {formatCurrency(summary.current_balance)}
+                      </p>
+                    </article>
+                  ))
+                : renderEmptyList("لا توجد حركات حسابات ضمن الفترة الحالية.")}
             </div>
 
             <div className="table-wrap">
@@ -603,20 +636,19 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
     return (
       <SectionCard title="المخزون المنخفض" className="analytical-card">
         <div className="stack-list">
-          {reportBaseline.inventoryReport.products.length > 0 ? (
-            reportBaseline.inventoryReport.products.map((product) => (
-              <article key={product.id} className="list-card">
-                <div className="list-card__header">
-                  <strong>{product.name}</strong>
-                  <span>
-                    {formatCompactNumber(product.stock_quantity)} / {formatCompactNumber(product.min_stock_level)}
-                  </span>
-                </div>
-              </article>
-            ))
-          ) : (
-            renderEmptyList("لا توجد عناصر منخفضة المخزون ضمن المؤشرات الحالية.")
-          )}
+          {reportBaseline.inventoryReport.products.length > 0
+            ? reportBaseline.inventoryReport.products.map((product) => (
+                <article key={product.id} className="list-card">
+                  <div className="list-card__header">
+                    <strong>{product.name}</strong>
+                    <span>
+                      {formatCompactNumber(product.stock_quantity)} /{" "}
+                      {formatCompactNumber(product.min_stock_level)}
+                    </span>
+                  </div>
+                </article>
+              ))
+            : renderEmptyList("لا توجد عناصر منخفضة المخزون ضمن المؤشرات الحالية.")}
         </div>
       </SectionCard>
     );
@@ -631,7 +663,9 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
             <strong className="analytical-kpi-value">
               {formatCurrency(reportBaseline.maintenanceReport.delivered_revenue)}
             </strong>
-            <span className="analytical-kpi-hint">إجمالي ما تم تسليمه ضمن الفترة الحالية</span>
+            <span className="analytical-kpi-hint">
+              إجمالي ما تم تسليمه ضمن الفترة الحالية
+            </span>
           </article>
           <article className="analytical-kpi-card">
             <span className="analytical-kpi-label">الأوامر المفتوحة</span>
@@ -738,7 +772,9 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
               {formatDate(filters.fromDate)} → {formatDate(filters.toDate)}
             </span>
             <span className="status-pill badge badge--neutral">
-              {filters.compareFromDate && filters.compareToDate ? "المقارنة مفعلة" : "بدون مقارنة"}
+              {filters.compareFromDate && filters.compareToDate
+                ? "المقارنة مفعلة"
+                : "بدون مقارنة"}
             </span>
           </>
         }
@@ -756,7 +792,11 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
         tone="subtle"
         className="analytical-card analytical-card--filters reports-page__command-bar"
       >
-        <form id="reports-filters-form" className="reports-page__command-form" method="GET">
+        <form
+          id="reports-filters-form"
+          className="reports-page__command-form"
+          method="GET"
+        >
           <input type="hidden" name="report_tab" value={activeTab} />
 
           <div className="reports-page__command-row">
@@ -790,7 +830,9 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
                 onClick={() => setShowAdvancedFilters((current) => !current)}
               >
                 <SlidersHorizontal size={16} aria-hidden="true" />
-                <span>{showAdvancedFilters ? "إخفاء الفلاتر المتقدمة" : "الفلاتر المتقدمة"}</span>
+                <span>
+                  {showAdvancedFilters ? "إخفاء الفلاتر المتقدمة" : "الفلاتر المتقدمة"}
+                </span>
                 <ChevronDown
                   size={16}
                   aria-hidden="true"
@@ -821,12 +863,20 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
 
               <label className="stack-field">
                 <span>من تاريخ المقارنة</span>
-                <input type="date" name="compare_from_date" defaultValue={filters.compareFromDate ?? ""} />
+                <input
+                  type="date"
+                  name="compare_from_date"
+                  defaultValue={filters.compareFromDate ?? ""}
+                />
               </label>
 
               <label className="stack-field">
                 <span>إلى تاريخ المقارنة</span>
-                <input type="date" name="compare_to_date" defaultValue={filters.compareToDate ?? ""} />
+                <input
+                  type="date"
+                  name="compare_to_date"
+                  defaultValue={filters.compareToDate ?? ""}
+                />
               </label>
 
               <label className="stack-field">
@@ -854,7 +904,10 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
 
               <label className="stack-field">
                 <span>الجهاز</span>
-                <select name="pos_terminal_code" defaultValue={filters.posTerminalCode ?? ""}>
+                <select
+                  name="pos_terminal_code"
+                  defaultValue={filters.posTerminalCode ?? ""}
+                >
                   <option value="">الكل</option>
                   {terminals.map((terminal) => (
                     <option key={terminal} value={terminal}>
@@ -892,16 +945,23 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
         <div className="analytical-kpi-grid reports-page__summary-grid">
           <article className="analytical-kpi-card">
             <span className="analytical-kpi-label">إجمالي المبيعات</span>
-            <strong className="analytical-kpi-value">{formatCurrency(reportBaseline.salesSummary.total_sales)}</strong>
+            <strong className="analytical-kpi-value">
+              {formatCurrency(reportBaseline.salesSummary.total_sales)}
+            </strong>
             <span className="analytical-kpi-hint">
-              الفترة المقارنة: {formatCurrency(advancedReport.comparePeriod?.sales_total ?? 0)}
+              الفترة المقارنة:{" "}
+              {formatCurrency(advancedReport.comparePeriod?.sales_total ?? 0)}
             </span>
           </article>
 
           <article className="analytical-kpi-card">
             <span className="analytical-kpi-label">صافي الربح</span>
-            <strong className="analytical-kpi-value">{formatCurrency(currentNetProfit)}</strong>
-            <span className="analytical-kpi-hint">{getComparisonHint(profitChangePercentage)}</span>
+            <strong className="analytical-kpi-value">
+              {formatCurrency(currentNetProfit)}
+            </strong>
+            <span className="analytical-kpi-hint">
+              {getComparisonHint(profitChangePercentage)}
+            </span>
           </article>
 
           <article className="analytical-kpi-card">
@@ -918,8 +978,12 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
             className={`analytical-kpi-card reports-page__summary-card reports-page__summary-card--${comparisonTone}`}
           >
             <span className="analytical-kpi-label">التغير عن المقارنة</span>
-            <strong className="analytical-kpi-value">{formatSignedPercent(salesChangePercentage)}</strong>
-            <span className="analytical-kpi-hint">{getComparisonHint(salesChangePercentage)}</span>
+            <strong className="analytical-kpi-value">
+              {formatSignedPercent(salesChangePercentage)}
+            </strong>
+            <span className="analytical-kpi-hint">
+              {getComparisonHint(salesChangePercentage)}
+            </span>
           </article>
         </div>
       </SectionCard>
@@ -934,7 +998,10 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
         <div className="reports-page__hero-switch">
           <div className="reports-page__hero-switch-copy">
             <h3>تفكيك البعد الحالي</h3>
-            <p>بدّل بين قراءة الاتجاه أو التوزيع داخل المساحة الرئيسية بدون عرض الرسمين معًا.</p>
+            <p>
+              بدّل بين قراءة الاتجاه أو التوزيع داخل المساحة الرئيسية بدون عرض الرسمين
+              معًا.
+            </p>
           </div>
 
           <div
@@ -979,10 +1046,17 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
       <section className="workspace-stack reports-page__detail-workspace">
         <div className="reports-page__detail-head">
           <h2>مساحة التفاصيل</h2>
-          <p>اختر المجال الذي تريد التعمق فيه دون تحويل الشاشة إلى صفحة مكدسة بكل شيء دفعة واحدة.</p>
+          <p>
+            اختر المجال الذي تريد التعمق فيه دون تحويل الشاشة إلى صفحة مكدسة بكل شيء دفعة
+            واحدة.
+          </p>
         </div>
 
-        <div className="reports-page__tabs" role="tablist" aria-label="التنقل داخل أقسام التقارير">
+        <div
+          className="reports-page__tabs nav-tabs"
+          role="tablist"
+          aria-label="التنقل داخل أقسام التقارير"
+        >
           {REPORT_DETAIL_TABS.map((tab) => (
             <button
               key={tab.key}
@@ -995,7 +1069,7 @@ export function ReportsOverview({ filters, users, terminals, reportBaseline }: R
               tabIndex={activeTab === tab.key ? 0 : -1}
               aria-selected={activeTab === tab.key}
               aria-controls={`reports-panel-${tab.key}`}
-              className={`reports-page__tab ${activeTab === tab.key ? "is-active" : ""}`}
+              className={`reports-page__tab nav-tab ${activeTab === tab.key ? "is-active" : ""}`}
               onClick={() => setActiveTab(tab.key)}
               onKeyDown={(event) => handleTabKeyDown(event, tab.key)}
             >
