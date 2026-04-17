@@ -52,14 +52,18 @@ const GROUP_LABELS: Record<DashboardNavGroup, string> = {
   management: "المتابعة والإدارة"
 };
 
-const PRIMARY_BOTTOM_NAV_HREFS = [
-  "/pos",
-  "/products",
-  "/invoices",
-  "/inventory"
-] as const;
+const BOTTOM_NAV_GROUPS = {
+  "/pos": ["/pos"],
+  "/products": ["/products", "/suppliers"],
+  "/invoices": ["/invoices", "/debts", "/expenses"],
+  "/inventory": ["/inventory", "/operations", "/maintenance"]
+} as const;
 
-const BOTTOM_BAR_LABELS: Partial<Record<(typeof PRIMARY_BOTTOM_NAV_HREFS)[number], string>> = {
+type BottomNavHref = keyof typeof BOTTOM_NAV_GROUPS;
+
+const PRIMARY_BOTTOM_NAV_HREFS = Object.keys(BOTTOM_NAV_GROUPS) as BottomNavHref[];
+
+const BOTTOM_BAR_LABELS: Partial<Record<BottomNavHref, string>> = {
   "/pos": "البيع",
   "/inventory": "الجرد"
 };
@@ -102,6 +106,19 @@ function isPathActive(pathname: string, href: string) {
   return href === "/notifications"
     ? pathname === href || pathname.startsWith("/notifications/")
     : pathname === href || pathname.startsWith(`${href}/`);
+}
+
+function getActiveBottomHref(pathname: string): BottomNavHref | null {
+  for (const [parentHref, childHrefs] of Object.entries(BOTTOM_NAV_GROUPS) as [
+    BottomNavHref,
+    readonly string[]
+  ][]) {
+    if (childHrefs.some((href) => pathname === href || pathname.startsWith(`${href}/`))) {
+      return parentHref;
+    }
+  }
+
+  return null;
 }
 
 function getPageContext(pathname: string, navigation: DashboardNavItem[]) {
@@ -177,6 +194,8 @@ export function DashboardShell({
   );
   const isPosPage = pathname === "/pos" || pathname.startsWith("/pos/");
   const isReportsPage = pathname === "/reports" || pathname.startsWith("/reports/");
+  const activeBottomHref = getActiveBottomHref(pathname);
+  const isMenuContextActive = activeBottomHref === null && !isPosPage;
   const bottomBarItems = useMemo(
     () =>
       PRIMARY_BOTTOM_NAV_HREFS.map((href) =>
@@ -378,9 +397,8 @@ export function DashboardShell({
         >
           {bottomBarItems.map((item) => {
             const Icon = getIcon(item.icon);
-            const isActive = isPathActive(pathname, item.href);
-            const compactLabel =
-              BOTTOM_BAR_LABELS[item.href as keyof typeof BOTTOM_BAR_LABELS] ?? item.label;
+            const isActive = activeBottomHref === item.href;
+            const compactLabel = BOTTOM_BAR_LABELS[item.href as BottomNavHref] ?? item.label;
 
             return (
               <Link
@@ -405,7 +423,11 @@ export function DashboardShell({
 
           <button
             type="button"
-            className="dashboard-bottom-bar__item dashboard-bottom-bar__item--menu"
+            className={
+              isMenuContextActive
+                ? "dashboard-bottom-bar__item dashboard-bottom-bar__item--menu is-active"
+                : "dashboard-bottom-bar__item dashboard-bottom-bar__item--menu"
+            }
             ref={bottomMenuButtonRef}
             onClick={(event) => openMenu(event.currentTarget)}
             aria-label="القائمة"
