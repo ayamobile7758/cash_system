@@ -9399,19 +9399,67 @@ h3 {
     flex-wrap: wrap;
     justify-content: center;
   }
+
+  /* ── Mobile product card density ── */
+  .pos-workspace .pos-product-card {
+    min-height: 0;
+    padding: var(--sp-2) var(--sp-2) var(--sp-1);
+    gap: var(--sp-1);
+  }
+
+  .pos-workspace .pos-product-card__thumb {
+    max-height: 56px;
+    min-height: 44px;
+  }
+
+  .pos-workspace .pos-product-card__thumb--thumbnail {
+    max-height: 56px;
+    min-height: 44px;
+  }
+
+  .pos-workspace .pos-product-card__name {
+    font-size: 11px;
+    font-weight: 600;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+  }
+
+  .pos-workspace .pos-product-card__price {
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .pos-workspace .pos-product-card__stock,
+  .pos-workspace .pos-product-card__stock-indicator {
+    font-size: 10px;
+    min-height: 18px;
+    padding: 0 var(--sp-1);
+  }
+
+  .pos-workspace .pos-product-card__sku {
+    display: none;
+  }
+
+  .pos-workspace .pos-product-card__add-button {
+    width: 24px;
+    height: 24px;
+  }
 }
 
 
 
 
-/* POS Cart Sidebar NO-Scroll Layout */
+/* POS Cart Sidebar — flex column so children can scroll internally */
 .pos-cart-panel,
 .pos-cart-sheet:not(.pos-mobile-cart-access) {
-  display: flex !important;
-  flex-direction: column !important;
-  min-height: 0 !important;
-  height: 100% !important;
-  overflow: hidden !important;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 0;
+  min-height: 0;
 }
 .pos-cart-surface {
   flex: 1 1 0;
@@ -9459,7 +9507,6 @@ h3 {
   display: none;
   flex: 1 1 0;
   min-block-size: 0;
-  overflow: hidden;
 }
 
 .pos-cart-review-shell {
@@ -9467,7 +9514,6 @@ h3 {
   flex-direction: column;
   flex: 1 1 0;
   min-block-size: 0;
-  overflow: hidden;
 }
 
 .pos-cart-rail {
@@ -9475,17 +9521,17 @@ h3 {
   grid-template-rows: auto minmax(0, 1fr) auto;
   flex: 1 1 0;
   min-block-size: 0;
+  overflow: hidden;
   background: var(--color-bg-base);
   border-inline-start: 1px solid var(--color-border);
   box-shadow: none;
   backdrop-filter: none;
-  overflow: hidden;
 }
 
 .pos-cart-rail-layout {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
-  block-size: 100%;
+  flex: 1 1 0;
   min-block-size: 0;
 }
 
@@ -9975,12 +10021,9 @@ h3 {
   }
 
   .pos-workspace .pos-cart-sheet:not(.pos-mobile-cart-access) {
-    display: flex !important;
-    flex-direction: column !important;
     padding: 0;
     border-inline-start: 0;
     background: var(--color-bg-base);
-    overflow: hidden;
   }
 
   .pos-cart-rail-shell {

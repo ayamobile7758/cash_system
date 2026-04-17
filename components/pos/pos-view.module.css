@@ -3,7 +3,6 @@
   grid-template-rows: auto auto minmax(0, 1fr);
   min-height: 0;
   height: 100%;
-  overflow: hidden;
   background: var(--color-bg-base);
 }
 
@@ -12,17 +11,14 @@
   grid-template-columns: minmax(0, 1fr) clamp(280px, 28vw, 400px);
   min-height: 0;
   height: 100%;
-  overflow: hidden;
   background: var(--color-bg-base);
 }
 
-/* Cart aside must fill layout height so rail scroll works */
+/* Cart aside: flex column so rail can fill and scroll internally */
 .layout > aside {
   display: flex;
   flex-direction: column;
   min-height: 0;
-  height: 100%;
-  overflow: hidden;
 }
 
 .productsPane {
@@ -277,14 +273,15 @@
   }
 
   .productsContent {
-    padding: var(--sp-3);
+    padding: var(--sp-2);
     padding-bottom: calc(var(--sp-8) + var(--sp-6));
+    gap: var(--sp-2);
   }
 
   .productGrid,
   .skeletonGrid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--sp-2);
+    gap: var(--sp-1);
   }
 
   .mobileCartAccess {
