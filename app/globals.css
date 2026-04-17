@@ -423,8 +423,8 @@ code {
 }
 
 .operational-sidebar--sticky {
-  position: sticky;
-  top: calc(var(--topbar-height, 5.5rem) + 0.25rem);
+  position: static;
+  top: auto;
 }
 
 .operational-content {
@@ -444,9 +444,14 @@ code {
   gap: 0.75rem;
   padding: 1rem 1.1rem;
   border-radius: var(--radius-lg);
-  border: 1px solid var(--color-border);
-  background: var(--color-bg-surface);
-  box-shadow: none;
+  border: 1px solid color-mix(in srgb, var(--color-border) 92%, var(--color-accent-light));
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-bg-surface) 97%, var(--color-bg-base)),
+      var(--color-bg-surface)
+    );
+  box-shadow: 0 12px 24px rgba(24, 23, 21, 0.04);
 }
 
 .operational-list-card--interactive {
@@ -460,15 +465,25 @@ code {
 
 .operational-list-card--interactive:hover,
 .operational-list-card--interactive:focus-visible {
-  border-color: var(--color-accent);
-  background: var(--color-accent-light);
-  box-shadow: none;
+  border-color: var(--color-accent-ring);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-bg-surface) 92%, var(--color-accent-light)),
+      color-mix(in srgb, var(--color-bg-surface) 98%, var(--color-bg-base))
+    );
+  box-shadow: 0 16px 30px rgba(24, 23, 21, 0.08);
   transform: translateY(-1px);
 }
 
 .operational-list-card--active {
-  border-color: var(--color-accent);
-  background: var(--color-accent-light);
+  border-color: var(--color-accent-ring);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-bg-surface) 92%, var(--color-accent-light)),
+      color-mix(in srgb, var(--color-bg-surface) 98%, var(--color-bg-base))
+    );
 }
 
 .operational-list-card__header {
@@ -1022,15 +1037,11 @@ code {
   color: var(--color-accent);
 }
 
-/* POS Status Banner - floating position to not affect layout */
+/* Transaction status banners stay inline with the workspace */
 .transaction-page .status-banner {
-  position: fixed;
-  top: var(--topbar-height);
-  inset-inline: 0;
-  margin: var(--sp-3);
-  margin-inline-start: calc(56px + var(--sp-3));
-  width: auto;
-  z-index: var(--z-offline-bar);
+  position: static;
+  margin: 0;
+  width: 100%;
   border-radius: var(--radius-lg);
 }
 
@@ -1388,25 +1399,37 @@ a:focus-visible {
   justify-content: center;
   min-inline-size: 44px;
   min-block-size: 44px;
-  border: 1px solid var(--color-border);
-  background: var(--color-bg-surface);
-  color: var(--color-text-primary);
+  border: 1px solid color-mix(in srgb, var(--color-border) 92%, var(--color-accent-light));
+  background: color-mix(in srgb, var(--color-bg-surface) 90%, var(--color-bg-muted));
+  color: var(--color-text-secondary);
   border-radius: 999px;
-  padding: 0.55rem 0.95rem;
+  padding: 0.45rem 0.95rem;
   font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
   cursor: pointer;
   transition:
     background-color 150ms ease,
     border-color 150ms ease,
+    box-shadow 150ms ease,
+    color 150ms ease,
     transform 150ms ease;
 }
 
 .chip-button:hover,
-.chip-button.is-selected {
-  border-color: var(--color-accent);
-  background: var(--color-accent-light);
-  color: var(--color-accent);
+.chip-button:focus-visible {
+  border-color: var(--color-accent-ring);
+  background: color-mix(in srgb, var(--color-bg-surface) 78%, var(--color-accent-light));
+  color: var(--color-text-primary);
+  box-shadow: 0 10px 20px rgba(24, 23, 21, 0.06);
   transform: translateY(-1px);
+}
+
+.chip-button.is-selected {
+  border-color: var(--color-accent-ring);
+  background: color-mix(in srgb, var(--color-accent-light) 72%, var(--color-bg-surface));
+  color: var(--color-accent);
+  box-shadow: 0 10px 20px rgba(24, 23, 21, 0.08);
 }
 
 .quick-add-row {
@@ -1627,13 +1650,10 @@ a:focus-visible {
   min-height: 200px;
   padding: 1.2rem;
   border-radius: 1rem;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.66),
-    rgba(255, 255, 255, 0.48)
-  );
-  border: 1px dashed var(--color-border);
+  background: color-mix(in srgb, var(--color-bg-muted) 82%, var(--color-bg-base));
+  border: none;
   text-align: center;
+  box-shadow: none;
 }
 
 .empty-panel--danger {
@@ -1661,8 +1681,14 @@ a:focus-visible {
 
 .result-card {
   padding: 1rem 1.1rem;
-  border: 1px solid var(--color-border);
-  background: var(--color-bg-surface);
+  border: 1px solid color-mix(in srgb, var(--color-border) 92%, var(--color-accent-light));
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-bg-surface) 97%, var(--color-bg-base)),
+      var(--color-bg-surface)
+    );
+  box-shadow: 0 14px 28px rgba(24, 23, 21, 0.05);
 }
 
 .transaction-page {
@@ -1721,8 +1747,8 @@ a:focus-visible {
 }
 
 .transaction-stack--sticky {
-  position: sticky;
-  top: 6.5rem;
+  position: static;
+  top: auto;
   align-self: start;
 }
 
@@ -3558,16 +3584,6 @@ h3 {
   max-width: 62ch;
 }
 
-.dashboard-shell .page-header .eyebrow,
-.dashboard-shell .page-header__description {
-  display: none;
-}
-
-.dashboard-layout--reports .page-header__description,
-.dashboard-shell--reports .page-header__description {
-  display: block;
-}
-
 .dashboard-layout--reports .page-header,
 .dashboard-shell--reports .page-header {
   margin-bottom: var(--sp-2);
@@ -3594,10 +3610,16 @@ h3 {
 
 .section-card,
 .workspace-panel {
-  background: var(--color-bg-surface);
-  border: 1px solid var(--color-border);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-bg-surface) 97%, var(--color-bg-base)),
+      var(--color-bg-surface)
+    );
+  border: 1px solid color-mix(in srgb, var(--color-border) 92%, var(--color-accent-light));
   border-radius: var(--radius-lg);
   padding: var(--sp-6);
+  box-shadow: 0 14px 28px rgba(24, 23, 21, 0.05);
 }
 
 .section-card {
@@ -3612,18 +3634,23 @@ h3 {
 }
 
 .section-card--subtle {
-  background: var(--color-bg-muted);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-bg-surface) 94%, var(--color-bg-muted)),
+      color-mix(in srgb, var(--color-bg-surface) 88%, var(--color-bg-muted))
+    );
 }
 
 .section-card--flat {
-  background: transparent;
+  background: color-mix(in srgb, var(--color-bg-muted) 76%, var(--color-bg-base));
   border: none;
   box-shadow: none;
   padding: var(--sp-4);
 }
 
 .section-card--inset {
-  background: var(--color-bg-muted);
+  background: color-mix(in srgb, var(--color-bg-muted) 82%, var(--color-bg-base));
   border: none;
   box-shadow: none;
   padding: var(--sp-4);
@@ -3716,11 +3743,15 @@ h3 {
   align-items: center;
   gap: var(--sp-1);
   min-height: auto;
-  padding: var(--sp-1) var(--sp-2);
-  border-radius: var(--radius-sm);
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 700;
   border: 1px solid transparent;
+  cursor: default;
+  box-shadow: none;
+  transform: none;
+  transition: none;
 }
 
 .badge--success,
@@ -3779,11 +3810,16 @@ h3 {
 .stat-card,
 .operational-page__meta-card,
 .transaction-page__meta-card {
-  background: var(--color-bg-surface);
-  border: 1px solid var(--color-border);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-bg-surface) 97%, var(--color-bg-base)),
+      var(--color-bg-surface)
+    );
+  border: 1px solid color-mix(in srgb, var(--color-border) 92%, var(--color-accent-light));
   border-radius: var(--radius-lg);
   padding: var(--sp-6);
-  box-shadow: 0 1px 3px rgba(24, 23, 21, 0.04);
+  box-shadow: 0 14px 28px rgba(24, 23, 21, 0.05);
 }
 
 .stat-card__value {
@@ -4417,16 +4453,16 @@ h3 {
 }
 
 .invoices-page__filters {
-  position: sticky;
-  top: calc(var(--topbar-height, 5.5rem) + var(--sp-2));
-  z-index: 2;
+  position: static;
+  top: auto;
+  z-index: auto;
   display: grid;
   gap: var(--sp-3);
   padding: var(--sp-4);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
   background: color-mix(in srgb, var(--color-bg-surface) 94%, var(--color-bg-base));
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
 }
 
 .invoices-page__filters-toggle {
@@ -4695,33 +4731,67 @@ h3 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: var(--btn-height);
+  min-height: 48px;
   padding-inline: var(--sp-4);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-pill);
-  background: var(--color-bg-surface);
-  color: inherit;
+  border: 1px solid color-mix(in srgb, var(--color-border) 85%, transparent);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-weight: 700;
   transition:
     border-color 0.2s ease,
     background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease,
     transform 0.2s ease;
 }
 
 .debts-page__tab:hover,
 .debts-page__tab:focus-visible {
   border-color: var(--color-accent-ring);
-  background: var(--color-accent-light);
-  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--color-accent-light) 62%, var(--color-bg-surface));
+  color: var(--color-text-primary);
+  box-shadow: 0 12px 22px rgba(24, 23, 21, 0.06);
 }
 
 .debts-page__tab.is-active {
   border-color: var(--color-accent-ring);
-  background: var(--color-accent-light);
-  box-shadow: inset 0 0 0 1px var(--color-accent-ring);
+  background: color-mix(in srgb, var(--color-accent-light) 72%, var(--color-bg-surface));
+  color: var(--color-text-primary);
+  box-shadow:
+    inset 0 -3px 0 var(--color-accent),
+    0 12px 22px rgba(24, 23, 21, 0.08);
 }
 
 .debts-page__quick-action {
   flex: 0 0 auto;
+}
+
+.invoice-page__sections .chip-button {
+  min-height: 48px;
+  border-radius: var(--radius-md);
+  border-color: color-mix(in srgb, var(--color-border) 85%, transparent);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-weight: 700;
+  box-shadow: none;
+}
+
+.invoice-page__sections .chip-button:hover,
+.invoice-page__sections .chip-button:focus-visible {
+  border-color: var(--color-accent-ring);
+  background: color-mix(in srgb, var(--color-accent-light) 62%, var(--color-bg-surface));
+  color: var(--color-text-primary);
+  box-shadow: 0 12px 22px rgba(24, 23, 21, 0.06);
+}
+
+.invoice-page__sections .chip-button.is-selected {
+  border-color: var(--color-accent-ring);
+  background: color-mix(in srgb, var(--color-accent-light) 72%, var(--color-bg-surface));
+  color: var(--color-text-primary);
+  box-shadow:
+    inset 0 -3px 0 var(--color-accent),
+    0 12px 22px rgba(24, 23, 21, 0.08);
 }
 
 .debts-page__tab-panel {
@@ -5078,15 +5148,18 @@ h3 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: var(--btn-height);
+  min-height: 48px;
   padding-inline: var(--sp-4);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-pill);
-  background: var(--color-bg-surface);
-  color: inherit;
+  border: 1px solid color-mix(in srgb, var(--color-border) 85%, transparent);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-weight: 700;
   transition:
     border-color 0.2s ease,
     background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease,
     transform 0.2s ease;
 }
 
@@ -5095,15 +5168,19 @@ h3 {
 .maintenance-page__tab:hover,
 .maintenance-page__tab:focus-visible {
   border-color: var(--color-accent-ring);
-  background: var(--color-accent-light);
-  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--color-accent-light) 62%, var(--color-bg-surface));
+  color: var(--color-text-primary);
+  box-shadow: 0 12px 22px rgba(24, 23, 21, 0.06);
 }
 
 .inventory-page__tab.is-active,
 .maintenance-page__tab.is-active {
   border-color: var(--color-accent-ring);
-  background: var(--color-accent-light);
-  box-shadow: inset 0 0 0 1px var(--color-accent-ring);
+  background: color-mix(in srgb, var(--color-accent-light) 72%, var(--color-bg-surface));
+  color: var(--color-text-primary);
+  box-shadow:
+    inset 0 -3px 0 var(--color-accent),
+    0 12px 22px rgba(24, 23, 21, 0.08);
 }
 
 .inventory-page__tab-panel,
@@ -5318,8 +5395,8 @@ h3 {
 }
 
 .suppliers-page__purchase-summary {
-  position: sticky;
-  top: var(--sp-4);
+  position: static;
+  top: auto;
 }
 
 .suppliers-page__payment-balance {
@@ -5734,29 +5811,36 @@ h3 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: var(--btn-height);
+  min-height: 48px;
   padding-inline: var(--sp-4);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-pill);
-  background: var(--color-bg-surface);
-  color: inherit;
+  border: 1px solid color-mix(in srgb, var(--color-border) 85%, transparent);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-weight: 700;
   transition:
     border-color 0.2s ease,
     background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease,
     transform 0.2s ease;
 }
 
 .reports-page__tab:hover,
 .reports-page__tab:focus-visible {
   border-color: var(--color-accent-ring);
-  background: var(--color-accent-light);
-  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--color-accent-light) 62%, var(--color-bg-surface));
+  color: var(--color-text-primary);
+  box-shadow: 0 12px 22px rgba(24, 23, 21, 0.06);
 }
 
 .reports-page__tab.is-active {
   border-color: var(--color-accent-ring);
-  background: var(--color-accent-light);
-  box-shadow: inset 0 0 0 1px var(--color-accent-ring);
+  background: color-mix(in srgb, var(--color-accent-light) 72%, var(--color-bg-surface));
+  color: var(--color-text-primary);
+  box-shadow:
+    inset 0 -3px 0 var(--color-accent),
+    0 12px 22px rgba(24, 23, 21, 0.08);
 }
 
 .reports-page__filter-block .section-card__body {
@@ -6772,26 +6856,6 @@ h3 {
   gap: var(--sp-1);
 }
 
-.dashboard-header-title {
-  display: flex;
-  align-items: center;
-  min-width: 0;
-}
-
-.dashboard-header-title__row {
-  display: flex;
-  align-items: center;
-  min-width: 0;
-}
-
-.dashboard-header-title h1 {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin: 0;
-  line-height: 1.3;
-}
-
 .dashboard-quick-search-minimal {
   display: flex;
   align-items: center;
@@ -6827,21 +6891,6 @@ h3 {
     gap: var(--sp-2);
   }
 
-  .dashboard-header-title {
-    min-width: 0;
-    max-inline-size: clamp(10rem, 24vw, 14rem);
-  }
-
-  .dashboard-header-title__row {
-    min-width: 0;
-  }
-
-  .dashboard-header-title h1 {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-
   .dashboard-quick-search-minimal {
     display: none;
   }
@@ -6866,10 +6915,6 @@ h3 {
   .dashboard-user-chip {
     gap: var(--sp-1);
     padding-inline: var(--sp-2);
-  }
-
-  .dashboard-header-title h1 {
-    font-size: 14px;
   }
 }
 

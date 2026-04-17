@@ -81,6 +81,19 @@ const ICONS = {
   settings: Settings
 } as const;
 
+const hiddenPageTitleStyle: React.CSSProperties = {
+  position: "absolute",
+  inlineSize: "1px",
+  blockSize: "1px",
+  padding: 0,
+  margin: "-1px",
+  overflow: "hidden",
+  clip: "rect(0, 0, 0, 0)",
+  clipPath: "inset(50%)",
+  whiteSpace: "nowrap",
+  border: 0
+};
+
 function getIcon(icon: DashboardNavItem["icon"]) {
   return ICONS[icon as keyof typeof ICONS] ?? LayoutDashboard;
 }
@@ -548,11 +561,13 @@ export function DashboardShell({
               ) : null}
             </div>
 
-            <div className="dashboard-header-title">
-              <div className="dashboard-header-title__row">
-                <h1>{pageContext.title}</h1>
-              </div>
-            </div>
+            <span
+              className="dashboard-header-title"
+              aria-hidden="true"
+              style={hiddenPageTitleStyle}
+            >
+              {pageContext.title}
+            </span>
           </div>
 
           <div className="dashboard-topbar__end dashboard-topbar__actions">
